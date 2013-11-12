@@ -1,0 +1,25 @@
+node_modules
+dist
+.tmp
+.sass-cache
+
+# I know this is controversial, but it's what the generator does by default
+app/bower_components
+
+# IntelliJ settings
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse settings
+.classpath
+.project
+.settings/
+
+# OS X
+.DS_Store
+
+# Backup and lock files
+*~
+\#*\#
