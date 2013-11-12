@@ -28,6 +28,12 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     yeoman: yeomanConfig,
+    hub: {
+      all: {
+        src: ['app/kibana/Gruntfile.js'],
+        tasks: ['build']
+      }
+    },
     watch: {
       coffee: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
@@ -338,6 +344,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'hub', // build kibana
     'clean:dist',
     'useminPrepare',
     'concurrent:dist',
