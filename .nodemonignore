@@ -1,0 +1,13 @@
+# FIXME nodemon is still starting on all changes
+/app/*
+/dist/*
+/node_modules/*
+/test/*
+/coverage/*
+/.idea/*
+/.sass-cache/*
+/.tmp/*
+/.git/*
+Gruntfile.js
+karma.conf.js
+karma-e2e.conf.js

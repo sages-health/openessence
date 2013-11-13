@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('openessenceApp')
-  .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+  .controller('MainCtrl', function ($scope, $http) {
+    $scope.login = function () {
+      $http({
+        method: 'POST',
+        url: '/login'
+      })
+    };
   });

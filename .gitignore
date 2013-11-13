@@ -1,7 +1,8 @@
-node_modules
-dist
-.tmp
-.sass-cache
+node_modules/
+npm-debug.log
+dist/
+.tmp/
+.sass-cache/
 
 # I know this is controversial, but it's what the generator does by default
 app/bower_components

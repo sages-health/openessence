@@ -1,10 +1,5 @@
-// Generated on 2013-11-12 using generator-express-angular 0.2.8
 'use strict';
 var LIVERELOAD_PORT = 35729;
-var lrSnippet = require('connect-livereload')({ port: LIVERELOAD_PORT });
-var mountFolder = function (connect, dir) {
-  return connect.static(require('path').resolve(dir));
-};
 
 // # Globbing
 // for performance reasons we're only matching one level down:
@@ -22,12 +17,9 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
-  try {
-    yeomanConfig.app = require('./bower.json').appPath || yeomanConfig.app;
-  } catch (e) {}
-
   grunt.initConfig({
     yeoman: yeomanConfig,
+    pkg: require('./package.json'),
     hub: {
       all: {
         src: ['app/kibana/Gruntfile.js'],
@@ -47,7 +39,7 @@ module.exports = function (grunt) {
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
         tasks: ['compass:server']
       },
-      livereload: {
+      livereload: { // TODO get this to work
         options: {
           livereload: LIVERELOAD_PORT
         },
@@ -57,48 +49,6 @@ module.exports = function (grunt) {
           '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
-      }
-    },
-    connect: {
-      options: {
-        port: 9000,
-        // Change this to '0.0.0.0' to access the server from outside.
-        hostname: 'localhost'
-      },
-      livereload: {
-        options: {
-          middleware: function (connect) {
-            return [
-              lrSnippet,
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, yeomanConfig.app)
-            ];
-          }
-        }
-      },
-      test: {
-        options: {
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, 'test')
-            ];
-          }
-        }
-      },
-      dist: {
-        options: {
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, yeomanConfig.dist)
-            ];
-          }
-        }
-      }
-    },
-    open: {
-      server: {
-        url: 'http://localhost:<%= connect.options.port %>'
       }
     },
     clean: {
@@ -164,11 +114,6 @@ module.exports = function (grunt) {
         }
       }
     },
-    // not used since Uglify task does concat,
-    // but still available if needed
-    /*concat: {
-      dist: {}
-    },*/
     rev: {
       dist: {
         files: {
@@ -274,6 +219,16 @@ module.exports = function (grunt) {
       }
     },
     concurrent: {
+      nodemon: {
+        options: {
+          logConcurrentOutput: true
+        },
+        tasks: [
+         // 'nodemon:nodeInspector',
+          'nodemon:dev',
+          'watch'
+        ]
+      },
       server: [
         'coffee:dist',
         'compass:server'
@@ -289,6 +244,14 @@ module.exports = function (grunt) {
         'svgmin',
         'htmlmin'
       ]
+    },
+    nodemon: { // TODO use watch and grunt-express-server instead, see http://blog.omkarpatil.com/2013/06/yeoman-express-angular-full-stack.html
+      dev: {
+        options: {
+          file: 'server.js',
+          nodeArgs: ['--debug']
+        }
+      }
     },
     karma: {
       unit: {
@@ -324,22 +287,21 @@ module.exports = function (grunt) {
 
   grunt.registerTask('server', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'open', 'connect:dist:keepalive']);
+      // TODO set NODE_ENV?
+      return grunt.task.run(['build']);
     }
 
     grunt.task.run([
       'clean:server',
       'concurrent:server',
-      'connect:livereload',
-      'open',
-      'watch'
+      'concurrent:nodemon'
     ]);
   });
 
   grunt.registerTask('test', [
+    // TODO set NODE_ENV?
     'clean:server',
     'concurrent:test',
-    'connect:test',
     'karma'
   ]);
 
