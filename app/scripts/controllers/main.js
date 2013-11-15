@@ -6,6 +6,6 @@ angular.module('openessenceApp')
       $http({
         method: 'POST',
         url: '/login'
-      })
+      });
     };
   });

@@ -28,6 +28,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     yeoman: yeomanConfig,
     pkg: require('./package.json'),
+    env: 'dev', // this property is modified at runtime, depending on whether we're doing a full (production) build
 
     // build Kibana
     hub: {
@@ -88,13 +89,14 @@ module.exports = function (grunt) {
           'server.js',
           'server/{,*/}*.{js,json}'
         ],
-        tasks: ['express:dev'],
+        tasks: ['express:<%= env %>'],
         options: {
           livereload: true,
           spawn: false
         }
       },
-      livereload: { // TODO get this to work
+      livereload: {
+        // install the LiveReload extension for your browser of choice to get this to work
         options: {
           livereload: true
         },
@@ -169,18 +171,28 @@ module.exports = function (grunt) {
         }
       }
     },
-    rev: {
-      dist: {
-        files: {
-          src: [
-            '<%= yeoman.dist %>/scripts/{,*/}*.js',
-            '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-            '<%= yeoman.dist %>/styles/fonts/*'
-          ]
-        }
+
+    // filerev operates on scripts in /dist, so it must be run after uglify (which puts the scripts there)
+    filerev: {
+      scripts: {
+        src: '<%= yeoman.dist %>/scripts/{,*/}*.js'
+      },
+      styles: {
+        src: '<%= yeoman.dist %>/styles/{,*/}*.css'
+      },
+      images: {
+        src: '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+      },
+      fonts: {
+        src: '<%= yeoman.dist %>/styles/fonts/*'
       }
     },
+
+    /* useminPrepare adds configs at runtime for concat, uglify, and cssmin:
+     * concat concatenates files and saves them in .tmp/concat
+     * uglify runs uglify on the files in .tmp/concat/scripts and outputs to dist/scripts
+     * cssmin minifies CSS in .tmp/concat and outputs to dist/styles
+     */
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
@@ -194,7 +206,7 @@ module.exports = function (grunt) {
         dirs: ['<%= yeoman.dist %>']
       }
     },
-    // Windows issue, see https://github.com/gruntjs/grunt-contrib-imagemin/issues/108
+    // imagemin has a Windows issue, see https://github.com/gruntjs/grunt-contrib-imagemin/issues/108
     imagemin: {
       dist: {
         files: [{
@@ -215,19 +227,29 @@ module.exports = function (grunt) {
         }]
       }
     },
-    cssmin: {
-      // By default, your `index.html` <!-- Usemin Block --> will take care of
-      // minification. This option is pre-configured if you do not wish to use
-      // Usemin blocks.
-      // dist: {
-      //   files: {
-      //     '<%= yeoman.dist %>/styles/main.css': [
-      //       '.tmp/styles/{,*/}*.css',
-      //       '<%= yeoman.app %>/styles/{,*/}*.css'
-      //     ]
-      //   }
-      // }
-    },
+
+    // By default, your `index.html` <!-- Usemin Block --> will take care of
+    // minification. This option is pre-configured if you do not wish to use Usemin blocks.
+    // cssmin: {
+    //   dist: {
+    //     files: {
+    //       '<%%= yeoman.dist %>/styles/main.css': [
+    //         '.tmp/styles/{,*/}*.css',
+    //         '<%%= yeoman.app %>/styles/{,*/}*.css'
+    //       ]
+    //     }
+    //   }
+    // },
+    // uglify: {
+    //   dist: {
+    //     files: {
+    //       '<%%= yeoman.dist %>/scripts/scripts.js': [
+    //         '<%%= yeoman.dist %>/scripts/scripts.js'
+    //       ]
+    //     }
+    //   }
+    // },
+
     htmlmin: {
       dist: {
         options: {
@@ -249,31 +271,36 @@ module.exports = function (grunt) {
         }]
       }
     },
+
     // Put files not handled in other tasks here
     copy: {
       dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,png,txt}',
-            '.htaccess',
-            'bower_components/**/*',
-            'images/{,*/}*.{gif,webp}',
-            'styles/fonts/*'
-          ]
-        }, {
-          expand: true,
-          cwd: '.tmp/images',
-          dest: '<%= yeoman.dist %>/images',
-          src: [
-            'generated/*'
-          ]
-        }]
+        files: [
+          {
+            expand: true,
+            dot: true,
+            cwd: '<%= yeoman.app %>',
+            dest: '<%= yeoman.dist %>',
+            src: [
+              '*.{ico,png,txt}',
+              '.htaccess',
+              'bower_components/**/*',
+              'images/{,*/}*.{gif,webp}',
+              'styles/fonts/*'
+            ]
+          },
+          {
+            expand: true,
+            cwd: '.tmp/images',
+            dest: '<%= yeoman.dist %>/images',
+            src: [
+              'generated/*'
+            ]
+          }
+        ]
       }
     },
+
     concurrent: {
       server: [
         'coffee:dist',
@@ -291,12 +318,6 @@ module.exports = function (grunt) {
         'htmlmin'
       ]
     },
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
-    },
     cdnify: {
       dist: {
         html: ['<%= yeoman.dist %>/*.html']
@@ -306,35 +327,40 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.dist %>/scripts',
+          cwd: '.tmp/concat/scripts', // must be run after concat and before uglify (which copies scripts to dist)
           src: '*.js',
-          dest: '<%= yeoman.dist %>/scripts'
+          dest: '.tmp/concat/scripts'
         }]
       }
     },
-    uglify: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/scripts/scripts.js': [
-            '<%= yeoman.dist %>/scripts/scripts.js'
-          ]
-        }
+
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
       }
     }
   });
 
   grunt.registerTask('server', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build']);
+    if (target === 'build' || target === 'prod' || target === 'production') {
+      grunt.config('env', 'prod');
+      grunt.task.run([
+        'build',
+        'express:prod',
+        'open',
+        'watch'
+      ]);
+    } else {
+      grunt.config('env', 'dev');
+      grunt.task.run([
+        'clean:server',
+        'concurrent:server',
+        'express:dev',
+        'open',
+        'watch'
+      ]);
     }
-
-    grunt.task.run([
-      'clean:server',
-      'concurrent:server',
-      'express:dev',
-      'open',
-      'watch'
-    ]);
   });
 
   grunt.registerTask('test', [
@@ -345,17 +371,17 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'hub', // build kibana
-    'clean:dist',
+    'clean:dist', // no incremental builds in Grunt (unlike Gradle) :(
     'jshint',
     'useminPrepare',
     'concurrent:dist',
-    'concat',
-    'copy',
-    'cdnify',
+    'concat', // this task is generated by useminPrepare
     'ngmin',
-    'cssmin',
-    'uglify',
-    'rev',
+    'copy:dist',
+    'cdnify',
+    'cssmin', // generated by useminPrepare
+    'uglify', // generated by useminPrepare, puts uglified scripts in dist
+    'filerev',
     'usemin'
   ]);
 
