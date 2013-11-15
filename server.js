@@ -16,6 +16,7 @@ app.engine('html', require('ejs').renderFile);
 if (env === 'development') {
   app.set('views', 'app');
   app.use(express.static('.tmp'));
+  app.use('/kibana', express.static('app/kibana/src'));
   app.use(express.static('app'));
 } else if (env === 'test') {
   app.set('views', 'app');
@@ -23,6 +24,7 @@ if (env === 'development') {
   app.use(express.static('test'));
 } else if (env === 'production') {
   app.set('views', 'dist');
+  app.use('/kibana', express.static('app/kibana/dist'));
   app.use(express.static('dist'));
 } else {
   throw new Error('Unknown environment ' + env);
@@ -36,10 +38,6 @@ app.get('/', function (request, response) {
 //  successRedirect: '/kibana/dist',
 //  failureRedirect: '/'
 //}));
-
-app.post('/login', function (request, response) {
-  response.render('index.html');
-});
 
 // this MUST be the last route
 app.use(function (req, res) {
@@ -61,7 +59,7 @@ app.use(function (req, res) {
 
 
 if (!module.parent) {
-  var port = process.env.PORT || 5000;
+  var port = process.env.PORT || 9000;
   app.listen(port, function () {
     console.log('Listening on ' + port);
   });

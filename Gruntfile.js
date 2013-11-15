@@ -1,5 +1,4 @@
 'use strict';
-var LIVERELOAD_PORT = 35729;
 
 // # Globbing
 // for performance reasons we're only matching one level down:
@@ -8,8 +7,17 @@ var LIVERELOAD_PORT = 35729;
 // 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
+
+  // see https://github.com/shama/grunt-hub/issues/11
+  grunt.loadNpmTasks('grunt-hub');
+  grunt.renameTask('watch', 'hubWatch');
+
   // load all grunt tasks
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  require('matchdep').filterDev('grunt-*').forEach(function (name) {
+    if (name !== 'grunt-hub') {
+      grunt.loadNpmTasks(name);
+    }
+  });
 
   // configurable paths
   var yeomanConfig = {
@@ -20,12 +28,48 @@ module.exports = function (grunt) {
   grunt.initConfig({
     yeoman: yeomanConfig,
     pkg: require('./package.json'),
+
+    // build Kibana
     hub: {
       all: {
         src: ['app/kibana/Gruntfile.js'],
         tasks: ['build']
       }
     },
+
+    // start server
+    express: {
+      options: {
+        port: process.env.PORT || 9000,
+        script: 'server.js'
+      },
+      dev: {
+        options: {
+          'node_env': 'development',
+          debug: true
+        }
+      },
+      prod: {
+        options: {
+          'node_env': 'production',
+          debug: false
+        }
+      },
+      test: {
+        options: {
+          'node_env': 'test',
+          debug: true
+        }
+      }
+    },
+
+    // open web browser
+    open: {
+      server: {
+        url: 'http://localhost:<%= express.options.port %>'
+      }
+    },
+
     watch: {
       coffee: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
@@ -39,9 +83,20 @@ module.exports = function (grunt) {
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
         tasks: ['compass:server']
       },
+      express: {
+        files: [
+          'server.js',
+          'server/{,*/}*.{js,json}'
+        ],
+        tasks: ['express:dev'],
+        options: {
+          livereload: true,
+          spawn: false
+        }
+      },
       livereload: { // TODO get this to work
         options: {
-          livereload: LIVERELOAD_PORT
+          livereload: true
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
@@ -139,6 +194,7 @@ module.exports = function (grunt) {
         dirs: ['<%= yeoman.dist %>']
       }
     },
+    // Windows issue, see https://github.com/gruntjs/grunt-contrib-imagemin/issues/108
     imagemin: {
       dist: {
         files: [{
@@ -219,16 +275,6 @@ module.exports = function (grunt) {
       }
     },
     concurrent: {
-      nodemon: {
-        options: {
-          logConcurrentOutput: true
-        },
-        tasks: [
-         // 'nodemon:nodeInspector',
-          'nodemon:dev',
-          'watch'
-        ]
-      },
       server: [
         'coffee:dist',
         'compass:server'
@@ -244,14 +290,6 @@ module.exports = function (grunt) {
         'svgmin',
         'htmlmin'
       ]
-    },
-    nodemon: { // TODO use watch and grunt-express-server instead, see http://blog.omkarpatil.com/2013/06/yeoman-express-angular-full-stack.html
-      dev: {
-        options: {
-          file: 'server.js',
-          nodeArgs: ['--debug']
-        }
-      }
     },
     karma: {
       unit: {
@@ -287,19 +325,19 @@ module.exports = function (grunt) {
 
   grunt.registerTask('server', function (target) {
     if (target === 'dist') {
-      // TODO set NODE_ENV?
       return grunt.task.run(['build']);
     }
 
     grunt.task.run([
       'clean:server',
       'concurrent:server',
-      'concurrent:nodemon'
+      'express:dev',
+      'open',
+      'watch'
     ]);
   });
 
   grunt.registerTask('test', [
-    // TODO set NODE_ENV?
     'clean:server',
     'concurrent:test',
     'karma'
@@ -308,6 +346,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'hub', // build kibana
     'clean:dist',
+    'jshint',
     'useminPrepare',
     'concurrent:dist',
     'concat',
@@ -321,7 +360,6 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', [
-    'jshint',
     'test',
     'build'
   ]);
