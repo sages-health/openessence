@@ -8,7 +8,8 @@ app.use(express.logger());
 
 var env = process.env.NODE_ENV || 'development';
 
-app.use(express.bodyParser());
+app.use(express.json());
+app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.engine('html', require('ejs').renderFile);
