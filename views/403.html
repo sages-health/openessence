@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Server Error :(</title>
+  <title>Access denied :(</title>
   <style>
     ::-moz-selection {
       background: #b3d4fc;
@@ -59,9 +59,10 @@
 </head>
 <body>
 <div class="container">
-  <h1>Server error <span>:(</span></h1>
+  <h1>Access denied <span>:(</span></h1>
 
-  <p>Sorry, but there was a server error.</p>
+  <p>Sorry, but you don't have permission to <%= action %>.</p>
+  <a href="/">Home</a>
 </div>
 </body>
 </html>

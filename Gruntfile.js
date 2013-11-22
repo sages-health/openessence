@@ -33,7 +33,7 @@ module.exports = function (grunt) {
     // build Kibana
     hub: {
       all: {
-        src: ['app/kibana/Gruntfile.js'],
+        src: ['kibana/Gruntfile.js'],
         tasks: ['build']
       }
     },
@@ -194,7 +194,7 @@ module.exports = function (grunt) {
      * cssmin minifies CSS in .tmp/concat and outputs to dist/styles
      */
     useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
+      html: 'views/login.html',
       options: {
         dest: '<%= yeoman.dist %>'
       }
@@ -265,8 +265,7 @@ module.exports = function (grunt) {
         },
         files: [{
           expand: true,
-          cwd: '<%= yeoman.app %>',
-          src: ['*.html', 'views/*.html'],
+          src: ['views/*.html', '<%= yeoman.app %>/views/*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
@@ -347,7 +346,7 @@ module.exports = function (grunt) {
       grunt.config('env', 'prod');
       grunt.task.run([
         'build',
-        'express:prod',
+        'express:prod', // FIXME production build is currently broken
         'open',
         'watch'
       ]);
