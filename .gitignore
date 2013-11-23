@@ -9,7 +9,7 @@ dist/
 /dev.js
 
 # I know this is controversial, but it's what the generator does by default
-app/bower_components
+/public/bower_components
 
 # IntelliJ settings
 .idea/

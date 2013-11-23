@@ -21,7 +21,7 @@ module.exports = function (grunt) {
 
   // configurable paths
   var yeomanConfig = {
-    app: 'app',
+    app: 'public',
     dist: 'dist'
   };
 
@@ -175,16 +175,16 @@ module.exports = function (grunt) {
     // filerev operates on scripts in /dist, so it must be run after uglify (which puts the scripts there)
     filerev: {
       scripts: {
-        src: '<%= yeoman.dist %>/scripts/{,*/}*.js'
+        src: 'dist/public/scripts/{,*/}*.js'
       },
       styles: {
-        src: '<%= yeoman.dist %>/styles/{,*/}*.css'
+        src: 'dist/public/styles/{,*/}*.css'
       },
       images: {
-        src: '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+        src: 'dist/public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
       },
       fonts: {
-        src: '<%= yeoman.dist %>/styles/fonts/*'
+        src: 'dist/public/styles/fonts/*'
       }
     },
 
@@ -196,14 +196,16 @@ module.exports = function (grunt) {
     useminPrepare: {
       html: 'views/login.html',
       options: {
-        dest: '<%= yeoman.dist %>'
+        dest: 'dist/public'
       }
     },
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+      html: ['dist/views/*.html'], // TODO add fragments
+      css: ['<%= yeoman.dist %>/public/styles/{,*/}*.css'],
       options: {
-        dirs: ['<%= yeoman.dist %>']
+        assetsDirs: [
+          '<%= yeoman.dist %>/public'
+        ]
       }
     },
     // imagemin has a Windows issue, see https://github.com/gruntjs/grunt-contrib-imagemin/issues/108
@@ -213,7 +215,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.{png,jpg,jpeg}',
-          dest: '<%= yeoman.dist %>/images'
+          dest: '<%= yeoman.dist %>/public/images'
         }]
       }
     },
@@ -223,7 +225,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.svg',
-          dest: '<%= yeoman.dist %>/images'
+          dest: '<%= yeoman.dist %>/public/images'
         }]
       }
     },
@@ -251,6 +253,15 @@ module.exports = function (grunt) {
     // },
 
     htmlmin: {
+      views: {
+        files: [
+          {
+            expand: true,
+            src: ['views/*.html'],
+            dest: 'dist'
+          }
+        ]
+      },
       dist: {
         options: {
           /*removeCommentsFromCDATA: true,
@@ -265,7 +276,7 @@ module.exports = function (grunt) {
         },
         files: [{
           expand: true,
-          src: ['views/*.html', '<%= yeoman.app %>/views/*.html'],
+          src: ['<%= yeoman.app %>/views/*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
@@ -279,7 +290,7 @@ module.exports = function (grunt) {
             expand: true,
             dot: true,
             cwd: '<%= yeoman.app %>',
-            dest: '<%= yeoman.dist %>',
+            dest: '<%= yeoman.dist %>/public',
             src: [
               '*.{ico,png,txt}',
               '.htaccess',
@@ -291,7 +302,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: '.tmp/images',
-            dest: '<%= yeoman.dist %>/images',
+            dest: '<%= yeoman.dist %>/public/images',
             src: [
               'generated/*'
             ]

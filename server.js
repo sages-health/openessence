@@ -16,7 +16,7 @@ if (fs.existsSync(__dirname + '/dev.js')) {
 
 var env = process.env.NODE_ENV || 'development'; // TODO use app.get('env');
 
-app.use(express.favicon('app/favicon.ico'));
+app.use(express.favicon('public/favicon.ico'));
 app.use(express.logger());
 app.use(express.json());
 app.use(express.urlencoded());
