@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var fs = require('fs');
 var express = require('express');
 var passport = require('passport');
@@ -11,7 +12,10 @@ var app = express();
 
 // load developer settings
 if (fs.existsSync(__dirname + '/dev.js')) {
-  require('./dev');
+  var settings = require('./dev');
+  _.forOwn(settings, function (value, name) {
+    process.env[name] = _.isString(value) ? value : JSON.stringify(value);
+  });
 }
 
 var env = process.env.NODE_ENV || 'development'; // TODO use app.get('env');
