@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * Imports OpenESSENCE's Tacbrd data from PostgreSQL into elasticsearch.
+ * Imports OpenESSENCE's Tacbrd data from PostgreSQL into elasticsearch. This script expects no Tacbrd indices to
+ * already exist in elasticsearch. Because of this, you should run purge.js to delete the Tacbrd indices first before
+ * running this script.
+ *
+ * TODO make an upgrade script that makes new index, loads data, moves alias, and deletes old index
  */
 'use strict';
 
@@ -155,8 +159,8 @@ function importErData () {
               sex: {
                 type: 'synonym',
                 synonyms: [
-                  'm, male',
-                  'f, female'
+                  'm => male',
+                  'f => female'
                 ]
               }
             }
