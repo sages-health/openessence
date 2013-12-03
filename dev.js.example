@@ -13,4 +13,5 @@ module.exports = {
     host: 'localhost',
     dialect: 'postgres'
   }
+  // DB_CONNECTION_STRING: 'jdbc:postgresql://localhost:5432/tacbrd'
 };
