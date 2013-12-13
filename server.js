@@ -1,24 +1,14 @@
 'use strict';
 
-var _ = require('lodash');
-var fs = require('fs');
 var express = require('express');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+
+var conf = require('./server/conf');
 var staticResources = require('./server/staticResources');
 var accessControl = require('./server/accessControl');
 
 var app = express();
-
-// load developer settings
-if (fs.existsSync(__dirname + '/dev.js')) {
-  var settings = require('./dev');
-  _.forOwn(settings, function (value, name) {
-    process.env[name] = _.isString(value) ? value : JSON.stringify(value);
-  });
-}
-
-var env = process.env.NODE_ENV || 'development'; // TODO use app.get('env');
 
 app.use(express.favicon('public/favicon.ico'));
 app.use(express.logger());
@@ -27,8 +17,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({
-  // using randomBytes means sessions won't be preserved through server restarts
-  secret: process.env.SESSION_SECRET || require('crypto').randomBytes(1024).toString('hex'),
+  secret: conf.settings.SESSION_SECRET,
   cookie: {
     path: '/',
     httpOnly: true,
@@ -38,7 +27,7 @@ app.use(express.session({
 }));
 app.use(require('connect-flash')());
 
-app.use(staticResources.anonymousResources(env, express));
+app.use(staticResources.anonymousResources(conf.env, express));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -68,7 +57,7 @@ app.use(function errorHandler(err, req, res, next) {
 });
 
 app.engine('html', require('ejs').renderFile);
-app.set('views', require('./server/views')(env));
+app.set('views', require('./server/views')(conf.env));
 
 // see http://redotheweb.com/2013/02/20/sequelize-the-javascript-orm-in-practice.html
 var models = require('./server/models');
@@ -137,7 +126,7 @@ app.post('/login', passport.authenticate('local', {
 // all routes below this require authenticating
 app.all('*', accessControl.denyAnonymousAccess);
 
-app.use('/kibana', staticResources.kibana(env, express));
+app.use('/kibana', staticResources.kibana(conf.env, express));
 
 // this MUST be the last route
 app.use(function (req, res) {
@@ -159,6 +148,17 @@ app.use(function (req, res) {
 });
 
 if (!module.parent) {
+  var childProcess = require('child_process');
+  var syncer = childProcess.fork(__dirname + '/server/es/pgsync');
+  syncer.on('error', function (err) {
+    console.error('Error in pgsqync child process');
+    console.error(err);
+  });
+  syncer.on('exit', function () {
+    console.error('syncer child process exited');
+    // TODO block writes until syncer is back up
+  });
+
   var port = process.env.PORT || 9000;
   app.listen(port, function () {
     console.log('Listening on port ' + port);

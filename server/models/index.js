@@ -1,11 +1,28 @@
 'use strict';
 
+var _ = require('lodash');
 var Sequelize = require('sequelize');
-var env = process.env;
-var sequelize = new Sequelize(env.DB_NAME, env.DB_USERNAME, env.DB_PASSWORD, JSON.parse(env.DB_OPTIONS));
+var fs = require('fs');
+var path = require('path');
+
+var db = require('../conf').db;
+
+// sequelize's API isn't great...
+var sequelize = new Sequelize(db.name, db.username, db.password, db);
+
+// Assumes all .js files in this directory that begin with an uppercase letter are Sequelize models
+var models = _.chain(fs.readdirSync(__dirname))
+  .filter(function (filename) {
+    var firstChar = path.basename(filename).charAt(0);
+    return firstChar === firstChar.toUpperCase() && path.extname(filename) === '.js';
+  })
+  .map(function (filename) {
+    return path.basename(filename, '.js');
+  });
 
 // inspired by http://redotheweb.com/2013/02/20/sequelize-the-javascript-orm-in-practice.html
-['User' /* add more models as needed */].forEach(function (model) {
+models.forEach(function (model) {
+  console.log('Importing model ' + model);
   exports[model] = sequelize.import(__dirname + '/' + model);
 });
 
