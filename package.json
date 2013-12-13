@@ -12,7 +12,11 @@
     "passport-local": "~0.1.6",
     "pg": "~2.8.2",
     "sequelize": "~2.0.0-beta.1",
-    "sequelize-postgres": "~2.0.0-beta.1"
+    "sequelize-postgres": "~2.0.0-beta.1",
+    "bluebird": "~0.11.3-0",
+    "async": "~0.2.9",
+    "es": "~0.3.14",
+    "winston": "~0.7.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -40,8 +44,10 @@
     "grunt-usemin": "~2.0.0",
     "karma": "~0.10.4",
     "matchdep": "~0.3.0",
-    "bluebird": "~0.11.3-0",
-    "request": "~2.27.0"
+    "mocha": "~1.15.1",
+    "chai": "~1.8.1",
+    "sinon": "~1.7.3",
+    "nock": "~0.25.0"
   },
   "engines": {
     "node": ">=0.8.0"

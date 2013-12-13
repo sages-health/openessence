@@ -357,7 +357,7 @@ module.exports = function (grunt) {
       grunt.config('env', 'prod');
       grunt.task.run([
         'build',
-        'express:prod', // FIXME production build is currently broken
+        'express:prod',
         'open',
         'watch'
       ]);
