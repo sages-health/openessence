@@ -15,11 +15,14 @@ var path = require('path');
 var elasticsearch = require('es');
 var conf = require('../conf');
 var logger = conf.logger;
+var Lock = require('../locks');
 
 // Mask for index names: name-ID, e.g. foo-1386709830584.
 // ID doesn't have to be a timestamp, that's just the easiest way to have (mostly)
 // monotonically increasing IDs.
 var INDEX_REGEX = /^(.+)-(\d+)$/;
+
+// TODO turn this into a class
 
 exports.loadIndexSettings = function loadIndexSettings (index) {
   return require('../../indices/' + index);
@@ -318,36 +321,11 @@ exports.moveAlias = function moveAlias (alias, newIndex, esClient, callback) {
     });
 };
 
-/**
- * Re-index data online. Inspired by http://www.elasticsearch.org/blog/changing-mapping-with-zero-downtime/.
- * Go read that link before continuing.
- *
- * Note that since elasticsearch doesn't have client-usable transactions, race conditions can happen during
- * re-indexing. Most of the time, a race condition will only cause a temporary consistency issue, i.e. moving
- * the alias to an index that's not ready yet. Such issues should be corrected when re-indexing is run again.
- * However, to prevent anything more serious from happening, you should avoid doing a few things while the
- * re-indexing is running:
- * 1. Don't create new indices that could confuse the re-indexing job. For example, if you're trying to re-index
- * alias `foo` from `foo-1` to `foo-2`, don't create index `foo-3`. Doing such a silly thing can cause the re-indexing
- * to move `foo` to `foo-3`, even if `foo-3` doesn't have all your data. Creating indices that the re-indexing will
- * ignore is of course fine, e.g. creating `bar-1` shouldn't cause a problem.
- * 2. Don't delete indices the re-indexer is using. This should be obvious.
- * 3. Don't modify the alias the re-indexer is using. This actually might be OK, but why would you want to test this?
- *
- * Doing anything else while the re-indexer is running is probably fine, but be careful.
- *
- * This function cleans up after itself, but if anything goes wrong, here's the list of things you might want to
- * manually delete from your cluster:
- * 1. Old indices. Normally, all old indices for an alias are deleted after the alias is moved. If something bad
- * happens and they're not deleted, you may want to delete them manually.
- * 2. River types. To avoid accidentally deleting a JDBC river while it's running, the re-indexer does not delete old
- * rivers types as aggressively. You may want to manually delete old JDBC river types yourself, or drop the entire
- * `_river` index (it will be created again from scratch the next time re-indexing runs).
- *
- *
- * If you want re-indexing to be more transactional, consider using something like Apache Zookeeper.
- */
-exports.reIndex = function reIndex (alias, callback) {
+exports.getLockForAlias = function getLockForAlias (alias) {
+  return new Lock('reindex-' + alias);
+};
+
+function doReIndex (alias, callback) {
   var esClient = elasticsearch({
     server: {
       host: conf.es.host,
@@ -420,9 +398,9 @@ exports.reIndex = function reIndex (alias, callback) {
 
       // This function deletes all rivers corresponding to old indices.
       // Note that it will *not* delete an old river if it doesn't have a corresponding index.
-      // If you want to delete all old rivers, drop the index manually. This will of course also delete newer rivers,
-      // but they'll be recreated next time a re-index is run. Try not to delete a JDBC river while it's running a
-      // job though. See https://groups.google.com/forum/#!topic/elasticsearch/WvtnHZlPqsY
+      // If you want to delete all old rivers, drop the index manually. This will of course also delete newer
+      // rivers, but they'll be recreated next time a re-index is run. Try not to delete a JDBC river while it's
+      // running a job though. See https://groups.google.com/forum/#!topic/elasticsearch/WvtnHZlPqsY
       function deleteOldRivers (callback) {
         logger.info('Deleting old rivers');
         async.each(indices, function (index, callback) {
@@ -486,6 +464,53 @@ exports.reIndex = function reIndex (alias, callback) {
     } else {
       callback(null, result);
     }
+  });
+}
+
+/**
+ * Re-index data online. Inspired by http://www.elasticsearch.org/blog/changing-mapping-with-zero-downtime/.
+ * Go read that link before continuing.
+ *
+ * Note that since elasticsearch doesn't have client-usable transactions, race conditions can happen during
+ * re-indexing. Most of the time, a race condition will only cause a temporary consistency issue, i.e. moving
+ * the alias to an index that's not ready yet. Such issues should be corrected when re-indexing is run again.
+ * However, to prevent anything more serious from happening, you should avoid doing a few things while the
+ * re-indexing is running:
+ * 1. Don't create new indices that could confuse the re-indexing job. For example, if you're trying to re-index
+ * alias `foo` from `foo-1` to `foo-2`, don't create index `foo-3`. Doing such a silly thing can cause the re-indexing
+ * to move `foo` to `foo-3`, even if `foo-3` doesn't have all your data. Creating indices that the re-indexing will
+ * ignore is of course fine, e.g. creating `bar-1` shouldn't cause a problem.
+ * 2. Don't delete indices the re-indexer is using. This should be obvious.
+ * 3. Don't modify the alias the re-indexer is using. This actually might be OK, but why would you want to test this?
+ *
+ * Doing anything else while the re-indexer is running is probably fine, but be careful.
+ *
+ * This function cleans up after itself, but if anything goes wrong, here's the list of things you might want to
+ * manually delete from your cluster:
+ * 1. Old indices. Normally, all old indices for an alias are deleted after the alias is moved. If something bad
+ * happens and they're not deleted, you may want to delete them manually.
+ * 2. River types. To avoid accidentally deleting a JDBC river while it's running, the re-indexer does not delete old
+ * rivers types as aggressively. You may want to manually delete old JDBC river types yourself, or drop the entire
+ * `_river` index (it will be created again from scratch the next time re-indexing runs).
+ */
+exports.reIndex = function reIndex (alias, callback) {
+  var lock = exports.getLockForAlias(alias); // prevent more than one alias-job from running at a time
+  lock.tryLock(function (err, result) {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    if (!result) {
+      logger.info('Failed to acquire %s lock. Is a re-indexer job for this alias already running?', lock.name);
+      callback(new Error('Failed to acquire re-index lock'));
+      return;
+    }
+
+    doReIndex(alias, function (err, result) {
+      lock.unlock();
+      callback(err, result);
+    });
   });
 };
 
