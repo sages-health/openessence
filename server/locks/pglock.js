@@ -30,6 +30,8 @@ var conf = require('../conf');
 var db = conf.db;
 var logger = conf.logger;
 
+var outstandingLocks = {};
+
 function PgLock (name) {
   if (!(this instanceof PgLock)) {
     return new PgLock(name);
@@ -75,6 +77,9 @@ PgLock.prototype.tryLock = function (callback) {
         return;
       }
 
+      logger.info('Acquired advisory lock %d', pgLock.id);
+      outstandingLocks[pgLock.id] = pgLock;
+
       callback(null, result.rows[0].result);
     });
   });
@@ -99,6 +104,8 @@ PgLock.prototype.lock = function (callback) {
       }
 
       logger.info('Acquired advisory lock %d', pgLock.id);
+      outstandingLocks[pgLock.id] = pgLock;
+
       callback(null);
     });
   });
@@ -112,10 +119,22 @@ PgLock.prototype.unlock = function (callback) {
     // this.client.query('SELECT pg_advisory_unlock(' + this.id + ')');
 
     this.client.end();
+    logger.info('Released advisory lock %d', this.id);
+    delete outstandingLocks[this.id];
   }
   if (callback) {
     callback(null);
   }
 };
+
+// one exit handler (as opposed to one per lock) to avoid memory leaks
+process.on('exit', function () {
+  // not sure if this helps at all (it definitely won't if the process is SIGKILL-ed),
+  // but it's what https://github.com/isaacs/lockfile/blob/d75e7119c7/lockfile.js#L33 does
+  // (of course he's dealing with files that won't get deleted otherwise...)
+  Object.keys(outstandingLocks).forEach(function (id) {
+    outstandingLocks[id].unlock();
+  });
+});
 
 module.exports = PgLock;

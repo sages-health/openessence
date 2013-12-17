@@ -94,6 +94,34 @@ describe('pglock', function () {
         });
       });
     });
+
+    it('should release lock on process exit', function (done) {
+      var child = require('child_process').fork(__dirname + '../../../resources/server/locks/child.js');
+      child.on('message', function (m) {
+        if (m === 'locked') { // just in case some other type of message is sent
+          var lock = new PgLock(1000);
+          lock.tryLock(function (err, result) {
+            if (err) {
+              throw err;
+            }
+
+            expect(result).to.be.false;
+
+            child.kill('SIGTERM');
+            lock.tryLock(function (err, result) {
+              if (err) {
+                throw err;
+              }
+
+              expect(result).to.be.true;
+
+              lock.unlock();
+              done();
+            });
+          });
+        }
+      });
+    });
   });
 
   describe('#unlock', function () {
