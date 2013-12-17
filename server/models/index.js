@@ -5,10 +5,14 @@ var Sequelize = require('sequelize');
 var fs = require('fs');
 var path = require('path');
 
-var db = require('../conf').db;
+var conf = require('../conf');
+var db = conf.db;
+var logger = conf.logger;
 
 // sequelize's API isn't great...
-var sequelize = new Sequelize(db.name, db.username, db.password, db);
+var sequelize = new Sequelize(db.name, db.username, db.password, _.extend({
+  logging: logger.info
+}, db));
 
 // Assumes all .js files in this directory that begin with an uppercase letter are Sequelize models
 var models = _.chain(fs.readdirSync(__dirname))
@@ -22,7 +26,7 @@ var models = _.chain(fs.readdirSync(__dirname))
 
 // inspired by http://redotheweb.com/2013/02/20/sequelize-the-javascript-orm-in-practice.html
 models.forEach(function (model) {
-  console.log('Importing model ' + model);
+  logger.debug('Importing model ' + model);
   exports[model] = sequelize.import(__dirname + '/' + model);
 });
 
