@@ -54,7 +54,7 @@ describe('pglock', function () {
   describe('#lock', function () {
     it('should acquire lock', function (done) {
       var lock = new PgLock(1000);
-      lock.lock(function (err) {
+      lock.lock(function (err, unlock) {
         if (err) {
           throw err;
         }
@@ -67,10 +67,9 @@ describe('pglock', function () {
           expect(result).to.be.true;
 
           // release lock for subsequent tests
-          lock.unlock();
+          unlock();
 
           done();
-
         });
       });
     });
@@ -100,22 +99,22 @@ describe('pglock', function () {
       child.on('message', function (m) {
         if (m === 'locked') { // just in case some other type of message is sent
           var lock = new PgLock(1000);
-          lock.tryLock(function (err, result) {
+          lock.tryLock(function (err, unlock) {
             if (err) {
               throw err;
             }
 
-            expect(result).to.be.false;
+            expect(unlock).to.not.exist;
 
             child.kill('SIGTERM');
-            lock.tryLock(function (err, result) {
+            lock.tryLock(function (err, unlock) {
               if (err) {
                 throw err;
               }
 
-              expect(result).to.be.true;
+              expect(unlock).to.exist;
 
-              lock.unlock();
+              unlock();
               done();
             });
           });
@@ -185,14 +184,14 @@ describe('pglock', function () {
   describe('#tryLock', function () {
     it('should acquire lock if free', function (done) {
       var lock = new PgLock(1000);
-      lock.tryLock(function (err, result) {
+      lock.tryLock(function (err, unlock) {
         if (err) {
           throw err;
         }
 
-        expect(result).to.be.true;
+        expect(unlock).to.exist;
 
-        lock.unlock();
+        unlock();
         done();
       });
     });
@@ -204,14 +203,13 @@ describe('pglock', function () {
           throw err;
         }
 
-        lock.tryLock(function (err, result) {
+        lock.tryLock(function (err, unlock) {
           if (err) {
             throw err;
           }
 
-          expect(result).to.be.false;
+          expect(unlock).to.not.exist;
 
-          lock.unlock();
           done();
         });
       });

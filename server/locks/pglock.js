@@ -70,8 +70,7 @@ PgLock.prototype.tryLock = function (callback) {
       return;
     }
 
-    // TODO prepared statement
-    client.query('SELECT pg_try_advisory_lock(' + pgLock.id + ') AS result', function (err, result) {
+    client.query('SELECT pg_try_advisory_lock($1) AS result', [pgLock.id], function (err, result) {
       if (err) {
         callback(err);
         return;
@@ -80,7 +79,11 @@ PgLock.prototype.tryLock = function (callback) {
       logger.info('Acquired advisory lock %d', pgLock.id);
       outstandingLocks[pgLock.id] = pgLock;
 
-      callback(null, result.rows[0].result);
+      if (result.rows[0].result) {
+        callback(null, pgLock.unlock.bind(pgLock));
+      } else {
+        callback(null, null);
+      }
     });
   });
 };
@@ -97,7 +100,7 @@ PgLock.prototype.lock = function (callback) {
     }
 
     // this acquires an exclusive lock, in the future, we may want to also support shared locks
-    client.query('SELECT pg_advisory_lock(' + pgLock.id + ')', function (err) {
+    client.query('SELECT pg_advisory_lock($1)', [pgLock.id], function (err) {
       if (err) {
         callback(err);
         return;
@@ -106,7 +109,7 @@ PgLock.prototype.lock = function (callback) {
       logger.info('Acquired advisory lock %d', pgLock.id);
       outstandingLocks[pgLock.id] = pgLock;
 
-      callback(null);
+      callback(null, pgLock.unlock.bind(pgLock));
     });
   });
 };
@@ -116,7 +119,7 @@ PgLock.prototype.unlock = function (callback) {
     // "Once acquired at session level, an advisory lock is held until explicitly released or the session ends"
 
     // not necessary to unlock if we close connection
-    // this.client.query('SELECT pg_advisory_unlock(' + this.id + ')');
+    // this.client.query('SELECT pg_advisory_unlock($1)', [this.id]);
 
     this.client.end();
     logger.info('Released advisory lock %d', this.id);
