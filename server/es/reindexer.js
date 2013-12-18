@@ -10,12 +10,11 @@
 
 var _ = require('lodash');
 var async = require('async');
-var fs = require('fs');
-var path = require('path');
 var elasticsearch = require('es');
 var conf = require('../conf');
 var logger = conf.logger;
 var Lock = require('../locks');
+var settings = require('./settings');
 
 // Mask for index names: name-ID, e.g. foo-1386709830584.
 // ID doesn't have to be a timestamp, that's just the easiest way to have (mostly)
@@ -24,32 +23,12 @@ var INDEX_REGEX = /^(.+)-(\d+)$/;
 
 // TODO turn this into a class
 
-exports.loadIndexSettings = function loadIndexSettings (index) {
-  return require('../../indices/' + index);
-};
-
-exports.getManagedAliases = function getManagedAliases (callback) {
-  fs.readdir(__dirname + '../../../indices', function (err, files) {
-    if (err) {
-      return callback(err);
-    }
-    var aliases = _.filter(files, function (file) {
-      return path.extname(file) === '.js';
-    })
-      .map(function (file) {
-        return path.basename(file, '.js');
-      });
-
-    return callback(null, aliases);
-  });
-};
-
 exports.getRiverNameFromIndexName = function getRiverNameFromAliasName (name) {
   return name + '-river';
 };
 
 exports.createIndex = function createIndex (aliasName, client, callback) {
-  var index = exports.loadIndexSettings(aliasName).index;
+  var index = settings.loadIndexSettings(aliasName).index;
   if (!index.settings) {
     index.settings = {
       // see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-update-settings.html#bulk
@@ -188,7 +167,7 @@ exports.getIndexForAlias = function getIndexForAlias (alias, esClient, callback)
  */
 exports.createJdbcRiver = function createJdbcRiver (indexName, client, callback) {
   var alias = exports.getAliasNameFromIndexName(indexName);
-  var riverSettings = exports.loadIndexSettings(alias).jdbcRiver;
+  var riverSettings = settings.loadIndexSettings(alias).jdbcRiver;
 
   if (riverSettings.index.index !== alias) {
     // we could allow the config file to not specify the index, but this is a useful sanity check
@@ -377,6 +356,7 @@ function doReIndex (alias, callback) {
       logger.info('Created new index %s', newIndex);
       callback(null, newIndex);
     },
+    // TODO ditch river and push data ourselves with https://github.com/brianc/node-pg-query-stream (requires converting result set -> JSON ourselves)
     function (result, callback) {
       logger.info('Creating new JDBC river for %s', newIndex);
       exports.createJdbcRiver(newIndex, esClient, callback);
@@ -502,7 +482,7 @@ exports.reIndex = function reIndex (alias, callback) {
     }
 
     if (!result) {
-      logger.info('Failed to acquire %s lock. Is a re-indexer job for this alias already running?', lock.name);
+      logger.warn('Failed to acquire %s lock. Is a re-indexer job for this alias already running?', lock.name);
       callback(new Error('Failed to acquire re-index lock'));
       return;
     }
@@ -515,7 +495,7 @@ exports.reIndex = function reIndex (alias, callback) {
 };
 
 if (!module.parent) {
-  exports.getManagedAliases(function (err, aliases) {
+  settings.getManagedAliases(function (err, aliases) {
     if (err) {
       throw err;
     }

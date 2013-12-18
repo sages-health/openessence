@@ -9,13 +9,15 @@ var nock = require('nock');
 var expect = require('chai').expect;
 
 var elasticsearch = require('es');
+
+var settings = require('../../../server/es/settings');
 var reindexer = require('../../../server/es/reindexer');
 
-afterEach(function () {
-  nock.cleanAll();
-});
-
 describe('reindexer', function () {
+  afterEach(function () {
+    nock.cleanAll();
+  });
+
   describe('#createIndex', function () {
     var esClient;
     var esServer;
@@ -31,7 +33,7 @@ describe('reindexer', function () {
         .post('/test-1', '*')
         .reply(201, {});
 
-      loadIndexSettingsStub = sinon.stub(reindexer, 'loadIndexSettings', function () {
+      loadIndexSettingsStub = sinon.stub(settings, 'loadIndexSettings', function () {
         return {
           index: {
             mappings: {}
@@ -373,7 +375,7 @@ describe('reindexer', function () {
         .put('/_river/test-1-river/_meta')
         .reply(201, {});
 
-      loadIndexSettingsStub = sinon.stub(reindexer, 'loadIndexSettings', function () {
+      loadIndexSettingsStub = sinon.stub(settings, 'loadIndexSettings', function () {
         return {
           jdbcRiver: {
             type: 'jdbc',
