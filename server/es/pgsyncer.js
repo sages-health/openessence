@@ -151,67 +151,33 @@ PgSyncer.prototype.sync = function sync (callback) {
 module.exports = PgSyncer;
 
 if (!module.parent) {
-  var db = conf.db;
-
-  var Lock = require('../locks');
-  var lock = new Lock('pgsync');
-  lock.tryLock(function (err, result) {
+  settings.getManagedAliases(function (err, aliases) {
     if (err) {
-      logger.error(err.stack);
+      logger.err(err.stack);
       process.exit(1);
     }
 
-    if (!result) {
-      logger.warn('Failed to acquire %s lock. Is pgsyncer already running?', lock.name);
-      process.exit(1);
-    }
+    var Monitor = require('forever-monitor').Monitor;
 
-    settings.getManagedAliases(function (err, aliases) {
-      if (err) {
-        logger.err(err.stack);
-        process.exit(1);
-      }
-
-      aliases.forEach(function (alias) {
-        pg.connect(
-          {
-            host: db.host,
-            database: db.name,
-            user: db.username,
-            password: db.password,
-            port: db.port
-          },
-          function (err, client) {
-            // third parameter to this func is callback to release connection, but we LISTEN forever
-
-            if (err) {
-              logger.error(err.stack);
-              process.exit(1);
-            }
-
-            var esClient = elasticsearch({
-              server: {
-                host: conf.es.host,
-                port: conf.es.port
-              }
-            });
-
-            var aliasSettings = settings.loadIndexSettings(alias);
-
-            new PgSyncer({
-              pgClient: client,
-              esClient: esClient,
-              alias: alias,
-              type: aliasSettings.type,
-              table: aliasSettings.table,
-              channels: aliasSettings.channels
-            }).sync(function (err) {
-              if (err) { // TODO call sync forever
-                logger.error(err.stack);
-              }
-            });
-          });
+    aliases.forEach(function (alias) {
+      var child = new Monitor(__dirname + '/pgsync_worker.js', {
+        max: 3,
+        silent: false,
+        command: 'node', // workaround https://github.com/nodejitsu/forever-monitor/issues/35
+        env: {
+          ALIAS: alias
+        }
       });
+
+      child.on('start', function () {
+        logger.info('pgsync_worker %s started', alias);
+      });
+
+      child.on('exit', function () {
+        logger.error('pgsync_worker %s died after 3 restarts', alias);
+      });
+
+      child.start();
     });
   });
 }
