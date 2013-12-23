@@ -300,8 +300,8 @@ exports.moveAlias = function moveAlias (alias, newIndex, esClient, callback) {
     });
 };
 
-exports.getLockForAlias = function getLockForAlias (alias) {
-  return new Lock('reindex-' + alias);
+exports.getLockNameForAlias = function (alias) {
+  return 'reindex-' + alias;
 };
 
 function doReIndex (alias, callback) {
@@ -332,12 +332,16 @@ function doReIndex (alias, callback) {
           callback(new Error('Timed out waiting for JDBC River %s job to stop', name));
           return;
         }
-
-        logger.info('JDBC River %s still active, waiting 1s before checking again', name);
         attempts++;
+
+        // wait 10 seconds, then 100, then 1000
+        var waitSeconds = Math.pow(10, attempts);
+
+        logger.info('JDBC River %s still active, waiting %ds before checking again', name, waitSeconds);
+
         setTimeout(function () {
           exports.isJdbcRiverActive(index, esClient, loop);
-        }, 1000);
+        }, waitSeconds * 1000);
       }
     }
 
@@ -474,23 +478,54 @@ function doReIndex (alias, callback) {
  * `_river` index (it will be created again from scratch the next time re-indexing runs).
  */
 exports.reIndex = function reIndex (alias, callback) {
-  var lock = exports.getLockForAlias(alias); // prevent more than one alias-job from running at a time
-  lock.tryLock(function (err, result) {
+  var lock = new Lock(exports.getLockNameForAlias(alias)); // prevent more than one alias-job from running at a time
+  lock.tryLock(function (err, unlock) {
     if (err) {
       callback(err);
       return;
     }
 
-    if (!result) {
-      logger.warn('Failed to acquire %s lock. Is a re-indexer job for this alias already running?', lock.name);
-      callback(new Error('Failed to acquire re-index lock'));
-      return;
+    function run () {
+      doReIndex(alias, function (err, result) {
+        lock.unlock(function (unlockErr) {
+          if (unlockErr) {
+            callback(unlockErr);
+            return;
+          }
+
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          callback(null, result);
+        });
+      });
     }
 
-    doReIndex(alias, function (err, result) {
-      lock.unlock();
-      callback(err, result);
-    });
+    if (unlock) {
+      run();
+    } else {
+      // wait for a little and try again
+      var retry = Math.random() * (10000 - 1000) + 1000; // random time to help prevent herds
+      logger.info('Failed to acquire %s lock. Trying again in %d ms', lock.name, retry);
+      setTimeout(function () {
+        lock.tryLock(function (err, unlock) {
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          if (!unlock) {
+            logger.warn('Failed to acquire %s lock. Is a re-indexer job for this alias already running?', lock.name);
+            callback(new Error('Failed to acquire re-index lock'));
+            return;
+          }
+
+          run();
+        });
+      }, retry);
+    }
   });
 };
 

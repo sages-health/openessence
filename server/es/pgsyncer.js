@@ -1,11 +1,12 @@
 'use strict';
 
-var pg = require('pg');
 var conf = require('../conf');
 var logger = conf.logger;
 var sequelize = require('../models').sequelize;
-var elasticsearch = require('es');
 var settings = require('./settings');
+var reindexer = require('./reindexer');
+var Lock = require('../locks');
+var PgBarrier = require('../locks/pgbarrier');
 
 function PgSyncer (options) {
   if (!(this instanceof PgSyncer)) {
@@ -18,6 +19,9 @@ function PgSyncer (options) {
   this.type = options.type;
   this.table = options.table;
   this.channels = options.channels;
+
+  this.lock = new Lock('pgsyncer-' + this.alias);
+  this.reindexBarrier = new PgBarrier(reindexer.getLockNameForAlias(this.alias));
 }
 
 function channelToOperation (channel) {
@@ -36,11 +40,13 @@ PgSyncer.prototype.processInsert = function processInsert (id, callback) {
   // The write resulting from the subsequent NOTIFY will be a NOOP
 
   var pgSyncer = this;
-  sequelize // TODO use async.queue and don't dequeue while re-indexing is running
-    .query('SELECT * FROM ' + this.table + ' WHERE _id = ?', null, { // TODO redis pub/sub for notification?
+  sequelize
+    .query('SELECT * FROM ' + this.table + ' WHERE _id = ?', null, {
       raw: true
     }, [id])
     .complete(function (err, rows) {
+      // this can (and often does) return out of order, so processing high volumes of INSERTS can lead to out of order
+      // writes
       if (err) {
         callback(err);
         return;
@@ -111,41 +117,88 @@ PgSyncer.prototype.processUpdate = function processUpdate (payload, callback) {
 
 /**
  * Begin listening for database changes. Listens for the duration of the database connection.
- * @param callback called for *every* error encountered
+ *
+ * Warning: high write volume may cause writes to elasticsearch to happen out of order. Writes during a reindex
+ * operation may also happen out of order. To mitgate this, only run reindexing when usage is low.
+ *
+ * @param ready called when syncing has begun
  */
-PgSyncer.prototype.sync = function sync (callback) {
-  logger.info('Watching database for changes');
-
+PgSyncer.prototype.sync = function sync (ready, progressCallback) {
   var pgSyncer = this;
-  this.pgClient.on('notification', function onNotification (message) {
-    logger.debug('Received NOTIFY %s, %s', message.channel, message.payload);
-
-    var op = channelToOperation(message.channel);
-
-    function cb (err) {
-      if (err) {
-        logger.error('Error on channel %s, payload %s: %s', message.channel, message.channel, err.stack);
-        callback(err);
-      }
+  this.lock.tryLock(function (err, unlockSync) {
+    if (err) {
+      ready(err);
+      return;
     }
 
-    if (op === 'TRUNCATE') {
-      pgSyncer.processTruncate(cb);
-    } else if (op === 'DELETE') {
-      pgSyncer.processDelete(message.payload, cb);
-    } else if (op === 'UPDATE') {
-      pgSyncer.processUpdate(message.payload, cb);
-    } else if (op === 'INSERT') {
-      pgSyncer.processInsert(message.payload, cb);
-    } else {
-      logger.error('Unknown operation %s', op);
+    if (!unlockSync) {
+      ready(new Error('Failed to acquire ' + pgSyncer.lock.name + ' lock. Is pgsyncer already running for this alias?'));
+      return;
     }
-  });
 
-  pgSyncer.channels.forEach(function (channel) {
-    pgSyncer.pgClient.query('LISTEN ' + channel);
-  });
-  // LISTEN forever...
+    logger.info('Watching database for changes to %s', pgSyncer.alias);
+
+    pgSyncer.pgClient.on('notification', function onNotification (message) {
+      logger.debug('Received NOTIFY %s, %s', message.channel, message.payload);
+
+      // prevent reindex while we're processing an update (this doesn't scale, but we're CP)
+
+      pgSyncer.reindexBarrier.await(function (err, done) {
+        // All pending NOTIFY operations now proceed in "parallel". However, since Node.js is single-threaded,
+        // operations actually run serially (oldest first). However, if I/O (e.g. a DB read) does not return in order,
+        // then out of order writes can occur. The alternative would be to wait for each operation to complete before
+        // proceeding to the next operation. This would hurt throughput and would still suffer from consistency issues
+        // if an operation failed to call the next operation in the chain. Use a dedicated queue if you want
+        // guaranteed serializability.
+        if (err) {
+          process.nextTick(function () {
+            unlockSync();
+            progressCallback(err);
+          });
+          return;
+        }
+
+        function processOp (op) {
+          function cb (err) {
+            if (err) {
+              logger.error('Error on channel %s, payload %s: %s', message.channel, message.channel, err.stack);
+              err.recoverable = true; // errors for individual notifications are recoverable
+              progressCallback(err);
+              return;
+            }
+
+            progressCallback(null);
+          }
+
+          if (op === 'TRUNCATE') {
+            pgSyncer.processTruncate(cb);
+          } else if (op === 'DELETE') {
+            pgSyncer.processDelete(message.payload, cb);
+          } else if (op === 'UPDATE') {
+            pgSyncer.processUpdate(message.payload, cb);
+          } else if (op === 'INSERT') {
+            pgSyncer.processInsert(message.payload, cb);
+          } else {
+            logger.error('Unknown operation %s', op);
+          }
+        }
+
+        // setImmediate is FIFO, process.nextTick is LIFO
+        setImmediate(function () {
+          processOp(channelToOperation(message.channel));
+          done();
+        });
+
+        // LISTEN forever...
+      });
+    });
+
+    pgSyncer.channels.forEach(function (channel) {
+      pgSyncer.pgClient.query('LISTEN ' + channel);
+    });
+
+    ready(null);
+  }.bind(this));
 };
 
 module.exports = PgSyncer;
