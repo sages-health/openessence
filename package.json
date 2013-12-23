@@ -18,7 +18,8 @@
     "es": "~0.3.14",
     "winston": "~0.7.2",
     "buffer-crc32": "~0.2.1",
-    "forever-monitor": "~1.2.3"
+    "forever-monitor": "~1.2.3",
+    "cron": "~1.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
