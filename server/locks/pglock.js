@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Locking with PostgreSQL session-level advisory locks.
+ * Fair-ish locking with PostgreSQL session-level advisory locks.
  *
  * PG session-level advisory locks are automatically released
  * when a session ends. This means deadlock can happen if a session doesn't end. This can happen if a connection
@@ -30,14 +30,16 @@ var conf = require('../conf');
 var db = conf.db;
 var logger = conf.logger;
 
+// these locks are the best!
 var outstandingLocks = {};
 
-function PgLock (name) {
+function PgLock (name, options) {
   if (!(this instanceof PgLock)) {
     return new PgLock(name);
   }
 
   this.name = name;
+  options = options || {};
 
   if (_.isNumber(name)) {
     this.id = name;
@@ -46,88 +48,87 @@ function PgLock (name) {
     // https://github.com/mceachen/with_advisory_lock/blob/master/lib/with_advisory_lock/postgresql.rb does
     this.id = crc32.signed(name);
   }
+
+  this.shared = !!options.shared;
 }
 
-function createClient () {
-  // don't use connection pool, we need our own session for the session-level lock
-  return new pg.Client({
+PgLock.prototype.tryLock = function (callback) {
+  this.client = new pg.Client({
     host: db.host,
     database: db.name,
     user: db.username,
     password: db.password,
     port: db.port
   });
-}
-
-PgLock.prototype.tryLock = function (callback) {
-  var client = createClient();
-  this.client = client;
   var pgLock = this;
 
-  client.connect(function (err) {
+  this.client.connect(function (err) {
     if (err) {
       callback(err);
       return;
     }
 
-    client.query('SELECT pg_try_advisory_lock($1) AS result', [pgLock.id], function (err, result) {
+    var query = (function () {
+      if (pgLock.shared) {
+        return 'SELECT pg_try_advisory_lock_shared($1) AS result';
+      } else {
+        return 'SELECT pg_try_advisory_lock($1) AS result';
+      }
+    })();
+
+    pgLock.client.query(query, [pgLock.id], function (err, result) {
       if (err) {
         callback(err);
         return;
       }
-
-      logger.info('Acquired advisory lock %d', pgLock.id);
-      outstandingLocks[pgLock.id] = pgLock;
 
       if (result.rows[0].result) {
-        callback(null, pgLock.unlock.bind(pgLock));
+        // we got the lock
+        logger.info('Acquired advisory lock %s (%d)', pgLock.name, pgLock.id);
+        outstandingLocks[pgLock.id] = pgLock;
+
+        process.nextTick(function () {
+          callback(null, pgLock.unlock.bind(pgLock));
+        });
       } else {
-        callback(null, null);
+        // no luck, no lock
+        process.nextTick(function () {
+          callback(null, null);
+        });
       }
-    });
-  });
-};
-
-PgLock.prototype.lock = function (callback) {
-  var client = createClient();
-  this.client = client;
-  var pgLock = this;
-
-  client.connect(function (err) {
-    if (err) {
-      callback(err);
-      return;
-    }
-
-    // this acquires an exclusive lock, in the future, we may want to also support shared locks
-    client.query('SELECT pg_advisory_lock($1)', [pgLock.id], function (err) {
-      if (err) {
-        callback(err);
-        return;
-      }
-
-      logger.info('Acquired advisory lock %d', pgLock.id);
-      outstandingLocks[pgLock.id] = pgLock;
-
-      callback(null, pgLock.unlock.bind(pgLock));
     });
   });
 };
 
 PgLock.prototype.unlock = function (callback) {
-  if (this.client) { // check if caller ever actually locked
-    // "Once acquired at session level, an advisory lock is held until explicitly released or the session ends"
-
-    // not necessary to unlock if we close connection
-    // this.client.query('SELECT pg_advisory_unlock($1)', [this.id]);
-
-    this.client.end();
-    logger.info('Released advisory lock %d', this.id);
-    delete outstandingLocks[this.id];
-  }
-  if (callback) {
+  if (!this.client) {
+    // no one called lock()
     callback(null);
+    return;
   }
+
+  var query = (function () {
+    if (this.shared) {
+      return 'SELECT pg_advisory_unlock_shared($1)';
+    } else {
+      return 'SELECT pg_advisory_unlock($1)';
+    }
+  }.bind(this))();
+
+  this.client.query(query, [this.id], function (err) {
+    this.client.end();
+    this.client = null;
+    delete outstandingLocks[this.id];
+
+    logger.info('Released advisory lock %s (%d)', this.name, this.id);
+
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    callback(null);
+  }.bind(this));
 };
 
 // one exit handler (as opposed to one per lock) to avoid memory leaks
