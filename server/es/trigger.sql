@@ -55,3 +55,12 @@ BEGIN
           ' FOR EACH STATEMENT EXECUTE PROCEDURE notify_trigger()';
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function to help in removing notify_trigger
+CREATE OR REPLACE FUNCTION oe.drop_notify_triggers(table_name TEXT)
+  RETURNS VOID AS $$
+BEGIN
+  EXECUTE 'DROP TRIGGER IF EXISTS notify_changes ON ' || table_name;
+  EXECUTE 'DROP TRIGGER IF EXISTS notify_truncate ON ' || table_name;
+END;
+$$ LANGUAGE plpgsql;
