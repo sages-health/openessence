@@ -167,15 +167,23 @@ exports.getIndexForAlias = function getIndexForAlias (alias, esClient, callback)
  */
 exports.createJdbcRiver = function createJdbcRiver (indexName, client, callback) {
   var alias = exports.getAliasNameFromIndexName(indexName);
-  var riverSettings = settings.loadIndexSettings(alias).jdbcRiver;
+  var indexSettings = settings.loadIndexSettings(alias);
+  var riverSettings = {
+    type: 'jdbc',
+    jdbc: {
+      driver: 'org.postgresql.Driver',
+      url: conf.db.url,
+      user: conf.db.username,
+      password: conf.db.password,
+      strategy: 'oneshot',
+      sql: indexSettings.reIndexSql || 'SELECT * FROM ' + indexSettings.table
+    },
+    index: {
+      index: indexName,
+      type: indexSettings.type
+    }
+  };
 
-  if (riverSettings.index.index !== alias) {
-    // we could allow the config file to not specify the index, but this is a useful sanity check
-    callback(new Error('Mismatch between alias and index'));
-    return;
-  }
-
-  riverSettings.index.index = indexName;
   var name = exports.getRiverNameFromIndexName(indexName);
 
   client.cluster.putRiver(
