@@ -180,7 +180,8 @@ exports.createJdbcRiver = function createJdbcRiver (indexName, client, callback)
     },
     index: {
       index: indexName,
-      type: indexSettings.type
+      type: indexSettings.type,
+      'bulk_size': 4096 // default is 100
     }
   };
 
@@ -250,66 +251,44 @@ exports.isJdbcRiverActive = function isJdbcRiverActive (indexName, esClient, cal
   });
 };
 
-exports.moveAlias = function moveAlias (alias, newIndex, esClient, callback) {
-  async.parallel(
-    [
-      function getCurrentIndex (callback) {
-        exports.getIndexForAlias(alias, esClient, function (err, index) {
-          if (err) {
-            callback(err);
-            return;
-          }
-
-          callback(null, index);
-        });
-      },
-      function enableRefresh (callback) {
-        esClient.indices.updateSettings(
-          {
-            _index: newIndex
-          },
-          {
-            'refresh_interval': '1s' // 1 second is the default
-          },
-          callback);
-      }
-    ],
-    function (err, results) {
-      if (err) {
-        callback(err);
-        return;
-      }
-      var currentIndex = results[0];
-      var addAction = {
-        add: {
-          index: newIndex,
-          alias: alias
-        }
-      };
-
-      if (currentIndex) {
-        esClient.indices.alias({}, {
-          actions: [
-            {
-              remove: {
-                index: currentIndex,
-                alias: alias
-              }
-            },
-            addAction
-          ]
-        }, callback);
-      } else {
-        // alias doesn't exist, so don't try to remove it
-        esClient.indices.alias({}, {
-          actions: [addAction]
-        }, callback);
-      }
-    });
-};
-
 exports.getLockNameForAlias = function (alias) {
   return 'reindex-' + alias;
+};
+
+// See https://groups.google.com/forum/#!topic/elasticsearch/WvtnHZlPqsY for why we wait
+exports.waitUntilJdbcRiverInactive = function waitUntilJdbcRiverInactive (index, esClient, callback) {
+  var name = exports.getRiverNameFromIndexName(index);
+  logger.info('Waiting until JDBC River %s is inactive', name);
+  var attempts = 0;
+
+  function loop (err, active) {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    if (!active) {
+      logger.info('JDBC River %s is now inactive', name);
+      callback(null, true);
+    } else {
+      if (attempts >= 5) {
+        callback(new Error('Timed out waiting for JDBC River %s job to stop', name));
+        return;
+      }
+
+      // wait 1 second, then 10 seconds, then 100, then 1,000, then 10,000
+      var waitSeconds = Math.pow(10, attempts);
+      attempts++;
+
+      logger.info('JDBC River %s still active, waiting %ds before checking again', name, waitSeconds);
+
+      setTimeout(function () {
+        exports.isJdbcRiverActive(index, esClient, loop);
+      }, waitSeconds * 1000);
+    }
+  }
+
+  exports.isJdbcRiverActive(index, esClient, loop);
 };
 
 function doReIndex (alias, callback) {
@@ -319,42 +298,6 @@ function doReIndex (alias, callback) {
       port: conf.es.port
     }
   });
-
-  // See https://groups.google.com/forum/#!topic/elasticsearch/WvtnHZlPqsY for why we wait
-  function waitUntilJdbcRiverInactive (index, callback) {
-    var name = exports.getRiverNameFromIndexName(index);
-    logger.info('Waiting until JDBC River %s is inactive', name);
-    var attempts = 0;
-
-    function loop (err, active) {
-      if (err) {
-        callback(err);
-        return;
-      }
-
-      if (!active) {
-        logger.info('JDBC River %s is now inactive', name);
-        callback(null, true);
-      } else {
-        if (attempts >= 3) {
-          callback(new Error('Timed out waiting for JDBC River %s job to stop', name));
-          return;
-        }
-        attempts++;
-
-        // wait 10 seconds, then 100, then 1000
-        var waitSeconds = Math.pow(10, attempts);
-
-        logger.info('JDBC River %s still active, waiting %ds before checking again', name, waitSeconds);
-
-        setTimeout(function () {
-          exports.isJdbcRiverActive(index, esClient, loop);
-        }, waitSeconds * 1000);
-      }
-    }
-
-    exports.isJdbcRiverActive(index, esClient, loop);
-  }
 
   var newIndex;
 
@@ -374,80 +317,19 @@ function doReIndex (alias, callback) {
       exports.createJdbcRiver(newIndex, esClient, callback);
     },
     function (result, callback) {
-      logger.info('Waiting 10s for river to activate');
+      logger.info('Waiting 10s for %s river to activate', newIndex);
       setTimeout(function () {
-        waitUntilJdbcRiverInactive(newIndex, callback);
+        exports.waitUntilJdbcRiverInactive(newIndex, esClient, callback);
       }, 10000); // TODO check doc count on index, if > 0 then river has started
     },
     function (result, callback) {
       logger.info('Moving %s alias to new index', alias);
-      exports.moveAlias(alias, newIndex, esClient, callback);
+      require('./move_alias')(alias, newIndex, esClient, callback);
     },
-    function (result, callback) {
-      exports.getOldIndices(alias, esClient, callback);
-    },
-    function cleanup (indices, callback) {
-
-      // This function deletes all rivers corresponding to old indices.
-      // Note that it will *not* delete an old river if it doesn't have a corresponding index.
-      // If you want to delete all old rivers, drop the index manually. This will of course also delete newer
-      // rivers, but they'll be recreated next time a re-index is run. Try not to delete a JDBC river while it's
-      // running a job though. See https://groups.google.com/forum/#!topic/elasticsearch/WvtnHZlPqsY
-      function deleteOldRivers (callback) {
-        logger.info('Deleting old rivers');
-        async.each(indices, function (index, callback) {
-          waitUntilJdbcRiverInactive(index, function (err) {
-            if (err) {
-              callback(err);
-              return;
-            }
-            var name = exports.getRiverNameFromIndexName(index);
-
-            esClient.delete({
-              _index: '_river',
-              _type: name
-            }, function (err, result) {
-              if (err) {
-                if (err.statusCode === 404) {
-                  logger.info('River %s not found. It may have already been deleted', name);
-                  callback(null, result);
-                  return;
-                } else {
-                  callback(err);
-                  return;
-                }
-              }
-
-              logger.info('deleted river %s', name);
-              callback(null, result);
-            });
-          });
-        }, function (err) {
-          if (err) {
-            callback(err);
-            return;
-          }
-
-          callback(null);
-        });
-      }
-
-      function deleteOldIndicesInParallel (callback) {
-        logger.info('Deleting old %s indices', alias);
-        var jobs = _.map(indices, function (index) {
-          return function (callback) {
-            logger.info('Deleting index %s', index);
-            esClient.indices.deleteIndex({
-              _index: index
-            }, callback);
-          };
-        });
-
-        // deleting indices is fast in elasticsearch, but a little throttling never hurt anyone
-        async.parallelLimit(jobs, 3, callback);
-      }
-
-      async.series([deleteOldRivers, deleteOldIndicesInParallel], callback);
+    function cleanup (result, callback) {
+      var Cleaner = require('./clean');
+      var cleaner = new Cleaner(alias, esClient);
+      async.series([cleaner.deleteOldRivers.bind(cleaner), cleaner.deleteOldIndices.bind(cleaner)], callback);
     }
   ], function (err, result) {
     if (err) {
@@ -543,7 +425,6 @@ if (!module.parent) {
       throw err;
     }
 
-    // re-index all aliases in series so we don't overload elasticsearch
     async.series(_.map(aliases, function (alias) {
       return function (callback) {
         exports.reIndex(alias, callback);
