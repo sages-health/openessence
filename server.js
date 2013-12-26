@@ -12,7 +12,9 @@ var accessControl = require('./server/accessControl');
 var app = express();
 
 app.use(express.favicon('public/favicon.ico'));
-app.use(express.logger());
+if (conf.env === 'production') {
+  app.use(express.logger());
+}
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
@@ -22,8 +24,8 @@ app.use(express.session({
   cookie: {
     path: '/',
     httpOnly: true,
-    maxAge: null
-//    secure: true // force HTTPS
+    maxAge: null,
+    secure: conf.env === 'production' // force HTTPS
   }
 }));
 app.use(require('connect-flash')());
@@ -148,42 +150,49 @@ app.use(function (req, res) {
   });
 });
 
-if (!module.parent) {
+function forkChildren () {
   var childProcess = require('child_process');
 
   var syncer = childProcess.fork(__dirname + '/server/es/pgsyncer');
   logger.info('Spawned pgsyncer child pid %d', syncer.pid); // so user knows what to kill, if need be
 
   syncer.on('error', function (err) {
-    console.error('Error in pgsqync child process');
+    console.error('Error in pgsync child process');
     console.error(err);
   });
   syncer.on('exit', function () {
     console.error('syncer child process exited');
   });
 
-  logger.info('Waiting 10s before starting reindexing');
-  setTimeout(function () {
-    var reindexer = childProcess.fork(__dirname + '/server/es/reindexer');
-    logger.info('Spawned reindexer child pid %d', reindexer.pid);
+  if (conf.env === 'production') {
+    logger.info('Waiting 10s before starting reindexing');
+    setTimeout(function () {
+      var reindexer = childProcess.fork(__dirname + '/server/es/reindexer');
+      logger.info('Spawned reindexer child pid %d', reindexer.pid);
 
-    reindexer.on('exit', function () {
-      logger.info('reindexer exited');
+      reindexer.on('exit', function () {
+        logger.info('reindexer exited');
 
-      // install cron job after reindexer is done
-      var CronJob = require('cron').CronJob;
-      // run every day at 3 AM
-      new CronJob('00 00 3 * * *', function () { // TODO test this
-        logger.info('Cron job is running reindexer');
-        var child = childProcess.fork(__dirname + '/server/es/reindexer');
-        logger.info('Spawned reindexer child pid %d', child.pid);
+        // install cron job after reindexer is done
+        var CronJob = require('cron').CronJob;
+        // run every day at 3 AM
+        new CronJob('00 00 3 * * *', function () { // TODO test this
+          logger.info('Cron job is running reindexer');
+          var child = childProcess.fork(__dirname + '/server/es/reindexer');
+          logger.info('Spawned reindexer child pid %d', child.pid);
+        });
       });
-    });
-  }, 10000);
+    }, 10000);
+  }
+}
 
+if (!module.parent) {
   var port = process.env.PORT || 9000;
+
   app.listen(port, function () {
     // must log to stdout (some 3rd party tools read stdout to know when web server is up)
     console.log('Listening on port ' + port);
   });
+
+  forkChildren();
 }
