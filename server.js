@@ -67,19 +67,12 @@ var models = require('./server/models');
 app.set('models', models);
 
 passport.serializeUser(function (user, done) {
-  done(null, user.id);
+  // store entire user object in session so we don't have to deserialize it from data store
+  // this won't scale to large number of concurrent users, but it will be faster for small deployments
+  done(null, user);
 });
-passport.deserializeUser(function (id, done) {
-  models.User
-    .find(id)
-    .error(done)
-    .success(function (user) {
-      if (user) {
-        done(null, user);
-      } else {
-        done(new Error('Unknown user ' + id));
-      }
-    });
+passport.deserializeUser(function (user, done) {
+  done(null, user);
 });
 
 passport.use(new LocalStrategy(function (username, password, done) {
