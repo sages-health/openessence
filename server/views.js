@@ -2,9 +2,9 @@
 
 module.exports = function (env) {
   if (env === 'development' || env === 'test') {
-    return 'views';
+    return __dirname + '/../views';
   } else if (env === 'production') {
-    return 'dist/views';
+    return __dirname + '/../dist/views';
   } else {
     throw new Error('Unknown environment ' + env);
   }
