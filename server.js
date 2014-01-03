@@ -37,27 +37,7 @@ app.use(passport.session());
 
 app.use(app.router);
 
-app.use(function errorHandler(err, req, res, next) {
-  if (!err) {
-    // this shouldn't happen, since all middleware with arity 4 is error middleware, but better safe than sorry
-    next();
-  } else {
-    console.error(err.stack);
-    res.status(500);
-    res.format({
-      html: function () {
-        res.render('error.html', {
-          error: err
-        });
-      },
-      json: function () {
-        res.send({
-          error: 'Server error'
-        });
-      }
-    });
-  }
-});
+app.use(require('./server/error').middleware);
 
 app.engine('html', require('ejs').renderFile);
 app.set('views', require('./server/views')(conf.env));
@@ -125,23 +105,7 @@ app.all('*', accessControl.denyAnonymousAccess);
 app.use('/kibana', staticResources.kibana(conf.env, express));
 
 // this MUST be the last route
-app.use(function (req, res) {
-  console.trace(req.url + ' not found');
-  res.status(404);
-
-  res.format({
-    html: function () {
-      res.render('404.html', {
-        url: req.url
-      });
-    },
-    json: function () {
-      res.send({
-        error: 'Not found'
-      });
-    }
-  });
-});
+app.use(require('./server/error').notFound);
 
 function forkChildren () {
   var childProcess = require('child_process');
