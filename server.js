@@ -102,6 +102,7 @@ app.post('/login', passport.authenticate('local', {
 // all routes below this require authenticating
 app.all('*', accessControl.denyAnonymousAccess);
 
+app.use('/es', require('./server/es/proxy'));
 app.use('/kibana', staticResources.kibana(conf.env, express));
 
 // this MUST be the last route
