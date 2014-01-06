@@ -2,10 +2,8 @@
 /* jshint -W024 */
 /* jshint expr:true */
 
-var pg = require('pg');
 var expect = require('chai').expect;
 var PgLock = require('../../../server/locks/pglock');
-var db = require('../../../server/conf').db;
 
 // check if someone has lock
 

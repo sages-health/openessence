@@ -7,7 +7,7 @@
 
 var _ = require('lodash');
 var crc32 = require('buffer-crc32');
-var pg = require('pg');
+var pg = require('pg.js');
 var conf = require('../conf');
 var db = conf.db;
 var logger = conf.logger;

@@ -2,12 +2,10 @@
 /* jshint -W024 */
 /* jshint expr:true */
 
-var pg = require('pg');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var PgBarrier = require('../../../server/locks/pgbarrier');
 var Lock = require('../../../server/locks');
-var db = require('../../../server/conf').db;
 var hasLock = require('./util').hasLock;
 
 describe('pgbarrier', function () {

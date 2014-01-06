@@ -1,6 +1,6 @@
 'use strict';
 
-var pg = require('pg');
+var pg = require('pg.js');
 var db = require('../../../server/conf').db;
 
 exports.hasLock = function hasLock (id, callback) {

@@ -6,6 +6,7 @@ module.exports = {
     username: 'postgres',
     password: 'password',
     host: 'localhost',
-    dialect: 'postgres'
+    dialect: 'postgres',
+    dialectModulePath: 'pg.js'
   }
 };

@@ -25,7 +25,10 @@ var db = _.assign({
   host: 'localhost',
   port: '5432',
   name: 'openessence', // database name, NOT username
-  dialect: 'postgres' // used by Sequelize
+
+  // used by Sequelize
+  dialect: 'postgres',
+  dialectModulePath: 'pg.js'
 }, settings.DB_SETTINGS);
 db.url = 'jdbc:postgresql://' + db.host + ':' + db.port + '/' + db.name;
 settings.DB_SETTINGS = db;

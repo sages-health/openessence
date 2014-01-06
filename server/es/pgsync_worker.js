@@ -4,7 +4,7 @@
 'use strict';
 
 var elasticsearch = require('es');
-var pg = require('pg');
+var pg = require('pg.js');
 
 var PgSyncer = require('./pgsyncer');
 var conf = require('../conf');
