@@ -10,11 +10,20 @@
 
 var _ = require('lodash');
 var async = require('async');
-var elasticsearch = require('es');
+var elasticsearch = require('es'); // TODO use official JS client: https://github.com/elasticsearch/elasticsearch-js
+var util = require('util');
+var pg = require('pg.js');
+var QueryStream = require('pg-query-stream');
+var stream = require('stream');
+var BatchStream = require('batch-stream');
+var Promise = require('bluebird');
 var conf = require('../conf');
+var db = conf.db;
 var logger = conf.logger;
 var Lock = require('../locks');
 var settings = require('./settings');
+var Cleaner = require('./clean');
+var moveAlias = require('./move_alias');
 
 // Mask for index names: name-ID, e.g. foo-1386709830584.
 // ID doesn't have to be a timestamp, that's just the easiest way to have (mostly)
@@ -22,10 +31,6 @@ var settings = require('./settings');
 var INDEX_REGEX = /^(.+)-(\d+)$/;
 
 // TODO turn this into a class
-
-exports.getRiverNameFromIndexName = function getRiverNameFromAliasName (name) {
-  return name + '-river';
-};
 
 exports.createIndex = function createIndex (aliasName, client, callback) {
   var index = settings.loadIndexSettings(aliasName).index;
@@ -162,133 +167,63 @@ exports.getIndexForAlias = function getIndexForAlias (alias, esClient, callback)
   });
 };
 
-/**
- * Creates a JDBC river for the specified index.
- */
-exports.createJdbcRiver = function createJdbcRiver (indexName, client, callback) {
-  var alias = exports.getAliasNameFromIndexName(indexName);
-  var indexSettings = settings.loadIndexSettings(alias);
-  var riverSettings = {
-    type: 'jdbc',
-    jdbc: {
-      driver: 'org.postgresql.Driver',
-      url: conf.db.url,
-      user: conf.db.username,
-      password: conf.db.password,
-      strategy: 'oneshot',
-      sql: indexSettings.reIndexSql || 'SELECT * FROM ' + indexSettings.table
-    },
-    index: {
-      index: indexName,
-      type: indexSettings.type,
-      'bulk_size': 4096 // default is 100
-    }
-  };
-
-  var name = exports.getRiverNameFromIndexName(indexName);
-
-  client.cluster.putRiver(
-    {
-      name: name,
-      refresh: true
-    },
-    riverSettings,
-    function (err, response) {
-      if (err) {
-        callback(err);
-        return;
-      }
-
-      callback(null, {
-        _type: name,
-        response: response
-      });
-    });
-};
-
-exports.deleteJdbcRiver = function deleteJdbcRiver (indexName, client, callback) {
-  client.delete({
-    _index: '_river',
-    _type: exports.getRiverNameFromIndexName(indexName),
-    refresh: true
-  }, function (err, response) {
-    if (err) {
-      if (err.statusCode === 404) {
-        logger.info('Didn\'t delete JDBC river for %s because it doesn\'t exist', indexName);
-      } else {
-        callback(err);
-        return;
-      }
-    }
-
-    callback(null, response);
-  });
-};
-
-exports.isJdbcRiverActive = function isJdbcRiverActive (indexName, esClient, callback) {
-  esClient.get({
-    _index: '_river',
-    _type: exports.getRiverNameFromIndexName(indexName),
-    _id: '_custom'
-  }, function (err, response) {
-    if (err) {
-      if (err.statusCode === 404) {
-        // can't be running if it's not there
-        logger.info('JDBC River not found for index %s', indexName);
-        callback(null, false);
-        return;
-      }
-      callback(err);
-      return;
-    }
-
-    try {
-      callback(null, response._source.jdbc.active);
-    } catch (e) {
-      // Unexpected response
-      callback(e);
-    }
-  });
-};
-
 exports.getLockNameForAlias = function (alias) {
   return 'reindex-' + alias;
 };
 
-// See https://groups.google.com/forum/#!topic/elasticsearch/WvtnHZlPqsY for why we wait
-exports.waitUntilJdbcRiverInactive = function waitUntilJdbcRiverInactive (index, esClient, callback) {
-  var name = exports.getRiverNameFromIndexName(index);
-  logger.info('Waiting until JDBC River %s is inactive', name);
-  var attempts = 0;
-
-  function loop (err, active) {
-    if (err) {
-      callback(err);
-      return;
-    }
-
-    if (!active) {
-      logger.info('JDBC River %s is now inactive', name);
-      callback(null, true);
-    } else {
-      if (attempts >= 5) {
-        callback(new Error('Timed out waiting for JDBC River %s job to stop', name));
-        return;
-      }
-
-      // wait 1 second, then 10 seconds, then 100, then 1,000, then 10,000
-      var waitSeconds = Math.pow(10, attempts);
-      attempts++;
-
-      logger.info('JDBC River %s still active, waiting %ds before checking again', name, waitSeconds);
-
-      setTimeout(function () {
-        exports.isJdbcRiverActive(index, esClient, loop);
-      }, waitSeconds * 1000);
-    }
+/**
+ * Stream to write to an elasticsearch index
+ * @param client Elasticsearch.js client
+ */
+function ElasticsearchWritableStream (client, index, type) {
+  if (!(this instanceof ElasticsearchWritableStream)) {
+    return new ElasticsearchWritableStream(client, index, type);
   }
 
-  exports.isJdbcRiverActive(index, esClient, loop);
+  ElasticsearchWritableStream.super_.call(this, {
+    objectMode: true,
+    highWaterMark: 16 // default in nodejs-master
+  });
+
+  this.client = client;
+  this.index = index;
+  this.type = type;
+}
+util.inherits(ElasticsearchWritableStream, stream.Writable);
+
+ElasticsearchWritableStream.prototype._write = function _write (chunk, encoding, callback) {
+  var stream = this;
+  var body = _.flatten(chunk.map(function (doc) {
+    var document = doc[stream.type];
+
+    return [
+      // operation
+      {
+        index: {
+          // these are passed on URL (and passing _index would break if allow_explicit_index is disabled)
+//          _index: stream.index,
+//          _type: stream.type
+
+          // if you don't provide an _id here, elasticsearch tries to generate one for you
+          _id: document._id
+        }
+      },
+      // data to index
+      document
+    ];
+  }), true);
+
+  this.client.bulk({
+    index: this.index,
+    type: this.type,
+    body: body
+  }, function (err) {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null);
+    }
+  });
 };
 
 function doReIndex (alias, callback) {
@@ -299,46 +234,63 @@ function doReIndex (alias, callback) {
     }
   });
 
-  var newIndex;
+  var indexSettings = settings.loadIndexSettings(alias);
+  logger.info('Creating new index for %s', alias);
 
-  async.waterfall([
-    function (callback) {
-      logger.info('Creating new index for %s', alias);
-      exports.createIndex(alias, esClient, callback);
-    },
-    function (result, callback) {
-      newIndex = result._index;
+  return Promise.promisify(exports.createIndex)(alias, esClient)
+    .then(function moveData (result) {
+      var newIndex = result._index;
       logger.info('Created new index %s', newIndex);
-      callback(null, newIndex);
-    },
-    // TODO ditch river and push data ourselves with https://github.com/brianc/node-pg-query-stream (requires converting result set -> JSON ourselves)
-    function (result, callback) {
-      logger.info('Creating new JDBC river for %s', newIndex);
-      exports.createJdbcRiver(newIndex, esClient, callback);
-    },
-    function (result, callback) {
-      logger.info('Waiting 10s for %s river to activate', newIndex);
-      setTimeout(function () {
-        exports.waitUntilJdbcRiverInactive(newIndex, esClient, callback);
-      }, 10000); // TODO check doc count on index, if > 0 then river has started
-    },
-    function (result, callback) {
-      logger.info('Moving %s alias to new index', alias);
-      require('./move_alias')(alias, newIndex, esClient, callback);
-    },
-    function cleanup (result, callback) {
-      var Cleaner = require('./clean');
+
+      return Promise.promisify(pg.connect, pg)({
+        host: db.host,
+        database: db.name,
+        user: db.username,
+        password: db.password,
+        port: db.port
+      })
+        .spread(function streamData (client, done) {
+          var query = indexSettings.reIndexSql || 'SELECT * FROM ' + indexSettings.table;
+          var resolver = Promise.defer();
+
+          logger.info('Piping hot data into %s', newIndex);
+          var stream = client.query(new QueryStream(query))
+            .pipe(new BatchStream({
+              size: 1024
+            }))
+            .pipe(new ElasticsearchWritableStream((function () {
+              return new (require('elasticsearch').Client)({
+                host: {
+                  host: conf.es.host,
+                  port: conf.es.port
+                },
+                log: 'info'
+              });
+            })(), newIndex, indexSettings.type));
+
+          stream.on('error', function (err) {
+            done();
+            resolver.reject(err);
+          });
+          stream.on('finish', function () {
+            logger.info('Stream finished');
+            done();
+            resolver.resolve();
+          });
+
+          return resolver.promise;
+        })
+        .return(newIndex);
+    })
+    .then(function move (newIndex) {
+      logger.info('Moving %s alias to new index %s', alias, newIndex);
+      return Promise.promisify(moveAlias)(alias, newIndex, esClient);
+    })
+    .then(function cleanup () {
       var cleaner = new Cleaner(alias, esClient);
-      async.series([cleaner.deleteOldRivers.bind(cleaner), cleaner.deleteOldIndices.bind(cleaner)], callback);
-    }
-  ], function (err, result) {
-    if (err) {
-      logger.error('Error re-indexing %s: %s', alias, err.stack);
-      callback(err);
-    } else {
-      callback(null, result);
-    }
-  });
+      return Promise.promisify(cleaner.deleteOldIndices, cleaner)();
+    })
+    .nodeify(callback);
 }
 
 /**
@@ -363,9 +315,6 @@ function doReIndex (alias, callback) {
  * manually delete from your cluster:
  * 1. Old indices. Normally, all old indices for an alias are deleted after the alias is moved. If something bad
  * happens and they're not deleted, you may want to delete them manually.
- * 2. River types. To avoid accidentally deleting a JDBC river while it's running, the re-indexer does not delete old
- * rivers types as aggressively. You may want to manually delete old JDBC river types yourself, or drop the entire
- * `_river` index (it will be created again from scratch the next time re-indexing runs).
  */
 exports.reIndex = function reIndex (alias, callback) {
   var lock = new Lock(exports.getLockNameForAlias(alias)); // prevent more than one alias-job from running at a time
@@ -377,6 +326,9 @@ exports.reIndex = function reIndex (alias, callback) {
 
     function run () {
       doReIndex(alias, function (err, result) {
+        if (err) {
+          logger.error('Error re-indexing %s: %s', alias, err.stack);
+        }
         lock.unlock(function (unlockErr) {
           if (unlockErr) {
             callback(unlockErr);
@@ -388,6 +340,7 @@ exports.reIndex = function reIndex (alias, callback) {
             return;
           }
 
+          logger.info('Done re-indexing %s', alias);
           callback(null, result);
         });
       });
@@ -436,6 +389,7 @@ if (!module.parent) {
         process.nextTick(function () {
           // wait for nextTick so any callbacks in reIndex can be called first
           logger.info('Done re-indexing');
+          process.exit();
         });
       }
     });
