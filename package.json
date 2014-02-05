@@ -55,12 +55,14 @@
     "chai": "~1.8.1",
     "sinon": "~1.7.3",
     "nock": "~0.25.0",
-    "sinon-chai": "~2.4.0"
+    "sinon-chai": "~2.4.0",
+    "bower": "~1.2.8"
   },
   "engines": {
     "node": ">=0.8.0"
   },
   "scripts": {
+    "dev": "cd kibana && npm install && cd .. && npm install && bower install && grunt build",
     "test": "grunt test"
   }
 }
