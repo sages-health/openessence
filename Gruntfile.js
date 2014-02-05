@@ -7,16 +7,9 @@
 // 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
-
-  // see https://github.com/shama/grunt-hub/issues/11
-  grunt.loadNpmTasks('grunt-hub');
-  grunt.renameTask('watch', 'hubWatch');
-
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(function (name) {
-    if (name !== 'grunt-hub') {
-      grunt.loadNpmTasks(name);
-    }
+    grunt.loadNpmTasks(name);
   });
 
   // configurable paths
