@@ -86,15 +86,12 @@ passport.use(new LocalStrategy(function (username, password, done) {
 }));
 
 app.get('/', function (req, res) {
-  if (req.user) {
-    res.redirect(307, '/kibana');
-  } else {
-    res.render('login.html');
-  }
+  // single page, even login view is handled by client
+  res.render('index.html', {user: req.user});
 });
 
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/kibana',
+  successRedirect: '/',
   failureRedirect: '/',
   failureFlash: true
 }));

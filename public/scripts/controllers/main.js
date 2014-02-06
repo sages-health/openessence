@@ -1,11 +1,9 @@
 'use strict';
 
-angular.module('openessenceApp')
-  .controller('MainCtrl', function ($scope, $http) {
-    $scope.login = function () {
-      $http({
-        method: 'POST',
-        url: '/login'
-      });
-    };
+angular.module('fracasApp')
+  .controller('MainCtrl', function ($scope, $location, user) {
+    if (!user.username) {
+      $location.path('/login').replace();
+      return;
+    }
   });
