@@ -1,5 +1,5 @@
 {
-  "name": "openessence",
+  "name": "fracas",
   "version": "3.0.0",
   "dependencies": {
     "connect-flash": {
