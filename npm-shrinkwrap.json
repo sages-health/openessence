@@ -337,10 +337,6 @@
       "version": "0.2.10",
       "from": "async@"
     },
-    "es": {
-      "version": "0.3.16",
-      "from": "es@~0.3.16"
-    },
     "winston": {
       "version": "0.7.2",
       "from": "https://registry.npmjs.org/winston/-/winston-0.7.2.tgz",
@@ -457,204 +453,6 @@
         }
       }
     },
-    "buffer-crc32": {
-      "version": "0.2.1",
-      "from": "buffer-crc32@0.2.1",
-      "resolved": "https://registry.npmjs.org/buffer-crc32/-/buffer-crc32-0.2.1.tgz"
-    },
-    "forever-monitor": {
-      "version": "1.2.3",
-      "from": "forever-monitor@~1.2.3",
-      "dependencies": {
-        "broadway": {
-          "version": "0.2.9",
-          "from": "broadway@0.2.x",
-          "dependencies": {
-            "cliff": {
-              "version": "0.1.8",
-              "from": "cliff@0.1.8",
-              "dependencies": {
-                "colors": {
-                  "version": "0.6.2",
-                  "from": "colors@0.x.x"
-                },
-                "eyes": {
-                  "version": "0.1.8",
-                  "from": "eyes@0.1.x"
-                },
-                "winston": {
-                  "version": "0.6.2",
-                  "from": "winston@0.6.2",
-                  "resolved": "https://registry.npmjs.org/winston/-/winston-0.6.2.tgz",
-                  "dependencies": {
-                    "async": {
-                      "version": "0.1.22",
-                      "from": "async@0.1.x"
-                    },
-                    "cycle": {
-                      "version": "1.0.3",
-                      "from": "cycle@1.0.x",
-                      "resolved": "https://registry.npmjs.org/cycle/-/cycle-1.0.3.tgz"
-                    },
-                    "pkginfo": {
-                      "version": "0.2.3",
-                      "from": "pkginfo@0.2.x"
-                    },
-                    "request": {
-                      "version": "2.9.203",
-                      "from": "request@2.9.x"
-                    },
-                    "stack-trace": {
-                      "version": "0.0.8",
-                      "from": "stack-trace@0.0.x",
-                      "resolved": "https://registry.npmjs.org/stack-trace/-/stack-trace-0.0.8.tgz"
-                    }
-                  }
-                }
-              }
-            },
-            "eventemitter2": {
-              "version": "0.4.12",
-              "from": "eventemitter2@0.4.12"
-            },
-            "nconf": {
-              "version": "0.6.9",
-              "from": "nconf@0.6.9",
-              "dependencies": {
-                "async": {
-                  "version": "0.2.9",
-                  "from": "async@0.2.9"
-                },
-                "ini": {
-                  "version": "1.1.0",
-                  "from": "ini@1.x.x"
-                },
-                "optimist": {
-                  "version": "0.6.0",
-                  "from": "optimist@0.6.0",
-                  "dependencies": {
-                    "wordwrap": {
-                      "version": "0.0.2",
-                      "from": "wordwrap@~0.0.2"
-                    },
-                    "minimist": {
-                      "version": "0.0.5",
-                      "from": "minimist@~0.0.1"
-                    }
-                  }
-                }
-              }
-            },
-            "utile": {
-              "version": "0.2.1",
-              "from": "utile@0.2.1",
-              "dependencies": {
-                "deep-equal": {
-                  "version": "0.2.1",
-                  "from": "deep-equal@*"
-                },
-                "i": {
-                  "version": "0.3.2",
-                  "from": "i@0.3.x"
-                },
-                "mkdirp": {
-                  "version": "0.3.5",
-                  "from": "mkdirp@0.x.x"
-                },
-                "ncp": {
-                  "version": "0.4.2",
-                  "from": "ncp@0.4.2"
-                },
-                "rimraf": {
-                  "version": "2.2.6",
-                  "from": "rimraf@2.x.x"
-                }
-              }
-            }
-          }
-        },
-        "minimatch": {
-          "version": "0.2.14",
-          "from": "minimatch@0.2.x",
-          "dependencies": {
-            "lru-cache": {
-              "version": "2.5.0",
-              "from": "lru-cache@2"
-            },
-            "sigmund": {
-              "version": "1.0.0",
-              "from": "sigmund@~1.0.0"
-            }
-          }
-        },
-        "pkginfo": {
-          "version": "0.3.0",
-          "from": "pkginfo@0.x.x"
-        },
-        "ps-tree": {
-          "version": "0.0.3",
-          "from": "ps-tree@0.0.x",
-          "dependencies": {
-            "event-stream": {
-              "version": "0.5.3",
-              "from": "event-stream@0.5.3",
-              "resolved": "https://registry.npmjs.org/event-stream/-/event-stream-0.5.3.tgz",
-              "dependencies": {
-                "optimist": {
-                  "version": "0.2.8",
-                  "from": "optimist@0.2",
-                  "dependencies": {
-                    "wordwrap": {
-                      "version": "0.0.2",
-                      "from": "wordwrap@>=0.0.1 <0.1.0"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "watch": {
-          "version": "0.5.1",
-          "from": "watch@0.5.1",
-          "resolved": "https://registry.npmjs.org/watch/-/watch-0.5.1.tgz"
-        },
-        "utile": {
-          "version": "0.1.7",
-          "from": "utile@0.1.7",
-          "dependencies": {
-            "async": {
-              "version": "0.1.22",
-              "from": "async@0.1.x"
-            },
-            "deep-equal": {
-              "version": "0.2.1",
-              "from": "deep-equal@*"
-            },
-            "i": {
-              "version": "0.3.2",
-              "from": "i@0.3.x"
-            },
-            "mkdirp": {
-              "version": "0.3.5",
-              "from": "mkdirp@~0.3.5"
-            },
-            "ncp": {
-              "version": "0.2.7",
-              "from": "ncp@0.2.x"
-            },
-            "rimraf": {
-              "version": "1.0.9",
-              "from": "rimraf@1.x.x"
-            }
-          }
-        }
-      }
-    },
-    "cron": {
-      "version": "1.0.3",
-      "from": "cron@~1.0.3"
-    },
     "http-proxy": {
       "version": "0.10.4",
       "from": "http-proxy@0.10.4",
@@ -714,118 +512,30 @@
       "from": "https://registry.npmjs.org/connect-restreamer/-/connect-restreamer-1.0.0.tgz",
       "resolved": "https://registry.npmjs.org/connect-restreamer/-/connect-restreamer-1.0.0.tgz"
     },
-    "pg-query-stream": {
-      "version": "0.2.0",
-      "from": "https://registry.npmjs.org/pg-query-stream/-/pg-query-stream-0.2.0.tgz",
-      "resolved": "https://registry.npmjs.org/pg-query-stream/-/pg-query-stream-0.2.0.tgz"
-    },
-    "elasticsearch": {
-      "version": "1.4.0",
-      "from": "elasticsearch@~1.4.0",
-      "dependencies": {
-        "when": {
-          "version": "2.6.0",
-          "from": "when@2.6.0",
-          "resolved": "https://registry.npmjs.org/when/-/when-2.6.0.tgz"
-        },
-        "lodash": {
-          "version": "2.3.0",
-          "from": "lodash@2.3.0",
-          "resolved": "https://registry.npmjs.org/lodash/-/lodash-2.3.0.tgz"
-        },
-        "agentkeepalive": {
-          "version": "0.1.5",
-          "from": "agentkeepalive@0.1.5",
-          "resolved": "https://registry.npmjs.org/agentkeepalive/-/agentkeepalive-0.1.5.tgz"
-        },
-        "chalk": {
-          "version": "0.3.0",
-          "from": "chalk@0.3.0",
-          "dependencies": {
-            "has-color": {
-              "version": "0.1.3",
-              "from": "has-color@~0.1.0"
-            },
-            "ansi-styles": {
-              "version": "0.2.0",
-              "from": "ansi-styles@~0.2.0"
-            }
-          }
-        },
-        "event-stream": {
-          "version": "3.1.0",
-          "from": "event-stream@~3.1.0",
-          "resolved": "https://registry.npmjs.org/event-stream/-/event-stream-3.1.0.tgz",
-          "dependencies": {
-            "through": {
-              "version": "2.3.4",
-              "from": "through@~2.3.1"
-            },
-            "duplexer": {
-              "version": "0.1.1",
-              "from": "duplexer@~0.1.1"
-            },
-            "from": {
-              "version": "0.1.3",
-              "from": "from@~0",
-              "resolved": "https://registry.npmjs.org/from/-/from-0.1.3.tgz"
-            },
-            "map-stream": {
-              "version": "0.1.0",
-              "from": "map-stream@~0.1.0",
-              "resolved": "https://registry.npmjs.org/map-stream/-/map-stream-0.1.0.tgz"
-            },
-            "pause-stream": {
-              "version": "0.0.11",
-              "from": "pause-stream@0.0.11",
-              "resolved": "https://registry.npmjs.org/pause-stream/-/pause-stream-0.0.11.tgz"
-            },
-            "split": {
-              "version": "0.2.10",
-              "from": "split@0.2.10",
-              "resolved": "https://registry.npmjs.org/split/-/split-0.2.10.tgz"
-            },
-            "stream-combiner": {
-              "version": "0.0.4",
-              "from": "stream-combiner@~0.0.4"
-            }
-          }
-        }
-      }
-    },
-    "batch-stream": {
-      "version": "0.0.1",
-      "from": "https://registry.npmjs.org/batch-stream/-/batch-stream-0.0.1.tgz",
-      "resolved": "https://registry.npmjs.org/batch-stream/-/batch-stream-0.0.1.tgz",
-      "dependencies": {
-        "readable-stream": {
-          "version": "1.0.25",
-          "from": "readable-stream@1.0.25",
-          "resolved": "https://registry.npmjs.org/readable-stream/-/readable-stream-1.0.25.tgz",
-          "dependencies": {
-            "string_decoder": {
-              "version": "0.10.25",
-              "from": "string_decoder@~0.10.x",
-              "resolved": "https://registry.npmjs.org/string_decoder/-/string_decoder-0.10.25.tgz"
-            }
-          }
-        }
-      }
-    },
-    "karma-firefox-launcher": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz"
+    "buffer-crc32": {
+      "version": "0.2.1",
+      "from": "buffer-crc32@0.2.1",
+      "resolved": "https://registry.npmjs.org/buffer-crc32/-/buffer-crc32-0.2.1.tgz"
     },
     "karma-chrome-launcher": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz"
     },
+    "karma-firefox-launcher": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz"
+    },
     "karma-html2js-preprocessor": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz"
+    },
+    "karma-requirejs": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
     },
     "karma-jasmine": {
       "version": "0.1.3",
@@ -836,11 +546,6 @@
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz"
-    },
-    "karma-requirejs": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
     },
     "karma-coffee-preprocessor": {
       "version": "0.1.0",

@@ -5,6 +5,7 @@ var express = require('express');
 var httpProxy = require('http-proxy');
 var conf = require('../conf');
 var settings = require('./settings');
+var notFound = require('../error');
 
 var proxy = new httpProxy.HttpProxy({
   target: {
@@ -24,7 +25,7 @@ app.param('index', function (req, res, next, index) {
     // TODO restrict access to _all or filter it to allowed indices only
     next();
   } else {
-    require('../error').notFound(req, res);
+    notFound(req, res);
   }
 });
 

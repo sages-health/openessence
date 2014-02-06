@@ -1,1 +1,0 @@
-Code for managing elasticsearch

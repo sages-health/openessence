@@ -105,42 +105,6 @@ app.use('/kibana', staticResources.kibana(conf.env, express));
 // this MUST be the last route
 app.use(require('./server/error').notFound);
 
-function forkChildren () {
-  var childProcess = require('child_process');
-
-  var syncer = childProcess.fork(__dirname + '/server/es/pgsyncer');
-  logger.info('Spawned pgsyncer child pid %d', syncer.pid); // so user knows what to kill, if need be
-
-  syncer.on('error', function (err) {
-    console.error('Error in pgsync child process');
-    console.error(err);
-  });
-  syncer.on('exit', function () {
-    console.error('syncer child process exited');
-  });
-
-  if (conf.env === 'production') {
-    logger.info('Waiting 10s before starting reindexing');
-    setTimeout(function () {
-      var reindexer = childProcess.fork(__dirname + '/server/es/reindexer');
-      logger.info('Spawned reindexer child pid %d', reindexer.pid);
-
-      reindexer.on('exit', function () {
-        logger.info('reindexer exited');
-
-        // install cron job after reindexer is done
-        var CronJob = require('cron').CronJob;
-        // run every day at 3 AM
-        new CronJob('00 00 3 * * *', function () { // TODO test this
-          logger.info('Cron job is running reindexer');
-          var child = childProcess.fork(__dirname + '/server/es/reindexer');
-          logger.info('Spawned reindexer child pid %d', child.pid);
-        });
-      });
-    }, 10000);
-  }
-}
-
 if (!module.parent) {
   var port = process.env.PORT || 9000;
 
@@ -148,6 +112,4 @@ if (!module.parent) {
     // must log to stdout (some 3rd party tools read stdout to know when web server is up)
     console.log('Listening on port ' + port);
   });
-
-  forkChildren();
 }
