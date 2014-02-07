@@ -17,13 +17,13 @@
     <link rel="stylesheet" href="../.tmp/styles/main.css">
     <!-- endbuild -->
 </head>
-<body ng-app="fracasApp">
+<body ng-app>
 <!--[if lt IE 7]>
 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 <![endif]-->
 
 <!--[if lt IE 9]>
-<script src="../public/bower_components/es5-shim/es5-shim.js"></script>
+<script src="../public/bower_components/es5-shim/es5-shim.js"></script><!-- TODO usemin these -->
 <script src="../public/bower_components/json3/lib/json3.min.js"></script>
 <![endif]-->
 
@@ -39,7 +39,7 @@
         s.parentNode.insertBefore(g,s)}(document,'script'));
 </script>
 
-<script src="../public/bower_components/jquery/jquery.js"></script>
+<script src="../public/bower_components/jquery/jquery.js"></script> <!-- TODO usemin these -->
 <script src="../public/bower_components/angular/angular.js"></script>
 
 <!-- build:js scripts/plugins.js -->
@@ -63,11 +63,7 @@
 <script src="../public/bower_components/angular-sanitize/angular-sanitize.js"></script>
 <!-- endbuild -->
 
-<!-- build:js scripts/scripts.js -->
-<script src="../public/scripts/app.js"></script>
-<script src="../public/scripts/controllers/main.js"></script>
-<script src="../public/scripts/controllers/login.js"></script>
-<script src="../public/scripts/services/user.js"></script><!-- TODO require.js or browserify -->
-<!-- endbuild -->
+<!-- see https://github.com/yeoman/grunt-usemin/issues/192#issuecomment-33067828 -->
+<script data-main="../public/scripts/main" src="../public/bower_components/requirejs/require.js"></script>
 </body>
 </html>

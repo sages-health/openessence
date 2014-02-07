@@ -1,18 +1,16 @@
-(function (angular) {
+define([
+  'angular',
+  'controllers',
+  'directives',
+  'services',
+  'filters',
+  'controllers/main',
+  'controllers/login'
+], function (angular, controllers, directives, services, filters) {
   'use strict';
 
-  // define module names
-  var modules = ['controllers', 'directives', 'factories', 'services', 'filters'].map(function (module) {
-    return 'fracas.' + module;
-  });
-
-  // register modules
-  modules.forEach(function (m) {
-    angular.module(m, []);
-  });
-
-  angular.module('fracasApp', modules)
-    .config(function ($routeProvider) {
+  var app = angular.module('fracasApp', [controllers.name, directives.name, services.name, filters.name]);
+  app.config(function ($routeProvider) {
       $routeProvider
         .when('/login', {
           templateUrl: 'partials/login.html',
@@ -26,4 +24,6 @@
           redirectTo: '/'
         });
     });
-})(angular);
+
+  return app;
+});
