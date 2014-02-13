@@ -3,6 +3,7 @@
 var express = require('express');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var _ = require('lodash');
 
 var conf = require('./server/conf');
 var logger = conf.logger;
@@ -24,8 +25,8 @@ app.use(express.session({
   cookie: {
     path: '/',
     httpOnly: true,
-    maxAge: null,
-    secure: conf.env === 'production' // force HTTPS
+    maxAge: null
+//    secure: conf.env === 'production' // force HTTPS, this should be turned on after development
   }
 }));
 app.use(require('connect-flash')());
@@ -39,7 +40,13 @@ app.use(app.router);
 
 app.use(require('./server/error').middleware);
 
-app.engine('html', require('ejs').renderFile);
+app.engine('html', function (path, options, callback) {
+  options = _.assign({
+    open: '{{', // htmlmin likes to escape <
+    close: '}}'
+  }, options);
+  require('ejs').renderFile(path, options, callback);
+});
 app.set('views', require('./server/views')(conf.env));
 
 // see http://redotheweb.com/2013/02/20/sequelize-the-javascript-orm-in-practice.html
@@ -56,33 +63,37 @@ passport.deserializeUser(function (user, done) {
 });
 
 passport.use(new LocalStrategy(function (username, password, done) {
-  models.User
-    .find({
-      where: {
-        name: username
-      }
-    })
-    .error(done)
-    .success(function (user) {
-      if (!user) {
-        return done(null, false, {
-          // don't display this to the user, that would be an info leak
-          message: 'Unknown username ' + username
-        });
-      }
-      user.comparePassword(password, function (err, result) {
-        if (err) {
-          return done(err);
-        }
-        if (result) {
-          return done(null, user);
-        } else {
-          return done(null, false, {
-            message: 'Incorrect password'
-          });
-        }
-      });
-    });
+  return done(null, {
+    id: 1,
+    name: 'admin'
+  }); // TODO get from es
+//  models.User
+//    .find({
+//      where: {
+//        name: username
+//      }
+//    })
+//    .error(done)
+//    .success(function (user) {
+//      if (!user) {
+//        return done(null, false, {
+//          // don't display this to the user, that would be an info leak
+//          message: 'Unknown username ' + username
+//        });
+//      }
+//      user.comparePassword(password, function (err, result) {
+//        if (err) {
+//          return done(err);
+//        }
+//        if (result) {
+//          return done(null, user);
+//        } else {
+//          return done(null, false, {
+//            message: 'Incorrect password'
+//          });
+//        }
+//      });
+//    });
 }));
 
 app.get('/', function (req, res) {
@@ -106,10 +117,20 @@ app.use('/kibana', staticResources.kibana(conf.env, express));
 app.use(require('./server/error').notFound);
 
 if (!module.parent) {
+  logger.info('Running in %s mode', conf.env);
+
   var port = process.env.PORT || 9000;
 
   app.listen(port, function () {
     // must log to stdout (some 3rd party tools read stdout to know when web server is up)
     console.log('Listening on port ' + port);
+
+    // if we have a parent, tell them we started
+    if (process.send) {
+      process.send({
+        started: true,
+        url: 'http://localhost:' + port
+      });
+    }
   });
 }

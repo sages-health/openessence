@@ -13,11 +13,11 @@ define([
   app.config(function ($routeProvider) {
       $routeProvider
         .when('/login', {
-          templateUrl: 'partials/login.html',
+          templateUrl: '/public/partials/login.html',
           controller: 'LoginCtrl'
         })
         .when('/', {
-          templateUrl: 'partials/home.html',
+          templateUrl: '/public/partials/home.html',
           controller: 'MainCtrl'
         })
         .otherwise({

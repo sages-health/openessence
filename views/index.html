@@ -10,60 +10,29 @@
     <meta name="description" content="Fracas, for disease surveillance">
     <meta name="viewport" content="width=device-width">
     <!-- there's probably a more Angular-y way to do this, e.g. ng-init, but oh well -->
-    <meta name="_username" content="<%= user ? user.name : '' %>">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <meta name="_username" content="{{= user ? user.name : '' }}">
 
-    <!-- build:css styles/main.css -->
+    <!-- inject:css -->
     <link rel="stylesheet" href="../.tmp/styles/main.css">
-    <!-- endbuild -->
+    <!-- endinject -->
 </head>
 <body ng-app>
 <!--[if lt IE 7]>
 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 <![endif]-->
 
+<!-- TODO use modernizr and pull these -->
 <!--[if lt IE 9]>
-<script src="../public/bower_components/es5-shim/es5-shim.js"></script><!-- TODO usemin these -->
+<script src="../public/bower_components/es5-shim/es5-shim.js"></script>
 <script src="../public/bower_components/json3/lib/json3.min.js"></script>
 <![endif]-->
 
-<!-- ng docs warn against ng-init, but it's what you're supposed to use in this case,
-    see https://github.com/angular/angular.js/issues/1605 -->
 <div class="container" ng-view></div>
 
-<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-<script>
-    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-        g.src='//www.google-analytics.com/ga.js';
-        s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
-<script src="../public/bower_components/jquery/jquery.js"></script> <!-- TODO usemin these -->
-<script src="../public/bower_components/angular/angular.js"></script>
-
-<!-- build:js scripts/plugins.js -->
-<script src="../public/bower_components/bootstrap-sass/js/affix.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/alert.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/dropdown.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/tooltip.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/modal.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/transition.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/button.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/popover.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/carousel.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/scrollspy.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/collapse.js"></script>
-<script src="../public/bower_components/bootstrap-sass/js/tab.js"></script>
-<!-- endbuild -->
-
-<!-- build:js scripts/modules.js -->
-<script src="../public/bower_components/angular-resource/angular-resource.js"></script>
-<script src="../public/bower_components/angular-cookies/angular-cookies.js"></script>
-<script src="../public/bower_components/angular-sanitize/angular-sanitize.js"></script>
-<!-- endbuild -->
-
-<!-- see https://github.com/yeoman/grunt-usemin/issues/192#issuecomment-33067828 -->
+<!-- In dev, load requirejs and have it load main.js.
+    In production, load main.js (main.js is single bundle that includes almond shim for requirejs) -->
+<!-- inject:js -->
 <script data-main="../public/scripts/main" src="../public/bower_components/requirejs/require.js"></script>
+<!-- endinject -->
 </body>
 </html>

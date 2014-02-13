@@ -512,6 +512,746 @@
       "from": "https://registry.npmjs.org/connect-restreamer/-/connect-restreamer-1.0.0.tgz",
       "resolved": "https://registry.npmjs.org/connect-restreamer/-/connect-restreamer-1.0.0.tgz"
     },
+    "jpegtran-bin": {
+      "version": "0.2.3",
+      "from": "jpegtran-bin@",
+      "dependencies": {
+        "bin-wrapper": {
+          "version": "0.1.9",
+          "from": "bin-wrapper@~0.1.3",
+          "dependencies": {
+            "download": {
+              "version": "0.1.10",
+              "from": "download@~0.1.2",
+              "dependencies": {
+                "decompress": {
+                  "version": "0.1.6",
+                  "from": "decompress@~0.1.5",
+                  "dependencies": {
+                    "adm-zip": {
+                      "version": "0.4.4",
+                      "from": "adm-zip@~0.4.3"
+                    },
+                    "rimraf": {
+                      "version": "2.2.6",
+                      "from": "rimraf@~2.2.2"
+                    },
+                    "stream-combiner": {
+                      "version": "0.0.4",
+                      "from": "stream-combiner@~0.0.2",
+                      "dependencies": {
+                        "duplexer": {
+                          "version": "0.1.1",
+                          "from": "duplexer@~0.1.1"
+                        }
+                      }
+                    },
+                    "tar": {
+                      "version": "0.1.19",
+                      "from": "tar@~0.1.18",
+                      "dependencies": {
+                        "inherits": {
+                          "version": "2.0.1",
+                          "from": "inherits@2"
+                        },
+                        "block-stream": {
+                          "version": "0.0.7",
+                          "from": "block-stream@*"
+                        },
+                        "fstream": {
+                          "version": "0.1.25",
+                          "from": "fstream@~0.1.8",
+                          "dependencies": {
+                            "graceful-fs": {
+                              "version": "2.0.1",
+                              "from": "graceful-fs@~2.0.0"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "tempfile": {
+                      "version": "0.1.2",
+                      "from": "tempfile@~0.1.2",
+                      "dependencies": {
+                        "uuid": {
+                          "version": "1.4.1",
+                          "from": "uuid@~1.4.0"
+                        }
+                      }
+                    }
+                  }
+                },
+                "each-async": {
+                  "version": "0.1.2",
+                  "from": "each-async@~0.1.1"
+                },
+                "request": {
+                  "version": "2.31.0",
+                  "from": "request@~2.31.0",
+                  "dependencies": {
+                    "qs": {
+                      "version": "0.6.6",
+                      "from": "qs@~0.6.0"
+                    },
+                    "json-stringify-safe": {
+                      "version": "5.0.0",
+                      "from": "json-stringify-safe@~5.0.0"
+                    },
+                    "forever-agent": {
+                      "version": "0.5.2",
+                      "from": "forever-agent@~0.5.0"
+                    },
+                    "node-uuid": {
+                      "version": "1.4.1",
+                      "from": "node-uuid@~1.4.0"
+                    },
+                    "mime": {
+                      "version": "1.2.11",
+                      "from": "mime@~1.2.9"
+                    },
+                    "tough-cookie": {
+                      "version": "0.9.15",
+                      "from": "tough-cookie@~0.9.15",
+                      "dependencies": {
+                        "punycode": {
+                          "version": "1.2.3",
+                          "from": "punycode@>=0.2.0"
+                        }
+                      }
+                    },
+                    "form-data": {
+                      "version": "0.1.2",
+                      "from": "form-data@~0.1.0",
+                      "dependencies": {
+                        "combined-stream": {
+                          "version": "0.0.4",
+                          "from": "combined-stream@~0.0.4",
+                          "dependencies": {
+                            "delayed-stream": {
+                              "version": "0.0.5",
+                              "from": "delayed-stream@0.0.5"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "tunnel-agent": {
+                      "version": "0.3.0",
+                      "from": "tunnel-agent@~0.3.0"
+                    },
+                    "http-signature": {
+                      "version": "0.10.0",
+                      "from": "http-signature@~0.10.0",
+                      "dependencies": {
+                        "assert-plus": {
+                          "version": "0.1.2",
+                          "from": "assert-plus@0.1.2"
+                        },
+                        "asn1": {
+                          "version": "0.1.11",
+                          "from": "asn1@0.1.11"
+                        },
+                        "ctype": {
+                          "version": "0.5.2",
+                          "from": "ctype@0.5.2"
+                        }
+                      }
+                    },
+                    "oauth-sign": {
+                      "version": "0.3.0",
+                      "from": "oauth-sign@~0.3.0"
+                    },
+                    "hawk": {
+                      "version": "1.0.0",
+                      "from": "hawk@~1.0.0",
+                      "dependencies": {
+                        "hoek": {
+                          "version": "0.9.1",
+                          "from": "hoek@0.9.x"
+                        },
+                        "boom": {
+                          "version": "0.4.2",
+                          "from": "boom@0.4.x"
+                        },
+                        "cryptiles": {
+                          "version": "0.2.2",
+                          "from": "cryptiles@0.2.x"
+                        },
+                        "sntp": {
+                          "version": "0.2.4",
+                          "from": "sntp@0.2.x"
+                        }
+                      }
+                    },
+                    "aws-sign2": {
+                      "version": "0.5.0",
+                      "from": "aws-sign2@~0.5.0"
+                    }
+                  }
+                },
+                "through2": {
+                  "version": "0.4.1",
+                  "from": "through2@~0.4.0",
+                  "dependencies": {
+                    "readable-stream": {
+                      "version": "1.0.25",
+                      "from": "readable-stream@~1.0.17",
+                      "dependencies": {
+                        "string_decoder": {
+                          "version": "0.10.25",
+                          "from": "string_decoder@~0.10.x"
+                        }
+                      }
+                    },
+                    "xtend": {
+                      "version": "2.1.2",
+                      "from": "xtend@~2.1.1",
+                      "dependencies": {
+                        "object-keys": {
+                          "version": "0.4.0",
+                          "from": "object-keys@~0.4.0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "isbin": {
+              "version": "0.0.2",
+              "from": "isbin@0.0.2",
+              "resolved": "https://registry.npmjs.org/isbin/-/isbin-0.0.2.tgz",
+              "dependencies": {
+                "async": {
+                  "version": "0.1.22",
+                  "from": "async@0.1.22",
+                  "resolved": "https://registry.npmjs.org/async/-/async-0.1.22.tgz"
+                }
+              }
+            },
+            "mout": {
+              "version": "0.6.0",
+              "from": "mout@~0.6.0"
+            },
+            "progress": {
+              "version": "1.1.3",
+              "from": "progress@~1.1.0"
+            },
+            "which": {
+              "version": "1.0.5",
+              "from": "which@~1.0.5"
+            }
+          }
+        },
+        "chalk": {
+          "version": "0.2.1",
+          "from": "chalk@~0.2.0",
+          "dependencies": {
+            "has-color": {
+              "version": "0.1.4",
+              "from": "has-color@~0.1.0"
+            },
+            "ansi-styles": {
+              "version": "0.2.0",
+              "from": "ansi-styles@~0.2.0"
+            }
+          }
+        }
+      }
+    },
+    "pngquant-bin": {
+      "version": "0.1.5",
+      "from": "pngquant-bin@",
+      "dependencies": {
+        "bin-wrapper": {
+          "version": "0.1.9",
+          "from": "bin-wrapper@~0.1.3",
+          "dependencies": {
+            "download": {
+              "version": "0.1.10",
+              "from": "download@~0.1.2",
+              "dependencies": {
+                "decompress": {
+                  "version": "0.1.6",
+                  "from": "decompress@~0.1.5",
+                  "dependencies": {
+                    "adm-zip": {
+                      "version": "0.4.4",
+                      "from": "adm-zip@~0.4.3"
+                    },
+                    "rimraf": {
+                      "version": "2.2.6",
+                      "from": "rimraf@~2.2.2"
+                    },
+                    "stream-combiner": {
+                      "version": "0.0.4",
+                      "from": "stream-combiner@~0.0.2",
+                      "dependencies": {
+                        "duplexer": {
+                          "version": "0.1.1",
+                          "from": "duplexer@~0.1.1"
+                        }
+                      }
+                    },
+                    "tar": {
+                      "version": "0.1.19",
+                      "from": "tar@~0.1.18",
+                      "dependencies": {
+                        "inherits": {
+                          "version": "2.0.1",
+                          "from": "inherits@2"
+                        },
+                        "block-stream": {
+                          "version": "0.0.7",
+                          "from": "block-stream@*"
+                        },
+                        "fstream": {
+                          "version": "0.1.25",
+                          "from": "fstream@~0.1.8",
+                          "dependencies": {
+                            "graceful-fs": {
+                              "version": "2.0.1",
+                              "from": "graceful-fs@~2.0.0"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "tempfile": {
+                      "version": "0.1.2",
+                      "from": "tempfile@~0.1.2",
+                      "dependencies": {
+                        "uuid": {
+                          "version": "1.4.1",
+                          "from": "uuid@~1.4.0"
+                        }
+                      }
+                    }
+                  }
+                },
+                "each-async": {
+                  "version": "0.1.2",
+                  "from": "each-async@~0.1.1"
+                },
+                "request": {
+                  "version": "2.31.0",
+                  "from": "request@~2.31.0",
+                  "dependencies": {
+                    "qs": {
+                      "version": "0.6.6",
+                      "from": "qs@~0.6.0"
+                    },
+                    "json-stringify-safe": {
+                      "version": "5.0.0",
+                      "from": "json-stringify-safe@~5.0.0"
+                    },
+                    "forever-agent": {
+                      "version": "0.5.2",
+                      "from": "forever-agent@~0.5.0"
+                    },
+                    "node-uuid": {
+                      "version": "1.4.1",
+                      "from": "node-uuid@~1.4.0"
+                    },
+                    "mime": {
+                      "version": "1.2.11",
+                      "from": "mime@~1.2.9"
+                    },
+                    "tough-cookie": {
+                      "version": "0.9.15",
+                      "from": "tough-cookie@~0.9.15",
+                      "dependencies": {
+                        "punycode": {
+                          "version": "1.2.3",
+                          "from": "punycode@>=0.2.0"
+                        }
+                      }
+                    },
+                    "form-data": {
+                      "version": "0.1.2",
+                      "from": "form-data@~0.1.0",
+                      "dependencies": {
+                        "combined-stream": {
+                          "version": "0.0.4",
+                          "from": "combined-stream@~0.0.4",
+                          "dependencies": {
+                            "delayed-stream": {
+                              "version": "0.0.5",
+                              "from": "delayed-stream@0.0.5"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "tunnel-agent": {
+                      "version": "0.3.0",
+                      "from": "tunnel-agent@~0.3.0"
+                    },
+                    "http-signature": {
+                      "version": "0.10.0",
+                      "from": "http-signature@~0.10.0",
+                      "dependencies": {
+                        "assert-plus": {
+                          "version": "0.1.2",
+                          "from": "assert-plus@0.1.2"
+                        },
+                        "asn1": {
+                          "version": "0.1.11",
+                          "from": "asn1@0.1.11"
+                        },
+                        "ctype": {
+                          "version": "0.5.2",
+                          "from": "ctype@0.5.2"
+                        }
+                      }
+                    },
+                    "oauth-sign": {
+                      "version": "0.3.0",
+                      "from": "oauth-sign@~0.3.0"
+                    },
+                    "hawk": {
+                      "version": "1.0.0",
+                      "from": "hawk@~1.0.0",
+                      "dependencies": {
+                        "hoek": {
+                          "version": "0.9.1",
+                          "from": "hoek@0.9.x"
+                        },
+                        "boom": {
+                          "version": "0.4.2",
+                          "from": "boom@0.4.x"
+                        },
+                        "cryptiles": {
+                          "version": "0.2.2",
+                          "from": "cryptiles@0.2.x"
+                        },
+                        "sntp": {
+                          "version": "0.2.4",
+                          "from": "sntp@0.2.x"
+                        }
+                      }
+                    },
+                    "aws-sign2": {
+                      "version": "0.5.0",
+                      "from": "aws-sign2@~0.5.0"
+                    }
+                  }
+                },
+                "through2": {
+                  "version": "0.4.1",
+                  "from": "through2@~0.4.0",
+                  "dependencies": {
+                    "readable-stream": {
+                      "version": "1.0.25",
+                      "from": "readable-stream@~1.0.17",
+                      "dependencies": {
+                        "string_decoder": {
+                          "version": "0.10.25",
+                          "from": "string_decoder@~0.10.x"
+                        }
+                      }
+                    },
+                    "xtend": {
+                      "version": "2.1.2",
+                      "from": "xtend@~2.1.1",
+                      "dependencies": {
+                        "object-keys": {
+                          "version": "0.4.0",
+                          "from": "object-keys@~0.4.0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "isbin": {
+              "version": "0.0.2",
+              "from": "isbin@0.0.2",
+              "dependencies": {
+                "async": {
+                  "version": "0.1.22",
+                  "from": "async@0.1.22"
+                }
+              }
+            },
+            "mout": {
+              "version": "0.6.0",
+              "from": "mout@~0.6.0"
+            },
+            "progress": {
+              "version": "1.1.3",
+              "from": "progress@~1.1.0"
+            },
+            "which": {
+              "version": "1.0.5",
+              "from": "which@~1.0.5"
+            }
+          }
+        },
+        "chalk": {
+          "version": "0.2.1",
+          "from": "chalk@~0.2.0",
+          "dependencies": {
+            "has-color": {
+              "version": "0.1.4",
+              "from": "has-color@~0.1.0"
+            },
+            "ansi-styles": {
+              "version": "0.2.0",
+              "from": "ansi-styles@~0.2.0"
+            }
+          }
+        }
+      }
+    },
+    "gifsicle": {
+      "version": "0.1.4",
+      "from": "gifsicle@",
+      "dependencies": {
+        "bin-wrapper": {
+          "version": "0.1.9",
+          "from": "bin-wrapper@~0.1.3",
+          "dependencies": {
+            "download": {
+              "version": "0.1.10",
+              "from": "download@~0.1.2",
+              "dependencies": {
+                "decompress": {
+                  "version": "0.1.6",
+                  "from": "decompress@~0.1.5",
+                  "dependencies": {
+                    "adm-zip": {
+                      "version": "0.4.4",
+                      "from": "adm-zip@~0.4.3"
+                    },
+                    "rimraf": {
+                      "version": "2.2.6",
+                      "from": "rimraf@~2.2.2"
+                    },
+                    "stream-combiner": {
+                      "version": "0.0.4",
+                      "from": "stream-combiner@~0.0.2",
+                      "dependencies": {
+                        "duplexer": {
+                          "version": "0.1.1",
+                          "from": "duplexer@~0.1.1"
+                        }
+                      }
+                    },
+                    "tar": {
+                      "version": "0.1.19",
+                      "from": "tar@~0.1.18",
+                      "dependencies": {
+                        "inherits": {
+                          "version": "2.0.1",
+                          "from": "inherits@2"
+                        },
+                        "block-stream": {
+                          "version": "0.0.7",
+                          "from": "block-stream@*"
+                        },
+                        "fstream": {
+                          "version": "0.1.25",
+                          "from": "fstream@~0.1.8",
+                          "dependencies": {
+                            "graceful-fs": {
+                              "version": "2.0.1",
+                              "from": "graceful-fs@~2.0.0"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "tempfile": {
+                      "version": "0.1.2",
+                      "from": "tempfile@~0.1.2",
+                      "dependencies": {
+                        "uuid": {
+                          "version": "1.4.1",
+                          "from": "uuid@~1.4.0"
+                        }
+                      }
+                    }
+                  }
+                },
+                "each-async": {
+                  "version": "0.1.2",
+                  "from": "each-async@~0.1.1"
+                },
+                "request": {
+                  "version": "2.31.0",
+                  "from": "request@~2.31.0",
+                  "dependencies": {
+                    "qs": {
+                      "version": "0.6.6",
+                      "from": "qs@~0.6.0"
+                    },
+                    "json-stringify-safe": {
+                      "version": "5.0.0",
+                      "from": "json-stringify-safe@~5.0.0"
+                    },
+                    "forever-agent": {
+                      "version": "0.5.2",
+                      "from": "forever-agent@~0.5.0"
+                    },
+                    "node-uuid": {
+                      "version": "1.4.1",
+                      "from": "node-uuid@~1.4.0"
+                    },
+                    "mime": {
+                      "version": "1.2.11",
+                      "from": "mime@~1.2.9"
+                    },
+                    "tough-cookie": {
+                      "version": "0.9.15",
+                      "from": "tough-cookie@~0.9.15",
+                      "dependencies": {
+                        "punycode": {
+                          "version": "1.2.3",
+                          "from": "punycode@>=0.2.0"
+                        }
+                      }
+                    },
+                    "form-data": {
+                      "version": "0.1.2",
+                      "from": "form-data@~0.1.0",
+                      "dependencies": {
+                        "combined-stream": {
+                          "version": "0.0.4",
+                          "from": "combined-stream@~0.0.4",
+                          "dependencies": {
+                            "delayed-stream": {
+                              "version": "0.0.5",
+                              "from": "delayed-stream@0.0.5"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "tunnel-agent": {
+                      "version": "0.3.0",
+                      "from": "tunnel-agent@~0.3.0"
+                    },
+                    "http-signature": {
+                      "version": "0.10.0",
+                      "from": "http-signature@~0.10.0",
+                      "dependencies": {
+                        "assert-plus": {
+                          "version": "0.1.2",
+                          "from": "assert-plus@0.1.2"
+                        },
+                        "asn1": {
+                          "version": "0.1.11",
+                          "from": "asn1@0.1.11"
+                        },
+                        "ctype": {
+                          "version": "0.5.2",
+                          "from": "ctype@0.5.2"
+                        }
+                      }
+                    },
+                    "oauth-sign": {
+                      "version": "0.3.0",
+                      "from": "oauth-sign@~0.3.0"
+                    },
+                    "hawk": {
+                      "version": "1.0.0",
+                      "from": "hawk@~1.0.0",
+                      "dependencies": {
+                        "hoek": {
+                          "version": "0.9.1",
+                          "from": "hoek@0.9.x"
+                        },
+                        "boom": {
+                          "version": "0.4.2",
+                          "from": "boom@0.4.x"
+                        },
+                        "cryptiles": {
+                          "version": "0.2.2",
+                          "from": "cryptiles@0.2.x"
+                        },
+                        "sntp": {
+                          "version": "0.2.4",
+                          "from": "sntp@0.2.x"
+                        }
+                      }
+                    },
+                    "aws-sign2": {
+                      "version": "0.5.0",
+                      "from": "aws-sign2@~0.5.0"
+                    }
+                  }
+                },
+                "through2": {
+                  "version": "0.4.1",
+                  "from": "through2@~0.4.0",
+                  "dependencies": {
+                    "readable-stream": {
+                      "version": "1.0.25",
+                      "from": "readable-stream@~1.0.17",
+                      "dependencies": {
+                        "string_decoder": {
+                          "version": "0.10.25",
+                          "from": "string_decoder@~0.10.x"
+                        }
+                      }
+                    },
+                    "xtend": {
+                      "version": "2.1.2",
+                      "from": "xtend@~2.1.1",
+                      "dependencies": {
+                        "object-keys": {
+                          "version": "0.4.0",
+                          "from": "object-keys@~0.4.0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "isbin": {
+              "version": "0.0.2",
+              "from": "isbin@0.0.2",
+              "dependencies": {
+                "async": {
+                  "version": "0.1.22",
+                  "from": "async@0.1.22"
+                }
+              }
+            },
+            "mout": {
+              "version": "0.6.0",
+              "from": "mout@~0.6.0"
+            },
+            "progress": {
+              "version": "1.1.3",
+              "from": "progress@~1.1.0"
+            },
+            "which": {
+              "version": "1.0.5",
+              "from": "which@~1.0.5"
+            }
+          }
+        },
+        "chalk": {
+          "version": "0.2.1",
+          "from": "chalk@~0.2.0",
+          "dependencies": {
+            "has-color": {
+              "version": "0.1.4",
+              "from": "has-color@~0.1.0"
+            },
+            "ansi-styles": {
+              "version": "0.2.0",
+              "from": "ansi-styles@~0.2.0"
+            }
+          }
+        }
+      }
+    },
     "buffer-crc32": {
       "version": "0.2.1",
       "from": "buffer-crc32@0.2.1",
@@ -532,11 +1272,6 @@
       "from": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz"
     },
-    "karma-requirejs": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
-    },
     "karma-jasmine": {
       "version": "0.1.3",
       "from": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz",
@@ -547,6 +1282,11 @@
       "from": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz"
     },
+    "karma-requirejs": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
+    },
     "karma-coffee-preprocessor": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-coffee-preprocessor/-/karma-coffee-preprocessor-0.1.0.tgz",
@@ -556,6 +1296,50 @@
           "version": "1.6.3",
           "from": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz",
           "resolved": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz"
+        }
+      }
+    },
+    "event-stream": {
+      "version": "3.1.0",
+      "from": "event-stream@",
+      "dependencies": {
+        "through": {
+          "version": "2.3.4",
+          "from": "through@~2.3.1"
+        },
+        "duplexer": {
+          "version": "0.1.1",
+          "from": "duplexer@~0.1.1"
+        },
+        "from": {
+          "version": "0.1.3",
+          "from": "from@~0"
+        },
+        "map-stream": {
+          "version": "0.1.0",
+          "from": "map-stream@~0.1.0"
+        },
+        "pause-stream": {
+          "version": "0.0.11",
+          "from": "pause-stream@0.0.11"
+        },
+        "split": {
+          "version": "0.2.10",
+          "from": "split@0.2"
+        },
+        "stream-combiner": {
+          "version": "0.0.4",
+          "from": "stream-combiner@~0.0.4"
+        }
+      }
+    },
+    "vinyl": {
+      "version": "0.2.3",
+      "from": "vinyl@",
+      "dependencies": {
+        "clone-stats": {
+          "version": "0.0.1",
+          "from": "clone-stats@~0.0.1"
         }
       }
     },

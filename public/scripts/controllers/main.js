@@ -5,7 +5,7 @@ define([
 ], function (angular, controllers) {
   'use strict';
 
-  controllers
+  angular.module(controllers.name)
     .controller('MainCtrl', function ($scope, $location, user) {
       if (!user.username) {
         $location.path('/login').replace();

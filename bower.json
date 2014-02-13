@@ -10,9 +10,10 @@
     "angular-resource": "~1.0.7",
     "angular-cookies": "~1.0.7",
     "angular-sanitize": "~1.0.7",
-    "requirejs": "~2.1.10"
+    "almond": "~0.2.9"
   },
   "devDependencies": {
+    "requirejs": "~2.1.10",
     "angular-mocks": "~1.0.7",
     "angular-scenario": "~1.0.7"
   }
