@@ -1,6 +1,7 @@
 {
   "name": "fracas",
   "version": "3.0.0",
+  "description": "A front-end for disease surveillance",
   "main": "./server.js",
   "dependencies": {
     "connect-flash": "~0.1.1",
