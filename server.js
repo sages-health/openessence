@@ -7,7 +7,7 @@ var _ = require('lodash');
 
 var conf = require('./server/conf');
 var logger = conf.logger;
-var staticResources = require('./server/staticResources');
+var assets = require('./server/assets');
 var accessControl = require('./server/accessControl');
 
 var app = express();
@@ -31,7 +31,7 @@ app.use(express.session({
 }));
 app.use(require('connect-flash')());
 
-app.use(staticResources.anonymousResources(conf.env, express));
+app.use(assets.anonymous());
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -111,7 +111,7 @@ app.post('/login', passport.authenticate('local', {
 app.all('*', accessControl.denyAnonymousAccess);
 
 app.use('/es', require('./server/es/proxy'));
-app.use('/kibana', staticResources.kibana(conf.env, express));
+app.use('/kibana', assets.kibana());
 
 // this MUST be the last route
 app.use(require('./server/error').notFound);

@@ -1,9 +1,12 @@
 'use strict';
-// TODO rename this file to `assets`
+
+var express = require('express');
+var env = require('./conf').env;
+
 /**
  * Returns an express app that serves static resources that do not require authentication.
  */
-exports.anonymousResources = function (env, express) {
+exports.anonymous = function () {
   var app = express();
   if (env === 'development') {
     app.use('/.tmp', express.static(__dirname + '/../.tmp'));
@@ -24,7 +27,7 @@ exports.anonymousResources = function (env, express) {
 /**
  * Returns an express app that serves static Kibana resources.
  */
-exports.kibana = function (env, express) {
+exports.kibana = function () {
   var app = express();
   if (env === 'development') {
     app.use(express.static(__dirname + '/../kibana/src'));
