@@ -17,7 +17,8 @@
     "async": "~0.2.10",
     "winston": "~0.7.2",
     "http-proxy": "~0.10.4",
-    "connect-restreamer": "~1.0.0"
+    "connect-restreamer": "~1.0.0",
+    "jquery": "~2.1.0"
   },
   "devDependencies": {
     "karma": "~0.10.4",
@@ -49,12 +50,32 @@
     "gulp-rename": "~1.0.0",
     "gulp-mocha": "~0.4.1",
     "gulp-ngmin": "~0.1.2",
-    "gulp-svgmin": "~0.4.1"
+    "gulp-svgmin": "~0.4.1",
+    "gulp-browserify": "~0.4.4",
+    "browserify": "~3.29.0",
+    "browserify-shim": "~3.2.2",
+    "browserify-middleware": "~2.3.0"
   },
   "optionalDependencies": {
     "jpegtran-bin": "~0.2.3",
     "pngquant-bin": "~0.1.5",
     "gifsicle": "~0.1.4"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browser": {
+    "angular": "./public/bower_components/angular/angular.js"
+  },
+  "browserify-shim": {
+    "angular": {
+      "exports": "angular",
+      "depends": [
+        "jquery:jQuery"
+      ]
+    }
   },
   "engines": {
     "node": ">=0.8.0"

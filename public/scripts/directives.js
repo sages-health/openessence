@@ -1,7 +1,4 @@
-define([
-  'angular'
-], function (angular) {
-  'use strict';
+'use strict';
 
-  return angular.module('fracas.directives', []);
-});
+var angular = require('angular');
+module.exports = angular.module('fracas.directives', []);

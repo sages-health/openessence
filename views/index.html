@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../.tmp/styles/main.css">
     <!-- endinject -->
 </head>
-<body ng-app>
+<body ng-app="fracasApp">
 <!--[if lt IE 7]>
 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 <![endif]-->
@@ -29,10 +29,9 @@
 
 <div class="container" ng-view></div>
 
-<!-- In dev, load requirejs and have it load main.js.
-    In production, load main.js (main.js is single bundle that includes almond shim for requirejs) -->
 <!-- inject:js -->
-<script data-main="../public/scripts/main" src="../public/bower_components/requirejs/require.js"></script>
 <!-- endinject -->
+
+<script src="/js/app.js"></script>
 </body>
 </html>

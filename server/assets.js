@@ -2,6 +2,7 @@
 
 var express = require('express');
 var env = require('./conf').env;
+// don't require browserify-middleware up here, it's a dev dependency
 
 /**
  * Returns an express app that serves static resources that do not require authentication.
@@ -11,6 +12,7 @@ exports.anonymous = function () {
   if (env === 'development') {
     app.use('/.tmp', express.static(__dirname + '/../.tmp'));
     app.use('/public', express.static(__dirname + '/../public'));
+    app.use('/js/app.js', require('browserify-middleware')('../public/scripts/app.js'));
   } else if (env === 'test') {
     app.use('/.tmp', express.static(__dirname + '/../.tmp'));
     app.use('/test', express.static(__dirname + '/../test'));

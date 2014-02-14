@@ -1,29 +1,29 @@
-define([
-  'angular',
-  'controllers',
-  'directives',
-  'services',
-  'filters',
-  'controllers/main',
-  'controllers/login'
-], function (angular, controllers, directives, services, filters) {
-  'use strict';
+'use strict';
 
-  var app = angular.module('fracasApp', [controllers.name, directives.name, services.name, filters.name]);
-  app.config(function ($routeProvider) {
-      $routeProvider
-        .when('/login', {
-          templateUrl: '/public/partials/login.html',
-          controller: 'LoginCtrl'
-        })
-        .when('/', {
-          templateUrl: '/public/partials/home.html',
-          controller: 'MainCtrl'
-        })
-        .otherwise({
-          redirectTo: '/'
-        });
+var angular = require('angular');
+var controllers = require('./controllers');
+var directives = require('./directives');
+var services = require('./services');
+var filters = require('./filters');
+
+// controllers must be required up here so any dependent services are initialized first
+var loginCtrl = require('./controllers/login');
+var mainCtrl = require('./controllers/main');
+
+var app = angular.module('fracasApp', [controllers.name, directives.name, services.name, filters.name]);
+app.config(function ($routeProvider) {
+  $routeProvider
+    .when('/login', {
+      templateUrl: '/public/partials/login.html',
+      controller: loginCtrl
+    })
+    .when('/', {
+      templateUrl: '/public/partials/home.html',
+      controller: mainCtrl
+    })
+    .otherwise({
+      redirectTo: '/'
     });
-
-  return app;
 });
+
+module.exports = app;
