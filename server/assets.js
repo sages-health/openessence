@@ -12,6 +12,8 @@ exports.anonymous = function () {
   if (env === 'development') {
     app.use('/.tmp', express.static(__dirname + '/../.tmp'));
     app.use('/public', express.static(__dirname + '/../public'));
+
+    // In development, we use browserify-middleware so that you don't have to do a build
     app.use('/js/app.js', require('browserify-middleware')('../public/scripts/app.js'));
   } else if (env === 'test') {
     app.use('/.tmp', express.static(__dirname + '/../.tmp'));

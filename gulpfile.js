@@ -4,10 +4,10 @@
 var gulp = require('gulp');
 var gutil  = require('gulp-util');
 var lazypipe = require('lazypipe');
-var rjs = require('requirejs');
 var sass = require('gulp-ruby-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
+var browserify = require('gulp-browserify');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var imagemin = require('gulp-imagemin');
@@ -19,8 +19,6 @@ var rev = require('gulp-rev');
 var inject = require('gulp-inject');
 var mocha = require('gulp-mocha');
 var open = require('open');
-var fs = require('fs');
-var mkdirp = require('mkdirp');
 var fork = require('child_process').fork;
 
 // add Kibana's grunt tasks
@@ -37,11 +35,11 @@ var fork = require('child_process').fork;
 
 var paths = {
   scripts: ['public/scripts/**/*.js'],
+  scriptMain: 'public/scripts/app.js',
   styles: ['public/styles/**/*.scss'],
   svgs: ['public/images/**/*.svg'],
   html: ['views/**/*.html'],
   partials: ['public/partials/**/*.html'],
-  mainJsConcat: 'dist/public/scripts/main.js',
   sassLoadPath: ['public/bower_components'],
   indexHtml: 'views/index.html',
   serverTests: ['test/server/**/test-*.js'],
@@ -83,36 +81,6 @@ gulp.task('clean-styles', function () {
     .pipe(rimraf());
 });
 
-gulp.task('rjs', ['clean-scripts'], function (callback) {
-  rjs.optimize({
-    baseUrl: 'public/scripts',
-    mainConfigFile: 'public/scripts/main.js',
-    optimize: 'none', // let other tasks uglify
-    useStrict: true,
-    // use shim loader instead of RequireJS, see https://github.com/jrburke/almond#restrictions
-    // if this gives you problems, then just use RequireJS
-    name: '../bower_components/almond/almond',
-    include: ['main'],
-    wrap: true,
-    out: function (text) {
-      // TODO do this with gulp, i.e. stream of vinyl file objects
-      mkdirp('dist/public/scripts', function (err) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        fs.writeFile(paths.mainJsConcat, text, function (err) {
-          callback(err);
-        });
-      });
-    }
-  }, function (buildResponse) {
-    console.log(buildResponse);
-  }, function (err) {
-    callback(err);
-  });
-});
-
 gulp.task('jshint', function () {
   return gulp.src(paths.scripts)
     .pipe(jshint('.jshintrc'))
@@ -120,9 +88,16 @@ gulp.task('jshint', function () {
 //    .pipe(jshint.reporter('fail')) // turn this on for pedantry
 });
 
-gulp.task('scripts', ['jshint', 'rjs'], function () {
-  return gulp.src(paths.mainJsConcat)
-    .pipe(rimraf()) // delete rjs temp output
+// If we ever need to split up our browserify bundles, here are some useful links:
+// https://github.com/domenic/browserify-deoptimizer
+// http://benclinkinbeard.com/posts/external-bundles-for-faster-browserify-builds/
+// http://esa-matti.suuronen.org/blog/2013/04/15/asynchronous-module-loading-with-browserify/
+
+gulp.task('scripts', ['jshint'], function () {
+  return gulp.src(paths.scriptMain)
+    .pipe(browserify({
+      debug: false // we use browserify-middleware in development
+    }))
     .pipe(ngmin())
     .pipe(uglify({
       preserveComments: 'some' // preserve license headers

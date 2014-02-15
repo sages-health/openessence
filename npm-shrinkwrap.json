@@ -1262,35 +1262,40 @@
       "from": "buffer-crc32@0.2.1",
       "resolved": "https://registry.npmjs.org/buffer-crc32/-/buffer-crc32-0.2.1.tgz"
     },
-    "karma-chrome-launcher": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz"
-    },
     "karma-firefox-launcher": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz"
     },
-    "karma-jasmine": {
-      "version": "0.1.3",
-      "from": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz",
-      "resolved": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz"
+    "karma-chrome-launcher": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz"
+    },
+    "karma-script-launcher": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz"
     },
     "karma-html2js-preprocessor": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz"
     },
+    "karma-jasmine": {
+      "version": "0.1.3",
+      "from": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz",
+      "resolved": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz"
+    },
     "karma-requirejs": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
     },
-    "karma-script-launcher": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz"
+    "mkdirp": {
+      "version": "0.3.5",
+      "from": "mkdirp@0.3.5",
+      "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.5.tgz"
     },
     "event-stream": {
       "version": "3.1.0",
@@ -1326,6 +1331,16 @@
         }
       }
     },
+    "vinyl": {
+      "version": "0.2.3",
+      "from": "vinyl@",
+      "dependencies": {
+        "clone-stats": {
+          "version": "0.0.1",
+          "from": "clone-stats@~0.0.1"
+        }
+      }
+    },
     "karma-coffee-preprocessor": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-coffee-preprocessor/-/karma-coffee-preprocessor-0.1.0.tgz",
@@ -1335,16 +1350,6 @@
           "version": "1.6.3",
           "from": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz",
           "resolved": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz"
-        }
-      }
-    },
-    "vinyl": {
-      "version": "0.2.3",
-      "from": "vinyl@",
-      "dependencies": {
-        "clone-stats": {
-          "version": "0.0.1",
-          "from": "clone-stats@~0.0.1"
         }
       }
     },
