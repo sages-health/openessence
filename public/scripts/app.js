@@ -1,6 +1,8 @@
 'use strict';
 
 var angular = require('angular');
+require('angular-route');
+
 var controllers = require('./controllers');
 var directives = require('./directives');
 var services = require('./services');
@@ -10,7 +12,7 @@ var filters = require('./filters');
 var loginCtrl = require('./controllers/login');
 var mainCtrl = require('./controllers/main');
 
-var app = angular.module('fracasApp', [controllers.name, directives.name, services.name, filters.name]);
+var app = angular.module('fracasApp', ['ngRoute', controllers.name, directives.name, services.name, filters.name]);
 app.config(function ($routeProvider) {
   $routeProvider
     .when('/login', {

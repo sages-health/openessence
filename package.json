@@ -63,13 +63,19 @@
     ]
   },
   "browser": {
-    "angular": "./public/bower_components/angular/angular.js"
+    "angular": "./public/bower_components/angular/angular.js",
+    "angular-route": "./public/bower_components/angular-route/angular-route.js"
   },
   "browserify-shim": {
     "angular": {
       "exports": "angular",
       "depends": [
         "jquery:jQuery"
+      ]
+    },
+    "angular-route": {
+      "depends": [
+        "angular:angular"
       ]
     }
   },
