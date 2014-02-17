@@ -49,10 +49,6 @@ app.engine('html', function (path, options, callback) {
 });
 app.set('views', require('./server/views')(conf.env));
 
-// see http://redotheweb.com/2013/02/20/sequelize-the-javascript-orm-in-practice.html
-var models = require('./server/models');
-app.set('models', models);
-
 passport.serializeUser(function (user, done) {
   // store entire user object in session so we don't have to deserialize it from data store
   // this won't scale to large number of concurrent users, but it will be faster for small deployments
@@ -67,33 +63,6 @@ passport.use(new LocalStrategy(function (username, password, done) {
     id: 1,
     name: 'admin'
   }); // TODO get from es
-//  models.User
-//    .find({
-//      where: {
-//        name: username
-//      }
-//    })
-//    .error(done)
-//    .success(function (user) {
-//      if (!user) {
-//        return done(null, false, {
-//          // don't display this to the user, that would be an info leak
-//          message: 'Unknown username ' + username
-//        });
-//      }
-//      user.comparePassword(password, function (err, result) {
-//        if (err) {
-//          return done(err);
-//        }
-//        if (result) {
-//          return done(null, user);
-//        } else {
-//          return done(null, false, {
-//            message: 'Incorrect password'
-//          });
-//        }
-//      });
-//    });
 }));
 
 app.get('/', function (req, res) {
