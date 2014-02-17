@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width">
     <!-- there's probably a more Angular-y way to do this, e.g. ng-init, but oh well -->
     <meta name="_username" content="{{= user ? user.name : '' }}">
+    <meta name="_csrf" content="{{= csrfToken }}">
 
     <!-- inject:css -->
     <link rel="stylesheet" href="../.tmp/styles/main.css">

@@ -30,11 +30,26 @@ app.use(express.session({
   }
 }));
 app.use(require('connect-flash')());
+app.use(express.csrf());
 
 app.use(assets.anonymous());
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.use(new LocalStrategy(function (username, password, done) {
+  return done(null, {
+    id: 1,
+    username: 'admin'
+  }); // TODO get from es
+}));
+
+// variables for views, this must be before router in the middleware chain
+app.use(function (req, res, next) {
+  res.locals.user = req.user;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 app.use(app.router);
 
@@ -58,23 +73,37 @@ passport.deserializeUser(function (user, done) {
   done(null, user);
 });
 
-passport.use(new LocalStrategy(function (username, password, done) {
-  return done(null, {
-    id: 1,
-    name: 'admin'
-  }); // TODO get from es
-}));
-
 app.get('/', function (req, res) {
   // single page, even login view is handled by client
-  res.render('index.html', {user: req.user});
+  res.render('index.html');
 });
 
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/',
-  failureFlash: true
-}));
+app.post('/login', function (req, res, next) {
+  passport.authenticate('local', function (err, user) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    if (user) {
+      req.login(user, function (err) {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        res.json(200, {
+          // whitelist user properties that are OK to send to client
+          username: user.username
+        });
+      });
+    } else {
+      res.json(401, {
+        message: 'Bad credentials'
+      });
+    }
+  })(req, res, next);
+});
 
 // all routes below this require authenticating
 app.all('*', accessControl.denyAnonymousAccess);
