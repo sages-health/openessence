@@ -30,13 +30,13 @@ app.config(function ($httpProvider, csrfToken) {
 
 app.config(function ($routeProvider) {
   $routeProvider
-    .when('/login', {
-      templateUrl: '/public/partials/login.html',
-      controller: loginCtrl
-    })
     .when('/', {
       templateUrl: '/public/partials/home.html',
       controller: mainCtrl
+    })
+    .when('/login', {
+      templateUrl: '/public/partials/login.html',
+      controller: loginCtrl
     })
     .otherwise({
       redirectTo: '/'

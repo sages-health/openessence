@@ -15,7 +15,8 @@
     "winston": "~0.7.2",
     "http-proxy": "~0.10.4",
     "connect-restreamer": "~1.0.0",
-    "jquery": "~2.1.0"
+    "jquery": "~2.1.0",
+    "passport-persona": "~0.1.7"
   },
   "devDependencies": {
     "karma": "~0.10.4",

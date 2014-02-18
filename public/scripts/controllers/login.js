@@ -7,18 +7,16 @@ require('../services/user');
 var NAME = 'LoginCtrl';
 
 // `controllers.controller` breaks ngmin, see https://github.com/btford/ngmin#references
-angular.module(controllers.name).controller(NAME, function ($scope, $http, $location, user) {
-  $scope.login = function (attemptedUser) {
-    $http({
-      method: 'POST',
-      url: '/login',
-      data: attemptedUser
-    }).success(function (data) {
-      user.username = data.username;
-      user.name = data.name;
-      $location.path('/');
-    }).error(function () {
-      // TODO check error, if bad auth then show bad auth view
+angular.module(controllers.name).controller(NAME, function ($scope, $http, $location, $q, user) {
+  if (user.isLoggedIn()) {
+    $location.path('/').replace();
+    return;
+  }
+
+  $scope.promptForLogin = function () {
+    navigator.id.request({
+      siteName: 'Fracas'
+      // TODO more options from https://developer.mozilla.org/en-US/docs/Web/API/navigator.id.request
     });
   };
 });

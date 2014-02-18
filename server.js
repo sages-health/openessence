@@ -3,6 +3,7 @@
 var express = require('express');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var PersonaStrategy = require('passport-persona').Strategy;
 var _ = require('lodash');
 
 var conf = require('./server/conf');
@@ -37,12 +38,25 @@ app.use(assets.anonymous());
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new LocalStrategy(function (username, password, done) {
+passport.serializeUser(function (user, done) {
+  // store entire user object in session so we don't have to deserialize it from data store
+  // this won't scale to large number of concurrent users, but it will be faster for small deployments
+  done(null, user);
+});
+passport.deserializeUser(function (user, done) {
+  // no need to deserialize, we store entire user in memory
+  done(null, user);
+});
+
+passport.use(new PersonaStrategy({
+  audience: 'http://localhost:9000'
+}, function (email, done) {
+  // TODO whitelist emails here
+  logger.info('%s logged in', email);
   return done(null, {
-    id: 1,
-    username: 'admin',
-    name: 'Gabe'
-  }); // TODO get from es
+    email: email
+    // other attributes can come from DB
+  });
 }));
 
 // variables for views, this must be before router in the middleware chain
@@ -65,22 +79,19 @@ app.engine('html', function (path, options, callback) {
 });
 app.set('views', require('./server/views')(conf.env));
 
-passport.serializeUser(function (user, done) {
-  // store entire user object in session so we don't have to deserialize it from data store
-  // this won't scale to large number of concurrent users, but it will be faster for small deployments
-  done(null, user);
-});
-passport.deserializeUser(function (user, done) {
-  done(null, user);
-});
 
 app.get('/', function (req, res) {
   // single page, even login view is handled by client
   res.render('index.html');
 });
 
-app.post('/login', function (req, res, next) {
-  passport.authenticate('local', function (err, user) {
+app.post('/session', function (req, res) {
+  // 307 means client should send another POST
+  res.redirect(307, '/session/browserid');
+});
+
+app.post('/session/browserid', function (req, res, next) {
+  passport.authenticate('persona', function (err, user) {
     if (err) {
       next(err);
       return;
@@ -95,8 +106,7 @@ app.post('/login', function (req, res, next) {
 
         res.json(200, {
           // whitelist user properties that are OK to send to client
-          username: user.username,
-          name: user.name
+          email: user.email
         });
       });
     } else {
@@ -109,6 +119,16 @@ app.post('/login', function (req, res, next) {
 
 // all routes below this require authenticating
 app.all('*', accessControl.denyAnonymousAccess);
+
+app.delete('/session', function (req, res) {
+  res.redirect(307, '/session/browserid');
+});
+
+app.delete('/session/browserid', function (req, res) {
+  logger.info('%s logged out', req.user.email);
+  req.logout();
+  res.send(204); // No Content
+});
 
 app.use('/es', require('./server/es/proxy'));
 app.use('/kibana', assets.kibana());

@@ -24,10 +24,11 @@
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown">{{user.name}} <b class="caret"></b></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown">{{user.email}} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="choice in dropdownItems">
-                            <a href="{{choice.href}}">{{choice.text}}</a>
+                        <li>
+                            <a href="/#/settings">Settings</a>
+                            <a ng-click="logout()">Logout</a>
                         </li>
                     </ul>
                 </li>

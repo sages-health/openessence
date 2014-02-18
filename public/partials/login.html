@@ -4,26 +4,7 @@
         <header>
             <h3 class="text-muted">Fracas</h3>
         </header>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Please sign in</h3>
-            </div>
-            <div class="panel-body">
-                <form accept-charset="UTF-8" role="form" ng-submit="login(user)">
-                    <fieldset>
-                        <div class="form-group">
-                            <input class="form-control" placeholder="Username" name="username" type="text" required
-                                   ng-model="user.username">
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" placeholder="Password" name="password" type="password" value=""
-                                   required ng-model="user.password">
-                        </div>
-                    </fieldset>
-                    <input type="submit" class="btn btn-lg btn-success btn-block" value="Login"/>
-                </form>
-            </div>
-        </div>
+        <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()">Login</button>
         <footer>
             <h4 class="text-muted pull-right">...for disease surveillance</h4>
         </footer>
