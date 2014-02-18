@@ -62,7 +62,8 @@
   "browser": {
     "angular": "./public/bower_components/angular/angular.js",
     "angular-route": "./public/bower_components/angular-route/angular-route.js",
-    "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js"
+    "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js",
+    "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"
   },
   "browserify-shim": {
     "angular": {
@@ -77,6 +78,11 @@
       ]
     },
     "angular-sanitize": {
+      "depends": [
+        "angular:angular"
+      ]
+    },
+    "angular-bootstrap": {
       "depends": [
         "angular:angular"
       ]

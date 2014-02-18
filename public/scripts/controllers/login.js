@@ -13,8 +13,9 @@ angular.module(controllers.name).controller(NAME, function ($scope, $http, $loca
       method: 'POST',
       url: '/login',
       data: attemptedUser
-    }).success(function () {
-      user.username = attemptedUser.username;
+    }).success(function (data) {
+      user.username = data.username;
+      user.name = data.name;
       $location.path('/');
     }).error(function () {
       // TODO check error, if bad auth then show bad auth view

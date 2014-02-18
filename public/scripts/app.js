@@ -3,6 +3,7 @@
 var angular = require('angular');
 require('angular-route');
 require('angular-sanitize');
+require('angular-bootstrap');
 
 var controllers = require('./controllers');
 var directives = require('./directives');
@@ -14,7 +15,7 @@ require('./services/csrfToken');
 var loginCtrl = require('./controllers/login');
 var mainCtrl = require('./controllers/main');
 
-var app = angular.module('fracasApp', ['ngRoute', 'ngSanitize',
+var app = angular.module('fracasApp', ['ngRoute', 'ngSanitize', 'ui.bootstrap',
                                        controllers.name, directives.name, services.name, filters.name]);
 
 app.config(function ($httpProvider, csrfToken) {

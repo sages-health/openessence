@@ -11,6 +11,20 @@ angular.module(controllers.name).controller(NAME, function ($scope, $location, u
     $location.path('/login').replace();
     return;
   }
+
+  $scope.user = user;
+
+  // this is overkill right now, but it shows how we can have dynamic content
+  $scope.dropdownItems = [
+    {
+      text: 'Settings',
+      href: '/#/settings'
+    },
+    {
+      text: 'Logout',
+      href: '/#/logout'
+    }
+  ];
 });
 
 module.exports = NAME;

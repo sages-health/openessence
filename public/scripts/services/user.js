@@ -7,7 +7,8 @@ var NAME = 'user';
 
 angular.module(services.name).factory(NAME, function () {
   return {
-    username: angular.element('meta[name="_username"]').attr('content')
+    username: angular.element('meta[name="_username"]').attr('content'),
+    name: angular.element('meta[name="_name"]').attr('content')
   };
 });
 

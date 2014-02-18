@@ -9,8 +9,10 @@
     <title>Fracas</title>
     <meta name="description" content="Fracas, for disease surveillance">
     <meta name="viewport" content="width=device-width">
+
     <!-- there's probably a more Angular-y way to do this, e.g. ng-init, but oh well -->
-    <meta name="_username" content="{{= user ? user.name : '' }}">
+    <meta name="_username" content="{{= user ? user.username : '' }}">
+    <meta name="_name" content="{{= user ? user.name : '' }}">
     <meta name="_csrf" content="{{= csrfToken }}">
 
     <!-- inject:css -->
@@ -22,7 +24,7 @@
 <p>You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> to better experience this site.</p>
 <![endif]-->
 
-<div class="container" ng-view></div>
+<div ng-view></div>
 
 <!-- inject:js -->
 <script src="/js/app.js"></script>

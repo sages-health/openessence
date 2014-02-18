@@ -40,7 +40,8 @@ app.use(passport.session());
 passport.use(new LocalStrategy(function (username, password, done) {
   return done(null, {
     id: 1,
-    username: 'admin'
+    username: 'admin',
+    name: 'Gabe'
   }); // TODO get from es
 }));
 
@@ -94,7 +95,8 @@ app.post('/login', function (req, res, next) {
 
         res.json(200, {
           // whitelist user properties that are OK to send to client
-          username: user.username
+          username: user.username,
+          name: user.name
         });
       });
     } else {

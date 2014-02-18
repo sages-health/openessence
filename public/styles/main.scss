@@ -3,7 +3,11 @@ $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
 @import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap";
 
-/* Put your CSS here */
+// for ng-bootstrap
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
+
 html, body {
   margin: 20px;
 }
