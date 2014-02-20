@@ -13,6 +13,7 @@ var accessControl = require('./server/accessControl');
 
 var app = express();
 
+app.use(express.compress());
 app.use(express.favicon('public/favicon.ico'));
 if (conf.env === 'production') {
   app.use(express.logger());
