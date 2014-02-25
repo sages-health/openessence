@@ -1,9 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-require('angular-route');
 require('angular-sanitize');
 require('angular-bootstrap');
+require('angular-ui-router');
 
 var controllers = require('./controllers');
 var directives = require('./directives');
@@ -15,7 +15,7 @@ require('./services/csrfToken');
 var loginCtrl = require('./controllers/login');
 var mainCtrl = require('./controllers/main');
 
-var app = angular.module('fracasApp', ['ngRoute', 'ngSanitize', 'ui.bootstrap',
+var app = angular.module('fracasApp', ['ngSanitize', 'ui.bootstrap', 'ui.router',
                                        controllers.name, directives.name, services.name, filters.name]);
 
 app.config(function ($httpProvider, csrfToken) {
@@ -28,18 +28,19 @@ app.config(function ($httpProvider, csrfToken) {
   });
 });
 
-app.config(function ($routeProvider) {
-  $routeProvider
-    .when('/', {
-      templateUrl: '/public/partials/home.html',
+app.config(function ($stateProvider, $urlRouterProvider) {
+  $urlRouterProvider.otherwise('/');
+
+  $stateProvider
+    .state('home', {
+      url: '/',
+      templateUrl: 'public/partials/home.html',
       controller: mainCtrl
     })
-    .when('/login', {
+    .state('login', {
+      url: '/login',
       templateUrl: '/public/partials/login.html',
       controller: loginCtrl
-    })
-    .otherwise({
-      redirectTo: '/'
     });
 });
 

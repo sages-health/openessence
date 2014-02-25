@@ -6,7 +6,8 @@
     "angular-route": "~1.2.13",
     "angular-sanitize": "~1.2.13",
     "angular-bootstrap": "~0.10.0",
-    "bootstrap-sass-official": "~3.1.1"
+    "bootstrap-sass-official": "~3.1.1",
+    "angular-ui-router": "0.2.8-bowratic-tedium"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.13",

@@ -62,9 +62,9 @@
   },
   "browser": {
     "angular": "./public/bower_components/angular/angular.js",
-    "angular-route": "./public/bower_components/angular-route/angular-route.js",
     "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js",
-    "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"
+    "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
+    "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js"
   },
   "browserify-shim": {
     "angular": {
@@ -73,17 +73,17 @@
         "jquery:jQuery"
       ]
     },
-    "angular-route": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
     "angular-sanitize": {
       "depends": [
         "angular:angular"
       ]
     },
     "angular-bootstrap": {
+      "depends": [
+        "angular:angular"
+      ]
+    },
+    "angular-ui-router": {
       "depends": [
         "angular:angular"
       ]
