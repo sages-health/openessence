@@ -31,7 +31,17 @@ app.use(express.session({
   }
 }));
 app.use(require('connect-flash')());
-app.use(express.csrf());
+
+var csrf = express.csrf();
+app.use(function (req, res, next) {
+  if (req.method === 'POST' && /^\/kibana\/es(\/|$)/.test(req.path)) {
+    // Kibana's POST requests to elasticsearch don't need CSRF tokens since they don't mutate state and we don't
+    // want to patch Kibana
+    next();
+  } else {
+    csrf(req, res, next);
+  }
+});
 
 app.use(assets.anonymous());
 
@@ -62,7 +72,9 @@ passport.use(new PersonaStrategy({
 // variables for views, this must be before router in the middleware chain
 app.use(function (req, res, next) {
   res.locals.user = req.user;
-  res.locals.csrfToken = req.csrfToken();
+  if (req.csrfToken) { // not every request has CSRF token
+    res.locals.csrfToken = req.csrfToken();
+  }
   next();
 });
 
@@ -130,7 +142,9 @@ app.delete('/session/browserid', function (req, res) {
   res.send(204); // No Content
 });
 
-app.use('/es', require('./server/es/proxy'));
+var esProxy = require('./server/es/proxy');
+app.use('/es', esProxy);
+app.use('/kibana/es', esProxy);
 app.use('/kibana', assets.kibana());
 
 // this MUST be the last route
