@@ -2,14 +2,16 @@
 
 var express = require('express');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 var PersonaStrategy = require('passport-persona').Strategy;
+var locale = require('locale');
 var _ = require('lodash');
 
 var conf = require('./server/conf');
 var logger = conf.logger;
-var assets = require('./server/assets');
 var accessControl = require('./server/accessControl');
+var assets = require('./server/assets');
+var supportedLocales = require('./server/locales').getSupportedLocalesSync();
+var routes = require('./server/routes');
 
 var app = express();
 
@@ -41,6 +43,17 @@ app.use(function (req, res, next) {
     next();
   } else {
     csrf(req, res, next);
+  }
+});
+
+app.use(locale(supportedLocales)); // adds req.locale based on best matching locale
+app.use(function (req, res, next) {
+  if (req.path === '/') {
+    res.redirect(307, '/' + req.locale);
+  } else {
+    // override user agent's locale, useful for debugging and for multilingual users
+    req.locale = req.path.split('/')[1];
+    next();
   }
 });
 
@@ -76,10 +89,25 @@ app.use(function (req, res, next) {
   if (req.csrfToken) { // not every request has CSRF token
     res.locals.csrfToken = req.csrfToken();
   }
+  res.locals.lang = req.locale;
   next();
 });
 
-app.use(app.router);
+// /en/*, /es/*, etc.
+supportedLocales.forEach(function (l) {
+  app.use('/' + l, routes);
+});
+
+// also allow requests unprefixed by locale
+app.use(routes);
+
+// everything below this requires authentication
+app.use(accessControl.denyAnonymousAccess);
+
+var esProxy = require('./server/es/proxy');
+app.use('/es', esProxy);
+app.use('/kibana/es', esProxy);
+app.use('/kibana', assets.kibana());
 
 app.use(require('./server/error').middleware);
 
@@ -91,62 +119,6 @@ app.engine('html', function (path, options, callback) {
   require('ejs').renderFile(path, options, callback);
 });
 app.set('views', require('./server/views')(conf.env));
-
-
-app.get('/', function (req, res) {
-  // single page, even login view is handled by client
-  res.render('index.html');
-});
-
-app.post('/session', function (req, res) {
-  // 307 means client should send another POST
-  res.redirect(307, '/session/browserid');
-});
-
-app.post('/session/browserid', function (req, res, next) {
-  passport.authenticate('persona', function (err, user) {
-    if (err) {
-      next(err);
-      return;
-    }
-
-    if (user) {
-      req.login(user, function (err) {
-        if (err) {
-          next(err);
-          return;
-        }
-
-        res.json(200, {
-          // whitelist user properties that are OK to send to client
-          email: user.email
-        });
-      });
-    } else {
-      res.json(401, {
-        message: 'Bad credentials'
-      });
-    }
-  })(req, res, next);
-});
-
-// all routes below this require authenticating
-app.all('*', accessControl.denyAnonymousAccess);
-
-app.delete('/session', function (req, res) {
-  res.redirect(307, '/session/browserid');
-});
-
-app.delete('/session/browserid', function (req, res) {
-  logger.info('%s logged out', req.user.email);
-  req.logout();
-  res.send(204); // No Content
-});
-
-var esProxy = require('./server/es/proxy');
-app.use('/es', esProxy);
-app.use('/kibana/es', esProxy);
-app.use('/kibana', assets.kibana());
 
 // this MUST be the last route
 app.use(require('./server/error').notFound);

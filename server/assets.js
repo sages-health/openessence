@@ -15,6 +15,9 @@ exports.anonymous = function () {
 
     // In development, we use browserify-middleware so that you don't have to do a build
     app.use('/js/app.js', require('browserify-middleware')('../public/scripts/app.js'));
+
+    // TODO po2json middleware instead
+    app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
   } else if (env === 'test') {
     app.use('/.tmp', express.static(__dirname + '/../.tmp'));
     app.use('/test', express.static(__dirname + '/../test'));

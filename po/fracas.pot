@@ -1,0 +1,32 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../public/partials/home.html
+msgid "Dashboard"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Logout"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Settings"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Submit"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Toggle navigation"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "...for disease surveillance"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "Login"
+msgstr ""

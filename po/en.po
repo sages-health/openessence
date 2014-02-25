@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 1.6.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
+
+#: ../public/partials/home.html
+msgid "Dashboard"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Logout"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Settings"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Submit"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Toggle navigation"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "...for disease surveillance"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "Login"
+msgstr ""

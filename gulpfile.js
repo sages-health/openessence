@@ -18,7 +18,9 @@ var htmlmin = require('gulp-htmlmin');
 var rev = require('gulp-rev');
 var inject = require('gulp-inject');
 var mocha = require('gulp-mocha');
+var gettext = require('gulp-angular-gettext');
 var open = require('open');
+var path = require('path');
 var fork = require('child_process').fork;
 
 // add Kibana's grunt tasks
@@ -34,16 +36,16 @@ var fork = require('child_process').fork;
 // TODO get livereload working with https://github.com/mollerse/gulp-embedlr
 
 var paths = {
-  scripts: ['public/scripts/**/*.js'],
+  scripts: 'public/scripts/**/*.js',
   scriptMain: 'public/scripts/app.js',
-  styles: ['public/styles/**/*.scss'],
-  svgs: ['public/images/**/*.svg'],
-  html: ['views/**/*.html'],
-  partials: ['public/partials/**/*.html'],
-  sassLoadPath: ['public/bower_components'],
+  styles: 'public/styles/**/*.scss',
+  svgs: 'public/images/**/*.svg',
+  html: 'views/**/*.html',
+  partials: 'public/partials/**/*.html',
+  sassLoadPath: 'public/bower_components',
   indexHtml: 'views/index.html',
-  serverTests: ['test/server/**/test-*.js'],
-  clientTests: ['test/client/**/test-*.js'],
+  serverTests: 'test/server/**/test-*.js',
+  clientTests: 'test/client/**/test-*.js',
   imagesDest: 'dist/public/images'
 };
 
@@ -232,12 +234,35 @@ gulp.task('html', ['inject'], function () {
 //  // TODO get this working when manually rebuilding gets annoying enough
 //});
 
+gulp.task('pot', function () {
+  gulp.src([paths.partials, paths.scripts])
+    .pipe(gettext.extract('fracas.pot', {
+      postProcess: function (po) {
+        po.items.forEach(function (item) {
+          item.references = item.references.map(function (ref) {
+            return path.relative(path.join(__dirname, 'po'), ref)
+              .replace(/\\/g, '/'); // replace any Windows-style paths
+          });
+        });
+      }
+    }))
+    .pipe(gulp.dest('po/'));
+});
+
+gulp.task('translations', function () {
+  gulp.src('po/*.po')
+    .pipe(gettext.compile({
+      format: 'json'
+    }))
+    .pipe(gulp.dest('dist/public/translations/'));
+});
+
 gulp.task('clean', function () {
   return gulp.src(['dist', '.tmp'], {read: false})
     .pipe(rimraf());
 });
 
-gulp.task('build', ['images', 'partials', 'html'/*, 'kibana-build'*/]);
+gulp.task('build', ['images', 'partials', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
 
 gulp.task('server', ['build'], function (callback) {
   var child = fork(__dirname + '/server.js', [], {

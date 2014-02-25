@@ -4,6 +4,7 @@ var angular = require('angular');
 require('angular-sanitize');
 require('angular-bootstrap');
 require('angular-ui-router');
+require('angular-gettext');
 
 var controllers = require('./controllers');
 var directives = require('./directives');
@@ -15,7 +16,9 @@ require('./services/csrfToken');
 var loginCtrl = require('./controllers/login');
 var mainCtrl = require('./controllers/main');
 
-var app = angular.module('fracasApp', ['ngSanitize', 'ui.bootstrap', 'ui.router',
+var i18n = require('./i18n');
+
+var app = angular.module('fracasApp', ['ngSanitize', 'ui.bootstrap', 'ui.router', 'gettext',
                                        controllers.name, directives.name, services.name, filters.name]);
 
 app.config(function ($httpProvider, csrfToken) {
@@ -42,6 +45,22 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       templateUrl: '/public/partials/login.html',
       controller: loginCtrl
     });
+});
+
+i18n.strings().then(function (strings) {
+  angular.element(document).ready(function () {
+    app.run(function (gettextCatalog) {
+      Object.keys(strings).forEach(function (lang) {
+        // angular-gettext's JSON format allows for multiple locales in a single bundle
+        // we don't use that now, but we may in the future
+        gettextCatalog.setStrings(lang, strings[lang]);
+      });
+      gettextCatalog.currentLanguage = document.documentElement.lang;
+      gettextCatalog.debug = true; // highlight untranslated strings TODO turn this off in production
+    });
+
+    angular.bootstrap(document, ['fracasApp']);
+  });
 });
 
 module.exports = app;

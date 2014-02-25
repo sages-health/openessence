@@ -16,11 +16,14 @@
     "http-proxy": "~0.10.4",
     "connect-restreamer": "~1.0.0",
     "jquery": "~2.1.0",
-    "passport-persona": "~0.1.7"
+    "passport-persona": "~0.1.7",
+    "locale": "0.0.14"
   },
   "devDependencies": {
+    "browserify": "~3.29.0",
+    "browserify-shim": "~3.2.2",
+    "browserify-middleware": "~2.3.0",
     "karma": "~0.10.4",
-    "matchdep": "~0.3.0",
     "mocha": "~1.17.1",
     "chai": "~1.9.0",
     "sinon": "~1.8.1",
@@ -46,9 +49,7 @@
     "gulp-ngmin": "~0.1.2",
     "gulp-svgmin": "~0.4.1",
     "gulp-browserify": "~0.4.4",
-    "browserify": "~3.29.0",
-    "browserify-shim": "~3.2.2",
-    "browserify-middleware": "~2.3.0"
+    "gulp-angular-gettext": "~0.1.1"
   },
   "optionalDependencies": {
     "jpegtran-bin": "~0.2.3",
@@ -64,7 +65,8 @@
     "angular": "./public/bower_components/angular/angular.js",
     "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js",
     "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
-    "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js"
+    "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js",
+    "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js"
   },
   "browserify-shim": {
     "angular": {
@@ -84,6 +86,11 @@
       ]
     },
     "angular-ui-router": {
+      "depends": [
+        "angular:angular"
+      ]
+    },
+    "angular-gettext": {
       "depends": [
         "angular:angular"
       ]
