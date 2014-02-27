@@ -7,12 +7,10 @@ var conf = require('../conf');
 var settings = require('./settings');
 var notFound = require('../error');
 
-var proxy = new httpProxy.HttpProxy({
-  target: {
-    host: conf.es.host,
-    port: conf.es.port
-  }
+var proxy = httpProxy.createProxyServer({
+  target: conf.es.url
 });
+
 var app = express();
 
 // fix for https://github.com/nodejitsu/node-http-proxy/issues/180
@@ -30,7 +28,7 @@ app.param('index', function (req, res, next, index) {
 });
 
 var proxyReq = function proxyReq (req, res) {
-  proxy.proxyRequest(req, res);
+  proxy.web(req, res);
 };
 
 app.options('*', proxyReq);

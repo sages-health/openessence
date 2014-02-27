@@ -16,28 +16,11 @@ if (!fs.existsSync(envFile)) {
 }
 
 var envSettings = require('./' + env);
-var settings = envSettings.settings;
-
-// database settings
-var db = _.assign({
-  username: 'postgres',
-  password: 'password',
-  host: 'localhost',
-  port: '5432',
-  name: 'openessence', // database name, NOT username
-
-  // used by Sequelize
-  dialect: 'postgres',
-  dialectModulePath: 'pg.js'
-}, settings.DB_SETTINGS);
-db.url = 'jdbc:postgresql://' + db.host + ':' + db.port + '/' + db.name;
-settings.DB_SETTINGS = db;
-exports.db = db;
+var settings = envSettings.settings; // TODO clean this up
 
 // elasticsearch settings
 var es = _.assign({
-  host: 'localhost',
-  port: 9200
+  url: 'http://localhost:9200'
 }, settings.ES_SETTINGS);
 settings.ES_SETTINGS = es;
 exports.es = es;
