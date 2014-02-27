@@ -32,12 +32,12 @@ app.config(function ($httpProvider, csrfToken) {
 });
 
 app.config(function ($stateProvider, $urlRouterProvider) {
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/'); // TODO use pushstate
 
   $stateProvider
     .state('home', {
       url: '/',
-      templateUrl: 'public/partials/home.html',
+      templateUrl: '/public/partials/home.html',
       controller: mainCtrl
     })
     .state('login', {
