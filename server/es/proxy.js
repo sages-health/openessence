@@ -8,7 +8,7 @@ var settings = require('./settings');
 var notFound = require('../error');
 
 var proxy = httpProxy.createProxyServer({
-  target: conf.es.url
+  target: conf.elasticsearch.url
 });
 
 var app = express();

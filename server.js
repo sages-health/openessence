@@ -25,7 +25,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({
-  secret: conf.settings.SESSION_SECRET,
+  secret: conf.sessionSecret,
   cookie: {
     path: '/',
     httpOnly: true,

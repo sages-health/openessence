@@ -1,12 +1,20 @@
-module.exports = {
-  SESSION_SECRET: 'L0NG_R@ND0M_STR!NG',
+'use strict';
 
-  DB_SETTINGS: {
-    name: 'databaseName',
-    username: 'postgres',
-    password: 'password',
-    host: 'localhost',
-    dialect: 'postgres',
-    dialectModulePath: 'pg.js'
-  }
-};
+var _ = require('lodash');
+var winston = require('winston');
+var defaults = require('./defaults');
+
+module.exports = _.assign(defaults, {
+  sessionSecret: 'someGoodSecret',
+  logger: new winston.Logger({
+    transports: [
+      new winston.transports.Console({
+        level: 'debug',
+        timestamp: true
+      })
+    ]
+  }),
+  elasticsearch: _.assign(defaults.elasticsearch, {
+    url: 'http://elasticsear.ch:1234'
+  })
+});

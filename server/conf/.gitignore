@@ -1,3 +1,4 @@
 *.js
 !index.js
+!defaults.js
 !*.example.js
