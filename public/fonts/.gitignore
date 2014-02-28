@@ -1,0 +1,3 @@
+# We don't have any fonts outside of those downloaded with Bower, but fonts will be placed here by the build
+*
+!.gitignore

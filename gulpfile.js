@@ -83,6 +83,16 @@ gulp.task('clean-styles', function () {
     .pipe(rimraf());
 });
 
+gulp.task('fonts', function () {
+  var fontPaths = ['.eot', '.svg', '.ttf', '.woff'].map(function (ext) {
+    return 'public/bower_components/bootstrap-sass-official/vendor/assets/fonts/**/*' + ext;
+  });
+
+  return gulp.src(fontPaths)
+    .pipe(gulp.dest('public/fonts'))
+    .pipe(gulp.dest('dist/public/fonts'));
+});
+
 gulp.task('jshint', function () {
   return gulp.src(paths.scripts)
     .pipe(jshint('.jshintrc'))
@@ -262,7 +272,7 @@ gulp.task('clean', function () {
     .pipe(rimraf());
 });
 
-gulp.task('build', ['images', 'partials', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
+gulp.task('build', ['images', 'fonts', 'partials', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
 
 gulp.task('server', ['build'], function (callback) {
   var child = fork(__dirname + '/server.js', [], {
