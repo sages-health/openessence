@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "dependencies": {
     "angular": "~1.2.13",
-    "angular-route": "~1.2.13",
+    "angular-resource": "~1.2.13",
     "angular-sanitize": "~1.2.13",
     "angular-bootstrap": "~0.10.0",
     "bootstrap-sass-official": "~3.1.1",

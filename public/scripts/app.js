@@ -1,6 +1,7 @@
 'use strict';
 
 var angular = require('angular');
+require('angular-resource');
 require('angular-sanitize');
 require('angular-bootstrap');
 require('angular-ui-router');
@@ -18,7 +19,7 @@ var mainCtrl = require('./controllers/main');
 
 var i18n = require('./i18n');
 
-var app = angular.module('fracasApp', ['ngSanitize', 'ui.bootstrap', 'ui.router', 'gettext',
+var app = angular.module('fracasApp', ['ngSanitize', 'ngResource', 'ui.bootstrap', 'ui.router', 'gettext',
                                        controllers.name, directives.name, services.name, filters.name]);
 
 app.config(function ($httpProvider, csrfToken) {
