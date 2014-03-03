@@ -1,16 +1,14 @@
 'use strict';
 
 var express = require('express');
-var passport = require('passport');
-var PersonaStrategy = require('passport-persona').Strategy;
 var locale = require('locale');
 var _ = require('lodash');
 
 var conf = require('./server/conf');
 var logger = conf.logger;
-var accessControl = require('./server/accessControl');
 var assets = require('./server/assets');
 var supportedLocales = require('./server/locales').getSupportedLocalesSync();
+var accessControl = require('./server/accessControl');
 var routes = require('./server/routes');
 
 var app = express();
@@ -53,35 +51,19 @@ app.use(function (req, res, next) {
   } else {
     // override user agent's locale, useful for debugging and for multilingual users
     req.locale = req.path.split('/')[1];
+    if (req.locale === 'api') {
+      // API requests don't have a locale associated with them
+      req.locale = 'en';
+    }
     next();
   }
 });
 
 app.use(assets.anonymous());
 
+var passport = require('./server/auth').passport;
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.serializeUser(function (user, done) {
-  // store entire user object in session so we don't have to deserialize it from data store
-  // this won't scale to large number of concurrent users, but it will be faster for small deployments
-  done(null, user);
-});
-passport.deserializeUser(function (user, done) {
-  // no need to deserialize, we store entire user in memory
-  done(null, user);
-});
-
-passport.use(new PersonaStrategy({
-  audience: 'http://localhost:9000'
-}, function (email, done) {
-  // TODO whitelist emails here
-  logger.info('%s logged in', email);
-  return done(null, {
-    email: email
-    // other attributes can come from DB
-  });
-}));
 
 // variables for views, this must be before router in the middleware chain
 app.use(function (req, res, next) {
@@ -90,16 +72,28 @@ app.use(function (req, res, next) {
     res.locals.csrfToken = req.csrfToken();
   }
   res.locals.lang = req.locale;
+  res.locals.persona = true;
+  res.locals.baseHref = req.protocol + '://' + req.host + ':' + conf.port + '/' + req.locale + '/';
+
   next();
 });
 
 // /en/*, /es/*, etc.
 supportedLocales.forEach(function (l) {
-  app.use('/' + l, routes);
+  app.use('/' + l, routes.router);
+
+  // You'll never get a 404. This isn't so bad, since these routes
+  // are only for user-facing URLs (XHR requests don't use locale prefix) and server-side 404 isn't that useful, as
+  // opposed to client-side error message.
+  app.use('/' + l, routes.clientRoutes);
 });
 
-// also allow requests unprefixed by locale
-app.use(routes);
+// also allow XHR requests unprefixed by locale (these do NOT delegate to client routes)
+app.use(routes.router);
+
+// ...and API clients with Bearer tokens
+var api = require('./server/api');
+app.use('/api', api);
 
 // everything below this requires authentication
 app.use(accessControl.denyAnonymousAccess);
@@ -108,6 +102,8 @@ var esProxy = require('./server/es/proxy');
 app.use('/es', esProxy);
 app.use('/kibana/es', esProxy);
 app.use('/kibana', assets.kibana());
+
+app.use('/reports', require('./server/reports'));
 
 app.use(require('./server/error').middleware);
 
@@ -120,17 +116,27 @@ app.engine('html', function (path, options, callback) {
 });
 app.set('views', require('./server/views')(conf.env));
 
-// this MUST be the last route
+// This MUST be the last route. Since we delegate to the client for HTML5-style routes, we'll never reach this point
+// for GET requests. But we can handle every other verb.
 app.use(require('./server/error').notFound);
 
 if (!module.parent) {
   logger.info('Running in %s mode', conf.env);
 
-  var port = process.env.PORT || 9000;
+  var port = conf.port;
+
+  var fork = require('child_process').fork;
+  var phantomChild = fork(__dirname + '/server/phantom');
+  var phantom = require('./server/phantom');
+  phantomChild.on('message', function (message) {
+    if (message.started) {
+      phantom.started = true; // TODO promise?
+      phantom.childProcess = phantomChild;
+    }
+  });
 
   app.listen(port, function () {
-    // must log to stdout (some 3rd party tools read stdout to know when web server is up)
-    console.log('Listening on port ' + port);
+    logger.info('Fracas listening on port %s', port);
 
     // if we have a parent, tell them we started
     if (process.send) {

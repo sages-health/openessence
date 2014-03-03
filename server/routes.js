@@ -7,10 +7,13 @@ var logger = conf.logger;
 var accessControl = require('./accessControl');
 var app = express();
 
-app.get('/', function (req, res) {
-  // single page, even login view is handled by client
+function renderIndex (req, res) {
   res.render('index.html');
-});
+}
+exports.renderIndex = renderIndex;
+
+// single page, even login view is handled by client
+app.get('/', renderIndex);
 
 app.post('/session', function (req, res) {
   // 307 means client should send another POST
@@ -57,6 +60,16 @@ app.delete('/session/browserid', function (req, res) {
   res.send(204); // No Content
 });
 
-// no need for app.use(app.router);
+// don't need http-bearer routes because there's no session to setup or teardown
 
-module.exports = app.router;
+// no need for app.use(app.router);
+exports.router = app.router;
+
+// This makes sure ALL other requests go to client for routing. If we really need 404, client can initiate.
+// This is the easiest way to handle HTML5 client-side routing. If we want to get fancy, we can parse client-side
+// routes from a shared file.
+exports.clientRoutes = (function () {
+  var app = express();
+  app.get('/*', renderIndex);
+  return app.router;
+})();

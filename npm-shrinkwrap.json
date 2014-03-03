@@ -207,6 +207,27 @@
         }
       }
     },
+    "passport-persona": {
+      "version": "0.1.7",
+      "from": "passport-persona@",
+      "resolved": "https://registry.npmjs.org/passport-persona/-/passport-persona-0.1.7.tgz",
+      "dependencies": {
+        "pkginfo": {
+          "version": "0.2.3",
+          "from": "pkginfo@0.2.x"
+        }
+      }
+    },
+    "passport-http-bearer": {
+      "version": "1.0.1",
+      "from": "passport-http-bearer@",
+      "dependencies": {
+        "passport-strategy": {
+          "version": "1.0.0",
+          "from": "passport-strategy@1.x.x"
+        }
+      }
+    },
     "bluebird": {
       "version": "1.0.2",
       "from": "bluebird@~1.0.2"
@@ -332,56 +353,12 @@
       }
     },
     "http-proxy": {
-      "version": "0.10.4",
-      "from": "http-proxy@0.10.4",
+      "version": "1.0.2",
+      "from": "http-proxy@~1.0.2",
       "dependencies": {
-        "colors": {
-          "version": "0.6.2",
-          "from": "colors@0.x.x"
-        },
-        "optimist": {
-          "version": "0.6.0",
-          "from": "optimist@0.6.x",
-          "dependencies": {
-            "wordwrap": {
-              "version": "0.0.2",
-              "from": "wordwrap@~0.0.2"
-            },
-            "minimist": {
-              "version": "0.0.5",
-              "from": "minimist@~0.0.1"
-            }
-          }
-        },
-        "pkginfo": {
-          "version": "0.3.0",
-          "from": "pkginfo@0.3.x"
-        },
-        "utile": {
-          "version": "0.2.1",
-          "from": "utile@~0.2.1",
-          "dependencies": {
-            "deep-equal": {
-              "version": "0.2.1",
-              "from": "deep-equal@*"
-            },
-            "i": {
-              "version": "0.3.2",
-              "from": "i@0.3.x"
-            },
-            "mkdirp": {
-              "version": "0.3.5",
-              "from": "mkdirp@0.x.x"
-            },
-            "ncp": {
-              "version": "0.4.2",
-              "from": "ncp@0.4.x"
-            },
-            "rimraf": {
-              "version": "2.2.6",
-              "from": "rimraf@2.x.x"
-            }
-          }
+        "eventemitter3": {
+          "version": "0.1.1",
+          "from": "eventemitter3@*"
         }
       }
     },
@@ -394,6 +371,76 @@
       "version": "2.1.0",
       "from": "jquery@",
       "resolved": "https://registry.npmjs.org/jquery/-/jquery-2.1.0.tgz"
+    },
+    "locale": {
+      "version": "0.0.14",
+      "from": "locale@",
+      "resolved": "https://registry.npmjs.org/locale/-/locale-0.0.14.tgz"
+    },
+    "phantom-cluster": {
+      "version": "0.1.1",
+      "from": "phantom-cluster@",
+      "resolved": "https://registry.npmjs.org/phantom-cluster/-/phantom-cluster-0.1.1.tgz",
+      "dependencies": {
+        "phantom": {
+          "version": "0.5.6",
+          "from": "phantom@git://github.com/sgentle/phantomjs-node.git#d4e40cae23c069c35500b8282cf3e41d3afb6d1e",
+          "resolved": "git://github.com/sgentle/phantomjs-node.git#d4e40cae23c069c35500b8282cf3e41d3afb6d1e",
+          "dependencies": {
+            "dnode": {
+              "version": "1.0.5",
+              "from": "dnode@~1.0.5",
+              "dependencies": {
+                "dnode-protocol": {
+                  "version": "0.2.2",
+                  "from": "dnode-protocol@~0.2.2",
+                  "dependencies": {
+                    "traverse": {
+                      "version": "0.6.6",
+                      "from": "traverse@~0.6.3"
+                    }
+                  }
+                },
+                "jsonify": {
+                  "version": "0.0.0",
+                  "from": "jsonify@~0.0.0"
+                },
+                "weak": {
+                  "version": "0.2.2",
+                  "from": "weak@~0.2.1",
+                  "dependencies": {
+                    "bindings": {
+                      "version": "1.1.1",
+                      "from": "bindings@*"
+                    }
+                  }
+                }
+              }
+            },
+            "shoe": {
+              "version": "0.0.15",
+              "from": "shoe@~0.0.10",
+              "dependencies": {
+                "sockjs": {
+                  "version": "0.3.7",
+                  "from": "sockjs@0.3.7",
+                  "dependencies": {
+                    "node-uuid": {
+                      "version": "1.3.3",
+                      "from": "node-uuid@1.3.3",
+                      "resolved": "https://registry.npmjs.org/node-uuid/-/node-uuid-1.3.3.tgz"
+                    },
+                    "faye-websocket": {
+                      "version": "0.4.4",
+                      "from": "faye-websocket@0.4.4"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "jpegtran-bin": {
       "version": "0.2.3",
@@ -1140,6 +1187,15 @@
       "from": "buffer-crc32@0.2.1",
       "resolved": "https://registry.npmjs.org/buffer-crc32/-/buffer-crc32-0.2.1.tgz"
     },
+    "esprima": {
+      "version": "1.0.4",
+      "from": "esprima@"
+    },
+    "karma-chrome-launcher": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz"
+    },
     "karma-firefox-launcher": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz",
@@ -1150,21 +1206,6 @@
       "from": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz"
     },
-    "karma-requirejs": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
-    },
-    "karma-chrome-launcher": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz"
-    },
-    "mkdirp": {
-      "version": "0.3.5",
-      "from": "mkdirp@0.3.5",
-      "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.5.tgz"
-    },
     "karma-script-launcher": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz",
@@ -1174,6 +1215,16 @@
       "version": "0.1.3",
       "from": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz",
       "resolved": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz"
+    },
+    "karma-requirejs": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
+    },
+    "mkdirp": {
+      "version": "0.3.5",
+      "from": "mkdirp@0.3.5",
+      "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.5.tgz"
     },
     "event-stream": {
       "version": "3.1.0",
@@ -1228,6 +1279,122 @@
         "clone-stats": {
           "version": "0.0.1",
           "from": "clone-stats@~0.0.1"
+        }
+      }
+    },
+    "through2": {
+      "version": "0.4.1",
+      "from": "through2@",
+      "dependencies": {
+        "readable-stream": {
+          "version": "1.0.25",
+          "from": "readable-stream@~1.0.17",
+          "dependencies": {
+            "string_decoder": {
+              "version": "0.10.25-1",
+              "from": "string_decoder@~0.10.x"
+            }
+          }
+        },
+        "xtend": {
+          "version": "2.1.2",
+          "from": "xtend@~2.1.1",
+          "dependencies": {
+            "object-keys": {
+              "version": "0.4.0",
+              "from": "object-keys@~0.4.0"
+            }
+          }
+        }
+      }
+    },
+    "pofile": {
+      "version": "0.2.4",
+      "from": "pofile@",
+      "resolved": "https://registry.npmjs.org/pofile/-/pofile-0.2.4.tgz",
+      "dependencies": {
+        "lodash.isarray": {
+          "version": "2.4.1",
+          "from": "lodash.isarray@~2.4.1",
+          "resolved": "https://registry.npmjs.org/lodash.isarray/-/lodash.isarray-2.4.1.tgz",
+          "dependencies": {
+            "lodash._isnative": {
+              "version": "2.4.1",
+              "from": "lodash._isnative@~2.4.1"
+            }
+          }
+        }
+      }
+    },
+    "phantomjs": {
+      "version": "1.9.7-1",
+      "from": "phantomjs@",
+      "dependencies": {
+        "adm-zip": {
+          "version": "0.2.1",
+          "from": "adm-zip@0.2.1"
+        },
+        "kew": {
+          "version": "0.1.7",
+          "from": "kew@~0.1.7"
+        },
+        "ncp": {
+          "version": "0.4.2",
+          "from": "ncp@0.4.2"
+        },
+        "npmconf": {
+          "version": "0.0.24",
+          "from": "npmconf@0.0.24",
+          "dependencies": {
+            "config-chain": {
+              "version": "1.1.8",
+              "from": "config-chain@~1.1.1",
+              "dependencies": {
+                "proto-list": {
+                  "version": "1.2.2",
+                  "from": "proto-list@~1.2.1"
+                }
+              }
+            },
+            "inherits": {
+              "version": "1.0.0",
+              "from": "inherits@~1.0.0"
+            },
+            "once": {
+              "version": "1.1.1",
+              "from": "once@~1.1.1"
+            },
+            "osenv": {
+              "version": "0.0.3",
+              "from": "osenv@0.0.3"
+            },
+            "nopt": {
+              "version": "2.2.0",
+              "from": "nopt@2",
+              "dependencies": {
+                "abbrev": {
+                  "version": "1.0.4",
+                  "from": "abbrev@1"
+                }
+              }
+            },
+            "semver": {
+              "version": "1.1.4",
+              "from": "semver@~1.1.0"
+            },
+            "ini": {
+              "version": "1.1.0",
+              "from": "ini@~1.1.0"
+            }
+          }
+        },
+        "rimraf": {
+          "version": "2.2.6",
+          "from": "rimraf@~2.2.2"
+        },
+        "which": {
+          "version": "1.0.5",
+          "from": "which@~1.0.5"
         }
       }
     },

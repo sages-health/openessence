@@ -37,12 +37,20 @@ winston.addColors(slf4jLevels.colors);
 
 module.exports = {
   env: env,
+  port: process.env.PORT || 9000,
 
   // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
   // using a random secret means sessions won't be preserved across server restarts
   sessionSecret: crypto.randomBytes(1024).toString('hex'),
 
   logger: logger,
+
+  // Base port for PhantomJS cluster. Worker n is assigned phantomBasePort + n, e.g. 12301 for the first worker.
+  // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.
+  // https://github.com/dailymuse/phantom-cluster/blob/87ebc9f2c5fc81792aa4c98ae1c6cf44c784cc5e/index.coffee#L105
+  phantomBasePort: 12300,
+
+  // elasticsearch settings, duh
   elasticsearch: {
     url: 'http://localhost:9200'
     // potentially more settings

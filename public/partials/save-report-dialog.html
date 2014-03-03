@@ -1,0 +1,28 @@
+<div class="modal-header">
+    <h4 class="modal-title" translate>Save this page</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" name="container.saveReportForm" novalidate>
+        <fieldset>
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="srd-modal-name">Name</label>
+                <div class="col-md-5">
+                    <input id="srd-modal-name" name="name" type="text" placeholder="Name" class="form-control input-md"
+                           ng-model="container.report.name" required>
+                    <span class="help-block">What to call this report</span>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="modal-footer">
+    <!-- include i18n-friendly images -->
+    <button class="btn btn-warning" ng-click="cancel()">
+        <span class="glyphicon glyphicon-remove"></span>
+        <span translate>Cancel</span>
+    </button>
+    <button class="btn btn-primary" ng-click="ok()" ng-disabled="container.saveReportForm.$invalid">
+        <span class="glyphicon glyphicon-ok"></span>
+        <span translate>Save</span>
+    </button>
+</div>

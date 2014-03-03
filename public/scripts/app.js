@@ -13,9 +13,9 @@ var services = require('./services');
 var filters = require('./filters');
 require('./services/csrfToken');
 
-// controllers must be required up here so any dependent services are initialized first
 var loginCtrl = require('./controllers/login');
 var mainCtrl = require('./controllers/main');
+var reportCtrl = require('./controllers/report');
 
 var i18n = require('./i18n');
 
@@ -32,6 +32,8 @@ app.config(function ($httpProvider, csrfToken) {
   });
 });
 
+var previousPath = '';
+
 app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
   $locationProvider.html5Mode(true).hashPrefix('!');
   $urlRouterProvider.otherwise('/'); // TODO show 404 view
@@ -46,7 +48,25 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/login',
       templateUrl: '/public/partials/login.html',
       controller: loginCtrl
+    })
+    .state('home.report', {
+      url: 'report',
+      controller: reportCtrl,
+      resolve: {
+        'previousPath': function () {
+          return previousPath;
+        }
+      }
+    })
+    .state('home.report.save', {
+      url: '/save'
     });
+});
+
+app.run(function ($rootScope) { // TODO do this in report controller
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
+    previousPath = fromState.url;
+  });
 });
 
 i18n.strings().then(function (strings) {

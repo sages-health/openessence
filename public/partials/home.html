@@ -15,12 +15,13 @@
             <ul class="nav navbar-nav">
                 <li><a href="/kibana" translate>Dashboard</a></li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" translate>Open <b class="caret"></b></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-folder-open"></span></a>
                     <ul class="dropdown-menu">
                         <li><a translate>Saved query</a></li>
                         <li><a translate>Something else</a></li>
                     </ul>
                 </li>
+                <li><a class="glyphicon glyphicon-floppy-save" ui-sref="home.report.save"></a></li>
             </ul>
             <!-- this can be where the user searches for records -->
             <form class="navbar-form navbar-left" role="search">

@@ -12,8 +12,11 @@
     <meta name="_csrf" content="{{= csrfToken }}">
     <meta name="_persona" content="{{= persona }}">
 
+    <!-- tell angular not to remove locale from URL when html5Mode is active -->
+    <base href="{{= baseHref }}">
+
     <!-- inject:css -->
-    <link rel="stylesheet" href="../.tmp/styles/main.css">
+    <link rel="stylesheet" href="/.tmp/styles/main.css">
     <!-- endinject -->
 </head>
 <body> <!-- no ng-app here, we manually bootstrap in app.js -->
