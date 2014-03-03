@@ -32,8 +32,9 @@ app.config(function ($httpProvider, csrfToken) {
   });
 });
 
-app.config(function ($stateProvider, $urlRouterProvider) {
-  $urlRouterProvider.otherwise('/'); // TODO use pushstate
+app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
+  $locationProvider.html5Mode(true).hashPrefix('!');
+  $urlRouterProvider.otherwise('/'); // TODO show 404 view
 
   $stateProvider
     .state('home', {
