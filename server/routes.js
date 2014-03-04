@@ -47,6 +47,9 @@ app.post('/session/browserid', function (req, res, next) {
   })(req, res, next);
 });
 
+// /login needs to be routed on client
+app.get('/login', renderIndex);
+
 // all routes below this require authenticating
 app.all('*', accessControl.denyAnonymousAccess);
 
