@@ -95,9 +95,9 @@ gulp.task('fonts', ['bootstrap-fonts'], function () {
 
 gulp.task('jshint', function () {
   return gulp.src(paths.scripts)
-    .pipe(jshint('.jshintrc'))
-    .pipe(jshint.reporter('default'));
-//    .pipe(jshint.reporter('fail')) // turn this on for pedantry
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
 });
 
 // If we ever need to split up our browserify bundles, here are some useful links:

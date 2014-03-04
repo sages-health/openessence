@@ -5,7 +5,6 @@ var locale = require('locale');
 var _ = require('lodash');
 
 var conf = require('./conf');
-var logger = conf.logger;
 var assets = require('./assets');
 var supportedLocales = require('./locales').getSupportedLocalesSync();
 var accessControl = require('./accessControl');

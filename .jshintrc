@@ -17,8 +17,5 @@
   "unused": true,
   "strict": true,
   "trailing": true,
-  "smarttabs": true,
-  "globals": {
-    "define": false
-  }
+  "smarttabs": true
 }
