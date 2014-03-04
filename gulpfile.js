@@ -4,7 +4,7 @@
 var gulp = require('gulp');
 var gutil  = require('gulp-util');
 var lazypipe = require('lazypipe');
-var sass = require('gulp-ruby-sass');
+var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
 var browserify = require('gulp-browserify');
@@ -22,6 +22,7 @@ var gettext = require('gulp-angular-gettext');
 var open = require('open');
 var path = require('path');
 var fork = require('child_process').fork;
+var path = require('path');
 
 // add Kibana's grunt tasks
 // blocked on https://github.com/gratimax/gulp-grunt/issues/3
@@ -38,39 +39,30 @@ var fork = require('child_process').fork;
 var paths = {
   scripts: 'public/scripts/**/*.js',
   scriptMain: 'public/scripts/app.js',
-  styles: 'public/styles/**/*.scss',
+  styles: 'public/styles/**/*.less',
   svgs: 'public/images/**/*.svg',
   html: 'views/**/*.html',
   partials: 'public/partials/**/*.html',
-  sassLoadPath: 'public/bower_components',
   indexHtml: 'views/index.html',
   serverTests: 'test/server/**/test-*.js',
   clientTests: 'test/client/**/test-*.js',
-  imagesDest: 'dist/public/images'
+  imagesDest: 'dist/public/images',
+  bowerComponents: path.normalize(__dirname + '/public/bower_components'),
+  copiedFonts: 'public/fonts/bootstrap'
 };
+
+var fontExtensions = ['.eot', '.svg', '.ttf', '.woff'];
 
 var autoprefix = function () {
   return autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4');
 };
 
-// build CSS for development
-gulp.task('sass', function () {
-  return gulp.src(paths.styles)
-    .pipe(sass({
-      style: 'expanded',
-      loadPath: paths.sassLoadPath
-    }))
-    .pipe(autoprefix())
-    .pipe(gulp.dest('.tmp/styles'));
-});
-
 // build CSS for production
 gulp.task('styles', ['clean-styles'], function () {
   // need to depend on clean-styles b/c inject will add all CSS files in dist/styles (including any old ones)
   return gulp.src(paths.styles)
-    .pipe(sass({
-      style: 'compact',
-      loadPath: paths.sassLoadPath
+    .pipe(less({
+      paths: [paths.bowerComponents]
     }))
     .pipe(autoprefix())
     .pipe(minifycss())
@@ -83,13 +75,20 @@ gulp.task('clean-styles', function () {
     .pipe(rimraf());
 });
 
-gulp.task('fonts', function () {
-  var fontPaths = ['.eot', '.svg', '.ttf', '.woff'].map(function (ext) {
-    return 'public/bower_components/bootstrap-sass-official/vendor/assets/fonts/**/*' + ext;
+// Copy Bootstap's fonts to public/fonts
+gulp.task('bootstrap-fonts', function () {
+  var fontPaths = fontExtensions.map(function (ext) {
+    return 'public/bower_components/bootstrap/fonts/**/*' + ext;
   });
 
   return gulp.src(fontPaths)
-    .pipe(gulp.dest('public/fonts'))
+    .pipe(gulp.dest('public/fonts/bootstrap'));
+});
+
+gulp.task('fonts', ['bootstrap-fonts'], function () {
+  return gulp.src(fontExtensions.map(function (ext) {
+      return 'public/fonts/**/*' + ext;
+    }))
     .pipe(gulp.dest('dist/public/fonts'));
 });
 
@@ -216,6 +215,8 @@ gulp.task('partials', function () {
     .pipe(gulp.dest('dist/public/partials'));
 });
 
+// Although we do a lot of processing in middleware, this task is still useful to replace references to resources
+// with references to revved versions.
 gulp.task('inject', ['styles', 'scripts'], function () {
   // TODO clean up when https://github.com/klei/gulp-inject/issues/9 is resolved
   return gulp.src(['dist/public/scripts/**/*.js', 'dist/public/styles/**/*.css'], {read: false})
@@ -268,7 +269,7 @@ gulp.task('translations', function () {
 });
 
 gulp.task('clean', function () {
-  return gulp.src(['dist', '.tmp'], {read: false})
+  return gulp.src(['dist', '.tmp', paths.copiedFonts], {read: false})
     .pipe(rimraf());
 });
 
@@ -276,7 +277,7 @@ gulp.task('build', ['images', 'fonts', 'partials', 'html', 'pot', 'translations'
 
 gulp.task('server', ['build'], function (callback) {
   var child = fork(__dirname + '/server.js', [], {
-    env: {
+    env: { // FIXME this breaks Node
       NODE_ENV: 'production'
     }
   });

@@ -10,16 +10,20 @@ var env = require('./conf').env;
 exports.anonymous = function () {
   var app = express();
   if (env === 'development') {
-    app.use('/.tmp', express.static(__dirname + '/../.tmp'));
-    app.use('/public', express.static(__dirname + '/../public'));
-
-    // In development, we use browserify-middleware so that you don't have to do a build
+    // In development, we use browserify-middleware and less-middleware so that you don't have to do a build
     app.use('/js/app.js', require('browserify-middleware')('../public/scripts/app.js'));
 
-    // TODO po2json middleware instead
+    app.use('/public/styles', require('less-middleware')({
+      src: __dirname + '/../public/styles',
+      paths: [__dirname + '/../public/bower_components'],
+      compress: false // no point in development
+    }));
+
+    // TODO angular-gettext middleware instead
     app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
+
+    app.use('/public', express.static(__dirname + '/../public'));
   } else if (env === 'test') {
-    app.use('/.tmp', express.static(__dirname + '/../.tmp'));
     app.use('/test', express.static(__dirname + '/../test'));
   } else if (env === 'production') {
     // TODO set Cache-Control: max-age=31556926 if resource has hash
