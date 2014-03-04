@@ -23,6 +23,7 @@ var open = require('open');
 var path = require('path');
 var fork = require('child_process').fork;
 var path = require('path');
+var _ = require('lodash');
 
 // add Kibana's grunt tasks
 // blocked on https://github.com/gratimax/gulp-grunt/issues/3
@@ -276,10 +277,11 @@ gulp.task('clean', function () {
 gulp.task('build', ['images', 'fonts', 'partials', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
 
 gulp.task('server', ['build'], function (callback) {
+  var env = _.clone(process.env);
+  env.NODE_ENV = 'production';
+
   var child = fork(__dirname + '/server.js', [], {
-    env: { // FIXME this breaks Node
-      NODE_ENV: 'production'
-    }
+    env: env
   });
   child.on('message', function (m) {
     if (m.started) {
