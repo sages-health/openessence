@@ -33,6 +33,11 @@ app.config(function ($httpProvider, csrfToken) {
 });
 
 var previousPath = '';
+app.run(function ($rootScope) {
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
+    previousPath = fromState.url;
+  });
+});
 
 app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
   $locationProvider.html5Mode(true).hashPrefix('!');
@@ -61,12 +66,6 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     .state('home.report.save', {
       url: '/save'
     });
-});
-
-app.run(function ($rootScope) { // TODO do this in report controller
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
-    previousPath = fromState.url;
-  });
 });
 
 i18n.strings().then(function (strings) {

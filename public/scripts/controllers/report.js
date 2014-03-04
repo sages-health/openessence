@@ -12,7 +12,7 @@ var modalCtrl = function ($scope, $modalInstance, $state, $location, Report, pre
     $modalInstance.close();
     Report.update({
       name: $scope.container.report.name,
-      url: previousPath//$location.path()
+      url: previousPath
     });
     $state.go('home');
   };
