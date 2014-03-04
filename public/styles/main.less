@@ -1,18 +1,24 @@
 @import "bootstrap/less/bootstrap";
+@import "bootswatch/flatly/variables";
+@import "bootswatch/flatly/bootswatch"; // TODO this calls out to Google Fonts, that's the price you pay for beauty
 
 @icon-font-path: "/public/fonts/bootstrap/";
+
+// Reset some settings. Most of these are Bootstrap's defaults
+
+@navbar-border-radius: 0px; // border radius makes sense when nav has top margin, but not when it doesn't
+@navbar-height: 50px;
+
+@padding-base-vertical: 6px;
+@padding-base-horizontal: 12px;
+
+@padding-large-vertical: 10px;
+@padding-large-horizontal: 16px;
+
+@padding-small-vertical: 5px;
+@padding-small-horizontal: 10px;
 
 // for ng-bootstrap
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
-}
-
-html, body {
-  margin: 20px;
-}
-
-body {
-  background: #fafafa;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #333;
 }
