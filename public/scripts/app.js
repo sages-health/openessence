@@ -16,6 +16,7 @@ require('./services/csrfToken');
 var loginCtrl = require('./controllers/login');
 var mainCtrl = require('./controllers/main');
 var reportCtrl = require('./controllers/report');
+var notFoundCtrl = require('./controllers/notFound');
 
 var i18n = require('./i18n');
 
@@ -35,13 +36,18 @@ app.config(function ($httpProvider, csrfToken) {
 var previousPath = '';
 app.run(function ($rootScope) {
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
-    previousPath = fromState.url;
+    if (fromState.url !== '^') {
+      previousPath = fromState.url;
+    }
   });
 });
 
 app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
   $locationProvider.html5Mode(true).hashPrefix('!');
-  $urlRouterProvider.otherwise('/'); // TODO show 404 view
+  $urlRouterProvider.otherwise(function ($injector, $location) {
+    previousPath = $location.path();
+    return '/not-found';
+  });
 
   $stateProvider
     .state('home', {
@@ -53,6 +59,16 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/login',
       templateUrl: '/public/partials/login.html',
       controller: loginCtrl
+    })
+    .state('not-found', {
+      url: '/not-found',
+      templateUrl: '/public/partials/not-found.html',
+      resolve: {
+        'previousPath': function () {
+          return previousPath;
+        }
+      },
+      controller: notFoundCtrl
     })
     .state('home.report', {
       url: 'report',
