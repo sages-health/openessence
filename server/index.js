@@ -73,6 +73,7 @@ app.use(function (req, res, next) {
   res.locals.lang = req.locale;
   res.locals.persona = true;
   res.locals.baseHref = req.protocol + '://' + req.host + ':' + conf.port + '/' + req.locale + '/';
+  res.locals.environment = conf.env;
 
   next();
 });
