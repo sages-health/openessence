@@ -15,6 +15,7 @@ var env = process.env.NODE_ENV || 'development';
 
 var logger = bunyan.createLogger({
   name: 'fracas',
+  serializers: bunyan.stdSerializers,
   streams: [
     // human-readable output on stdout
     {
