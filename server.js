@@ -19,6 +19,12 @@ if (!module.parent) {
       phantom.childProcess = phantomChild;
     }
   });
+  phantomChild.on('error', function (err) {
+    logger.error({err: err}, 'PhantomJS child process error');
+  });
+  phantomChild.on('exit', function () {
+    logger.info('PhantomJS child process exited');
+  });
 
   app.listen(port, function () {
     logger.info('Fracas listening on port %s', port);
