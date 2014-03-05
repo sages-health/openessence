@@ -1,6 +1,4 @@
 'use strict';
-/* jshint -W024 */
-/* jshint expr:true */
 
 var chai = require('chai');
 chai.use(require('sinon-chai'));

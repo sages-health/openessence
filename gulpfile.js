@@ -19,6 +19,7 @@ var rev = require('gulp-rev');
 var inject = require('gulp-inject');
 var mocha = require('gulp-mocha');
 var gettext = require('gulp-angular-gettext');
+var karma = require('karma');
 var open = require('open');
 var path = require('path');
 var fork = require('child_process').fork;
@@ -54,10 +55,6 @@ var paths = {
 
 var fontExtensions = ['.eot', '.svg', '.ttf', '.woff'];
 
-var autoprefix = function () {
-  return autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4');
-};
-
 // build CSS for production
 gulp.task('styles', ['clean-styles'], function () {
   // need to depend on clean-styles b/c inject will add all CSS files in dist/styles (including any old ones)
@@ -65,7 +62,7 @@ gulp.task('styles', ['clean-styles'], function () {
     .pipe(less({
       paths: [paths.bowerComponents]
     }))
-    .pipe(autoprefix())
+    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
     .pipe(minifycss())
     .pipe(rev())
     .pipe(gulp.dest('dist/public/styles'));
@@ -309,22 +306,14 @@ gulp.task('server-tests', function () {
     .pipe(mochaTransform());
 });
 
-// these are unit tests, integration tests would use Karma and/or CasperJS as the test runner
-var clientTests = function () {
-  return gulp.src(paths.clientTests, {read: false})
-    .pipe(mochaTransform());
-};
-
-gulp.task('client-tests', function () {
-  return clientTests();
+// these are unit tests, integration/e2e tests would use Protractor as the test runner
+gulp.task('client-tests', function (cb) {
+  // FIXME this doesn't work
+  karma.server.start({configFile: __dirname + '/test/client/karma.conf.js'}, function () {
+    cb(null);
+  });
 });
 
-// run tests in series so output isn't garbage
-gulp.task('tests', ['server-tests'], function () {
-  gutil.log('Running client-tests...');
-  var pipe = clientTests();
-  gutil.log('Finished client-tests');
-  return pipe;
-});
+gulp.task('tests', ['server-tests']);
 
 gulp.task('default', ['build']);
