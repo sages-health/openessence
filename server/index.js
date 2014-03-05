@@ -7,7 +7,7 @@ var _ = require('lodash');
 var conf = require('./conf');
 var assets = require('./assets');
 var supportedLocales = require('./locales').getSupportedLocalesSync();
-var accessControl = require('./accessControl');
+var auth = require('./auth');
 var routes = require('./routes');
 
 var app = express();
@@ -59,10 +59,8 @@ app.use(function (req, res, next) {
 });
 
 app.use(assets.anonymous());
-
-var passport = require('./auth').passport;
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(auth.passport.initialize());
+app.use(auth.passport.session());
 
 // variables for views, this must be before router in the middleware chain
 app.use(function (req, res, next) {
@@ -96,7 +94,7 @@ var api = require('./api');
 app.use('/api', api);
 
 // everything below this requires authentication
-app.use(accessControl.denyAnonymousAccess);
+app.use(auth.denyAnonymousAccess);
 
 var esProxy = require('./es/proxy');
 app.use('/es', esProxy);

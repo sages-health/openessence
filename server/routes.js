@@ -4,7 +4,7 @@ var express = require('express');
 var passport = require('passport');
 var conf = require('./conf');
 var logger = conf.logger;
-var accessControl = require('./accessControl');
+var auth = require('./auth');
 var app = express();
 
 function renderIndex (req, res) {
@@ -51,7 +51,7 @@ app.post('/session/browserid', function (req, res, next) {
 app.get('/login', renderIndex);
 
 // all routes below this require authenticating
-app.all('*', accessControl.denyAnonymousAccess);
+app.all('*', auth.denyAnonymousAccess);
 
 app.delete('/session', function (req, res) {
   res.redirect(307, '/session/browserid');

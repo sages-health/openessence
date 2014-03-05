@@ -50,4 +50,35 @@ passport.use(new BearerStrategy({}, function (token, done) {
   done(null, user);
 }));
 
-exports.passport = passport;
+function accessDeniedHandler (req, res) {
+  logger.info({req: req}, 'Blocked unauthorized request to ' + req.url); // bunyan FTW!
+  var action = 'access ' + req.originalUrl;
+
+  res.status(403);
+  res.format({
+    html: function () {
+      res.render('403.html', {
+        action: action
+      });
+    },
+    json: function () {
+      res.send({
+        error: 'Access denied: you don\'t have permission to ' + action
+      });
+    }
+  });
+}
+
+function denyAnonymousAccess (req, res, next) {
+  if (!req.user) {
+    accessDeniedHandler(req, res);
+  } else {
+    next();
+  }
+}
+
+module.exports = {
+  passport: passport,
+  accessDeniedHandler: accessDeniedHandler,
+  denyAnonymousAccess: denyAnonymousAccess
+};
