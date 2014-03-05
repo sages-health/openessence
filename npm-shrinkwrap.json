@@ -228,129 +228,27 @@
         }
       }
     },
-    "bluebird": {
-      "version": "1.0.2",
-      "from": "bluebird@~1.0.2"
-    },
     "async": {
       "version": "0.2.10",
       "from": "async@"
     },
-    "winston": {
-      "version": "0.7.2",
-      "from": "https://registry.npmjs.org/winston/-/winston-0.7.2.tgz",
-      "resolved": "https://registry.npmjs.org/winston/-/winston-0.7.2.tgz",
+    "bluebird": {
+      "version": "1.0.2",
+      "from": "bluebird@~1.0.2"
+    },
+    "bunyan": {
+      "version": "0.22.1",
+      "from": "bunyan@~0.22.1",
       "dependencies": {
-        "colors": {
-          "version": "0.6.2",
-          "from": "colors@~0.6.0",
-          "resolved": "https://registry.npmjs.org/colors/-/colors-0.6.2.tgz"
-        },
-        "cycle": {
-          "version": "1.0.3",
-          "from": "cycle@1.0.3",
-          "resolved": "https://registry.npmjs.org/cycle/-/cycle-1.0.3.tgz"
-        },
-        "eyes": {
-          "version": "0.1.8",
-          "from": "https://registry.npmjs.org/eyes/-/eyes-0.1.8.tgz",
-          "resolved": "https://registry.npmjs.org/eyes/-/eyes-0.1.8.tgz"
-        },
-        "pkginfo": {
-          "version": "0.3.0",
-          "from": "pkginfo@0.3.0",
-          "resolved": "https://registry.npmjs.org/pkginfo/-/pkginfo-0.3.0.tgz"
-        },
-        "request": {
-          "version": "2.16.6",
-          "from": "request@2.16.6",
-          "dependencies": {
-            "form-data": {
-              "version": "0.0.10",
-              "from": "form-data@~0.0.3",
-              "dependencies": {
-                "combined-stream": {
-                  "version": "0.0.4",
-                  "from": "combined-stream@~0.0.4",
-                  "dependencies": {
-                    "delayed-stream": {
-                      "version": "0.0.5",
-                      "from": "delayed-stream@0.0.5"
-                    }
-                  }
-                },
-                "async": {
-                  "version": "0.2.10",
-                  "from": "async@~0.2.7"
-                }
-              }
-            },
-            "mime": {
-              "version": "1.2.11",
-              "from": "mime@~1.2.7"
-            },
-            "hawk": {
-              "version": "0.10.2",
-              "from": "hawk@~0.10.2",
-              "dependencies": {
-                "hoek": {
-                  "version": "0.7.6",
-                  "from": "hoek@0.7.x"
-                },
-                "boom": {
-                  "version": "0.3.8",
-                  "from": "boom@0.3.x"
-                },
-                "cryptiles": {
-                  "version": "0.1.3",
-                  "from": "cryptiles@0.1.x"
-                },
-                "sntp": {
-                  "version": "0.1.4",
-                  "from": "sntp@0.1.x"
-                }
-              }
-            },
-            "node-uuid": {
-              "version": "1.4.1",
-              "from": "node-uuid@~1.4.0"
-            },
-            "cookie-jar": {
-              "version": "0.2.0",
-              "from": "cookie-jar@~0.2.0"
-            },
-            "aws-sign": {
-              "version": "0.2.0",
-              "from": "aws-sign@~0.2.0"
-            },
-            "oauth-sign": {
-              "version": "0.2.0",
-              "from": "oauth-sign@~0.2.0"
-            },
-            "forever-agent": {
-              "version": "0.2.0",
-              "from": "forever-agent@~0.2.0"
-            },
-            "tunnel-agent": {
-              "version": "0.2.0",
-              "from": "tunnel-agent@~0.2.0"
-            },
-            "json-stringify-safe": {
-              "version": "3.0.0",
-              "from": "json-stringify-safe@~3.0.0"
-            },
-            "qs": {
-              "version": "0.5.6",
-              "from": "qs@~0.5.4"
-            }
-          }
-        },
-        "stack-trace": {
-          "version": "0.0.8",
-          "from": "stack-trace@0.0.8",
-          "resolved": "https://registry.npmjs.org/stack-trace/-/stack-trace-0.0.8.tgz"
+        "mv": {
+          "version": "0.0.5",
+          "from": "mv@0.0.5"
         }
       }
+    },
+    "bunyan-prettystream": {
+      "version": "0.1.3",
+      "from": "bunyan-prettystream@~0.1.3"
     },
     "http-proxy": {
       "version": "1.0.2",
@@ -1196,6 +1094,16 @@
       "from": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.0.tgz"
     },
+    "karma-jasmine": {
+      "version": "0.1.3",
+      "from": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz",
+      "resolved": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz"
+    },
+    "karma-requirejs": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
+    },
     "karma-firefox-launcher": {
       "version": "0.1.0",
       "from": "https://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.0.tgz",
@@ -1211,20 +1119,22 @@
       "from": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz",
       "resolved": "https://registry.npmjs.org/karma-script-launcher/-/karma-script-launcher-0.1.0.tgz"
     },
-    "karma-jasmine": {
-      "version": "0.1.3",
-      "from": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz",
-      "resolved": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.1.3.tgz"
-    },
-    "karma-requirejs": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-requirejs/-/karma-requirejs-0.1.0.tgz"
-    },
     "mkdirp": {
       "version": "0.3.5",
       "from": "mkdirp@0.3.5",
       "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.5.tgz"
+    },
+    "karma-coffee-preprocessor": {
+      "version": "0.1.0",
+      "from": "https://registry.npmjs.org/karma-coffee-preprocessor/-/karma-coffee-preprocessor-0.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/karma-coffee-preprocessor/-/karma-coffee-preprocessor-0.1.0.tgz",
+      "dependencies": {
+        "coffee-script": {
+          "version": "1.6.3",
+          "from": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz",
+          "resolved": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz"
+        }
+      }
     },
     "event-stream": {
       "version": "3.1.0",
@@ -1260,18 +1170,6 @@
         }
       }
     },
-    "karma-coffee-preprocessor": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/karma-coffee-preprocessor/-/karma-coffee-preprocessor-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/karma-coffee-preprocessor/-/karma-coffee-preprocessor-0.1.0.tgz",
-      "dependencies": {
-        "coffee-script": {
-          "version": "1.6.3",
-          "from": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz",
-          "resolved": "https://registry.npmjs.org/coffee-script/-/coffee-script-1.6.3.tgz"
-        }
-      }
-    },
     "vinyl": {
       "version": "0.2.3",
       "from": "vinyl@",
@@ -1279,6 +1177,24 @@
         "clone-stats": {
           "version": "0.0.1",
           "from": "clone-stats@~0.0.1"
+        }
+      }
+    },
+    "pofile": {
+      "version": "0.2.4",
+      "from": "pofile@",
+      "resolved": "https://registry.npmjs.org/pofile/-/pofile-0.2.4.tgz",
+      "dependencies": {
+        "lodash.isarray": {
+          "version": "2.4.1",
+          "from": "lodash.isarray@~2.4.1",
+          "resolved": "https://registry.npmjs.org/lodash.isarray/-/lodash.isarray-2.4.1.tgz",
+          "dependencies": {
+            "lodash._isnative": {
+              "version": "2.4.1",
+              "from": "lodash._isnative@~2.4.1"
+            }
+          }
         }
       }
     },
@@ -1303,24 +1219,6 @@
             "object-keys": {
               "version": "0.4.0",
               "from": "object-keys@~0.4.0"
-            }
-          }
-        }
-      }
-    },
-    "pofile": {
-      "version": "0.2.4",
-      "from": "pofile@",
-      "resolved": "https://registry.npmjs.org/pofile/-/pofile-0.2.4.tgz",
-      "dependencies": {
-        "lodash.isarray": {
-          "version": "2.4.1",
-          "from": "lodash.isarray@~2.4.1",
-          "resolved": "https://registry.npmjs.org/lodash.isarray/-/lodash.isarray-2.4.1.tgz",
-          "dependencies": {
-            "lodash._isnative": {
-              "version": "2.4.1",
-              "from": "lodash._isnative@~2.4.1"
             }
           }
         }

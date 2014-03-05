@@ -3,47 +3,45 @@
 // A place to hold default settings. Useful so environments can reference the defaults when they override
 
 var crypto = require('crypto');
-var winston = require('winston');
+var bunyan = require('bunyan');
+var PrettyStream = require('bunyan-prettystream');
+
+var prettyStdOut = new PrettyStream({
+  mode: 'short' // 'long' is useful if you want to see PID and/or hostname
+});
+prettyStdOut.pipe(process.stdout);
 
 var env = process.env.NODE_ENV || 'development';
 
-// logging
-var slf4jLevels = { // SLF4j's levels are much saner than winston's, TODO switch to bunyan or something else better
-  levels: {
-    // TRACE is controversial, see http://slf4j.org/faq.html#trace
-    debug: 0,
-    info: 1,
-    warn: 2,
-    error: 3
-  },
-  colors: {
-    // same as winston's default colors for these levels
-    debug: 'blue',
-    info: 'green',
-    warn: 'yellow',
-    error: 'red'
-  }
-};
-var logger = new winston.Logger({
-  transports: [
-    new winston.transports.Console({
+var logger = bunyan.createLogger({
+  name: 'fracas',
+  streams: [
+    // human-readable output on stdout
+    {
+      level: 'debug',
+      type: 'raw',
+      stream: prettyStdOut
+    },
+
+    // machine-readable output in log file
+    {
       level: 'info',
-      timestamp: true
-    })
+      type: 'rotating-file',
+      path: __dirname + '/../../logs/fracas.log',
+      period: '1d', // rotate daily, bunyan doesn't support size-based rotation :(
+      count: 3 // number of back copies
+    }
   ]
 });
-logger.setLevels(slf4jLevels.levels);
-winston.addColors(slf4jLevels.colors);
 
 module.exports = {
   env: env,
   port: process.env.PORT || 9000,
+  logger: logger,
 
   // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
   // using a random secret means sessions won't be preserved across server restarts
   sessionSecret: crypto.randomBytes(1024).toString('hex'),
-
-  logger: logger,
 
   // Base port for PhantomJS cluster. Worker n is assigned phantomBasePort + n, e.g. 12301 for the first worker.
   // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.
