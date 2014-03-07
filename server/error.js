@@ -10,12 +10,7 @@ exports.middleware = function errorMiddleware (err, req, res, next) {
     return;
   }
 
-  if (err.stack) {
-    logger.error(err.stack);
-  } else {
-    // some middleware, like node-sass, return strings instead of Errors
-    logger.error(err);
-  }
+  logger.error(err);
 
   res.status(500);
   res.format({
