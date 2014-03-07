@@ -1,8 +1,7 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../services');
-//require('./notification');
+var services = require('../modules').services;
 
 var NAME = 'errorInterceptor';
 

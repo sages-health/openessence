@@ -9,25 +9,17 @@ require('angular-ui-router');
 require('angular-gettext');
 require('angular-toaster');
 
-var controllers = require('./controllers');
-var directives = require('./directives');
+var modules = require('./modules');
+require('./controllers');
 var services = require('./services');
-var filters = require('./filters');
-
-require('./services/csrfToken');
-var errorInterceptor = require('./services/error-interceptor');
-
-var loginCtrl = require('./controllers/login');
-var mainCtrl = require('./controllers/main');
-var reportCtrl = require('./controllers/report');
-var notFoundCtrl = require('./controllers/notFound');
-var reloginCtrl = require('./controllers/relogin');
-
 var i18n = require('./i18n');
 
-var app = angular.module('fracasApp', ['ngAnimate', 'ngResource', 'ngSanitize',
-                                       'ui.bootstrap', 'ui.router', 'gettext', 'toaster',
-                                       controllers.name, directives.name, services.name, filters.name]);
+var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'gettext', 'toaster']
+  .concat(Object.keys(modules).map(function (m) {
+    return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
+  }));
+
+var app = angular.module('fracasApp', dependencies);
 
 app.config(function ($httpProvider, csrfToken) {
   ['post', 'put', 'delete', 'patch'].forEach(function (method) {
@@ -52,7 +44,7 @@ app.run(function ($rootScope) {
   });
 });
 
-angular.module(services.name).factory('previousState', function () {
+angular.module(modules.services.name).factory('previousState', function () {
   return previousState;
 });
 
@@ -70,25 +62,25 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/',
       templateUrl: '/public/partials/home.html',
-      controller: mainCtrl
+      controller: 'MainCtrl'
     })
     .state('login', {
       url: '/login',
       templateUrl: '/public/partials/login.html',
-      controller: loginCtrl
+      controller: 'LoginCtrl'
     })
     .state('not-found', {
       url: '/not-found',
       templateUrl: '/public/partials/not-found.html',
-      controller: notFoundCtrl
+      controller: 'NotFoundCtrl'
     })
     .state('home.relogin', {
       url: 'relogin',
-      controller: reloginCtrl
+      controller: 'ReloginCtrl'
     })
     .state('home.report', {
       url: 'report/:url', // url param gives path to save
-      controller: reportCtrl
+      controller: 'ReportCtrl'
     })
     .state('home.report.save', {
       url: '/save'
@@ -96,7 +88,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
 });
 
 app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push(errorInterceptor);
+  $httpProvider.interceptors.push(services.errorInterceptor);
 });
 
 i18n.strings().then(function (strings) {

@@ -1,7 +1,7 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../services');
+var services = require('../modules').services;
 
 var NAME = 'persona';
 

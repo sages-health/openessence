@@ -1,9 +1,7 @@
 'use strict';
 
 var angular = require('angular'); // TODO https://github.com/mgechev/angularjs-style-guide
-var controllers = require('../controllers');
-require('../services/user');
-require('../services/login');
+var controllers = require('../modules').controllers;
 
 var NAME = 'LoginCtrl';
 

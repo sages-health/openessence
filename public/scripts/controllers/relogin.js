@@ -1,8 +1,7 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../controllers');
-require('../services/report');
+var controllers = require('../modules').controllers;
 
 var NAME = 'ReloginCtrl';
 

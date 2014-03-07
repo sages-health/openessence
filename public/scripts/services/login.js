@@ -1,10 +1,7 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../services');
-require('../services/user');
-require('../services/persona');
-require('../services/Session');
+var services = require('../modules').services;
 
 var NAME = 'login';
 
