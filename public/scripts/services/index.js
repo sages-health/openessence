@@ -2,7 +2,7 @@
 
 module.exports = {
   csrfToken: require('./csrfToken'),
-  errorInterceptor: require('./error-interceptor'),
+  errorInterceptor: require('./errorInterceptor'),
   login: require('./login'),
   persona: require('./persona'),
   Report: require('./Report'),
