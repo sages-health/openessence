@@ -1,26 +1,32 @@
 'use strict';
 
 var angular = require('angular');
+require('angular-animate');
 require('angular-resource');
 require('angular-sanitize');
 require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-gettext');
+require('angular-toaster');
 
 var controllers = require('./controllers');
 var directives = require('./directives');
 var services = require('./services');
 var filters = require('./filters');
+
 require('./services/csrfToken');
+var errorInterceptor = require('./services/error-interceptor');
 
 var loginCtrl = require('./controllers/login');
 var mainCtrl = require('./controllers/main');
 var reportCtrl = require('./controllers/report');
 var notFoundCtrl = require('./controllers/notFound');
+var reloginCtrl = require('./controllers/relogin');
 
 var i18n = require('./i18n');
 
-var app = angular.module('fracasApp', ['ngSanitize', 'ngResource', 'ui.bootstrap', 'ui.router', 'gettext',
+var app = angular.module('fracasApp', ['ngAnimate', 'ngResource', 'ngSanitize',
+                                       'ui.bootstrap', 'ui.router', 'gettext', 'toaster',
                                        controllers.name, directives.name, services.name, filters.name]);
 
 app.config(function ($httpProvider, csrfToken) {
@@ -33,19 +39,30 @@ app.config(function ($httpProvider, csrfToken) {
   });
 });
 
-var previousPath = '';
+var previousState = {};
 app.run(function ($rootScope) {
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
     if (fromState.url !== '^') {
-      previousPath = fromState.url;
+      previousState = {
+        state: fromState,
+        params: fromParams,
+        path: null // path is only used when transitioning to unknown state
+      };
     }
   });
 });
 
+angular.module(services.name).factory('previousState', function () {
+  return previousState;
+});
+
 app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
   $locationProvider.html5Mode(true).hashPrefix('!');
+
   $urlRouterProvider.otherwise(function ($injector, $location) {
-    previousPath = $location.path();
+    previousState = {
+      path: $location.path()
+    };
     return '/not-found';
   });
 
@@ -63,25 +80,23 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     .state('not-found', {
       url: '/not-found',
       templateUrl: '/public/partials/not-found.html',
-      resolve: {
-        'previousPath': function () {
-          return previousPath;
-        }
-      },
       controller: notFoundCtrl
     })
+    .state('home.relogin', {
+      url: 'relogin',
+      controller: reloginCtrl
+    })
     .state('home.report', {
-      url: 'report',
-      controller: reportCtrl,
-      resolve: {
-        'previousPath': function () {
-          return previousPath;
-        }
-      }
+      url: 'report/:url', // url param gives path to save
+      controller: reportCtrl
     })
     .state('home.report.save', {
       url: '/save'
     });
+});
+
+app.config(function ($httpProvider) {
+  $httpProvider.interceptors.push(errorInterceptor);
 });
 
 i18n.strings().then(function (strings) {

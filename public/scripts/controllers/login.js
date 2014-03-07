@@ -1,23 +1,25 @@
 'use strict';
 
-var angular = require('angular');
+var angular = require('angular'); // TODO https://github.com/mgechev/angularjs-style-guide
 var controllers = require('../controllers');
 require('../services/user');
+require('../services/login');
 
 var NAME = 'LoginCtrl';
 
 // `controllers.controller` breaks ngmin, see https://github.com/btford/ngmin#references
-angular.module(controllers.name).controller(NAME, function ($scope, $http, $location, $q, user) {
-  if (user.isLoggedIn()) {
+angular.module(controllers.name).controller(NAME, function ($scope, $http, $location, $q, user, login) {
+  if (user.isLoggedIn()) { // TODO do this in router
     $location.path('/').replace();
     return;
   }
 
+  $scope.$on('login', function () {
+    $location.path('/');
+  });
+
   $scope.promptForLogin = function () {
-    navigator.id.request({
-      siteName: 'Fracas'
-      // TODO more options from https://developer.mozilla.org/en-US/docs/Web/API/navigator.id.request
-    });
+    login.prompt();
   };
 });
 

@@ -6,15 +6,21 @@ require('../services/report');
 
 var NAME = 'ReportCtrl';
 
-var modalCtrl = function ($scope, $modalInstance, $state, $location, Report, previousPath) {
+var modalCtrl = function ($scope, $modalInstance, $state, $log, Report, urlToSave) {
   $scope.container = {}; // see https://github.com/angular-ui/bootstrap/issues/969
   $scope.ok = function () {
     $modalInstance.close();
     Report.update({
       name: $scope.container.report.name,
-      url: previousPath
-    });
-    $state.go('home');
+      url: urlToSave
+    }).$promise
+      .catch(function () {
+        // TODO do something
+        $log.error('Error saving report');
+      })
+      .finally(function () {
+        $state.go('home');
+      });
   };
 
   $scope.cancel = function () {
@@ -23,16 +29,16 @@ var modalCtrl = function ($scope, $modalInstance, $state, $location, Report, pre
   };
 };
 // b/c ngmin doesn't like anonymous controllers
-modalCtrl.$inject = ['$scope', '$modalInstance', '$state', '$location', 'Report', 'previousPath'];
+modalCtrl.$inject = ['$scope', '$modalInstance', '$state', '$log', 'Report', 'urlToSave'];
 
-angular.module(controllers.name).controller(NAME, function ($scope, $modal, previousPath) {
+angular.module(controllers.name).controller(NAME, function ($scope, $modal, $stateParams, $window) {
   $modal.open({
     templateUrl: '/public/partials/save-report-dialog.html',
     controller: modalCtrl,
     scope: $scope,
     resolve: {
-      'previousPath': function () {
-        return previousPath;
+      'urlToSave': function () {
+        return $window.decodeURIComponent($stateParams.url);
       }
     }
   });
