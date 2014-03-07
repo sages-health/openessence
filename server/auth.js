@@ -54,10 +54,12 @@ function accessDeniedHandler (req, res) {
   logger.info({req: req}, 'Blocked unauthorized request to ' + req.url); // bunyan FTW!
   var action = 'access ' + req.originalUrl;
 
-  res.status(403);
+  res.status(401);
+  res.set('WWW-Authenticate', 'None');
+
   res.format({
     html: function () {
-      res.render('403.html', {
+      res.render('401.html', {
         action: action
       });
     },
