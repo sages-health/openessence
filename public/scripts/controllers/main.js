@@ -3,20 +3,11 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-var NAME = 'MainCtrl';
-
-angular.module(controllers.name).controller(NAME, function ($scope, $location, $window, $state, user, login) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $location, $window, $state, user, login) {
   if (!user.isLoggedIn()) { // TODO do this in router
     $location.path('/login').replace();
     return;
   }
-
-  // On normal login, i.e. through the login page, this controller isn't in scope and so this event will not be
-  // handled here. But when a user's session expires and they log back in, this controller will be in scope and thus
-  // the event will be handled here
-  $scope.$on('login', function () {
-    //history.back(); // TODO this probably doesn't work in IE
-  });
 
   $scope.user = user;
   $scope.logout = function () {
@@ -33,5 +24,3 @@ angular.module(controllers.name).controller(NAME, function ($scope, $location, $
 
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
 });
-
-module.exports = NAME;

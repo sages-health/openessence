@@ -3,9 +3,7 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-var NAME = 'Report';
-
-angular.module(services.name).factory(NAME, function ($resource) {
+angular.module(services.name).factory('Report', function ($resource) {
   return $resource('/reports/:name',
     {
       name: '@name'
@@ -16,5 +14,3 @@ angular.module(services.name).factory(NAME, function ($resource) {
       }
     });
 });
-
-module.exports = NAME;

@@ -1,12 +1,10 @@
 'use strict';
 
-var angular = require('angular'); // TODO https://github.com/mgechev/angularjs-style-guide
+var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-var NAME = 'LoginCtrl';
-
 // `controllers.controller` breaks ngmin, see https://github.com/btford/ngmin#references
-angular.module(controllers.name).controller(NAME, function ($scope, $http, $location, $q, user, login) {
+angular.module(controllers.name).controller('LoginCtrl', function ($scope, $http, $location, $q, user, login) {
   if (user.isLoggedIn()) { // TODO do this in router
     $location.path('/').replace();
     return;
@@ -20,6 +18,3 @@ angular.module(controllers.name).controller(NAME, function ($scope, $http, $loca
     login.prompt();
   };
 });
-
-// export name, not function, so clients don't try to use this instead of DI
-module.exports = NAME;

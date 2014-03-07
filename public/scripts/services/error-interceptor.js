@@ -3,11 +3,9 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-var NAME = 'errorInterceptor';
-
 // inspired by https://github.com/witoldsz/angular-http-auth
 
-angular.module(services.name).factory(NAME, function ($q, $injector, $rootScope, $window, toaster) {
+angular.module(services.name).factory('errorInterceptor', function ($q, $injector, $rootScope, $window, toaster) {
   // get around circular dependency, see
   // http://stackoverflow.com/questions/20647483/angularjs-injecting-service-into-a-http-interceptor-circular-dependency
   var $http;
@@ -61,5 +59,3 @@ angular.module(services.name).factory(NAME, function ($q, $injector, $rootScope,
     }
   };
 });
-
-module.exports = NAME;

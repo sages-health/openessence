@@ -3,8 +3,6 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-var NAME = 'ReloginCtrl';
-
 var modalCtrl = function ($scope, $modalInstance, login) {
   $scope.$on('login', function () {
     $modalInstance.dismiss('login');
@@ -18,7 +16,7 @@ var modalCtrl = function ($scope, $modalInstance, login) {
 // b/c ngmin doesn't like anonymous controllers
 modalCtrl.$inject = ['$scope', '$modalInstance', 'login'];
 
-angular.module(controllers.name).controller(NAME, function ($scope, $modal) {
+angular.module(controllers.name).controller('ReloginCtrl', function ($scope, $modal) {
   $modal.open({
     templateUrl: '/public/partials/relogin.html',
     controller: modalCtrl,
@@ -29,5 +27,3 @@ angular.module(controllers.name).controller(NAME, function ($scope, $modal) {
     keyboard: false // don't allow closing via ESC key
   });
 });
-
-module.exports = NAME;

@@ -3,9 +3,7 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-var NAME = 'login';
-
-angular.module(services.name).factory(NAME, function ($location, $window, $rootScope, user, persona, Session) {
+angular.module(services.name).factory('login', function ($location, $window, $rootScope, user, persona, Session) {
   // including persona script kills phantomjs
   if (persona) { // TODO do this by injecting NOOP navigator
     navigator.id.watch({
@@ -53,5 +51,3 @@ angular.module(services.name).factory(NAME, function ($location, $window, $rootS
     }
   };
 });
-
-module.exports = NAME;

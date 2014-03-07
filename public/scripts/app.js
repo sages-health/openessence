@@ -11,7 +11,7 @@ require('angular-toaster');
 
 var modules = require('./modules');
 require('./controllers');
-var services = require('./services');
+require('./services');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'gettext', 'toaster']
@@ -88,7 +88,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
 });
 
 app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push(services.errorInterceptor);
+  $httpProvider.interceptors.push('errorInterceptor');
 });
 
 i18n.strings().then(function (strings) {

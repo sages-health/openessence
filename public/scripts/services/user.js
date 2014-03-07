@@ -3,9 +3,7 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-var NAME = 'user';
-
-angular.module(services.name).factory(NAME, function () {
+angular.module(services.name).factory('user', function () {
 
   var user = {
     email: angular.element('meta[name="_email"]').attr('content'),
@@ -18,5 +16,3 @@ angular.module(services.name).factory(NAME, function () {
 
   return user;
 });
-
-module.exports = NAME;

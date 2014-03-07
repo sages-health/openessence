@@ -3,8 +3,6 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-var NAME = 'ReportCtrl';
-
 var modalCtrl = function ($scope, $modalInstance, $state, $log, Report, urlToSave) {
   $scope.container = {}; // see https://github.com/angular-ui/bootstrap/issues/969
   $scope.ok = function () {
@@ -30,7 +28,7 @@ var modalCtrl = function ($scope, $modalInstance, $state, $log, Report, urlToSav
 // b/c ngmin doesn't like anonymous controllers
 modalCtrl.$inject = ['$scope', '$modalInstance', '$state', '$log', 'Report', 'urlToSave'];
 
-angular.module(controllers.name).controller(NAME, function ($scope, $modal, $stateParams, $window) {
+angular.module(controllers.name).controller('ReportCtrl', function ($scope, $modal, $stateParams, $window) {
   $modal.open({
     templateUrl: '/public/partials/save-report-dialog.html',
     controller: modalCtrl,
@@ -42,5 +40,3 @@ angular.module(controllers.name).controller(NAME, function ($scope, $modal, $sta
     }
   });
 });
-
-module.exports = NAME;
