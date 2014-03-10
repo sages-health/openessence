@@ -21,7 +21,8 @@
     "connect-restreamer": "~1.0.0",
     "jquery": "~2.1.0",
     "locale": "0.0.14",
-    "phantom-cluster": "~0.1.1"
+    "phantom-cluster": "~0.1.1",
+    "humane-js": "~3.1.0"
   },
   "devDependencies": {
     "browserify": "~3.29.0",
@@ -78,8 +79,7 @@
     "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js",
     "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
     "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js",
-    "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js",
-    "angular-toaster": "./public/bower_components/AngularJS-Toaster/toaster.js"
+    "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js"
   },
   "browserify-shim": {
     "angular": {
@@ -114,11 +114,6 @@
       ]
     },
     "angular-gettext": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-toaster": {
       "depends": [
         "angular:angular"
       ]

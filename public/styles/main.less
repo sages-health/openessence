@@ -1,7 +1,7 @@
 @import "bootstrap/less/bootstrap";
 @import "bootswatch/flatly/variables";
 @import "bootswatch/flatly/bootswatch"; // TODO this calls out to Google Fonts, that's the price you pay for beauty
-@import (less) "AngularJS-Toaster/toaster.css";
+@import (less) "humane-js/themes/libnotify.css";
 
 @icon-font-path: "/public/fonts/bootstrap/";
 
@@ -18,6 +18,18 @@
 
 @padding-small-vertical: 5px;
 @padding-small-horizontal: 10px;
+
+// notification settings
+.humane {
+  font-family: @font-family-sans-serif;
+  font-size: @font-size-large;
+  width: 300px;
+}
+
+.humane-error {
+  background-color: @brand-danger;
+  background-image: none; // TODO see if this breaks IE
+}
 
 // for ng-bootstrap
 .nav, .pagination, .carousel, .panel-title a {

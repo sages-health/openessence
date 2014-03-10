@@ -15,7 +15,7 @@ exports.anonymous = function () {
 
     app.use('/public/styles', require('less-middleware')({
       src: __dirname + '/../public/styles',
-      paths: [__dirname + '/../public/bower_components'],
+      paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules'],
       compress: false // no point in development
     }));
 

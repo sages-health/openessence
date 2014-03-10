@@ -5,11 +5,12 @@ var services = require('../modules').services;
 
 // inspired by https://github.com/witoldsz/angular-http-auth
 
-angular.module(services.name).factory('errorInterceptor', function ($q, $injector, $rootScope, $window, toaster) {
+angular.module(services.name).factory('errorInterceptor', function ($q, $injector, $rootScope, gettext, notification) {
   // get around circular dependency, see
   // http://stackoverflow.com/questions/20647483/angularjs-injecting-service-into-a-http-interceptor-circular-dependency
   var $http;
   var $state;
+  var gettextCatalog;
 
   return {
     responseError: function (rejection) {
@@ -20,15 +21,10 @@ angular.module(services.name).factory('errorInterceptor', function ($q, $injecto
 
       $http = $http || $injector.get('$http');
       $state = $state || $injector.get('$state');
+      gettextCatalog = gettextCatalog || $injector.get('gettextCatalog'); // depends on $http for remote loading
 
       if (rejection.status >= 500) {
-        // TODO gettext
-        // TODO contextual info about response
-        // TODO move to notification service
-        // TODO copy good parts of humanize
-        toaster.pop('error', 'Error', 'Server error'); // TODO make these more like Ubuntu's notifications
-        // TODO make translucent on mouseover NOT by default (#toast-container > :hover)
-        // TODO don't stop timer on mouseover
+        notification.error(gettextCatalog.getString(gettext('Something went wrong :(')));
       } else if (rejection.status === 401) {
         // 401 is the only time it makes sense to retry: after user has logged in the request should succeed
         var deferred = $q.defer();
@@ -48,11 +44,9 @@ angular.module(services.name).factory('errorInterceptor', function ($q, $injecto
 
         return deferred.promise;
       } else if (rejection.status === 403) {
-        // TODO gettext
-        toaster.pop('error', '', 'You don\'t have permission to do that. Sorry about that.');
+        notification.error(gettextCatalog.getString(gettext('Insufficient permissions')));
       } else if (rejection.status >= 400) {
-        // TODO gettext
-        toaster.pop('error', '', 'Something went wrong :(');
+        notification.error(gettextCatalog.getString(gettext('That was a very bad request :(')));
       }
 
       return $q.reject(rejection);

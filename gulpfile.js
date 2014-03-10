@@ -49,7 +49,8 @@ var paths = {
   serverTests: 'test/server/**/test-*.js',
   clientTests: 'test/client/**/test-*.js',
   imagesDest: 'dist/public/images',
-  bowerComponents: path.normalize(__dirname + '/public/bower_components'),
+  bowerComponents: 'public/bower_components',
+  nodeModules: 'public/node_modules',
   copiedFonts: 'public/fonts/bootstrap'
 };
 
@@ -60,7 +61,7 @@ gulp.task('styles', ['clean-styles'], function () {
   // need to depend on clean-styles b/c inject will add all CSS files in dist/styles (including any old ones)
   return gulp.src(paths.styles)
     .pipe(less({
-      paths: [paths.bowerComponents]
+      paths: [paths.bowerComponents, paths.nodeModules]
     }))
     .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
     .pipe(minifycss())
