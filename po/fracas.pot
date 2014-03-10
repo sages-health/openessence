@@ -3,12 +3,49 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../public/partials/login.html
+msgid "...for disease surveillance"
+msgstr ""
+
+#: ../public/partials/save-report-dialog.html
+msgid "Cancel"
+msgstr ""
+
 #: ../public/partials/home.html
 msgid "Dashboard"
 msgstr ""
 
+#: ../public/partials/not-found.html
+msgid "Home"
+msgstr ""
+
+#: ../public/scripts/services/errorInterceptor.js
+msgid "Insufficient permissions"
+msgstr ""
+
+#: ../public/partials/login.html
+#: ../public/partials/relogin.html
+msgid "Login"
+msgstr ""
+
 #: ../public/partials/home.html
 msgid "Logout"
+msgstr ""
+
+#: ../public/partials/relogin.html
+msgid "Please log back in first"
+msgstr ""
+
+#: ../public/partials/save-report-dialog.html
+msgid "Save"
+msgstr ""
+
+#: ../public/partials/save-report-dialog.html
+msgid "Save this page"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Saved query"
 msgstr ""
 
 #: ../public/partials/home.html
@@ -16,17 +53,29 @@ msgid "Settings"
 msgstr ""
 
 #: ../public/partials/home.html
+msgid "Something else"
+msgstr ""
+
+#: ../public/scripts/services/errorInterceptor.js
+msgid "Something went wrong :("
+msgstr ""
+
+#: ../public/partials/not-found.html
+msgid "Sorry, but we couldn't find"
+msgstr ""
+
+#: ../public/partials/home.html
 msgid "Submit"
+msgstr ""
+
+#: ../public/scripts/services/errorInterceptor.js
+msgid "That was a very bad request :("
 msgstr ""
 
 #: ../public/partials/home.html
 msgid "Toggle navigation"
 msgstr ""
 
-#: ../public/partials/login.html
-msgid "...for disease surveillance"
-msgstr ""
-
-#: ../public/partials/login.html
-msgid "Login"
+#: ../public/partials/not-found.html
+msgid "the page you were looking for."
 msgstr ""
