@@ -50,7 +50,7 @@ var paths = {
   clientTests: 'test/client/**/test-*.js',
   imagesDest: 'dist/public/images',
   bowerComponents: 'public/bower_components',
-  nodeModules: 'public/node_modules',
+  nodeModules: 'node_modules',
   copiedFonts: 'public/fonts/bootstrap'
 };
 
