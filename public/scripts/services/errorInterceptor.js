@@ -40,7 +40,7 @@ angular.module(services.name).factory('errorInterceptor', function ($q, $injecto
             });
         });
 
-        $state.go('home.relogin');
+        $state.go('relogin');
 
         return deferred.promise;
       } else if (rejection.status === 403) {

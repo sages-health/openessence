@@ -73,24 +73,28 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       templateUrl: '/public/partials/not-found.html',
       controller: 'NotFoundCtrl'
     })
-    .state('home.relogin', { // TODO use parent: 'home' option
+    .state('relogin', {
       url: 'relogin',
-      controller: 'ReloginCtrl'
+      controller: 'ReloginCtrl',
+      parent: 'home'
     })
-    .state('home.report', {
+    .state('report', {
       url: 'report/:url', // url param gives path to save
-      controller: 'ReportCtrl'
+      controller: 'ReportCtrl',
+      parent: 'home',
+      abstract: true
     })
-    .state('home.report.save', {
+    .state('report.save', {
       url: '/save'
     })
-    .state('home.entry', {
+    .state('entry', {
       url: 'entry',
       controller: 'EntryCtrl',
+      parent: 'home',
       abstract: true,
       template: '<div ui-view></div>'
     })
-    .state('home.entry.visit', {
+    .state('entry.visit', {
       url: '/visit',
       templateUrl: '/public/partials/entry/visit.html',
       controller: 'VisitEntryCtrl'
