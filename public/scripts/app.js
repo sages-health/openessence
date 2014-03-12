@@ -73,7 +73,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       templateUrl: '/public/partials/not-found.html',
       controller: 'NotFoundCtrl'
     })
-    .state('home.relogin', {
+    .state('home.relogin', { // TODO use parent: 'home' option
       url: 'relogin',
       controller: 'ReloginCtrl'
     })
@@ -83,6 +83,17 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('home.report.save', {
       url: '/save'
+    })
+    .state('home.entry', {
+      url: 'entry',
+      controller: 'EntryCtrl',
+      abstract: true,
+      template: '<div ui-view></div>'
+    })
+    .state('home.entry.visit', {
+      url: '/visit',
+      templateUrl: '/public/partials/entry/visit.html',
+      controller: 'VisitEntryCtrl'
     });
 });
 
