@@ -2,7 +2,6 @@
 
 var express = require('express');
 var env = require('./conf').env;
-// don't require browserify-middleware up here, it's a dev dependency
 
 /**
  * Returns an express app that serves static resources that do not require authentication.
@@ -10,10 +9,18 @@ var env = require('./conf').env;
 exports.anonymous = function () {
   var app = express();
   if (env === 'development') {
-    // In development, we use browserify-middleware and less-middleware so that you don't have to do a build
-    app.use('/js/app.js', require('browserify-middleware')('../public/scripts/app.js'));
+    // Don't move these requires outside this conditional, they're dev dependencies only.
+    // We use these so that you don't have to do a build or watch in development.
+    var browserify = require('browserify-middleware');
+    var less = require('less-middleware');
 
-    app.use('/public/styles', require('less-middleware')({
+    app.use('/js/app.js', browserify('../public/scripts/app.js', {
+      // Make require('partial.html') work.
+      // In production, we use a custom version of this that also minifies the partials
+      transform: 'partialify'
+    }));
+
+    app.use('/public/styles', less({
       src: __dirname + '/../public/styles',
       paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules'],
       compress: false // no point in development

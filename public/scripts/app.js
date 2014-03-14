@@ -60,17 +60,17 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: '/',
-      templateUrl: '/public/partials/home.html',
+      template: require('../partials/home.html'),
       controller: 'MainCtrl'
     })
     .state('login', {
       url: '/login',
-      templateUrl: '/public/partials/login.html',
+      template: require('../partials/login.html'),
       controller: 'LoginCtrl'
     })
     .state('not-found', {
       url: '/not-found',
-      templateUrl: '/public/partials/not-found.html',
+      template: require('../partials/not-found.html'),
       controller: 'NotFoundCtrl'
     })
     .state('relogin', {
@@ -96,7 +96,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('entry.visit', {
       url: '/visit',
-      templateUrl: '/public/partials/entry/visit.html',
+      template: require('../partials/entry/visit.html'),
       controller: 'VisitEntryCtrl'
     });
 });

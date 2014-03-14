@@ -18,7 +18,7 @@ modalCtrl.$inject = ['$scope', '$modalInstance', 'login'];
 
 angular.module(controllers.name).controller('ReloginCtrl', function ($scope, $modal) {
   $modal.open({
-    templateUrl: '/public/partials/relogin.html',
+    template: require('../../partials/relogin.html'),
     controller: modalCtrl,
     scope: $scope,
 

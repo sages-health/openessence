@@ -7,7 +7,6 @@ var lazypipe = require('lazypipe');
 var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
-var browserify = require('gulp-browserify');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var imagemin = require('gulp-imagemin');
@@ -19,12 +18,19 @@ var rev = require('gulp-rev');
 var inject = require('gulp-inject');
 var mocha = require('gulp-mocha');
 var gettext = require('gulp-angular-gettext');
+var buffer = require('gulp-buffer');
+var replace = require('gulp-replace');
+var header = require('gulp-header');
+var footer = require('gulp-footer');
+var browserify = require('browserify');
 var karma = require('karma');
 var open = require('open');
 var path = require('path');
 var fork = require('child_process').fork;
 var path = require('path');
 var _ = require('lodash');
+var source = require('vinyl-source-stream');
+var transformTools = require('browserify-transform-tools');
 
 // add Kibana's grunt tasks
 // blocked on https://github.com/gratimax/gulp-grunt/issues/3
@@ -40,7 +46,6 @@ var _ = require('lodash');
 
 var paths = {
   scripts: 'public/scripts/**/*.js',
-  scriptMain: 'public/scripts/app.js',
   styles: 'public/styles/**/*.less',
   svgs: 'public/images/**/*.svg',
   html: 'views/**/*.html',
@@ -103,11 +108,56 @@ gulp.task('jshint', function () {
 // http://benclinkinbeard.com/posts/external-bundles-for-faster-browserify-builds/
 // http://esa-matti.suuronen.org/blog/2013/04/15/asynchronous-module-loading-with-browserify/
 
-gulp.task('scripts', ['jshint'], function () {
-  return gulp.src(paths.scriptMain)
-    .pipe(browserify({
-      debug: false // we use browserify-middleware in development
+// minifies partials and converts them to a JS string that can be `require`d
+gulp.task('partials', function () {
+  return gulp.src(paths.partials)
+    .pipe(htmlmin({
+      collapseWhitespace: true,
+      collapseBooleanAttributes: true,
+      removeComments: true,
+      removeAttributeQuotes: false,
+      removeRedundantAttributes: true,
+      removeEmptyAttributes: true,
+      removeOptionalTags: false // removing is probably a bad idea with partial docs
     }))
+    // inspired by https://github.com/visionmedia/node-string-to-js/blob/master/index.js
+    .pipe(replace(/"/g, '\\"'))
+    .pipe(replace(/\r\n|\r|\n/g, '\\n'))
+
+    // wrap HTML in module
+    .pipe(header('module.exports = "'))
+    .pipe(footer('";'))
+
+    .pipe(gulp.dest('.tmp/public/partials')); // write to .tmp so they can be read by browserify
+});
+
+gulp.task('scripts', ['clean-scripts', 'jshint', 'partials'], function () {
+  // transform that replaces references to `require`d partials with their minified versions in .tmp,
+  // e.g. a call to require('../partials/foo.html') in public/scripts would be replaced by
+  // require('../../.tmp/public/partials/foo.html')
+  var minifyPartials = transformTools.makeRequireTransform('partialTransform',
+    {evaluateArguments: true},
+    function (args, opts, cb) {
+      var file = args[0];
+      if (path.extname(file) !== '.html') {
+        cb();
+        return;
+      }
+
+      var referrerDir = path.dirname(opts.file); // directory of file that has the require() call
+      var tmp = path.join(__dirname, '.tmp');
+      var tmpResource = path.resolve(referrerDir, file).replace(__dirname, tmp); // path to required tmp resource
+      var relativePath = path.relative(referrerDir, tmpResource).replace(/\\/g, '/');
+
+      cb(null, 'require("' + relativePath + '")');
+    });
+
+  return browserify()
+    .add(__dirname + '/public/scripts/app.js')
+    .transform(minifyPartials)
+    .bundle()
+    .pipe(source('app.js')) // convert stream of text to stream of Vinyl objects for gulp
+    .pipe(buffer())// ngmin, et al. don't like streams, so convert to buffer
     .pipe(ngmin())
     .pipe(uglify({
       preserveComments: 'some' // preserve license headers
@@ -200,20 +250,6 @@ gulp.task('svgs', function () {
 
 gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs']);
 
-gulp.task('partials', function () {
-  return gulp.src(paths.partials)
-    .pipe(htmlmin({
-      collapseWhitespace: true,
-      collapseBooleanAttributes: true,
-      removeComments: true,
-      removeAttributeQuotes: false,
-      removeRedundantAttributes: true,
-      removeEmptyAttributes: true,
-      removeOptionalTags: false // removing is probably a bad idea with partial docs
-    }))
-    .pipe(gulp.dest('dist/public/partials'));
-});
-
 // Although we do a lot of processing in middleware, this task is still useful to replace references to resources
 // with references to revved versions.
 gulp.task('inject', ['styles', 'scripts'], function () {
@@ -272,7 +308,7 @@ gulp.task('clean', function () {
     .pipe(rimraf());
 });
 
-gulp.task('build', ['images', 'fonts', 'partials', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
+gulp.task('build', ['images', 'fonts', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
 
 gulp.task('server', ['build'], function (callback) {
   var env = _.clone(process.env);

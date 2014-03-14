@@ -27,9 +27,11 @@
   "devDependencies": {
     "browserify": "~3.29.0",
     "browserify-shim": "~3.2.2",
+    "partialify": "~3.1.0",
     "browserify-middleware": "~2.3.0",
-    "less-middleware": "~0.1.15",
+    "browserify-transform-tools": "~1.2.1",
     "less": "~1.7.0",
+    "less-middleware": "~0.1.15",
     "jshint-stylish": "~0.1.5",
     "karma": "~0.10.4",
     "karma-browserify": "~0.1.0",
@@ -59,8 +61,12 @@
     "gulp-mocha": "~0.4.1",
     "gulp-ngmin": "~0.1.2",
     "gulp-svgmin": "~0.4.1",
-    "gulp-browserify": "~0.4.4",
-    "gulp-angular-gettext": "~0.1.1"
+    "gulp-angular-gettext": "~0.1.1",
+    "gulp-buffer": "0.0.2",
+    "gulp-header": "~1.0.2",
+    "gulp-footer": "~1.0.4",
+    "gulp-replace": "~0.2.0",
+    "vinyl-source-stream": "~0.1.1"
   },
   "optionalDependencies": {
     "jpegtran-bin": "~0.2.3",
