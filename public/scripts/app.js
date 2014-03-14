@@ -105,19 +105,17 @@ app.config(function ($httpProvider) {
   $httpProvider.interceptors.push('errorInterceptor');
 });
 
-i18n.strings().then(function (strings) {
-  angular.element(document).ready(function () {
-    app.run(function ($rootScope, gettextCatalog) {
-      Object.keys(strings).forEach(function (lang) {
-        // angular-gettext's JSON format allows for multiple locales in a single bundle
-        // we don't use that now, but we may in the future
-        gettextCatalog.setStrings(lang, strings[lang]);
-      });
-      gettextCatalog.currentLanguage = document.documentElement.lang;
-      gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
+app.run(function ($rootScope, gettextCatalog) {
+  i18n.strings().then(function (strings) {
+    Object.keys(strings).forEach(function (lang) {
+      // angular-gettext's JSON format allows for multiple locales in a single bundle
+      // we don't use that now, but we may in the future
+      gettextCatalog.setStrings(lang, strings[lang]);
     });
+    gettextCatalog.currentLanguage = document.documentElement.lang;
+    gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
 
-    angular.bootstrap(document, ['fracasApp']);
+    $rootScope.$digest();
   });
 });
 
