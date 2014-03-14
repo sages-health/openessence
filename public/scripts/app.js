@@ -31,8 +31,22 @@ app.config(function ($httpProvider, csrfToken) {
 });
 
 var previousState = {};
-app.run(function ($rootScope) {
+var stateChanged = false; // there's probably a better way to track initial state change, but this works
+app.run(function ($rootScope, $state, user) {
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    if (!stateChanged) {
+      // We only "redirect" on initial page load. Once you're in the app, there are better ways of dealing with this
+      stateChanged = true;
+      if (!user.isLoggedIn()) {
+        event.preventDefault();
+        $state.transitionTo('login');
+      } else if (toState.name === 'login') {
+        // user is already logged in and trying to go to login page
+        event.preventDefault();
+        $state.transitionTo('home');
+      }
+    }
+
     if (fromState.url !== '^') {
       previousState = {
         state: fromState,

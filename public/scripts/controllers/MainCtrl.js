@@ -4,11 +4,6 @@ var angular = require('angular');
 var controllers = require('../modules').controllers;
 
 angular.module(controllers.name).controller('MainCtrl', function ($scope, $location, $window, $state, user, login) {
-  if (!user.isLoggedIn()) { // TODO do this in router
-    $location.path('/login').replace();
-    return;
-  }
-
   $scope.user = user;
   $scope.logout = function () {
     login.logout();
