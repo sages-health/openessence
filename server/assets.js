@@ -23,6 +23,7 @@ exports.anonymous = function () {
     app.use('/public/styles', less({
       src: __dirname + '/../public/styles',
       paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules'],
+      sourceMap: true,
       compress: false // no point in development
     }));
 

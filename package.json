@@ -69,7 +69,8 @@
     "gulp-header": "~1.0.2",
     "gulp-footer": "~1.0.4",
     "gulp-replace": "~0.2.0",
-    "vinyl-source-stream": "~0.1.1"
+    "vinyl-source-stream": "~0.1.1",
+    "source-map": "~0.1.33"
   },
   "optionalDependencies": {
     "jpegtran-bin": "~0.2.3",
