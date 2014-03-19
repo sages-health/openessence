@@ -2,6 +2,7 @@
 @import "bootswatch/flatly/variables";
 @import "bootswatch/flatly/bootswatch"; // TODO this calls out to Google Fonts, that's the price you pay for beauty
 @import (less) "humane-js/themes/libnotify.css";
+@import "../frable/frable.less"; // TODO figure out a way to include addons w/o having to manually add it here
 
 @icon-font-path: "/public/fonts/bootstrap/";
 
@@ -39,4 +40,8 @@
 // se we don't have to load angular.js in head
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
+}
+
+.frable-pager {
+  .make-md-column-offset(2);
 }

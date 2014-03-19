@@ -7,13 +7,14 @@ require('angular-sanitize');
 require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-gettext');
+var frable = require('../frable');
 
 var modules = require('./modules');
 require('./controllers');
 require('./services');
 var i18n = require('./i18n');
 
-var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'gettext']
+var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'gettext', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));

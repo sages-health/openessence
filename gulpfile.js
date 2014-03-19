@@ -27,7 +27,6 @@ var karma = require('karma');
 var open = require('open');
 var path = require('path');
 var fork = require('child_process').fork;
-var path = require('path');
 var _ = require('lodash');
 var source = require('vinyl-source-stream');
 var transformTools = require('browserify-transform-tools');
@@ -44,12 +43,14 @@ var transformTools = require('browserify-transform-tools');
 
 // TODO get livereload working with https://github.com/mollerse/gulp-embedlr
 
+var notBowerComponents = '!public/bower_components/**/*';
+
 var paths = {
-  scripts: 'public/scripts/**/*.js',
-  styles: 'public/styles/**/*.less',
-  svgs: 'public/images/**/*.svg',
+  scripts: ['public/**/*.js', notBowerComponents],
+  styles: ['public/**/*.less', notBowerComponents],
+  svgs: ['public/**/*.svg', notBowerComponents],
+  partials: ['public/**/*.html', notBowerComponents],
   html: 'views/**/*.html',
-  partials: 'public/partials/**/*.html',
   indexHtml: 'views/index.html',
   serverTests: 'test/server/**/test-*.js',
   clientTests: 'test/client/**/test-*.js',
@@ -128,7 +129,7 @@ gulp.task('partials', function () {
     .pipe(header('module.exports = "'))
     .pipe(footer('";'))
 
-    .pipe(gulp.dest('.tmp/public/partials')); // write to .tmp so they can be read by browserify
+    .pipe(gulp.dest('.tmp/public/')); // write to .tmp so they can be read by browserify
 });
 
 gulp.task('scripts', ['clean-scripts', 'jshint', 'partials'], function () {
@@ -281,7 +282,7 @@ gulp.task('html', ['inject'], function () {
 //});
 
 gulp.task('pot', function () {
-  gulp.src([paths.partials, paths.scripts])
+  gulp.src(paths.partials.concat(paths.scripts))
     .pipe(gettext.extract('fracas.pot', {
       postProcess: function (po) {
         po.items.forEach(function (item) {
