@@ -73,9 +73,14 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
 
   $stateProvider
     .state('home', {
-      url: '/',
+      abstract: true,
       template: require('../partials/home.html'),
       controller: 'MainCtrl'
+    })
+    .state('home.content', {
+      url: '/',
+      template: require('../partials/home-content.html'),
+      controller: 'HomeCtrl'
     })
     .state('login', {
       url: '/login',
@@ -88,12 +93,12 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       controller: 'NotFoundCtrl'
     })
     .state('relogin', {
-      url: 'relogin',
+      url: '/relogin',
       controller: 'ReloginCtrl',
       parent: 'home'
     })
     .state('report', {
-      url: 'report/:url', // url param gives path to save
+      url: '/report/:url', // url param gives path to save
       controller: 'ReportCtrl',
       parent: 'home',
       abstract: true
@@ -102,7 +107,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/save'
     })
     .state('entry', {
-      url: 'entry',
+      url: '/entry',
       controller: 'EntryCtrl',
       parent: 'home',
       abstract: true,

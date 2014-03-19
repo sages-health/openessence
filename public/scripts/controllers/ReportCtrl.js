@@ -16,13 +16,13 @@ var modalCtrl = function ($scope, $modalInstance, $state, $log, Report, urlToSav
         $log.error('Error saving report');
       })
       .finally(function () {
-        $state.go('home');
+        $state.go('home.content');
       });
   };
 
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
-    $state.go('home');
+    $state.go('home.content');
   };
 };
 // b/c ngmin doesn't like anonymous controllers

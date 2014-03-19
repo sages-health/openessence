@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $location, $window, $state, user, login) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, login) {
   $scope.user = user;
   $scope.logout = function () {
     login.logout();
@@ -18,4 +18,8 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $locat
   };
 
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
+
+  $scope.isActive = function (stateName) {
+    return stateName === $state.current.name;
+  };
 });
