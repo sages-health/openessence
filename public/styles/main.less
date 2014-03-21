@@ -2,6 +2,7 @@
 @import "bootswatch/flatly/variables";
 @import "bootswatch/flatly/bootswatch"; // TODO this calls out to Google Fonts, that's the price you pay for beauty
 @import (less) "humane-js/themes/libnotify.css";
+@import (less) "nvd3/nv.d3.css";
 @import "../frable/frable.less"; // TODO figure out a way to include addons w/o having to manually add it here
 
 @icon-font-path: "/public/fonts/bootstrap/";
@@ -44,4 +45,8 @@
 
 .frable-pager {
   .make-md-column-offset(2);
+}
+
+.braph svg {
+  padding: 1px;
 }

@@ -10,7 +10,8 @@
     "angular-ui-router": "0.2.8-bowratic-tedium",
     "angular-gettext": "~0.2.4",
     "bootstrap": "~3.1.1",
-    "bootswatch": "~3.1.1"
+    "bootswatch": "~3.1.1",
+    "nvd3": "~1.1.15-beta"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.13",

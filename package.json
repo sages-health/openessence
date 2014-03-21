@@ -89,7 +89,9 @@
     "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js",
     "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
     "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js",
-    "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js"
+    "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js",
+    "d3": "./public/bower_components/d3/d3.js",
+    "nvd3": "./public/bower_components/nvd3/nv.d3.js"
   },
   "browserify-shim": {
     "angular": {
@@ -126,6 +128,15 @@
     "angular-gettext": {
       "depends": [
         "angular:angular"
+      ]
+    },
+    "d3": {
+      "exports": "d3"
+    },
+    "nvd3": {
+      "exports": "nv",
+      "depends": [
+        "d3:d3"
       ]
     }
   },
