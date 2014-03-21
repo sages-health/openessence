@@ -13,27 +13,50 @@ prettyStdOut.pipe(process.stdout);
 
 var env = process.env.NODE_ENV || 'development';
 
-var logger = bunyan.createLogger({
-  name: 'fracas',
-  serializers: bunyan.stdSerializers,
-  streams: [
-    // human-readable output on stdout
-    {
-      level: 'debug',
-      type: 'raw',
-      stream: prettyStdOut
-    },
+var createLogger = function (name) {
+  return bunyan.createLogger({
+    name: name,
+    serializers: bunyan.stdSerializers,
+    streams: [
+      // human-readable output on stdout
+      {
+        level: 'debug',
+        type: 'raw',
+        stream: prettyStdOut
+      },
 
-    // machine-readable output in log file
-    {
-      level: 'info',
-      type: 'rotating-file',
-      path: __dirname + '/../../logs/fracas.log',
-      period: '1d', // rotate daily, bunyan doesn't support size-based rotation :(
-      count: 3 // number of back copies
-    }
-  ]
-});
+      // machine-readable output in log file
+      {
+        level: 'info',
+        type: 'rotating-file',
+        path: __dirname + '/../../logs/' + name + '.log',
+        period: '1d', // rotate daily, bunyan doesn't support size-based rotation :(
+        count: 3 // number of back copies
+      }
+    ]
+  });
+};
+
+var logger = createLogger('fracas');
+
+function ElasticSearchLogger () {
+  var logger = createLogger('elasticsearch');
+
+  this.error = logger.error.bind(logger);
+  this.warning = logger.warn.bind(logger);
+  this.info = logger.info.bind(logger);
+  this.debug = logger.debug.bind(logger);
+  this.trace = function (method, requestUrl, body, responseBody, responseStatus) {
+    logger.trace({
+      method: method,
+      requestUrl: requestUrl,
+      body: body,
+      responseBody: responseBody,
+      responseStatus: responseStatus
+    });
+  };
+  this.close = function () {};
+}
 
 module.exports = {
   env: env,
@@ -51,7 +74,8 @@ module.exports = {
 
   // elasticsearch settings, duh
   elasticsearch: {
-    url: 'http://localhost:9200'
-    // potentially more settings
+    host: 'http://localhost:9200',
+    log: ElasticSearchLogger,
+    apiVersion: '1.0'
   }
 };
