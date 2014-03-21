@@ -81,13 +81,21 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('home.content', {
       url: '/',
-      template: require('../partials/home-content.html'),
-      controller: 'HomeCtrl'
+      // home.content is the same as the workbench right now, just at a different URL.
+      // It may be different in the future though.
+      template: require('../partials/workbench.html'),
+      controller: 'WorkbenchCtrl'
     })
     .state('login', {
       url: '/login',
       template: require('../partials/login.html'),
       controller: 'LoginCtrl'
+    })
+    .state('workbench', {
+      url: '/workbench',
+      template: require('../partials/workbench.html'),
+      controller: 'WorkbenchCtrl',
+      parent: 'home'
     })
     .state('not-found', {
       url: '/not-found',

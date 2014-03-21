@@ -17,8 +17,8 @@
 
         <!-- Bootstrap convention is to have a home button and a brand link (that probably leads to home).
              Useful because brand doesn't respect .active -->
-        <li ng-class="{active: isActive('home.content')}">
-          <a class="glyphicon glyphicon-home" ui-sref="home.content"></a>
+        <li ui-sref-active="active">
+          <a class="glyphicon glyphicon-stats" ui-sref="workbench"></a>
         </li>
 
         <li class="dropdown">

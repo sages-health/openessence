@@ -18,8 +18,4 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
   };
 
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
-
-  $scope.isActive = function (stateName) {
-    return stateName === $state.current.name;
-  };
 });

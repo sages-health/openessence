@@ -4,7 +4,7 @@ var angular = require('angular');
 var controllers = require('../modules').controllers;
 var d3 = require('d3');
 
-angular.module(controllers.name).controller('HomeCtrl', function ($scope, FrableParams) {
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, FrableParams) {
   var data = [];
   for (var i = 0; i < 500; i++) {
     data[i] = {
