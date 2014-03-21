@@ -29,7 +29,7 @@ exports.getManagedAliases = function getManagedAliases (callback) {
  * @returns {*} array of strings
  */
 exports.getManagedAliasesSync = function getManagedAliasesSync () {
-  var files = fs.readdirSync(__dirname + '../../../indices');
+  var files = fs.readdirSync(__dirname + '/../../indices');
   return getAliases(files);
 };
 

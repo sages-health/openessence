@@ -101,6 +101,8 @@ app.use('/es', esProxy);
 app.use('/kibana/es', esProxy);
 app.use('/kibana', assets.kibana());
 
+app.use('/resources', require('./codex'));
+
 app.use('/reports', require('./reports'));
 
 app.use(require('./error').middleware);
