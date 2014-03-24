@@ -4,25 +4,9 @@ var angular = require('angular');
 var controllers = require('../modules').controllers;
 var d3 = require('d3');
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, FrableParams) {
-  var data = [];
-  for (var i = 0; i < 500; i++) {
-    data[i] = {
-      sex: ['Male', 'Female'][Math.floor(Math.random() * 2)],
-      age: Math.floor(Math.random() * 100)
-    };
-  }
-
-  $scope.tableParams = new FrableParams({
-    page: 1,
-    count: 10
-  }, {
-    total: data.length,
-    counts: [], // hide page count control
-    getData: function($defer, params) {
-      $defer.resolve(data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-    }
-  });
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, filterFilter, orderByFilter,
+                                                                       FrableParams) {
+  $scope.filters = {};
 
   // values copied from one of the nvd3 examples
   var values = [
@@ -42,7 +26,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, F
     [1170219600000, 85],
     [1172638800000, 84],
     [1175313600000, 92],
-    [1177905600000, 99] ,
+    [1177905600000, 99],
     [1180584000000, 121],
     [1183176000000, 122],
     [1185854400000, 131],
@@ -105,6 +89,48 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, F
     [1335758400000, 583]
   ];
 
+  var data = [];
+  for (var i = 0; i < 500; i++) {
+    data[i] = {
+      date: new Date(values[Math.floor(Math.random() * values.length)][0]),
+      sex: ['male', 'female'][Math.floor(Math.random() * 2)],
+      age: Math.floor(Math.random() * 100)
+    };
+  }
+  $scope.data = data;
+
+  var filterData = function () {
+    // TODO we need a real filter service like Kibana has
+    // https://github.com/elasticsearch/kibana/blob/master/src/app/services/filterSrv.js
+    return filterFilter(data, $scope.filters, function (actual, expected) {
+      if (expected === '') { // TODO sometimes we do want to search for the empty string
+        return true;
+      } else {
+        return angular.equals(expected, actual);
+      }
+    });
+  };
+
+  $scope.tableParams = new FrableParams({
+    page: 1,
+    count: 10,
+    sorting: {
+      date: 'desc'
+    }
+  }, {
+    total: function () {
+      return $scope.data.length;
+    },
+    counts: [], // hide page count control
+    $scope: {
+      $data: {}
+    },
+    getData: function($defer, params) {
+      var orderData = orderByFilter($scope.data, params.orderBy());
+      $defer.resolve(orderData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+    }
+  });
+
   $scope.tsData = [
     {
       key: 'Males',
@@ -125,4 +151,12 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, F
   $scope.xAxisTickFormat = function (d) {
     return d3.time.format('%x')(new Date(d));
   };
+
+  $scope.$watch('filters', function () {
+    $scope.data = filterData();
+  }, true);
+
+  $scope.$watch('data', function () {
+    $scope.tableParams.reload();
+  }); // we always update the entire array reference, so no need for deep equality
 });

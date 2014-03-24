@@ -1,12 +1,28 @@
+<!-- filters -->
+
+<!-- visualizations -->
 <div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <label class="col-md-2 control-label" for="workbench-filter-sex" translate>Sex</label>
+      <!-- single select until we figure multiselect out -->
+      <select id="workbench-filter-sex" name="sex" class="form-control" ng-model="filters.sex">
+        <option value="" selected></option>
+        <option value="male" translate>Male</option>
+        <option value="female" translate>Female</option>
+      </select>
+    </div>
+  </div>
+  <br>
   <div class="row">
     <div class="col-md-4">
       <div class="panel panel-default">
         <div class="table-responsive">
           <table class="table table-striped" frable="tableParams">
             <tr ng-repeat="visit in $data">
-              <td data-title="'Sex'">{{visit.sex}}</td>
-              <td data-title="'Age'">{{visit.age}}</td>
+              <td data-title="'Date'" sortable="'date'">{{visit.date | date}}</td>
+              <td data-title="'Sex'" sortable="'sex'">{{visit.sex}}</td>
+              <td data-title="'Age'" sortable="'age'">{{visit.age}}</td>
             </tr>
           </table>
         </div>
