@@ -136,15 +136,15 @@ app.config(function ($httpProvider) {
 
 app.run(function ($rootScope, gettextCatalog) {
   i18n.strings().then(function (strings) {
-    Object.keys(strings).forEach(function (lang) {
-      // angular-gettext's JSON format allows for multiple locales in a single bundle
-      // we don't use that now, but we may in the future
-      gettextCatalog.setStrings(lang, strings[lang]);
+    $rootScope.$apply(function () { // TODO this is really slow, think of a better way to load strings
+      Object.keys(strings).forEach(function (lang) {
+        // angular-gettext's JSON format allows for multiple locales in a single bundle
+        // we don't use that now, but we may in the future
+        gettextCatalog.setStrings(lang, strings[lang]);
+      });
+      gettextCatalog.currentLanguage = document.documentElement.lang;
+      gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
     });
-    gettextCatalog.currentLanguage = document.documentElement.lang;
-    gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
-
-    $rootScope.$digest();
   });
 });
 
