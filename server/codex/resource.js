@@ -37,7 +37,7 @@ exports.serialize = function () {
       req.instance = match[2];
     }
 
-    // Keep processing the filter chain
+    // Keep processing the middleware chain
     next();
   };
 };
@@ -335,7 +335,7 @@ exports.controller = function () {
       }
     };
 
-    // The standard set of REST endpoints for reosurces
+    // The standard set of REST endpoints for resources
     if (req.method === 'GET') {
       exports['query' + scope](req, standardResponse);
     } else if (req.method === 'POST') {

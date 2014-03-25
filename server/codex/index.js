@@ -26,7 +26,7 @@ glob('controllers/*.js', {cwd: __dirname}, function (err, files) {
   var exampleRegex = /.*\.example\.js$/;
   files = _.filter(files, function (item) {
     var isExample = exampleRegex.test(item);
-    if(isExample) {
+    if (isExample) {
       conf.logger.debug('Skipping example controller: %s', path.basename(item));
     }
     return !isExample;

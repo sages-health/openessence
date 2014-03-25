@@ -1,9 +1,17 @@
 'use strict';
 
 var _ = require('lodash');
+var changeCase = require('change-case');
 var client = require('./client');
 
-function Model () {
+function Model (options) {
+  options = _.assign({
+    // we use param-case since that's the de facto REST standard for resources, even if elasticsearch uses snake_case
+    index: this.constructor.INDEX || changeCase.paramCase(this.constructor.name),
+    // type depends on index
+    mapping: this.constructor.MAPPING
+  }, options);
+
   // Bind the inner functions to the model so they can reference the
   // instance properties below
   var instance = this;
@@ -11,9 +19,9 @@ function Model () {
     obj[key] = _.bind(value, instance);
   });
 
-  this.index = this.constructor.index || this.constructor.name.toLowerCase();
-  this.type = this.constructor.type || this.index;
-  this.mapping = this.constructor.mapping;
+  this.index = options.index;
+  this.type = options.type|| this.constructor.TYPE || this.index;
+  this.mapping = options.mapping;
   this.client = client;
 }
 
@@ -77,7 +85,7 @@ Model.prototype.insert = function (params, callback) {
 Model.prototype.mget = function (params, callback) {
   // Mget has two modes - index and type per request, or bulk for a set of ids
   // Only provide default index and type for the latter case
-  if(params && params.body.ids) {
+  if (params && params.body.ids) {
     params = _.assign({
       index: this.index,
       type: this.type
