@@ -25,8 +25,9 @@ util.inherits(FormatError, Error);
 
 exports.serialize = function () {
   return function (req, res, next) {
-    // Look up the model as the first full word in the url
-    var match = req.url.match(/^\/(\w+)(?:\/([\w|-]+))?$/);
+    // Look up the model as the first path in the URL, with an optional ID as the second path,
+    // and an optional trailing /
+    var match = req.path.match(/^\/([\w-]+)(?:\/([\w-]+))?\/?$/);
     req.model = null;
 
     // If the model and/or instance is specified, add it/them to the request
