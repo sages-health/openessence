@@ -4,8 +4,9 @@ var angular = require('angular');
 var controllers = require('../modules').controllers;
 var d3 = require('d3');
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, filterFilter, orderByFilter,
-                                                                       FrableParams) {
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $http, orderByFilter, FrableParams) {
+
+  $scope.data = [];
   $scope.filters = {};
 
   // values copied from one of the nvd3 examples
@@ -89,27 +90,61 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, f
     [1335758400000, 583]
   ];
 
-  var data = [];
-  for (var i = 0; i < 500; i++) {
-    data[i] = {
-      date: new Date(values[Math.floor(Math.random() * values.length)][0]),
-      sex: ['male', 'female'][Math.floor(Math.random() * 2)],
-      age: Math.floor(Math.random() * 100)
-    };
-  }
-  $scope.data = data;
-
-  var filterData = function () {
+  $http.get('/resources/outpatient-visit?size=500').success(function (rawData) {
     // TODO we need a real filter service like Kibana has
     // https://github.com/elasticsearch/kibana/blob/master/src/app/services/filterSrv.js
-    return filterFilter(data, $scope.filters, function (actual, expected) {
-      if (expected === '') { // TODO sometimes we do want to search for the empty string
-        return true;
-      } else {
-        return angular.equals(expected, actual);
-      }
-    });
-  };
+    var filterRawData = function () {
+      return rawData.results
+        .map(function (r) {
+          return r._source;
+        })
+        .filter(function (row) {
+
+          // nested comparison, based on https://github.com/angular/angular.js/pull/6215
+          var compare = function (expected, actual) {
+            if (expected === '') { // when filter not selected
+              // TODO sometimes we do want to search for the empty string
+              return true;
+            }
+
+            if (typeof expected === 'object') {
+              if (typeof actual !== 'object') {
+                return false;
+              }
+
+              for (var key in expected) {
+                if (expected.hasOwnProperty(key)) {
+                  if (!compare(expected[key], actual[key])) {
+                    return false;
+                  }
+                }
+              }
+
+              return true;
+            }
+
+            return angular.equals(expected, actual);
+          };
+
+          // for each row, make sure every filter matches
+          return Object.keys($scope.filters).every(function (filter) {
+            var expected = {};
+            expected[filter] = $scope.filters[filter];
+            return compare(expected, row);
+          });
+        });
+    };
+
+    $scope.data = filterRawData();
+
+    $scope.$watch('filters', function () {
+      $scope.data = filterRawData();
+    }, true);
+
+    $scope.$watch('data', function () {
+      $scope.tableParams.reload();
+    }); // we always update the entire array reference, so no need for deep equality
+  });
 
   $scope.tableParams = new FrableParams({
     page: 1,
@@ -151,12 +186,4 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, f
   $scope.xAxisTickFormat = function (d) {
     return d3.time.format('%x')(new Date(d));
   };
-
-  $scope.$watch('filters', function () {
-    $scope.data = filterData();
-  }, true);
-
-  $scope.$watch('data', function () {
-    $scope.tableParams.reload();
-  }); // we always update the entire array reference, so no need for deep equality
 });
