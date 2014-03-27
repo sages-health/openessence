@@ -1,11 +1,14 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <form name="visitForm" class="form-horizontal col-md-6" ng-submit="submit()" novalidate>
+      <form name="visitForm" class="form-horizontal col-md-6" ng-submit="submit(visitForm)" novalidate>
         <fieldset>
           <legend translate>New outpatient visit</legend>
 
-          <div class="form-group">
+          <!-- TODO red text on white background instead of alert -->
+          <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+
+          <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.date)}">
             <label class="col-md-4 control-label" for="entry-visit-date" translate>Date</label>
             <div class="col-md-6">
               <!--<datepicker id="entry-visit-date"></datepicker>-->
@@ -59,7 +62,7 @@
 
         </fieldset>
         <div class="col-md-offset-4">
-          <button type="submit" class="btn btn-primary" translate ng-disabled="visitForm.$invalid">Submit</button>
+          <button type="submit" class="btn btn-primary" translate>Submit</button>
         </div>
       </form>
     </div>

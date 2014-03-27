@@ -3,17 +3,30 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('VisitEntryCtrl', function ($scope, $http, gettext) {
-  $scope.agePlaceholder = gettext('Patient\'s age');
+angular.module(controllers.name).controller('VisitEntryCtrl', function ($scope, $http, gettext, gettextCatalog) {
+  $scope.agePlaceholder = gettextCatalog.getString(gettext('Patient\'s age'));
+  $scope.yellAtUser = false;
 
   $scope.isInvalid = function (field) {
-    return field.$invalid && !field.$pristine;
+    if ($scope.yellAtUser) {
+      // if the user has already tried to submit, show them all the fields they're required to submit
+      return field.$invalid;
+    } else {
+      // only show a field's error message if the user has already interacted with it, this prevents a ton of red
+      // before the user has even interacted with the form
+      return field.$invalid && !field.$pristine;
+    }
   };
 
-  $scope.submit = function () {
+  $scope.submit = function (visitForm) {
+    if (visitForm.$invalid) {
+      $scope.yellAtUser = true;
+      return;
+    }
+
     $http({
       method: 'POST',
-      url: '/visits',
+      url: '/resources/outpatient-visit',
       data: $scope.visit
     });
   };
