@@ -71,7 +71,8 @@
     "gulp-footer": "~1.0.4",
     "gulp-replace": "~0.2.0",
     "vinyl-source-stream": "~0.1.1",
-    "source-map": "~0.1.33"
+    "source-map": "~0.1.33",
+    "mock-fs": "~2.2.0"
   },
   "optionalDependencies": {
     "jpegtran-bin": "~0.2.3",

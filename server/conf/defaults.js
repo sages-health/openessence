@@ -64,7 +64,8 @@ module.exports = {
   logger: logger,
 
   // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
-  // using a random secret means sessions won't be preserved across server restarts
+  // Using a random secret means sessions won't be preserved across server restarts, but we'd need a persistent
+  // session store for that anyway
   sessionSecret: crypto.randomBytes(1024).toString('hex'),
 
   // Base port for PhantomJS cluster. Worker n is assigned phantomBasePort + n, e.g. 12301 for the first worker.
@@ -77,5 +78,14 @@ module.exports = {
     host: 'http://localhost:9200',
     log: ElasticSearchLogger,
     apiVersion: '1.0'
+  },
+
+  // Database settings. Fracas doesn't use a relational database, but we still need connection info for things like
+  // importing data. If you're not using a features that require connecting to a DB, then you can skip this.
+  db: {
+    url: 'jdbc:postgresql://localhost:5432/fracas',
+    user: 'postgres',
+    password: '',
+    driver: 'org.postgresql.Driver'
   }
 };

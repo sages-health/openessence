@@ -8,8 +8,8 @@
       <!-- single select until we figure multiselect out -->
       <select id="workbench-filter-sex" name="sex" class="form-control" ng-model="filters.patient.sex">
         <option value="" selected></option>
-        <option value="M" translate>Male</option><!-- TODO use male and female instead of abbrevs. to be unambiguous -->
-        <option value="F" translate>Female</option>
+        <option value="male" translate>Male</option>
+        <option value="female" translate>Female</option>
       </select>
     </div>
   </div>
@@ -20,7 +20,7 @@
         <div class="table-responsive">
           <table class="table table-striped" frable="tableParams">
             <tr ng-repeat="visit in $data">
-              <td data-title="'Date'" sortable="'date'">{{visit.date | date}}</td>
+              <td data-title="'Date'" sortable="'reportDate'">{{visit.reportDate | date}}</td>
               <td data-title="'Sex'" sortable="'patient.sex'">{{visit.patient.sex}}</td>
               <td data-title="'Age'" sortable="'patient.age'">{{visit.patient.age}}</td>
             </tr>

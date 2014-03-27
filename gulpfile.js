@@ -354,4 +354,10 @@ gulp.task('client-tests', function (cb) {
 
 gulp.task('tests', ['server-tests']);
 
+gulp.task('migrations', function (done) {
+  var importData = require('./server/codex/import');
+  var strategy = require('./server/codex/import/db');
+  importData(strategy, done);
+});
+
 gulp.task('default', ['build']);
