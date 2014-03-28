@@ -42,6 +42,9 @@ angular.module(controllers.name).controller('VisitEntryCtrl', function ($scope, 
       method: 'POST',
       url: '/resources/outpatient-visit',
       data: $scope.visit
+    }).success(function () {
+      $scope.yellAtUser = false;
+      $scope.success = true;
     });
   };
 });

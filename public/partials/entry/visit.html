@@ -6,7 +6,9 @@
           <legend translate>New outpatient visit</legend>
 
           <!-- TODO red text on white background instead of alert -->
-          <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+          <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+
+          <div class="alert alert-success alert-show-hide" ng-show="success" translate>Success!</div>
 
           <!-- Date -->
           <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.reportDate)}">
