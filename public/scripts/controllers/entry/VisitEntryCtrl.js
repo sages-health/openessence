@@ -5,7 +5,12 @@ var controllers = require('../../modules').controllers;
 
 angular.module(controllers.name).controller('VisitEntryCtrl', function ($scope, $http, gettext, gettextCatalog) {
   $scope.agePlaceholder = gettextCatalog.getString(gettext('Patient\'s age'));
+  $scope.weightPlaceholder = gettextCatalog.getString(gettext('Patient\'s weight'));
   $scope.yellAtUser = false;
+
+  // TODO get this from codex
+  $scope.districts = ['District 1', 'District 2', 'District 3', 'District 4', 'District 5'];
+  $scope.symptoms = [];
 
   $scope.isInvalid = function (field) {
     if ($scope.yellAtUser) {
@@ -16,6 +21,15 @@ angular.module(controllers.name).controller('VisitEntryCtrl', function ($scope, 
       // before the user has even interacted with the form
       return field.$invalid && !field.$pristine;
     }
+  };
+
+  $scope.warnSystolic = function (bpSystolic) {
+    // 180 is "hypertensive emergency" and 90 is hypotension according to Wikipedia
+    return !!bpSystolic && (bpSystolic >= 180 || bpSystolic < 90);
+  };
+
+  $scope.warnDiastolic = function (bpDiastolic) {
+    return !!bpDiastolic && (bpDiastolic >= 110 || bpDiastolic < 60);
   };
 
   $scope.submit = function (visitForm) {
