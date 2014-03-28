@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var helmet = require('helmet');
 var locale = require('locale');
 var _ = require('lodash');
 
@@ -31,6 +32,32 @@ app.use(express.session({
   }
 }));
 app.use(require('connect-flash')());
+
+app.use(helmet.xframe('deny')); // change this if you want to embed Fracas in an iframe
+//app.use(helmet.hsts()); // TODO turn this on when we support TLS
+app.use(helmet.iexss()); // XSS protection for IE
+app.use(helmet.ienoopen()); // force users to save downloads in IE instead of open them, we might want to turn this off
+app.use(helmet.contentTypeOptions()); // X-Content-Type-Options: nosniff
+
+//helmet.csp.add('script-src', ['login.persona.org']);
+app.use((function () {
+  var self = '\'self\'';
+  var none = '\'none\'';
+  helmet.csp.policy({
+    defaultPolicy: {
+      'default-src': [self],
+      'script-src': [self, 'login.persona.org'],
+      // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
+      'style-src': [self, 'fonts.googleapis.com', '\'unsafe-inline\''],
+      'img-src': [self],
+      'font-src': [self, 'themes.googleusercontent.com'],
+      'frame-src': ['login.persona.org'],
+      'media-src': [self], // someday we might use <audio> and/or <video>
+      'object-src': [none] // I really hope we never need Flash or any other plugins
+    }
+  });
+  return helmet.csp();
+})());
 
 var csrf = express.csrf();
 app.use(function (req, res, next) {
