@@ -13,6 +13,7 @@ var modules = require('./modules');
 require('./controllers');
 require('./services');
 require('./directives');
+require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'gettext', frable.name]

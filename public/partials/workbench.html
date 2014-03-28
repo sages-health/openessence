@@ -15,7 +15,7 @@
   </div>
   <br>
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div class="panel panel-default">
         <div class="table-responsive">
           <table class="table table-striped" frable="tableParams">
@@ -23,6 +23,7 @@
               <td data-title="'Date'" sortable="'reportDate'">{{visit.reportDate | date}}</td>
               <td data-title="'Sex'" sortable="'patient.sex'">{{visit.patient.sex}}</td>
               <td data-title="'Age'" sortable="'patient.age'">{{visit.patient.age}}</td>
+              <td data-title="'Symptoms'">{{visit.symptoms | join | truncate:30}}</td>
             </tr>
           </table>
         </div>
