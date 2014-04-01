@@ -28,6 +28,12 @@ angular.module(controllers.name).controller('VisitEntryCtrl', function ($scope, 
     }
   };
 
+  $scope.openReportDate = function ($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    $scope.reportDateOpened = true;
+  };
+
   $scope.warnSystolic = function (bpSystolic) {
     // 180 is "hypertensive emergency" and 90 is hypotension according to Wikipedia
     return !!bpSystolic && (bpSystolic >= 180 || bpSystolic < 90);

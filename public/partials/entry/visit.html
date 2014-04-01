@@ -14,9 +14,17 @@
           <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.reportDate)}">
             <label class="col-md-4 control-label" for="entry-visit-date" translate>Date</label>
             <div class="col-md-6">
-              <!--<datepicker id="entry-visit-date"></datepicker>-->
-              <!-- TODO fallback for IE -->
-              <input type="date" id="entry-visit-date" name="reportDate" ng-model="visit.reportDate" required>
+              <div class="input-group">
+                <input id="entry-visit-date" name="reportDate" type="text" class="form-control" required
+                       ng-model="visit.reportDate" datepicker-popup show-weeks="false" is-open="reportDateOpened">
+                <!-- TODO in angular-ui/bootstrap master they removed weeks -->
+
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" ng-click="openReportDate($event)">
+                    <i class="icon-calendar"></i>
+                  </button>
+                </span>
+              </div>
               <span class="help-block" translate>Date of visit</span>
             </div>
           </div>
