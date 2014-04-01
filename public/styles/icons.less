@@ -24,7 +24,7 @@
 //  }
 //}
 
-[class^="icon-"]:before, [class*=" icon-"]:before {
+[class^="icon-"]:before, .glyphicon {
   font-family: @icon-font-name;
   font-style: normal;
   font-weight: normal;
@@ -79,16 +79,28 @@
   content: '\e805';
 }
 
-.icon-ok:before {
-  content: '\e802';
+.icon-attention:before {
+  content: '\e806';
 }
 
 .icon-folder-open:before {
   content: '\e800';
 }
 
-.icon-cog:before {
-  content: '\e807';
+.icon-ok:before {
+  content: '\e802';
+}
+
+.icon-calendar:before {
+  content: '\e80b';
+}
+
+.icon-left-open:before {
+  content: '\e80d';
+}
+
+.icon-right-open:before {
+  content: '\e80c';
 }
 
 .icon-floppy:before {
@@ -99,6 +111,15 @@
   content: '\e808';
 }
 
-.icon-attention:before {
-  content: '\e806';
+.icon-cog:before {
+  content: '\e807';
+}
+
+// glyphicon shims
+
+// chevron-left and -right are used by angular-ui-bootstrap's datepicker popup
+.glyphicon-chevron-left:before:extend(.icon-left-open:before) {
+}
+
+.glyphicon-chevron-right:before:extend(.icon-right-open:before) {
 }

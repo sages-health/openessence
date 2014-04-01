@@ -55,6 +55,24 @@
       "src": "fontawesome"
     },
     {
+      "uid": "531bc468eecbb8867d822f1c11f1e039",
+      "css": "calendar",
+      "code": 59403,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "d870630ff8f81e6de3958ecaeac532f2",
+      "css": "left-open",
+      "code": 59405,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "399ef63b1e23ab1b761dfbb5591fa4da",
+      "css": "right-open",
+      "code": 59404,
+      "src": "fontawesome"
+    },
+    {
       "uid": "f4445feb55521283572ee88bc304f928",
       "css": "floppy",
       "code": 59393,
