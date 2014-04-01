@@ -91,6 +91,7 @@
     "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js",
     "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
     "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js",
+    "angular-ui-select2": "./public/bower_components/angular-ui-select2/src/select2.js",
     "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js",
     "d3": "./public/bower_components/d3/d3.js",
     "nvd3": "./public/bower_components/nvd3/nv.d3.js"
@@ -125,6 +126,12 @@
     "angular-ui-router": {
       "depends": [
         "angular:angular"
+      ]
+    },
+    "angular-ui-select2": {
+      "depends": [
+        "angular:angular",
+        "jquery:jQuery"
       ]
     },
     "angular-gettext": {

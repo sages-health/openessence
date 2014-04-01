@@ -10,7 +10,12 @@ angular.module(controllers.name).controller('VisitEntryCtrl', function ($scope, 
 
   // TODO get this from codex
   $scope.districts = ['District 1', 'District 2', 'District 3', 'District 4', 'District 5'];
-  $scope.symptoms = [];
+  $scope.symptoms = ['Abdominal Pain', 'Cold', 'Coryza', 'Cough', 'Dehydration'].map(function (s) {
+    return [{name: s, val: s}];
+  });
+  $scope.diagnoses = ['Asthma', 'Bronchitis', 'Cholera', 'Cough', 'Dengue'].map(function (d) {
+    return [{name: d, val: d}];
+  });
 
   $scope.isInvalid = function (field) {
     if ($scope.yellAtUser) {
