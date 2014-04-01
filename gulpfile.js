@@ -56,8 +56,7 @@ var paths = {
   clientTests: 'test/client/**/test-*.js',
   imagesDest: 'dist/public/images',
   bowerComponents: 'public/bower_components',
-  nodeModules: 'node_modules',
-  copiedFonts: 'public/fonts/bootstrap'
+  nodeModules: 'node_modules'
 };
 
 var fontExtensions = ['.eot', '.svg', '.ttf', '.woff'];
@@ -80,17 +79,7 @@ gulp.task('clean-styles', function () {
     .pipe(rimraf());
 });
 
-// Copy Bootstap's fonts to public/fonts
-gulp.task('bootstrap-fonts', function () {
-  var fontPaths = fontExtensions.map(function (ext) {
-    return 'public/bower_components/bootstrap/fonts/**/*' + ext;
-  });
-
-  return gulp.src(fontPaths)
-    .pipe(gulp.dest('public/fonts/bootstrap'));
-});
-
-gulp.task('fonts', ['bootstrap-fonts'], function () {
+gulp.task('fonts', function () {
   return gulp.src(fontExtensions.map(function (ext) {
       return 'public/fonts/**/*' + ext;
     }))
@@ -305,7 +294,7 @@ gulp.task('translations', function () {
 });
 
 gulp.task('clean', function () {
-  return gulp.src(['dist', '.tmp', paths.copiedFonts], {read: false})
+  return gulp.src(['dist', '.tmp'], {read: false})
     .pipe(rimraf());
 });
 
