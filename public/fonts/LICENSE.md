@@ -19,3 +19,12 @@ Font license info
    Homepage:  http://www.mfglabs.com/
 
 
+## Entypo
+
+   Copyright (C) 2012 by Daniel Bruce
+
+   Author:    Daniel Bruce
+   License:   CC BY-SA (http://creativecommons.org/licenses/by-sa/2.0/)
+   Homepage:  http://www.entypo.com
+
+
