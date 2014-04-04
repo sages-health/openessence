@@ -353,17 +353,17 @@ app.factory('FrableParams', ['$q', '$log', function ($q, $log) {
      * @description Reload table data
      */
     this.reload = function () {
-      var $defer = $q.defer(),
-        self = this;
+      var defer = $q.defer();
+      var self = this;
 
       settings.$loading = true;
       if (settings.groupBy) {
-        settings.getGroups($defer, settings.groupBy, this);
+        settings.getGroups(defer, settings.groupBy, this);
       } else {
-        settings.getData($defer, this);
+        settings.getData(defer, this);
       }
       log('frable: reload data');
-      $defer.promise.then(function (data) {
+      defer.promise.then(function (data) {
         settings.$loading = false;
         log('frable: current scope', settings.$scope);
         if (settings.groupBy) {
@@ -373,6 +373,8 @@ app.factory('FrableParams', ['$q', '$log', function ($q, $log) {
         }
         settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
       });
+
+      return defer.promise;
     };
 
     this.reloadPages = function () {
