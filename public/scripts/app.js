@@ -11,6 +11,8 @@ require('angular-gettext');
 
 var frable = require('../frable');
 require('../select2');
+require('../hinge');
+require('../crosstab');
 
 var modules = require('./modules');
 require('./controllers');

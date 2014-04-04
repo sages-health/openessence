@@ -1,6 +1,3 @@
-<!-- filters -->
-
-<!-- visualizations -->
 <div class="container">
   <div class="row">
     <div class="col-md-4">
@@ -16,21 +13,29 @@
   <br>
   <div class="row">
     <div class="col-md-6">
-      <div class="panel panel-default">
-        <div class="table-responsive">
-          <table class="table table-striped" frable="tableParams">
-            <tr ng-repeat="visit in $data">
-              <td data-title="'Date'" sortable="'reportDate'">{{visit.reportDate | date}}</td>
-              <td data-title="'Sex'" sortable="'patient.sex'">{{visit.patient.sex}}</td>
-              <td data-title="'Age'" sortable="'patient.age'">{{visit.patient.age}}</td>
-              <td data-title="'Symptoms'">{{visit.symptoms | join | truncate:30}}</td>
-            </tr>
-          </table>
+      <hinge visualization="visualization" pivot="pivot" options="pivotOptions">
+        <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
+          <div class="animation-switch" ng-switch-when="table">
+            <div class="table-responsive">
+              <table class="table table-striped" frable="tableParams">
+                <tr ng-repeat="visit in $data">
+                  <td data-title="strings.date" sortable="'reportDate'">{{visit.reportDate | date}}</td>
+                  <td data-title="strings.sex" sortable="'patient.sex'">{{visit.patient.sex}}</td>
+                  <td data-title="strings.age" sortable="'patient.age'">{{visit.patient.age}}</td>
+                  <td data-title="strings.symptoms">{{visit.symptoms | join | truncate:30}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="animation-switch" ng-switch-when="crosstab">
+            <crosstab records="tabularData" options="pivot"></crosstab>
+          </div>
+          <div class="animation-switch" ng-switch-when="line">TODO line graph</div>
+          <div class="animation-switch" ng-switch-when="pie">TODO pie char</div>
+          <div class="animation-switch" ng-switch-when="bar">TODO bar chart</div>
+          <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <braph data="tsData" xAxisTickFormat="xAxisTickFormat" tooltips></braph>
+      </hinge>
     </div>
   </div>
 </div>

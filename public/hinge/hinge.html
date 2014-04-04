@@ -1,0 +1,45 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="clearfix">
+      <div class="col-md-6 pull-right">
+        <select class="form-control select2-multiple" multiple ui-select2
+                data-placeholder="{{pivotColsPlaceholder | translate}}" ng-model="pivot.cols">
+          <option value=""></option>
+          <option ng-repeat="option in options" value="{{option.value}}">{{option.label}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- clients are responsible for what's rendered inside the hinge, e.g. a table, crosstab, pie chart, etc. -->
+  <div ng-transclude></div>
+
+  <div class="panel-footer">
+    <div class="clearfix">
+      <div class="col-md-6">
+        <select class="form-control select2-multiple" multiple ui-select2
+                data-placeholder="{{pivotRowsPlaceholder | translate}}" ng-model="pivot.rows">
+          <option value=""></option>
+          <option ng-repeat="option in options" value="{{option.value}}">{{option.label}}</option>
+        </select>
+      </div>
+      <div class="btn-group pull-right">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'">
+          <span class="icon-table"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'crosstab'">
+          <span class="icon-rocket"></span><!-- TODO get a better crosstab icon -->
+        </button>
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'line'">
+          <span class="icon-chart-line"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'pie'">
+          <span class="icon-chart-pie"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'bar'">
+          <span class="icon-chart-bar-box"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

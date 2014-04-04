@@ -6,6 +6,7 @@
 @import (less) "angular/angular-csp.css";
 @import "../frable/frable"; // TODO figure out a way to include addons w/o having to manually add it here
 @import "../select2/select2";
+@import "../crosstab/crosstab";
 @import "icons";
 
 // Reset some settings. Most of these are Bootstrap's defaults
@@ -67,6 +68,20 @@ ul[datepicker-popup-wrap] {
 .form-inline .form-group {
   margin-left: 0;
   margin-right: 0;
+}
+
+.table {
+  // this looks better on all the tables we have so far, but we may need to re-evaluate in the future
+  margin-bottom: 0px;
+}
+
+// don't show table border when panel-body is hidden
+.panel {
+  > .panel-body.ng-hide + .table,
+  > .panel-body.ng-hide + .table-responsive {
+    border-top: 0px;
+    //border-top: 1px solid @table-border-color;
+  }
 }
 
 // animations
