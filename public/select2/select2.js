@@ -27,10 +27,6 @@ if (typeof $.fn.each2 === 'undefined') {
   });
 }
 
-if (window.Select2 !== undefined) {
-  return;
-}
-
 var KEY, AbstractSelect2, SingleSelect2, MultiSelect2, nextUid, sizer,
   lastMousePosition = {x: 0, y: 0}, $document, scrollBarDimensions,
 
@@ -3624,7 +3620,7 @@ $.fn.select2.ajaxDefaults = {
 };
 
 // exports
-window.Select2 = {
+window.Select2 = window.Select2 || {
   query: {
     ajax: ajax,
     local: local,
