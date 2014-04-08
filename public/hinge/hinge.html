@@ -2,11 +2,9 @@
   <div class="panel-heading">
     <div class="clearfix">
       <div class="col-md-6 pull-right">
-        <select class="form-control select2-multiple" multiple ui-select2
-                data-placeholder="{{pivotColsPlaceholder | translate}}" ng-model="pivot.cols">
-          <option value=""></option>
-          <option ng-repeat="option in options" value="{{option.value}}">{{option.label}}</option>
-        </select>
+        <input type="hidden" class="select2-multiple pivot-cols" multiple
+               placeholder="{{pivotColsPlaceholder | translate}}" ui-select2="select2Options"
+               ng-model="pivot.cols">
       </div>
     </div>
   </div>
@@ -17,11 +15,9 @@
   <div class="panel-footer">
     <div class="clearfix">
       <div class="col-md-6">
-        <select class="form-control select2-multiple" multiple ui-select2
-                data-placeholder="{{pivotRowsPlaceholder | translate}}" ng-model="pivot.rows">
-          <option value=""></option>
-          <option ng-repeat="option in options" value="{{option.value}}">{{option.label}}</option>
-        </select>
+        <input type="hidden" class="select2-multiple pivot-rows"
+               multiple placeholder="{{pivotRowsPlaceholder | translate}}" ui-select2="select2Options"
+               ng-model="pivot.rows">
       </div>
       <div class="btn-group pull-right">
         <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'">
