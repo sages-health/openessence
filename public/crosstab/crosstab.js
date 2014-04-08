@@ -6,6 +6,7 @@
 
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
+var $ = require('jquery');
 require('./pivot');
 
 angular.module(directives.name).directive('crosstab', function ($parse) {
@@ -28,10 +29,16 @@ angular.module(directives.name).directive('crosstab', function ($parse) {
         }); // records array is always replaced by reference
 
         scope.$watchCollection('[' + attrs.options + '.rows, ' + attrs.options + '.cols]', function (newValue) {
-          var options = angular.extend({}, scope.options, {
-            rows: newValue[0] || [],
-            cols: newValue[1] || []
-          });
+          var options = angular.extend(
+            {
+              // heatmaps are nice in theory but make it harder to read and the bar chart is kind of pointless
+              renderer: $.pivotUtilities.renderers.Table
+            },
+            scope.options,
+            {
+              rows: newValue[0] || [],
+              cols: newValue[1] || []
+            });
 
           pivot(scope.records, options);
         });
