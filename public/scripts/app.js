@@ -13,6 +13,7 @@ var frable = require('../frable');
 require('../select2');
 require('../hinge');
 require('../crosstab');
+require('../outpatient');
 
 var modules = require('./modules');
 require('./controllers');

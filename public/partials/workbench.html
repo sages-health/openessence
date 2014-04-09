@@ -11,31 +11,12 @@
     </div>
   </div>
   <br>
-  <div class="row">
-    <div class="col-md-6">
-      <hinge visualization="visualization" pivot="pivot" options="pivotOptions">
-        <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
-          <div class="animation-switch" ng-switch-when="table">
-            <div class="table-responsive">
-              <table class="table table-striped" frable="tableParams">
-                <tr ng-repeat="visit in $data">
-                  <td data-title="strings.date" sortable="'reportDate'">{{visit.reportDate | date}}</td>
-                  <td data-title="strings.sex" sortable="'patient.sex'">{{visit.patient.sex}}</td>
-                  <td data-title="strings.age" sortable="'patient.age'">{{visit.patient.age}}</td>
-                  <td data-title="strings.symptoms">{{visit.symptoms | join | truncate:30}}</td>
-                </tr>
-              </table>
-            </div>
-          </div>
-          <div class="animation-switch" ng-switch-when="crosstab">
-            <crosstab records="tabularData" options="pivot"></crosstab>
-          </div>
-          <div class="animation-switch" ng-switch-when="line">TODO line graph</div>
-          <div class="animation-switch" ng-switch-when="pie">TODO pie char</div>
-          <div class="animation-switch" ng-switch-when="bar">TODO bar chart</div>
-          <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
-        </div>
-      </hinge>
+  <div class="row" ng-repeat="row in rows">
+    <div class="col-md-6" ng-repeat="viz in row" ng-switch="viz.plus">
+      <button type="button" class="btn btn-primary btn-lg" ng-switch-when="true" ng-click="addVisualization()">
+        <span class="icon-plus"></span>
+      </button>
+      <outpatient-visualization filters="filters" ng-switch-default></outpatient-visualization>
     </div>
   </div>
 </div>
