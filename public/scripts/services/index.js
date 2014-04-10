@@ -4,6 +4,7 @@ module.exports = {
   csrfToken: require('./csrfToken'),
   errorInterceptor: require('./errorInterceptor'),
   login: require('./login'),
+  luceneQuery: require('./luceneQuery'),
   notification: require('./notification'),
   persona: require('./persona'),
   Report: require('./Report'),

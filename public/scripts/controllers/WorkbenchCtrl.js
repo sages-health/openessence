@@ -3,8 +3,7 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope) {
-  $scope.filters = {};
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, luceneQuery) {
 
   // If you delete a visualization from the grid, subsequent elements should "slide" back to fill in the gap. But you
   // don't want their state to change, only their position. E.g. a pie chart should remain a pie chart, even if it's
@@ -12,6 +11,85 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope) {
   // (see "track by").
   var vizId = 0;
   var plusId = -1; // use a single ID for the + icon, since there's only ever one and it has no state
+
+  $scope.filters = {};
+  $scope.records = []; // store any queried records
+  $scope.queryFilterString = '';
+
+  // TODO make this a service
+  $scope.FilterModel = function (fm) {
+    this.id = fm.id;
+    this.name = fm.name;
+    this.modelRef = fm.modelRef;
+    this.filterValue = fm.filterValue || '*';
+    this.type = fm.type;
+    this.placeHolder = fm.placeHolder;
+    this.possibleValues = fm.possibleValues;
+  };
+
+  // TODO this should all be directive(s)
+  $scope.getDateConfig = function(){
+    return {
+      id: 'REF_DATE',
+      name: 'Date',
+      modelRef: 'reportDate',
+      filterValue: {start: undefined, end: undefined},
+      type: 'dateRange',
+      placeHolder: 'YYYYMMDD'
+    };
+  };
+
+  $scope.getSexConfig = function (){
+    return {
+      id: 'REF_SEX',
+      name: 'Sex',
+      modelRef: 'patient.sex',
+      filterValue: '*',
+      type: 'select',
+      possibleValues: ['*', 'Female', 'Male'],
+      placeHolder: 'Female or Male'
+    };
+  };
+  $scope.getAgeConfig = function(){
+    return  {
+      id: 'REF_AGE',
+      name: 'Age',
+      modelRef: 'patient.age',
+      filterValue: '*',
+      type: 'text',
+      placeHolder: '##'
+    };
+  };
+
+  $scope.possibleFilterConfigs = {
+    Date: $scope.getDateConfig,
+    Sex: $scope.getSexConfig,
+    Age: $scope.getAgeConfig
+  };
+
+  $scope.filters = [new $scope.FilterModel($scope.possibleFilterConfigs.Date())];
+
+  // TODO: We probably do not want this collection watched but on focus lost from the filterUI update
+  $scope.$watch(
+    function () {
+      return angular.toJson($scope.filters);
+    },
+    function () {
+      $scope.queryFilterString = luceneQuery.toQueryString($scope.filters);
+    });
+
+  $scope.addFilter = function (filterModelFn) {
+    if(filterModelFn){
+      $scope.filters.push(new $scope.FilterModel(filterModelFn()));
+    }
+  };
+
+  $scope.removeFilter = function (filterModel) {
+    var index = $scope.filters.indexOf(filterModel);
+    if (index >= 0) {
+      $scope.filters.splice(index, 1);
+    }
+  };
 
   $scope.rows = [
     [

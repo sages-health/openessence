@@ -1,16 +1,79 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-4">
-      <label class="col-md-2 control-label" for="workbench-filter-sex" translate>Sex</label>
-      <!-- single select until we figure multiselect out -->
-      <select id="workbench-filter-sex" name="sex" class="form-control" ng-model="filters.patient.sex">
-        <option value="" selected></option>
-        <option value="male" translate>Male</option>
-        <option value="female" translate>Female</option>
-      </select>
+<!-- applied query string TODO: determine final styling other than hijacking nav bar space-->
+<div class="col-md-12 input-group" style="margin-top:-21px; margin-bottom:5px;">
+  <!-- search button -->
+    <span class="input-group-addon">
+      <button type="button"><i class="icon-search"></i></button>
+    </span>
+  <input class="form-control" id="query-filter-string" name="query-filter-string" ng-model="queryFilterString"
+         type="text" placeholder="Query String">
+</div>
+
+<!-- filters -->
+<div class="col-md-12">
+  <div class="list-group col-md-3" ng-repeat="f in filters">
+    <!-- do we template these into separate partials or will directives take care of it?, also, looks very OE-ee -->
+    <div ng-switch on="f.type">
+      <div ng-switch-when="text">
+        <label class="list-group-item-heading" for="{{f.id}}" translate><span class="badge">{{f.name}}</span></label>
+
+        <div class="input-group">
+          <input class="form-control" id="{{f.id}}" name="{{f.name}}" ng-model="f.filterValue" type="text"
+                 placeholder="{{f.placeHolder | translate}}">
+          <!-- remove button -->
+          <span class="input-group-addon">
+            <button type="button" ng-click="removeFilter(f)">-</button>
+          </span>
+        </div>
+      </div>
+      <div ng-switch-when="select">
+        <label class="list-group-item-heading" for="{{f.id}}" translate><span class="badge">{{f.name}}</span></label>
+
+        <div class="input-group">
+          <select class="form-control" ng-model="f.filterValue" ng-options="o for o in f.possibleValues">
+          </select>
+          <!-- remove button -->
+          <span class="input-group-addon">
+            <button type="button" ng-click="removeFilter(f)">-</button>
+          </span>
+        </div>
+      </div>
+      <div ng-switch-when="dateRange">
+        <label class="list-group-item-heading" translate><span class="badge">{{f.name}}</span></label>
+
+        <div class="input-group"
+             style="padding-left:6px; padding-bottom:6px; background-color:#ECF0F1; border: 1px solid #DCE4EC; border-radius: 4px;">
+          <label translate>Start:</label>
+          <input class="form-control" name="{{f.id + 'Start'}}" ng-model="f.filterValue.start" type="text"
+                 datepicker-popup show-weeks="false" placeholder="{{f.placeHolder | translate}}">
+          <br>
+          <label translate>End:</label>
+          <input class="form-control" name="{{f.id + 'End'}}" ng-model="f.filterValue.end" type="text"
+                 datepicker-popup show-weeks="false" placeholder="{{f.placeHolder | translate}}">
+
+          <!-- remove button -->
+          <span class="input-group-addon" style="border-bottom: 0 none">
+            <button type="button" ng-click="removeFilter(f)">-</button>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
-  <br>
+
+  <!-- add button-->
+  <div class="btn-group">
+    <button id="addFilterModelBtn" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
+      <i class="icon-plus">Filter</i>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="addFilterModelBtn">
+      <li ng-repeat="(key, value) in possibleFilterConfigs">
+        <a ng-click="addFilter(value)">{{key}}</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- visualizations -->
+<div class="container">
   <div class="row" ng-repeat="row in rows">
     <!-- track by viz.id to preserve state when we delete a grid element -->
     <div class="col-md-6" ng-repeat="viz in row track by viz.id" ng-switch="viz.plus">
