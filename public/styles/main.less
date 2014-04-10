@@ -76,6 +76,19 @@ ul[datepicker-popup-wrap] {
   margin-bottom: 0px;
 }
 
+// This is bootstrap's default, but they don't expose it as a variable. We do this in case it ever changes.
+@panel-heading-padding-vertical: 10px;
+@panel-heading-padding-horizontal: 15px;
+.panel-heading {
+  padding: @panel-heading-padding-vertical @panel-heading-padding-horizontal;
+}
+
+.panel-heading .close {
+  position: relative;
+  top: -@panel-heading-padding-vertical;
+  right: -@panel-heading-padding-horizontal;
+}
+
 // don't show table border when panel-body is hidden
 .panel {
   > .panel-body.ng-hide + .table,

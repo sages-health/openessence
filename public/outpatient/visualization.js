@@ -10,7 +10,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
     template: require('./visualization.html'),
     scope: {
       filters: '=',
-      records: '=?'
+      records: '=?',
+      close: '&onClose'
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502

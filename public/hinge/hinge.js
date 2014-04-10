@@ -17,7 +17,8 @@ angular.module(directives.name).directive('hinge', function (gettextCatalog) {
     scope: {
       visualization: '=', // what visualization we're working with
       pivot: '=', // what rows/columns we're currently pivoting on
-      options: '=' // available options to pivot on
+      options: '=', // available options to pivot on
+      close: '&onClose'
     },
     link: {
       pre: function (scope) {

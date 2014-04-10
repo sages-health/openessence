@@ -12,11 +12,13 @@
   </div>
   <br>
   <div class="row" ng-repeat="row in rows">
-    <div class="col-md-6" ng-repeat="viz in row" ng-switch="viz.plus">
+    <!-- track by viz.id to preserve state when we delete a grid element -->
+    <div class="col-md-6" ng-repeat="viz in row track by viz.id" ng-switch="viz.plus">
       <button type="button" class="btn btn-primary btn-lg" ng-switch-when="true" ng-click="addVisualization()">
         <span class="icon-plus"></span>
       </button>
-      <outpatient-visualization filters="filters" ng-switch-default></outpatient-visualization>
+      <outpatient-visualization filters="filters" on-close="removeVisualization($parent.$parent.$index, $index)"
+                                ng-switch-default></outpatient-visualization>
     </div>
   </div>
 </div>
