@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, luceneQuery) {
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, gettextCatalog, luceneQuery) {
 
   // If you delete a visualization from the grid, subsequent elements should "slide" back to fill in the gap. But you
   // don't want their state to change, only their position. E.g. a pie chart should remain a pie chart, even if it's
@@ -12,9 +12,13 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, l
   var vizId = 0;
   var plusId = -1; // use a single ID for the + icon, since there's only ever one and it has no state
 
-  $scope.filters = {};
   $scope.records = []; // store any queried records
-  $scope.queryFilterString = '';
+  $scope.queryString = '';
+
+  $scope.strings = {
+    start: gettextCatalog.getString('Start'),
+    end: gettextCatalog.getString('End')
+  };
 
   // TODO make this a service
   $scope.FilterModel = function (fm) {
@@ -27,37 +31,35 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, l
     this.possibleValues = fm.possibleValues;
   };
 
-  // TODO this should all be directive(s)
-  $scope.getDateConfig = function(){
+  // TODO these should all be directive(s)
+  $scope.getDateConfig = function () {
     return {
       id: 'REF_DATE',
-      name: 'Date',
+      name: gettextCatalog.getString('Date'),
       modelRef: 'reportDate',
       filterValue: {start: undefined, end: undefined},
-      type: 'dateRange',
-      placeHolder: 'YYYYMMDD'
+      type: 'dateRange'
     };
   };
 
-  $scope.getSexConfig = function (){
+  $scope.getSexConfig = function () {
     return {
       id: 'REF_SEX',
-      name: 'Sex',
+      name: gettextCatalog.getString('Sex'),
       modelRef: 'patient.sex',
       filterValue: '*',
       type: 'select',
-      possibleValues: ['*', 'Female', 'Male'],
-      placeHolder: 'Female or Male'
+      possibleValues: ['*', 'female', 'male']
     };
   };
-  $scope.getAgeConfig = function(){
+  $scope.getAgeConfig = function () {
     return  {
       id: 'REF_AGE',
       name: 'Age',
       modelRef: 'patient.age',
       filterValue: '*',
       type: 'text',
-      placeHolder: '##'
+      placeHolder: '*'
     };
   };
 
@@ -67,6 +69,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, l
     Age: $scope.getAgeConfig
   };
 
+  // TODO 90 day range by default
   $scope.filters = [new $scope.FilterModel($scope.possibleFilterConfigs.Date())];
 
   // TODO: We probably do not want this collection watched but on focus lost from the filterUI update
@@ -75,7 +78,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, l
       return angular.toJson($scope.filters);
     },
     function () {
-      $scope.queryFilterString = luceneQuery.toQueryString($scope.filters);
+      $scope.queryString = luceneQuery.toQueryString($scope.filters);
     });
 
   $scope.addFilter = function (filterModelFn) {

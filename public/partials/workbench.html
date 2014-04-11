@@ -1,11 +1,10 @@
 <!-- applied query string TODO: determine final styling other than hijacking nav bar space-->
 <div class="col-md-12 input-group" style="margin-top:-21px; margin-bottom:5px;">
   <!-- search button -->
-    <span class="input-group-addon">
-      <button type="button"><i class="icon-search"></i></button>
-    </span>
-  <input class="form-control" id="query-filter-string" name="query-filter-string" ng-model="queryFilterString"
-         type="text" placeholder="Query String">
+  <input class="form-control" id="query-string" name="queryString" ng-model="queryString" type="text">
+  <span class="input-group-btn">
+    <button type="button" class="btn btn-default"><span class="icon-search"></span></button>
+  </span>
 </div>
 
 <!-- filters -->
@@ -13,47 +12,57 @@
   <div class="list-group col-md-3" ng-repeat="f in filters">
     <!-- do we template these into separate partials or will directives take care of it?, also, looks very OE-ee -->
     <div ng-switch on="f.type">
-      <div ng-switch-when="text">
-        <label class="list-group-item-heading" for="{{f.id}}" translate><span class="badge">{{f.name}}</span></label>
-
-        <div class="input-group">
-          <input class="form-control" id="{{f.id}}" name="{{f.name}}" ng-model="f.filterValue" type="text"
-                 placeholder="{{f.placeHolder | translate}}">
-          <!-- remove button -->
-          <span class="input-group-addon">
-            <button type="button" ng-click="removeFilter(f)">-</button>
-          </span>
+      <div class="panel panel-default filter-panel" ng-switch-when="text">
+        <div class="panel-heading condensed">
+          <div class="clearfix">
+            <button type="button" class="close" ng-click="removeFilter(f)"><span class="icon-cancel"></span></button>
+            {{f.name}}
+          </div>
+        </div>
+        <div class="panel-body">
+          <form class="form" role="form">
+            <div class="form-group">
+              <input class="form-control" id="{{f.id}}" name="{{f.name}}" ng-model="f.filterValue" type="text"
+                     placeholder="{{f.placeHolder}}">
+            </div>
+          </form>
         </div>
       </div>
-      <div ng-switch-when="select">
-        <label class="list-group-item-heading" for="{{f.id}}" translate><span class="badge">{{f.name}}</span></label>
-
-        <div class="input-group">
-          <select class="form-control" ng-model="f.filterValue" ng-options="o for o in f.possibleValues">
-          </select>
-          <!-- remove button -->
-          <span class="input-group-addon">
-            <button type="button" ng-click="removeFilter(f)">-</button>
-          </span>
+      <div class="panel panel-default filter-panel" ng-switch-when="select"> <!-- TODO they all share this header -->
+        <div class="panel-heading condensed">
+          <div class="clearfix">
+            <button type="button" class="close" ng-click="removeFilter(f)"><span class="icon-cancel"></span></button>
+            {{f.name}}
+          </div>
+        </div>
+        <div class="panel-body">
+          <form class="form" role="form">
+            <div class="form-group">
+              <!-- TODO validation -->
+              <select class="form-control" ng-model="f.filterValue" ng-options="o for o in f.possibleValues"></select>
+            </div>
+          </form>
         </div>
       </div>
-      <div ng-switch-when="dateRange">
-        <label class="list-group-item-heading" translate><span class="badge">{{f.name}}</span></label>
-
-        <div class="input-group"
-             style="padding-left:6px; padding-bottom:6px; background-color:#ECF0F1; border: 1px solid #DCE4EC; border-radius: 4px;">
-          <label translate>Start:</label>
-          <input class="form-control" name="{{f.id + 'Start'}}" ng-model="f.filterValue.start" type="text"
-                 datepicker-popup show-weeks="false" placeholder="{{f.placeHolder | translate}}">
-          <br>
-          <label translate>End:</label>
-          <input class="form-control" name="{{f.id + 'End'}}" ng-model="f.filterValue.end" type="text"
-                 datepicker-popup show-weeks="false" placeholder="{{f.placeHolder | translate}}">
-
-          <!-- remove button -->
-          <span class="input-group-addon" style="border-bottom: 0 none">
-            <button type="button" ng-click="removeFilter(f)">-</button>
-          </span>
+      <div class="panel panel-default filter-panel" ng-switch-when="dateRange">
+        <div class="panel-heading condensed">
+          <div class="clearfix">
+            <button type="button" class="close" ng-click="removeFilter(f)"><span class="icon-cancel"></span></button>
+            {{f.name}}
+          </div>
+        </div>
+        <div class="panel-body">
+          <form class="form-inline" role="form">
+            <div class="form-group">
+              <!-- TODO validation -->
+              <input class="form-control" name="{{f.id + 'Start'}}" ng-model="f.filterValue.start"
+                     type="text" datepicker-popup show-weeks="false" placeholder="{{strings.start}}">
+            </div>
+            <div class="form-group">
+              <input class="form-control" name="{{f.id + 'End'}}" ng-model="f.filterValue.end" type="text"
+                     datepicker-popup show-weeks="false" placeholder="{{strings.end}}">
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -62,7 +71,7 @@
   <!-- add button-->
   <div class="btn-group">
     <button id="addFilterModelBtn" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
-      <i class="icon-plus">Filter</i>
+      <span class="icon-plus"></span>
     </button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="addFilterModelBtn">
       <li ng-repeat="(key, value) in possibleFilterConfigs">
