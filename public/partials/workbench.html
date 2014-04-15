@@ -1,23 +1,54 @@
-<div class="container">
+<div class="container-fluid">
+
+  <!-- search box -->
   <div class="row">
-    <div class="col-md-4">
-      <label class="col-md-2 control-label" for="workbench-filter-sex" translate>Sex</label>
-      <!-- single select until we figure multiselect out -->
-      <select id="workbench-filter-sex" name="sex" class="form-control" ng-model="filters.patient.sex">
-        <option value="" selected></option>
-        <option value="male" translate>Male</option>
-        <option value="female" translate>Female</option>
-      </select>
+    <div class="col-md-12">
+      <form role="form" class="form" novalidate>
+        <div class="input-group">
+          <!-- search button -->
+          <label class="sr-only" for="query-string" translate>Query</label>
+          <input class="form-control" id="query-string" name="queryString" ng-model="queryString" type="text"
+                 spellcheck="false">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default"><span class="icon-search"></span></button>
+          </span>
+        </div>
+      </form>
     </div>
   </div>
+
   <br>
-  <div class="row" ng-repeat="row in rows">
+
+  <!-- filters -->
+  <div class="row" ng-repeat="r in filterRows">
+    <div class="col-md-3" ng-repeat="filter in r track by filter.id" ng-switch="filter.plus">
+      <div class="btn-group" ng-switch-when="true">
+        <button id="add-filter-btn" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                type="button">
+          <span class="icon-plus"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="add-filter-btn">
+          <li ng-repeat="filter in filterTypes">
+            <a ng-click="addFilter(filter.type)">{{filter.name}}</a>
+          </li>
+        </ul>
+      </div>
+      <div ng-switch-default outpatient-filter="filter" on-close="removeFilter(filter)"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- visualizations -->
+<div class="container">
+  <div class="row" ng-repeat="row in vizRows">
     <!-- track by viz.id to preserve state when we delete a grid element -->
     <div class="col-md-6" ng-repeat="viz in row track by viz.id" ng-switch="viz.plus">
       <button type="button" class="btn btn-primary btn-lg" ng-switch-when="true" ng-click="addVisualization()">
         <span class="icon-plus"></span>
       </button>
-      <outpatient-visualization filters="filters" on-close="removeVisualization($parent.$parent.$index, $index)"
+      <outpatient-visualization query-string="queryString"
+                                on-close="removeVisualization($parent.$parent.$index, $index)"
                                 ng-switch-default></outpatient-visualization>
     </div>
   </div>

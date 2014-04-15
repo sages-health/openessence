@@ -77,16 +77,25 @@ ul[datepicker-popup-wrap] {
 }
 
 // This is bootstrap's default, but they don't expose it as a variable. We do this in case it ever changes.
-@panel-heading-padding-vertical: 10px;
-@panel-heading-padding-horizontal: 15px;
 .panel-heading {
-  padding: @panel-heading-padding-vertical @panel-heading-padding-horizontal;
+  padding: @padding-base-vertical @padding-base-horizontal;
+
+  .close {
+    position: relative;
+    top: -@padding-base-vertical;
+    right: -@padding-base-horizontal;
+  }
 }
 
-.panel-heading .close {
-  position: relative;
-  top: -@panel-heading-padding-vertical;
-  right: -@panel-heading-padding-horizontal;
+// Panel heading with less padding, for when the table's contents are less than the table header
+.panel-heading.condensed {
+  padding: @padding-small-vertical @padding-small-horizontal;
+
+  .close {
+    position: relative;
+    top: -@padding-small-vertical;
+    right: -@padding-small-horizontal;
+  }
 }
 
 // don't show table border when panel-body is hidden
@@ -95,6 +104,16 @@ ul[datepicker-popup-wrap] {
   > .panel-body.ng-hide + .table-responsive {
     border-top: 0px;
     //border-top: 1px solid @table-border-color;
+  }
+}
+
+.filter-panel {
+  input {
+    text-align: center; // center input placeholders
+  }
+
+  .form > .form-group {
+    display: inline; // to match the height of range filters which are form-inline
   }
 }
 
