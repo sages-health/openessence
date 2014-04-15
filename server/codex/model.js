@@ -57,7 +57,8 @@ Model.prototype.bulk = function (params, callback) {
   // so they can always be specified
   params = _.assign({
     index: this.index,
-    type: this.type
+    type: this.type,
+    refresh: true // we have a very low write volume, so we favor consistency over speed by default
   }, params);
   this.client.bulk(params, callback);
 };
@@ -70,7 +71,8 @@ Model.prototype.delete = function (params, callback) {
   }
   params = _.assign({
     index: this.index,
-    type: this.type
+    type: this.type,
+    refresh: true
   }, params);
   this.client.delete(params, callback);
 };
@@ -83,7 +85,8 @@ Model.prototype.deleteByQuery = function (params, callback) {
   }
   params = _.assign({
     index: this.index,
-    type: this.type
+    type: this.type,
+    refresh: true
   }, params);
   this.client.deleteByQuery(params, callback);
 };
@@ -122,7 +125,8 @@ Model.prototype.insert = function (params, callback) {
   }
   params = _.assign({
     index: this.index,
-    type: this.type
+    type: this.type,
+    refresh: true
   }, params);
   this.client.index(params, callback);
 };
