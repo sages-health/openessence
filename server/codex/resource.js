@@ -68,13 +68,17 @@ exports.queryAll = function (req, callback) {
 
   // Support pagination
   if (req.query.from) {
-    request.from = parseInt(req.query.from);
+    request.from = parseInt(req.query.from, 10);
   }
   if (req.query.size) {
-    request.size = parseInt(req.query.size);
+    request.size = parseInt(req.query.size, 10);
   }
 
-  //FIXME: Figure out how to support sorting
+  // Support sorting
+  if (req.query.sort) {
+    // TODO test this for potential injection attacks
+    request.sort = req.query.sort;
+  }
 
   // Search the model on the request
   req.model.search(request, function (err, esr) {
@@ -86,7 +90,8 @@ exports.queryAll = function (req, callback) {
 
     // Otherwise, terminate the chain with the query results
     callback(null, {
-      results: esr.hits.hits
+      results: esr.hits.hits,
+      total: esr.hits.total
     });
   });
 };
@@ -320,15 +325,23 @@ exports.controller = function () {
 
     // Format and return the standard response from each endpoint
     var standardResponse = function (err, response) {
-      if(err) {
+      if (err) {
         next(err);
         return;
       }
       var status = response.status || 200;
-      if(response.results) {
-        res.json(status, {
-          results: response.results
-        });
+
+      // this duplicates the whitelisting we do in the dao methods b/c we're being extra cautious about not
+      // returning sensitive fields
+      var data = {
+        results: response.results
+      };
+      if (response.total) {
+        data.total = response.total;
+      }
+
+      if (response.results) {
+        res.json(status, data);
       } else {
         res.status(status);
         res.end();
@@ -354,7 +367,7 @@ exports.controller = function () {
 
     // ElasticSearch client does terrible error handling
     // Look at the error message and correct the error status
-    // TODO: Expand this to accomodate other ES errors
+    // TODO: Expand this to accommodate other ES errors
     else if (err.constructor.name === 'StatusCodeError') {
       if (/^Not Found/.test(err.message) || /^IndexMissingException/.test(err.message)) {
         res.status(404);
