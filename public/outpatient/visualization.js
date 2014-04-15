@@ -3,13 +3,13 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, gettextCatalog, orderByFilter,
-                                                                               FrableParams, luceneQuery) {
+angular.module(directives.name).directive('outpatientVisualization', function ($http, gettextCatalog,
+                                                                               orderByFilter, FrableParams) {
   return {
     restrict: 'E',
     template: require('./visualization.html'),
     scope: {
-      filters: '=',
+      queryString: '=',
       records: '=?',
       close: '&onClose'
     },
@@ -80,79 +80,24 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           scope.tableParams.reload();
         }); // we always update the entire array reference, so no need for deep equality
 
-        //this is only needed for local filtering
-        scope.filterData = function (data) {
-          //if we have new data, apply it, if not use scope.records which is always initialized
-          var dat = data ? data : scope.records;
-          return dat
-            .filter(function (row) {
-
-              // nested comparison, based on https://github.com/angular/angular.js/pull/6215
-              var compare = function (expected, actual) {
-                if (expected === '') { // when filter not selected
-                  // TODO sometimes we do want to search for the empty string
-                  return true;
-                }
-
-                if (typeof expected === 'object') {
-                  if (typeof actual !== 'object') {
-                    return false;
-                  }
-
-                  for (var key in expected) {
-                    if (expected.hasOwnProperty(key)) {
-                      if (!compare(expected[key], actual[key])) {
-                        return false;
-                      }
-                    }
-                  }
-
-                  return true;
-                }
-
-                return angular.equals(expected, actual);
-              };
-
-              // for each row, make sure every filter matches
-              return Object.keys(scope.filters).every(function (filter) {
-                var expected = {};
-                expected[filter] = scope.filters[filter];
-                return compare(expected, row);
-              });
-            });
-        };
-
         scope.query = function (queryString) {
           $http.get('/resources/outpatient-visit',
             {
               params: {
-                size: 500,
+                size: 500, // TODO paging in grid
                 q: queryString
               }
-            }
-          ).success(function (rawData) {
-              // TODO we need a real filter service like Kibana has
-              // https://github.com/elasticsearch/kibana/blob/master/src/app/services/filterSrv.js
-              //store the original set of records from the query
-              scope.records = rawData ? rawData.results.
-                map(function (r) {
-                  return r._source;
-                })
-                : [];
-              //not applying local filters anymore
-              //scope.records = scope.filterData(scope.records);
+            })
+            .success(function (rawData) {
+              scope.records = rawData.results.map(function (r) {
+                return r._source;
+              });
             });
         };
 
-        // trigger query of initial dataset
-        scope.query();
-
-        scope.$watch(function () {
-            return angular.toJson(scope.filters);
-          },
-          function () {
-            scope.query(luceneQuery.toQueryString(scope.filters));
-          });
+        scope.$watch('queryString', function (queryString) {
+          scope.query(queryString);
+        });
       }
     }
   };

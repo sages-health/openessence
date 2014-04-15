@@ -1,95 +1,54 @@
-<!-- applied query string TODO: determine final styling other than hijacking nav bar space-->
-<div class="col-md-12 input-group" style="margin-top:-21px; margin-bottom:5px;">
-  <!-- search button -->
-  <input class="form-control" id="query-string" name="queryString" ng-model="queryString" type="text">
-  <span class="input-group-btn">
-    <button type="button" class="btn btn-default"><span class="icon-search"></span></button>
-  </span>
-</div>
+<div class="container-fluid">
 
-<!-- filters -->
-<div class="col-md-12">
-  <div class="list-group col-md-3" ng-repeat="f in filters">
-    <!-- do we template these into separate partials or will directives take care of it?, also, looks very OE-ee -->
-    <div ng-switch on="f.type">
-      <div class="panel panel-default filter-panel" ng-switch-when="text">
-        <div class="panel-heading condensed">
-          <div class="clearfix">
-            <button type="button" class="close" ng-click="removeFilter(f)"><span class="icon-cancel"></span></button>
-            {{f.name}}
-          </div>
+  <!-- search box -->
+  <div class="row">
+    <div class="col-md-12">
+      <form role="form" class="form" novalidate>
+        <div class="input-group">
+          <!-- search button -->
+          <label class="sr-only" for="query-string" translate>Query</label>
+          <input class="form-control" id="query-string" name="queryString" ng-model="queryString" type="text"
+                 spellcheck="false">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default"><span class="icon-search"></span></button>
+          </span>
         </div>
-        <div class="panel-body">
-          <form class="form" role="form">
-            <div class="form-group">
-              <input class="form-control" id="{{f.id}}" name="{{f.name}}" ng-model="f.filterValue" type="text"
-                     placeholder="{{f.placeHolder}}">
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="panel panel-default filter-panel" ng-switch-when="select"> <!-- TODO they all share this header -->
-        <div class="panel-heading condensed">
-          <div class="clearfix">
-            <button type="button" class="close" ng-click="removeFilter(f)"><span class="icon-cancel"></span></button>
-            {{f.name}}
-          </div>
-        </div>
-        <div class="panel-body">
-          <form class="form" role="form">
-            <div class="form-group">
-              <!-- TODO validation -->
-              <select class="form-control" ng-model="f.filterValue" ng-options="o for o in f.possibleValues"></select>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="panel panel-default filter-panel" ng-switch-when="dateRange">
-        <div class="panel-heading condensed">
-          <div class="clearfix">
-            <button type="button" class="close" ng-click="removeFilter(f)"><span class="icon-cancel"></span></button>
-            {{f.name}}
-          </div>
-        </div>
-        <div class="panel-body">
-          <form class="form-inline" role="form">
-            <div class="form-group">
-              <!-- TODO validation -->
-              <input class="form-control" name="{{f.id + 'Start'}}" ng-model="f.filterValue.start"
-                     type="text" datepicker-popup show-weeks="false" placeholder="{{strings.start}}">
-            </div>
-            <div class="form-group">
-              <input class="form-control" name="{{f.id + 'End'}}" ng-model="f.filterValue.end" type="text"
-                     datepicker-popup show-weeks="false" placeholder="{{strings.end}}">
-            </div>
-          </form>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- add button-->
-  <div class="btn-group">
-    <button id="addFilterModelBtn" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
-      <span class="icon-plus"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="addFilterModelBtn">
-      <li ng-repeat="(key, value) in possibleFilterConfigs">
-        <a ng-click="addFilter(value)">{{key}}</a>
-      </li>
-    </ul>
+  <br>
+
+  <!-- filters -->
+  <div class="row" ng-repeat="r in filterRows">
+    <div class="col-md-3" ng-repeat="filter in r track by filter.id" ng-switch="filter.plus">
+      <div class="btn-group" ng-switch-when="true">
+        <button id="add-filter-btn" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                type="button">
+          <span class="icon-plus"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="add-filter-btn">
+          <li ng-repeat="filter in filterTypes">
+            <a ng-click="addFilter(filter.type)">{{filter.name}}</a>
+          </li>
+        </ul>
+      </div>
+      <div ng-switch-default outpatient-filter="filter" on-close="removeFilter(filter)"></div>
+    </div>
+
   </div>
 </div>
 
 <!-- visualizations -->
 <div class="container">
-  <div class="row" ng-repeat="row in rows">
+  <div class="row" ng-repeat="row in vizRows">
     <!-- track by viz.id to preserve state when we delete a grid element -->
     <div class="col-md-6" ng-repeat="viz in row track by viz.id" ng-switch="viz.plus">
       <button type="button" class="btn btn-primary btn-lg" ng-switch-when="true" ng-click="addVisualization()">
         <span class="icon-plus"></span>
       </button>
-      <outpatient-visualization filters="filters" on-close="removeVisualization($parent.$parent.$index, $index)"
+      <outpatient-visualization query-string="queryString"
+                                on-close="removeVisualization($parent.$parent.$index, $index)"
                                 ng-switch-default></outpatient-visualization>
     </div>
   </div>
