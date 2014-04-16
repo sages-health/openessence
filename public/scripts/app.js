@@ -132,10 +132,9 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       abstract: true,
       template: '<div ui-view></div>'
     })
-    .state('entry.visit', {
+    .state('entry.visit', { // TODO define this in outpatient module
       url: '/visit',
-      template: require('../partials/entry/visit.html'),
-      controller: 'VisitEntryCtrl'
+      template: require('../partials/edit.html')
     });
 });
 
