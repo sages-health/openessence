@@ -62,8 +62,7 @@ var paths = {
 var fontExtensions = ['.eot', '.svg', '.ttf', '.woff'];
 
 // build CSS for production
-gulp.task('styles', ['clean-styles'], function () {
-  // need to depend on clean-styles b/c inject will add all CSS files in dist/styles (including any old ones)
+gulp.task('styles', function () {
   return gulp.src(paths.styles)
     .pipe(less({
       paths: [paths.bowerComponents, paths.nodeModules]
@@ -72,11 +71,6 @@ gulp.task('styles', ['clean-styles'], function () {
     .pipe(minifycss())
     .pipe(rev())
     .pipe(gulp.dest('dist/public/styles'));
-});
-
-gulp.task('clean-styles', function () {
-  return gulp.src('dist/public/styles', {read: false})
-    .pipe(rimraf());
 });
 
 gulp.task('fonts', function () {
@@ -119,7 +113,7 @@ gulp.task('partials', function () {
 /**
  * Task to build 3rd-party JavaScript libraries.
  */
-gulp.task('libs', [], function () {
+gulp.task('libs', function () {
   var bundle = browserify();
   jsLibs.forEach(function (lib) {
     bundle.require(lib);
@@ -136,7 +130,7 @@ gulp.task('libs', [], function () {
     .pipe(gulp.dest('dist/public/scripts/'));
 });
 
-gulp.task('scripts', ['clean-scripts', 'jshint', 'partials', 'libs'], function () {
+gulp.task('scripts', ['jshint', 'partials', 'libs'], function () {
   // transform that replaces references to `require`d partials with their minified versions in .tmp,
   // e.g. a call to require('../partials/foo.html') in public/scripts would be replaced by
   // require('../../.tmp/public/partials/foo.html')
@@ -175,11 +169,6 @@ gulp.task('scripts', ['clean-scripts', 'jshint', 'partials', 'libs'], function (
     }))
     .pipe(rev())
     .pipe(gulp.dest('dist/public/scripts'));
-});
-
-gulp.task('clean-scripts', function () {
-  return gulp.src('dist/public/scripts', {read: false})
-    .pipe(rimraf());
 });
 
 var imageminTransform = function () {
@@ -267,16 +256,34 @@ gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs'], function () {
 // Although we do a lot of processing in middleware, this task is still useful to replace references to resources
 // with references to revved versions.
 gulp.task('inject', ['styles', 'scripts'], function () {
-  // TODO clean up when https://github.com/klei/gulp-inject/issues/9 is resolved
+  var fs = require('fs');
+  var glob = require('glob');
+  var getLatestFile = function (path) {
+    var maxFile = '';
+    var maxTime = -1;
+
+    // this I/O should probably be async and in a stream instead, but this is a lot easier
+    glob.sync(path)
+      .forEach(function (file) {
+        var mtime = fs.statSync(file).mtime.getTime();
+        if (mtime > maxTime) {
+          maxTime = mtime;
+          maxFile = file;
+        }
+      });
+
+    return maxFile;
+  };
+
   return gulp.src(paths.indexHtml)
-    .pipe(inject(gulp.src('dist/public/styles/*.css', {read: false}), {
+    .pipe(inject(gulp.src(getLatestFile('dist/public/styles/*.css'), {read: false}), {
       ignorePath: '/dist'
     }))
-    .pipe(inject(gulp.src('dist/public/scripts/libs-*.js', {read: false}), { // TODO get newest one
+    .pipe(inject(gulp.src(getLatestFile('dist/public/scripts/libs-*.js'), {read: false}), {
       starttag: '<!-- inject:libs:{{ext}} -->',
       ignorePath: '/dist'
     }))
-    .pipe(inject(gulp.src('dist/public/scripts/app-*.js', {read: false}), {
+    .pipe(inject(gulp.src(getLatestFile('dist/public/scripts/app-*.js'), {read: false}), {
       ignorePath: '/dist'
     }))
     .pipe(gulp.dest('dist/views'));
