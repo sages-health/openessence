@@ -23,16 +23,13 @@ var createLogger = function (name) {
         level: 'debug',
         type: 'raw',
         stream: prettyStdOut
-      },
-
-      // machine-readable output in log file
-      {
-        level: 'info',
-        type: 'rotating-file',
-        path: __dirname + '/../../logs/' + name + '.log',
-        period: '1d', // rotate daily, bunyan doesn't support size-based rotation :(
-        count: 3 // number of back copies
       }
+
+      // TODO machine-readable output in log file
+      // We need log rotation, but bunyan's implementation has issues
+      // (see https://github.com/trentm/node-bunyan/pull/97 for example). Log rotation is a big enough problem that
+      // it should be handled independently, e.g. by logrotate on Linux. All the more reason to deploy to a managed
+      // container.
     ]
   });
 };
