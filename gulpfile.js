@@ -1,32 +1,18 @@
 'use strict';
 
-// see http://markgoodyear.com/2014/01/getting-started-with-gulp/
 var gulp = require('gulp');
 var gutil  = require('gulp-util');
 var lazypipe = require('lazypipe');
-var less = require('gulp-less');
-var autoprefixer = require('gulp-autoprefixer');
-var minifycss = require('gulp-minify-css');
-var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
-var imagemin = require('gulp-imagemin');
-var svgmin = require('gulp-svgmin');
-var rimraf = require('gulp-rimraf'); // preferred over gulp-clean, see https://github.com/peter-vilja/gulp-clean/pull/3
-var ngmin = require('gulp-ngmin');
 var htmlmin = require('gulp-htmlmin');
 var rev = require('gulp-rev');
-var inject = require('gulp-inject');
 var mocha = require('gulp-mocha');
 var gettext = require('gulp-angular-gettext');
 var buffer = require('gulp-buffer');
-var replace = require('gulp-replace');
-var header = require('gulp-header');
-var footer = require('gulp-footer');
 var browserify = require('browserify');
 var karma = require('karma');
-var open = require('open');
 var path = require('path');
-var fork = require('child_process').fork;
+
 var _ = require('lodash');
 var source = require('vinyl-source-stream');
 var transformTools = require('browserify-transform-tools');
@@ -63,6 +49,10 @@ var fontExtensions = ['.eot', '.svg', '.ttf', '.woff'];
 
 // build CSS for production
 gulp.task('styles', function () {
+  var less = require('gulp-less');
+  var autoprefixer = require('gulp-autoprefixer');
+  var minifycss = require('gulp-minify-css');
+
   return gulp.src(paths.styles)
     .pipe(less({
       paths: [paths.bowerComponents, paths.nodeModules]
@@ -81,6 +71,8 @@ gulp.task('fonts', function () {
 });
 
 gulp.task('jshint', function () {
+  var jshint = require('gulp-jshint');
+
   return gulp.src(paths.scripts)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
@@ -89,6 +81,10 @@ gulp.task('jshint', function () {
 
 // minifies partials and converts them to a JS string that can be `require`d
 gulp.task('partials', function () {
+  var replace = require('gulp-replace');
+  var header = require('gulp-header');
+  var footer = require('gulp-footer');
+
   return gulp.src(paths.partials)
     .pipe(htmlmin({
       collapseWhitespace: true,
@@ -131,6 +127,8 @@ gulp.task('libs', function () {
 });
 
 gulp.task('scripts', ['jshint', 'partials', 'libs'], function () {
+  var ngmin = require('gulp-ngmin');
+
   // transform that replaces references to `require`d partials with their minified versions in .tmp,
   // e.g. a call to require('../partials/foo.html') in public/scripts would be replaced by
   // require('../../.tmp/public/partials/foo.html')
@@ -172,6 +170,8 @@ gulp.task('scripts', ['jshint', 'partials', 'libs'], function () {
 });
 
 var imageminTransform = function () {
+  var imagemin = require('gulp-imagemin');
+
   return imagemin({
     optimizationLevel: 3,
     progressive: true,
@@ -243,6 +243,8 @@ gulp.task('gifs', function () {
 });
 
 gulp.task('svgs', function () {
+  var svgmin = require('gulp-svgmin');
+
   return gulp.src('public/images/**/*.svg')
     .pipe(svgmin())
     .pipe(gulp.dest('dist/public/images'));
@@ -256,8 +258,10 @@ gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs'], function () {
 // Although we do a lot of processing in middleware, this task is still useful to replace references to resources
 // with references to revved versions.
 gulp.task('inject', ['styles', 'scripts'], function () {
+  var inject = require('gulp-inject');
   var fs = require('fs');
   var glob = require('glob');
+
   var getLatestFile = function (path) {
     var maxFile = '';
     var maxTime = -1;
@@ -332,6 +336,9 @@ gulp.task('translations', function () {
 });
 
 gulp.task('clean', function () {
+  // recommended over gulp-clean, see https://github.com/peter-vilja/gulp-clean/pull/3
+  var rimraf = require('gulp-rimraf');
+
   return gulp.src(['dist', '.tmp'], {read: false})
     .pipe(rimraf());
 });
@@ -339,6 +346,8 @@ gulp.task('clean', function () {
 gulp.task('build', ['images', 'fonts', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
 
 gulp.task('server', ['build'], function (callback) {
+  var fork = require('child_process').fork;
+  var open = require('open');
   var env = _.clone(process.env);
   env.NODE_ENV = 'production';
 
