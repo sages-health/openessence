@@ -1,0 +1,204 @@
+<form name="visitForm" class="form" novalidate ng-submit="submit(visitForm)" ng-cloak>
+<fieldset>
+
+<!-- TODO red text on white background instead of alert -->
+<div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+
+<!-- Date -->
+<div class="form-group" ng-class="{'has-error': isInvalid(visitForm.reportDate)}">
+  <label for="entry-visit-date" translate>Date</label>
+
+  <div class="input-group">
+    <!-- TODO in angular-ui/bootstrap master they removed weeks -->
+    <input id="entry-visit-date" name="reportDate" type="text" class="form-control" required
+           ng-model="visit.reportDate" datepicker-popup show-weeks="false" is-open="reportDateOpened">
+
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="button" ng-click="openReportDate($event)">
+        <span class="icon-calendar"></span>
+      </button>
+    </span>
+  </div>
+
+  <span class="help-block" translate>Date of visit</span>
+</div>
+
+<!-- District -->
+<div class="form-group">
+  <label for="entry-visit-district" translate>District</label>
+
+  <select class="form-control" id="entry-visit-district" name="district" ng-model="visit.medicalFacility.district"
+          ng-options="district for district in districts">
+    <option value=""></option>
+  </select>
+</div>
+
+<!-- Sex -->
+<div class="form-group">
+  <label translate>Sex</label>
+  <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
+
+  <label class="radio-inline">
+    <input type="radio" name="sex" value="male" ng-model="visit.patient.sex">
+    <span translate>Male</span>
+  </label>
+  <label class="radio-inline">
+    <input type="radio" name="sex" value="female" ng-model="visit.patient.sex">
+    <span translate>Female</span>
+  </label>
+  <label class="radio-inline">
+    <input type="radio" name="sex" value="" checked>
+    <span translate>Unknown</span>
+  </label>
+</div>
+
+<!-- Age -->
+<div class="form-group"
+     ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120}">
+  <label for="entry-visit-age" translate>Age</label>
+
+  <div class="input-group">
+    <input class="form-control" id="entry-visit-age" name="age" ng-model="visit.patient.age" type="number"
+           min="0" max="200" placeholder="{{agePlaceholder | translate}}">
+
+    <!-- TODO this looks bad with has-error -->
+    <span class="input-group-addon" translate>years</span>
+  </div>
+
+  <span ng-show="isInvalid(visitForm.age)" class="help-block" translate>
+      Please enter a valid age in years, for example 15 or 0.5
+  </span>
+  <span ng-show="visit.patient.age > 120 && visit.patient.age != 999" class="help-block" translate>
+    {{visit.patient.age}} years is quite old. Are you sure?
+  </span>
+  <span ng-show="visit.patient.age == 999" class="help-block" translate>
+    Leave this field blank if you don't know the patient's age
+  </span>
+</div>
+
+<!-- Weight -->
+<div class="form-group"
+     ng-class="{'has-error': isInvalid(visitForm.weight), 'has-warning': visit.patient.weight > 500}">
+  <label for="entry-visit-weight" translate>Weight</label>
+
+  <div class="input-group">
+    <input class="form-control" id="entry-visit-weight" name="weight" ng-model="visit.patient.weight"
+           type="number" min="0" max="1000" placeholder="{{weightPlaceholder | translate}}">
+    <span class="input-group-addon" translate>kg</span>
+  </div>
+
+  <span ng-show="isInvalid(visitForm.weight)" class="help-block" translate>
+    Please enter a valid weight in kilograms
+  </span>
+  <span ng-show="visit.patient.weight > 500 && visit.patient.weight != 999" class="help-block" translate>
+    Not to be rude, but {{visit.patient.weight}}kg is quite heavy. Are you sure?
+  </span>
+  <span ng-show="visit.patient.weight == 999" class="help-block" translate>
+    Leave this field blank if you don't know the patient's weight
+  </span>
+</div>
+
+<!-- Blood pressure -->
+<div class="form-group has-feedback">
+  <label for="entry-visit-systolic" translate>Blood pressure</label>
+
+  <div class="form-inline">
+    <label class="sr-only" for="entry-visit-systolic" translate>Systolic</label>
+
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.systolic),
+                                       'has-warning': warnSystolic(visit.patient.bloodPressure.systolic)}">
+      <input class="form-control" id="entry-visit-systolic" name="systolic" type="number" min="0"
+             max="300" ng-model="visit.patient.bloodPressure.systolic"
+             ng-required="!!visit.patient.bloodPressure.diastolic">
+      <!-- TODO get input-group-addon mm Hg to work with .form-inline -->
+    </div>
+    /
+    <div class="form-group" ng-class="{'has-warning': warnDiastolic(visit.patient.bloodPressure.diastolic)}">
+      <label class="sr-only" for="entry-visit-diastolic" translate>Systolic</label>
+
+      <input class="form-control" id="entry-visit-diastolic" name="diastolic" type="number" min="0" max="300"
+               ng-model="visit.patient.bloodPressure.diastolic"
+               ng-required="!!visit.patient.bloodPressure.systolic">
+        <!-- TODO should be invalid if only one value is entered -->
+    </div>
+
+    <span class="help-block" ng-show="warnSystolic(visit.patient.bloodPressure.systolic)
+                                      || warnDiastolic(visit.patient.bloodPressure.diastolic)" translate>
+      Are you sure?
+    </span>
+
+    <!-- TODO this could use some more work in terms of validation -->
+  </div>
+</div>
+
+<!-- Pulse -->
+<div class="form-group" ng-class="{'has-error': isInvalid(visitForm.pulse)}">
+  <label for="entry-visit-pulse" translate>Pulse</label>
+
+  <div class="input-group">
+    <input class="form-control" id="entry-visit-pulse" name="pulse" ng-model="visit.patient.pulse"
+           type="number" min="0" max="300">
+    <span class="input-group-addon" translate>bpm</span>
+  </div>
+
+  <span ng-show="isInvalid(visitForm.pulse)" class="help-block" translate>
+    Please enter a valid pulse
+  </span>
+</div>
+
+<!-- Temperature -->
+<div class="form-group" ng-class="{'has-error': isInvalid(visitForm.temperature)}">
+  <label for="entry-visit-temperature" translate>Temperature</label>
+
+  <div class="input-group">
+    <input class="form-control" id="entry-visit-temperature" name="temperature"
+           ng-model="visit.patient.temperature" type="number" min="0" max="50">
+    <span class="input-group-addon" translate>°C</span>
+  </div>
+
+  <span ng-show="isInvalid(visitForm.temperature)" class="help-block" translate>
+    Please enter a valid temperature
+  </span>
+</div>
+
+<div class="form-group">
+  <label for="entry-visit-symptoms" translate>Symptoms</label>
+
+  <select class="form-control select2-multiple" id="entry-visit-symptoms" multiple ui-select2
+          ng-model="visit.symptoms">
+    <option value="abdominal pain" translate>Abdominal Pain</option>
+    <option value="cold" translate>Cold</option>
+    <option value="cough" translate>Cough</option>
+  </select>
+
+  <span class="help-block" translate>Select symptom(s)</span>
+</div>
+
+<div class="form-group">
+  <label for="entry-visit-diagnoses" translate>Diagnoses</label>
+
+  <select class="form-control select2-multiple" id="entry-visit-diagnoses" multiple ui-select2
+          ng-model="visit.diagnoses">
+    <option value="asthma" translate>Asthma</option>
+    <option value="bronchitis" translate>Bronchitis</option>
+    <option value="cholera" translate>Cholera</option>
+  </select>
+
+  <span class="help-block" translate>Select diagnoses</span>
+</div>
+
+
+<!-- Chief complaint -->
+<div class="form-group">
+  <label for="entry-visit-chief-complaint" translate>Chief complaint</label>
+
+  <textarea class="form-control" id="entry-visit-chief-complaint" name="chiefComplaint"
+            ng-model="visit.chiefComplaint"></textarea>
+  <span class="help-block" translate>What reason did the patient give for this visit?</span>
+</div>
+
+</fieldset>
+
+<div ng-transclude></div>
+
+</form>

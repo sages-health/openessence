@@ -85,16 +85,22 @@ ul[datepicker-popup-wrap] {
     top: -@padding-base-vertical;
     right: -@padding-base-horizontal;
   }
-}
 
-// Panel heading with less padding, for when the table's contents are less than the table header
-.panel-heading.condensed {
-  padding: @padding-small-vertical @padding-small-horizontal;
+  // ensure panel title is vertically centered when we have weird layout in header,
+  // see http://stackoverflow.com/a/20412225
+  .panel-title.pull-left {
+    padding-top: @padding-base-vertical;
+  }
 
-  .close {
-    position: relative;
-    top: -@padding-small-vertical;
-    right: -@padding-small-horizontal;
+  // Panel heading with less padding, for when the table's contents are less than the table header
+  &.condensed {
+    padding: @padding-small-vertical @padding-small-horizontal;
+
+    .close {
+      position: relative;
+      top: -@padding-small-vertical;
+      right: -@padding-small-horizontal;
+    }
   }
 }
 
@@ -118,12 +124,15 @@ ul[datepicker-popup-wrap] {
 }
 
 // animations
-.alert-show-hide.ng-hide-add, .alert-show-hide.ng-hide-remove {
-  -webkit-transition: all linear 0.5s; // TODO lesshat
-  -moz-transition: all linear 0.5s;
-  -o-transition: all linear 0.5s;
-  transition: all linear 0.5s;
-  display: block !important;
+.alert-show-hide.ng-hide-add,
+.alert-show-hide.ng-hide-remove {
+  &:not(.ng-hide) { // prevents alerts from flashing when we open a modal, among other things
+    -webkit-transition: all linear 0.5s; // TODO lesshat
+    -moz-transition: all linear 0.5s;
+    -o-transition: all linear 0.5s;
+    transition: all linear 0.5s;
+    display: block !important;
+  }
 }
 
 .alert-show-hide.ng-hide-add.ng-hide-add-active,

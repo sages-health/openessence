@@ -13,32 +13,32 @@
 
     <div class="collapse navbar-collapse" id="fracas-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><a href="/kibana" translate>Dashboard</a></li>
 
-        <!-- Bootstrap convention is to have a home button and a brand link (that probably leads to home).
-             Useful because brand doesn't respect .active -->
+        <!-- Dashboard -->
+        <li><a href="/kibana" class="icon-gauge"></a></li>
+
+        <!-- Workbench -->
         <li ui-sref-active="active">
           <a class="icon-chart-bar" ui-sref="workbench"></a>
         </li>
 
+        <!-- Open -->
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-folder-open"></span></a>
           <ul class="dropdown-menu">
             <li><a translate>Saved query</a></li>
-            <li><a translate>Something else</a></li>
+
+            <!-- TODO define this in outpatient module -->
+            <li><a ui-sref="edit.visit" translate>Outpatient visit</a></li>
           </ul>
         </li>
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-plus"></span></a>
-          <ul class="dropdown-menu">
-            <li><a translate ui-sref="entry.visit">Patient visit</a></li>
-            <li><a translate>Something else</a></li>
-          </ul>
-        </li>
-        <li><a class="icon-floppy" ui-sref="report.save({url: currentPath})"></a></li>
+
+        <!-- Export report -->
+        <li><a class="icon-export" ui-sref="report.save({url: currentPath})"></a></li>
       </ul>
+
       <!-- this can be where the user searches for records -->
-      <form class="navbar-form navbar-left" role="search">
+      <form class="navbar-form navbar-left" role="search"> <!-- TODO http://stackoverflow.com/a/18520870 -->
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Search">
         </div>

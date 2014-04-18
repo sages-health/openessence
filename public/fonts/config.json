@@ -37,9 +37,27 @@
       "src": "fontawesome"
     },
     {
+      "uid": "895405dfac8a3b7b2f23b183c6608ee6",
+      "css": "export",
+      "code": 59416,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "d35a1d35efeb784d1dc9ac18b9b6c2b6",
+      "css": "pencil",
+      "code": 59411,
+      "src": "fontawesome"
+    },
+    {
       "uid": "c76b7947c957c9b78b11741173c8349b",
       "css": "attention",
       "code": 59398,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "f48ae54adfb27d8ada53d0fd9e34ee10",
+      "css": "trash",
+      "code": 59415,
       "src": "fontawesome"
     },
     {
@@ -97,9 +115,27 @@
       "src": "fontawesome"
     },
     {
+      "uid": "0bda4bc779d4c32623dec2e43bd67ee8",
+      "css": "gauge",
+      "code": 59412,
+      "src": "fontawesome"
+    },
+    {
       "uid": "cda0cdcfd38f5f1d9255e722dad42012",
       "css": "spinner",
       "code": 59400,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "d862a10e1448589215be19702f98f2c1",
+      "css": "smile",
+      "code": 59413,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "06ddc67d609c477cd5524a7238d7850d",
+      "css": "frown",
+      "code": 59414,
       "src": "fontawesome"
     },
     {

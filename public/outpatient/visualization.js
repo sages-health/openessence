@@ -3,20 +3,17 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, gettextCatalog, sortString,
-                                                                               FrableParams) {
+angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisit, outpatientEditModal, outpatientDeleteModal) {
   return {
     restrict: 'E',
     template: require('./visualization.html'),
     scope: {
       queryString: '=',
-      records: '=?',
       close: '&onClose'
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
       pre: function (scope) {
-        scope.records = scope.records || [];
         scope.visualization = {
           name: 'table'
         };
@@ -41,13 +38,30 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           date: gettextCatalog.getString('Date'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
-          symptoms: gettextCatalog.getString('Symptoms')
+          symptoms: gettextCatalog.getString('Symptoms'),
+          edit: gettextCatalog.getString('Edit')
         };
 
-        var query = function (params) { // TODO ngResource
-          return $http.get('/resources/outpatient-visit',
-            {
-              params: params
+        var reload = function () {
+          if (scope.visualization.name === 'table') {
+            scope.tableParams.reload();
+          }
+        };
+
+        scope.editVisit = function (record) {
+          outpatientEditModal.open({
+            record: record
+          })
+            .result
+            .then(function () {
+              reload(); // TODO highlight changed record
+            });
+        };
+        scope.deleteVisit = function (record) {
+          outpatientDeleteModal.open({record: record})
+            .result
+            .then(function () {
+              reload();
             });
         };
 
@@ -55,7 +69,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           page: 1,
           count: 10,
           sorting: {
-            date: 'desc'
+            reportDate: 'desc'
           }
         }, {
           total: 0,
@@ -63,28 +77,31 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           $scope: {
             $data: {}
           },
-          getData: function($defer, params) {
-            query({
+          getData: function ($defer, params) {
+            if (!angular.isDefined(scope.queryString)) {
+              // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
+              // If you really don't want a filter, set queryString='' or null
+              // TODO there's probably a more Angular-y way to do this
+              $defer.resolve([]);
+              return;
+            }
+
+            OutpatientVisit.get({
               q: scope.queryString,
               from: (params.page() - 1) * params.count(),
               size: params.count(),
               sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting
-            }).success(function (data) {
+            }, function (data) {
               params.total(data.total);
-              $defer.resolve(data.results.map(function (r) {
-                return r._source;
-              }));
+              $defer.resolve(data.results);
             });
           }
         });
 
         scope.$watch('queryString', function () {
-          if (scope.visualization.name === 'table') {
-            scope.tableParams.reload();
-          } else if (scope.visualization.name === 'crosstab') {
-            // TODO make a pivot table with elasticsearch aggregations and set scope.tabularData
-          }
+          reload();
         });
+
       }
     }
   };
