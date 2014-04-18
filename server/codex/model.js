@@ -1,7 +1,18 @@
 'use strict';
 
+var util = require('util');
 var _ = require('lodash');
 var changeCase = require('change-case');
+
+function PrimaryKeyViolcationError (message) {
+  Error.call(this, message);
+  this.message = message;
+  this.name = this.constructor.name;
+  this.status = 400;
+  Error.captureStackTrace(this, PrimaryKeyViolcationError);
+}
+util.inherits(PrimaryKeyViolcationError, Error);
+
 
 function Model (options) {
   options = _.assign({
@@ -10,6 +21,7 @@ function Model (options) {
     // type depends on index
     mapping: this.constructor.MAPPING,
     indexSettings: this.constructor.INDEX_SETTINGS,
+    pk: this.constructor.PK,
     sql: this.constructor.SQL,
     transformMapping: function (mapping) {
       var mappings = {};
@@ -45,6 +57,7 @@ function Model (options) {
    * @type {string}
    */
   this.sql = options.sql;
+  this.pk = options.pk;
 }
 
 // Bulk operations
@@ -128,7 +141,28 @@ Model.prototype.insert = function (params, callback) {
     type: this.type,
     refresh: true
   }, params);
-  this.client.index(params, callback);
+  var self = this;
+  // if pk (= single column name for pk) //TODO: allow multi-column pk...
+  if (this.pk && this.pk.length > 0) {
+    var query = this.pk + ':' + params.body[this.pk];
+    var searchParams = _.assign({
+      index: this.index,
+      type: this.type,
+      q: query
+    });
+    this.client.search(searchParams, function (error, response) {
+      if ((response.hits.hits.length == 1 && params.id != response.hits.hits[0]._id) || response.hits.hits.length > 1) {
+        callback(new PrimaryKeyViolcationError('Duplicate record! [' + query + ']'));
+        return;
+      }
+      self.client.index(params, callback);
+    });
+  }
+  else {
+    self.client.index(params, callback);
+  }
+
+
 };
 
 // Get the contents of multiple records

@@ -12,7 +12,7 @@ exports.middleware = function errorMiddleware (err, req, res, next) {
 
   logger.error(err);
 
-  res.status(500);
+  res.status(res.statusCode || 500);
   res.format({
     html: function () {
       res.render('error.html', {
@@ -21,7 +21,7 @@ exports.middleware = function errorMiddleware (err, req, res, next) {
     },
     json: function () {
       res.send({
-        error: 'Server error'
+        error: (err && err.message) || 'Server error'
       });
     }
   });

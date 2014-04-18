@@ -3,10 +3,21 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
+var lookupSearchParams = {
+  from: 0,
+  size: 10000,
+  sort: 'name'// we only support one level of sorting
+};
+
+var pluckName = function (r) {
+  return r._source.name;
+};
+
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientForm', function ($http, gettextCatalog, OutpatientVisit) {
+angular.module(directives.name).directive('outpatientForm', function ($http, gettextCatalog, OutpatientVisit, District,
+                                                                      Diagnosis, Symptom) {
   return {
     restrict: 'E',
     template: require('./form.html'),
@@ -26,13 +37,14 @@ angular.module(directives.name).directive('outpatientForm', function ($http, get
           scope.weightPlaceholder = gettextCatalog.getString('Patient\'s weight');
           scope.yellAtUser = false;
 
-          // TODO get this from codex
-          scope.districts = ['District 1', 'District 2', 'District 3', 'District 4', 'District 5'];
-          scope.symptoms = ['Abdominal Pain', 'Cold', 'Coryza', 'Cough', 'Dehydration'].map(function (s) {
-            return [{name: s, val: s}];
+          District.get(lookupSearchParams, function (response) {
+            scope.districts = response.results.map(pluckName);
           });
-          scope.diagnoses = ['Asthma', 'Bronchitis', 'Cholera', 'Cough', 'Dengue'].map(function (d) {
-            return [{name: d, val: d}];
+          Symptom.get(lookupSearchParams, function (response) {
+            scope.symptoms = response.results.map(pluckName);
+          });
+          Diagnosis.get(lookupSearchParams, function (response) {
+            scope.diagnoses = response.results.map(pluckName);
           });
 
           scope.isInvalid = function (field) {

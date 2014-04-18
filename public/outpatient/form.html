@@ -165,10 +165,7 @@
   <label for="entry-visit-symptoms" translate>Symptoms</label>
 
   <select class="form-control select2-multiple" id="entry-visit-symptoms" multiple ui-select2
-          ng-model="visit.symptoms">
-    <option value="abdominal pain" translate>Abdominal Pain</option>
-    <option value="cold" translate>Cold</option>
-    <option value="cough" translate>Cough</option>
+          ng-model="visit.symptoms" ng-options="symptom for symptom in symptoms">
   </select>
 
   <span class="help-block" translate>Select symptom(s)</span>
@@ -177,16 +174,12 @@
 <div class="form-group">
   <label for="entry-visit-diagnoses" translate>Diagnoses</label>
 
-  <select class="form-control select2-multiple" id="entry-visit-diagnoses" multiple ui-select2
-          ng-model="visit.diagnoses">
-    <option value="asthma" translate>Asthma</option>
-    <option value="bronchitis" translate>Bronchitis</option>
-    <option value="cholera" translate>Cholera</option>
+  <select  class="form-control select2-multiple" id="entry-visit-diagnoses" multiple ui-select2
+          ng-model="visit.diagnoses" ng-options="diagnosis for diagnosis in diagnoses">
   </select>
-
-  <span class="help-block" translate>Select diagnoses</span>
+  Selected Diagnoses:{{visit.diagnoses}}
+  <span class="help-block" translate>Select diagnoses </span>
 </div>
-
 
 <!-- Chief complaint -->
 <div class="form-group">

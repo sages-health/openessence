@@ -135,6 +135,21 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/visit',
       template: require('../outpatient/edit.html'),
       controller: 'OutpatientEditCtrl'
+    })
+    .state('edit.district', {
+      url: '/district',
+      template: require('../partials/edit/district.html'),
+      controller: 'DistrictsEditCtrl'
+    })
+    .state('edit.symptom', {
+      url: '/symptom',
+      template: require('../partials/edit/symptom.html'),
+      controller: 'SymptomEditCtrl'
+    })
+    .state('edit.diagnosis', {
+      url: '/diagnosis',
+      template: require('../partials/edit/diagnosis.html'),
+      controller: 'DiagnosisEditCtrl'
     });
 });
 
