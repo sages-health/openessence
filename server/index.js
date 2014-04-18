@@ -14,7 +14,13 @@ var routes = require('./routes');
 var app = express();
 
 app.use(express.compress());
-app.use(express.favicon('public/favicon.ico'));
+
+if (conf.env === 'development') {
+  app.use(express.favicon('public/images/favicon.ico'));
+} else {
+  app.use(express.favicon('dist/images/favicon.ico'));
+}
+
 if (conf.env === 'production') {
   app.use(express.logger());
 }

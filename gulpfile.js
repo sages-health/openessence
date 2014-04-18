@@ -260,7 +260,10 @@ gulp.task('svgs', function () {
     .pipe(gulp.dest('dist/public/images'));
 });
 
-gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs']);
+gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs'], function () {
+  return gulp.src('public/images/*.ico')
+    .pipe(gulp.dest('dist/public/images'));
+});
 
 // Although we do a lot of processing in middleware, this task is still useful to replace references to resources
 // with references to revved versions.
