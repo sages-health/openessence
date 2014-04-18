@@ -49,7 +49,6 @@ var notBowerComponents = '!public/bower_components/**/*';
 var paths = {
   scripts: ['public/**/*.js', notBowerComponents],
   styles: ['public/styles/main.less'], // other styles are loaded from main
-  svgs: ['public/**/*.svg', notBowerComponents],
   partials: ['public/**/*.html', notBowerComponents],
   html: 'views/**/*.html',
   indexHtml: 'views/index.html',
@@ -255,7 +254,7 @@ gulp.task('gifs', function () {
 });
 
 gulp.task('svgs', function () {
-  return gulp.src(paths.svgs)
+  return gulp.src('public/images/**/*.svg')
     .pipe(svgmin())
     .pipe(gulp.dest('dist/public/images'));
 });
