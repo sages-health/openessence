@@ -33,7 +33,7 @@
     "browserify": "~3.29.0",
     "browserify-shim": "~3.2.2",
     "partialify": "~3.1.0",
-    "browserify-middleware": "~2.3.0",
+    "browserify-middleware": "~2.5.0",
     "browserify-transform-tools": "~1.2.1",
     "less": "~1.7.0",
     "less-middleware": "~0.1.15",
@@ -62,7 +62,7 @@
     "gulp-rimraf": "0.0.9",
     "gulp-htmlmin": "~0.1.2",
     "gulp-rev": "~0.2.1",
-    "gulp-inject": "~0.2.2",
+    "gulp-inject": "~0.4.1",
     "gulp-mocha": "~0.4.1",
     "gulp-ngmin": "~0.1.2",
     "gulp-svgmin": "~0.4.1",
@@ -97,6 +97,10 @@
     "d3": "./public/bower_components/d3/d3.js",
     "nvd3": "./public/bower_components/nvd3/nv.d3.js"
   },
+  "browser-libs": [
+    "jquery",
+    "humane-js"
+  ],
   "browserify-shim": {
     "angular": {
       "exports": "angular",

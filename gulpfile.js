@@ -30,6 +30,7 @@ var fork = require('child_process').fork;
 var _ = require('lodash');
 var source = require('vinyl-source-stream');
 var transformTools = require('browserify-transform-tools');
+var jsLibs = require('./server/assets').libs();
 
 // add Kibana's grunt tasks
 // blocked on https://github.com/gratimax/gulp-grunt/issues/3
@@ -47,7 +48,7 @@ var notBowerComponents = '!public/bower_components/**/*';
 
 var paths = {
   scripts: ['public/**/*.js', notBowerComponents],
-  styles: ['public/**/*.less', notBowerComponents],
+  styles: ['public/styles/main.less'], // other styles are loaded from main
   svgs: ['public/**/*.svg', notBowerComponents],
   partials: ['public/**/*.html', notBowerComponents],
   html: 'views/**/*.html',
@@ -93,11 +94,6 @@ gulp.task('jshint', function () {
     .pipe(jshint.reporter('fail'));
 });
 
-// If we ever need to split up our browserify bundles, here are some useful links:
-// https://github.com/domenic/browserify-deoptimizer
-// http://benclinkinbeard.com/posts/external-bundles-for-faster-browserify-builds/
-// http://esa-matti.suuronen.org/blog/2013/04/15/asynchronous-module-loading-with-browserify/
-
 // minifies partials and converts them to a JS string that can be `require`d
 gulp.task('partials', function () {
   return gulp.src(paths.partials)
@@ -121,7 +117,27 @@ gulp.task('partials', function () {
     .pipe(gulp.dest('.tmp/public/')); // write to .tmp so they can be read by browserify
 });
 
-gulp.task('scripts', ['clean-scripts', 'jshint', 'partials'], function () {
+/**
+ * Task to build 3rd-party JavaScript libraries.
+ */
+gulp.task('libs', [], function () {
+  var bundle = browserify();
+  jsLibs.forEach(function (lib) {
+    bundle.require(lib);
+  });
+
+  return bundle
+    .bundle()
+    .pipe(source('libs.js'))
+    .pipe(buffer())// gulp-rev doesn't like streams, so convert to buffer
+    .pipe(uglify({
+      preserveComments: 'some' // preserve license headers
+    }))
+    .pipe(rev())
+    .pipe(gulp.dest('dist/public/scripts/'));
+});
+
+gulp.task('scripts', ['clean-scripts', 'jshint', 'partials', 'libs'], function () {
   // transform that replaces references to `require`d partials with their minified versions in .tmp,
   // e.g. a call to require('../partials/foo.html') in public/scripts would be replaced by
   // require('../../.tmp/public/partials/foo.html')
@@ -142,9 +158,15 @@ gulp.task('scripts', ['clean-scripts', 'jshint', 'partials'], function () {
       cb(null, 'require("' + relativePath + '")');
     });
 
-  return browserify()
+  var appBundle = browserify()
     .add(__dirname + '/public/scripts/app.js')
-    .transform(minifyPartials)
+    .transform(minifyPartials);
+
+  jsLibs.forEach(function (lib) {
+    appBundle.external(lib);
+  });
+
+  return appBundle
     .bundle()
     .pipe(source('app.js')) // convert stream of text to stream of Vinyl objects for gulp
     .pipe(buffer())// ngmin, et al. don't like streams, so convert to buffer
@@ -244,8 +266,15 @@ gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs']);
 // with references to revved versions.
 gulp.task('inject', ['styles', 'scripts'], function () {
   // TODO clean up when https://github.com/klei/gulp-inject/issues/9 is resolved
-  return gulp.src(['dist/public/scripts/**/*.js', 'dist/public/styles/**/*.css'], {read: false})
-    .pipe(inject(paths.indexHtml, {
+  return gulp.src(paths.indexHtml)
+    .pipe(inject(gulp.src('dist/public/styles/*.css', {read: false}), {
+      ignorePath: '/dist'
+    }))
+    .pipe(inject(gulp.src('dist/public/scripts/libs-*.js', {read: false}), { // TODO get newest one
+      starttag: '<!-- inject:libs:{{ext}} -->',
+      ignorePath: '/dist'
+    }))
+    .pipe(inject(gulp.src('dist/public/scripts/app-*.js', {read: false}), {
       ignorePath: '/dist'
     }))
     .pipe(gulp.dest('dist/views'));

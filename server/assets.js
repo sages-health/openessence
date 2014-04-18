@@ -4,6 +4,23 @@ var express = require('express');
 var env = require('./conf').env;
 
 /**
+ * Returns a list of JavaScript packages that should be bundled together in libs.js.
+ */
+exports.libs = function () {
+  var packageJson = require('../package.json');
+  var bowerLibs = Object.keys(packageJson.browser);
+
+  // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention
+  var npmLibsForBrowser = packageJson['browser-libs'];
+
+  return bowerLibs.concat(npmLibsForBrowser).filter(function (l) {
+    // FIXME d3 is not defined when its in the external bundle
+    // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
+    return l !== 'd3' && l !== 'nvd3';
+  });
+};
+
+/**
  * Returns an express app that serves static resources that do not require authentication.
  */
 exports.anonymous = function () {
@@ -14,10 +31,16 @@ exports.anonymous = function () {
     var browserify = require('browserify-middleware');
     var less = require('less-middleware');
 
+    var libs = exports.libs();
+    app.use('/public/scripts/libs.js', browserify(libs, {
+      // can't use noParse with browserify-shim
+      // noParse: bowerLibs
+    }));
     app.use('/js/app.js', browserify('../public/scripts/app.js', {
       // Make require('partial.html') work.
       // In production, we use a custom version of this that also minifies the partials
-      transform: 'partialify'
+      transform: ['partialify'],
+      external: libs
     }));
 
     app.use('/public/styles', less({
