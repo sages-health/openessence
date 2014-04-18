@@ -13,8 +13,6 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
   var filterId = 0;
   var plusId = -1; // use a single ID for the + icon, since there's only ever one and it has no state
 
-  $scope.queryString = '';
-
   $scope.filterTypes = [ // TODO let outpatient/filters define this
     {
       type: 'age',
@@ -136,7 +134,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     var lastRow = $scope.vizRows[lastIndex];
     if (lastRow[0].plus) {
       // this row is empty so add it here
-      $scope.rows[lastIndex] = [
+      $scope.vizRows[lastIndex] = [
         {type: 'outpatient-visit', id: vizId++},
         {plus: true, id: plusId}
       ];

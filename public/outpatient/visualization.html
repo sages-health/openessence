@@ -2,6 +2,7 @@
   <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
     <div class="animation-switch" ng-switch-when="table">
       <div class="table-responsive">
+        <!-- can't reuse the table used for editing b/c that's a lot bigger -->
         <table class="table table-striped table-hover table-condensed" frable="tableParams">
           <tr ng-repeat="visit in $data">
             <td data-title="strings.date" sortable="'reportDate'">{{visit._source.reportDate | date}}</td>

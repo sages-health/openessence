@@ -3,6 +3,9 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
+/**
+ * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
+ */
 angular.module(directives.name).directive('outpatientForm', function ($http, gettextCatalog, OutpatientVisit) {
   return {
     restrict: 'E',
@@ -12,11 +15,9 @@ angular.module(directives.name).directive('outpatientForm', function ($http, get
       onSubmit: '&',
       record: '=?' // to populate fields
     },
-    compile: function (element, attrs) {
-      var showLegend = angular.isDefined(attrs.showLegend) && attrs.showLegend !== 'false';
+    compile: function () {
       return {
         pre: function (scope) {
-          scope.showLegend = showLegend;
           scope.record = scope.record || {};
           // we copy b/c don't want to update the workbench before we hit save!
           scope.visit = angular.copy(scope.record._source) || {};
@@ -68,7 +69,6 @@ angular.module(directives.name).directive('outpatientForm', function ($http, get
 
             var cleanup = function () {
               scope.yellAtUser = false;
-              scope.success = true;
               scope.onSubmit(scope.visitForm);
             };
 

@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports = {
-  entry: require('./EntryCtrl'),
   login: require('./LoginCtrl'),
   main: require('./MainCtrl'),
   notFound: require('./NotFoundCtrl'),

@@ -125,16 +125,16 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     .state('report.save', {
       url: '/save'
     })
-    .state('entry', {
-      url: '/entry',
-      controller: 'EntryCtrl',
+    .state('edit', {
+      url: '/edit',
       parent: 'home',
       abstract: true,
       template: '<div ui-view></div>'
     })
-    .state('entry.visit', { // TODO define this in outpatient module
+    .state('edit.visit', { // TODO define this in outpatient module
       url: '/visit',
-      template: require('../partials/edit.html')
+      template: require('../outpatient/edit.html'),
+      controller: 'OutpatientEditCtrl'
     });
 });
 
