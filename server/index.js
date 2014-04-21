@@ -141,8 +141,8 @@ app.use(require('./error').middleware);
 
 app.engine('html', function (path, options, callback) {
   options = _.assign({
-    open: '{{', // htmlmin likes to escape <
-    close: '}}'
+    open: '[[', // htmlmin likes to escape <, and {{ is used by Angular
+    close: ']]'
   }, options);
   require('ejs').renderFile(path, options, callback);
 });

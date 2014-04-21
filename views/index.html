@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{= lang }}"> <!-- lang is locale supported by server -->
+<html lang="[[= lang ]]"> <!-- lang is locale supported by server -->
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -8,13 +8,13 @@
   <meta name="viewport" content="width=device-width">
 
   <!-- you can also use ng-init, but that won't get populated until after angular bootstraps -->
-  <meta name="_email" content="{{= (user && user.email) ? user.email : '' }}">
-  <meta name="_csrf" content="{{= csrfToken }}">
-  <meta name="_persona" content="{{= persona }}">
-  <meta name="_environment" content="{{= environment }}">
+  <meta name="_email" content="[[= (user && user.email) ? user.email : '' ]]">
+  <meta name="_csrf" content="[[= csrfToken ]]">
+  <meta name="_persona" content="[[= persona ]]">
+  <meta name="_environment" content="[[= environment ]]">
 
   <!-- tell angular not to remove locale from URL when html5Mode is active -->
-  <base href="{{= baseHref }}">
+  <base href="[[= baseHref ]]">
 
   <!-- inject:css -->
   <link rel="stylesheet" href="/public/styles/main.css">
@@ -29,10 +29,10 @@
 
 <div ui-view></div>
 
-{{ if (persona) { }}
+[[ if (persona) { ]]
 <!-- "Because Persona is still in development, you should not self-host the include.js file." -->
 <script src="https://login.persona.org/include.js"></script>
-{{ } }}
+[[ } ]]
 
 <!-- inject:libs:js -->
 <script src="/public/scripts/libs.js"></script>
