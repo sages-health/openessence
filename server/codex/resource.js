@@ -3,7 +3,6 @@
 var util = require('util');
 var _ = require('lodash');
 var express = require('express');
-var uuid = require('node-uuid');
 
 function SerializationError (message) {
   Error.call(this, message);
@@ -23,10 +22,6 @@ function FormatError (message) {
 }
 util.inherits(FormatError, Error);
 
-exports.generateId = function () {
-  // Using time-based UUID makes IDs monotonically increasing in insert order
-  return uuid.v1();
-};
 
 exports.queryAll = function (req, callback) {
   // The model must have been deserialized from the request
@@ -128,11 +123,6 @@ exports.updateAll = function (req, callback) {
       var cmd = {
         index: _.pick(item, outerProps)
       };
-
-      // Specifically generate UUIDs for records, since the elasticsearch ID generator is wonky
-      if (!cmd.index._id) {
-        cmd.index._id = exports.generateId(req);
-      }
 
       request.body.push(cmd);
       request.body.push(item._source || _.omit(item, outerProps));
@@ -255,9 +245,6 @@ exports.update = function (req, callback) {
   // This method can also be used to perform updates, iff the ID is provided
   if (req.instance) {
     request.id = req.instance;
-  } else {
-    // Specifically generate UUIDs for records, since the elasticsearch ID generator is wonky
-    request.id = exports.generateId(req);
   }
 
   // Insert or update the document
