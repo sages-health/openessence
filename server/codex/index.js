@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
 var path = require('path');
 var express = require('express');
 var glob = require('glob');
@@ -9,9 +8,6 @@ var resource = require('./resource');
 
 module.exports = function () {
   var app = express();
-
-  // Deserialize the model/instance from the URL
-  app.use(resource.serialize());
 
   // Mount controllers
   glob('controllers/*.js', {cwd: __dirname}, function (err, files) {
@@ -22,7 +18,7 @@ module.exports = function () {
 
     // Filter out example files
     var exampleRegex = /.*\.example\.js$/;
-    files = _.filter(files, function (item) {
+    files = files.filter(function (item) {
       var isExample = exampleRegex.test(item);
       if (isExample) {
         conf.logger.debug('Skipping example controller: %s', path.basename(item));
@@ -33,6 +29,8 @@ module.exports = function () {
     files.forEach(function (controller) {
       var name = path.basename(controller, '.js').toLowerCase();
       conf.logger.info('Found resource controller: /%s', name);
+
+      // mount each controller at model name
       app.use('/' + name, require('./' + controller));
     });
   });

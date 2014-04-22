@@ -23,25 +23,6 @@ function FormatError (message) {
 }
 util.inherits(FormatError, Error);
 
-exports.serialize = function () {
-  return function (req, res, next) {
-    // Look up the model as the first path in the URL, with an optional ID as the second path,
-    // and an optional trailing /
-    var match = req.path.match(/^\/([\w-]+)(?:\/([\w-]+))?\/?$/);
-    req.model = null;
-
-    // If the model and/or instance is specified, add it/them to the request
-    if (match) {
-      var Model = require('./models/' + match[1].toLowerCase());
-      req.model = new Model();
-      req.instance = match[2];
-    }
-
-    // Keep processing the middleware chain
-    next();
-  };
-};
-
 exports.generateId = function () {
   // Using time-based UUID makes IDs monotonically increasing in insert order
   return uuid.v1();
@@ -54,30 +35,45 @@ exports.queryAll = function (req, callback) {
     return;
   }
 
-  // Set sane defaults for the query
-  var request = {};
-  if (req.query.q) {
-    request.q = req.query.q;
-  } else {
-    request.body = {
-      query: {
-        'match_all': {}
-      }
-    };
-  }
+  var request = {
+    body: {}
+  };
 
   // Support pagination
-  if (req.query.from) {
-    request.from = parseInt(req.query.from, 10);
+  var from = req.param('from');
+  if (from || from === 0) {
+    request.from = parseInt(from, 10);
   }
-  if (req.query.size) {
-    request.size = parseInt(req.query.size, 10);
+  var size = req.param('size');
+  if (size || size === 0) {
+    request.size = parseInt(size, 10);
   }
 
   // Support sorting
-  if (req.query.sort) {
+  if (req.param('sort')) { // sort is always a string
     // TODO test this for potential injection attacks
-    request.sort = req.query.sort;
+    request.sort = req.param('sort');
+  }
+
+  if (req.param('q')) { // req.param because parameter can be in query string or body
+    // have to use body instead of q because we might have aggregations
+    request.body.query = {
+      'query_string': {
+        query: req.param('q')
+      }
+    };
+  } else {
+    request.body.query = {
+      'match_all': {}
+    };
+  }
+
+  var aggregate = req.param('aggregations') || req.param('aggs');
+
+  // Support aggregations TODO whitelist acceptable aggregations
+  if (aggregate) {
+    // aggregations have to be in body, plus that's the only way for them to be parsed as JSON
+    request.body.aggregations = req.body.aggregations;
   }
 
   // Search the model on the request
@@ -88,11 +84,17 @@ exports.queryAll = function (req, callback) {
       return;
     }
 
-    // Otherwise, terminate the chain with the query results
-    callback(null, {
+    var response = {
       results: esr.hits.hits,
       total: esr.hits.total
-    });
+    };
+
+    if (aggregate) {
+      response.aggregations = esr.aggregations;
+    }
+
+    // Otherwise, terminate the chain with the query results
+    callback(null, response);
   });
 };
 
@@ -127,7 +129,7 @@ exports.updateAll = function (req, callback) {
         index: _.pick(item, outerProps)
       };
 
-      // Specifically generate UUIDs for records, since the ES generator is wonky
+      // Specifically generate UUIDs for records, since the elasticsearch ID generator is wonky
       if (!cmd.index._id) {
         cmd.index._id = exports.generateId(req);
       }
@@ -234,7 +236,7 @@ exports.update = function (req, callback) {
   }
 
   // The body must be a single object to insert or update
-  if (!(req.body && _.isObject(req.body) && !_.isArray(req.body))) {
+  if (!(req.body && _.isObject(req.body) && !Array.isArray(req.body))) {
     callback(new FormatError('Invalid record format'));
     return;
   }
@@ -254,7 +256,7 @@ exports.update = function (req, callback) {
   if (req.instance) {
     request.id = req.instance;
   } else {
-    // Specifically generate UUIDs for records, since the ES generator is wonky
+    // Specifically generate UUIDs for records, since the elasticsearch ID generator is wonky
     request.id = exports.generateId(req);
   }
 
@@ -309,56 +311,112 @@ exports.delete = function (req, callback) {
   });
 };
 
-exports.idRoute = /^\/([\w|-]+)$/;
-
 exports.controller = function () {
   var app = express();
-  app.use(function (req, res, next) {
-    // The model must have been deserialized from the request
-    if (!req.model) {
-      next(new SerializationError('No model present on request'));
-      return;
-    }
 
-    // If the ID is specified, use the single
-    var scope = (req.instance) ? '' : 'All';
-
-    // Format and return the standard response from each endpoint
-    var standardResponse = function (err, response) {
-      if (err) {
-        next(err);
-        return;
-      }
-      var status = response.status || 200;
-
-      // this duplicates the whitelisting we do in the dao methods b/c we're being extra cautious about not
-      // returning sensitive fields
-      var data = {
-        results: response.results
-      };
-      if (response.total) {
-        data.total = response.total;
-      }
-
-      if (response.results) {
-        res.json(status, data);
+  app.param('model', function (req, res, next, model) {
+    try {
+      var Model = require('./models/' + model.toLowerCase());
+      req.model = new Model();
+      next();
+    } catch (e) {
+      // yes, we're actually using exceptions in Node
+      if (e.code === 'MODULE_NOT_FOUND') {
+        next(new Error('No such model: ' + model));
       } else {
-        res.status(status);
-        res.end();
+        throw e;
       }
-    };
-
-    // The standard set of REST endpoints for resources
-    if (req.method === 'GET') {
-      exports['query' + scope](req, standardResponse);
-    } else if (req.method === 'POST') {
-      exports.update(req, standardResponse);
-    } else if (req.method === 'PUT') {
-      exports['update' + scope](req, standardResponse);
-    } else if (req.method === 'DELETE') {
-      exports['delete' + scope](req, standardResponse);
     }
   });
+
+  app.param('id', function (req, res, next, id) {
+    if (/^[\w-]+$/.test(id)) {
+      req.instance = id;
+      next();
+    } else {
+      // skip this route
+      next('route');
+    }
+  });
+
+  // Format and return the standard response from each endpoint
+  var standardResponse = function (err, esResponse, res, next) {
+    if (err) {
+      next(err);
+      return;
+    }
+    var status = esResponse.status || 200;
+
+    // this duplicates the whitelisting we do in the dao methods b/c we're being extra cautious about not
+    // returning sensitive fields
+    var data = {
+      results: esResponse.results
+    };
+    if (esResponse.total) {
+      data.total = esResponse.total;
+    }
+    if (esResponse.aggregations) {
+      data.aggregations = esResponse.aggregations;
+    }
+
+    if (esResponse.results) {
+      res.json(status, data);
+    } else {
+      res.status(status);
+      res.end();
+    }
+  };
+
+  app.get('/:model', function (req, res, next) {
+    exports.queryAll(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
+  app.get('/:model/:id', function (req, res, next) {
+    exports.query(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
+  app.post('/:model', function (req, res, next) {
+    exports.update(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
+  // POST /:model/:id doesn't make sense
+
+  app.post('/:model/search', function (req, res, next) {
+    exports.queryAll(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
+  app.put('/:model', function (req, res, next) {
+    exports.updateAll(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
+  app.put('/:model/:id', function (req, res, next) {
+    exports.update(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
+  app.delete('/:model', function (req, res, next) {
+    exports.deleteAll(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
+  app.delete('/:model/:id', function (req, res, next) {
+    exports.delete(req, function (err, esResponse) {
+      standardResponse(err, esResponse, res, next);
+    });
+  });
+
   app.use(function (err, req, res, next) {
     // If the error has a status, use that (codex custom errors do this)
     if (err.status) {
@@ -380,6 +438,7 @@ exports.controller = function () {
     // TODO: File a pull request with ES to get their StatusCodeError fixed
     next(err);
   });
+
   return app;
 };
 
