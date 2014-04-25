@@ -3,10 +3,15 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
+var pluckName = function (r) {
+  return r._source.name;
+};
+
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientForm', function ($http, gettextCatalog, OutpatientVisit) {
+angular.module(directives.name).directive('outpatientForm', function (gettextCatalog, OutpatientVisit, District,
+                                                                      Diagnosis, Symptom) {
   return {
     restrict: 'E',
     template: require('./form.html'),
@@ -26,13 +31,19 @@ angular.module(directives.name).directive('outpatientForm', function ($http, get
           scope.weightPlaceholder = gettextCatalog.getString('Patient\'s weight');
           scope.yellAtUser = false;
 
-          // TODO get this from codex
-          scope.districts = ['District 1', 'District 2', 'District 3', 'District 4', 'District 5'];
-          scope.symptoms = ['Abdominal Pain', 'Cold', 'Coryza', 'Cough', 'Dehydration'].map(function (s) {
-            return [{name: s, val: s}];
+          // TODO use multi-get so we only have one XHR request
+          var searchParams = {
+            size: 100, // TODO search on demand if response indicates there are more records
+            sort: 'name'
+          };
+          District.get(searchParams, function (response) {
+            scope.districts = response.results.map(pluckName);
           });
-          scope.diagnoses = ['Asthma', 'Bronchitis', 'Cholera', 'Cough', 'Dengue'].map(function (d) {
-            return [{name: d, val: d}];
+          Symptom.get(searchParams, function (response) {
+            scope.symptoms = response.results.map(pluckName);
+          });
+          Diagnosis.get(searchParams, function (response) {
+            scope.diagnoses = response.results.map(pluckName);
           });
 
           scope.isInvalid = function (field) {
@@ -40,8 +51,8 @@ angular.module(directives.name).directive('outpatientForm', function ($http, get
               // if the user has already tried to submit, show them all the fields they're required to submit
               return field.$invalid;
             } else {
-              // only show a field's error message if the user has already interacted with it, this prevents a ton of red
-              // before the user has even interacted with the form
+              // only show a field's error message if the user has already interacted with it, this prevents a ton of
+              // red before the user has even interacted with the form
               return field.$invalid && !field.$pristine;
             }
           };

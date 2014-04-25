@@ -14,3 +14,79 @@ angular.module(services.name).factory('OutpatientVisit', function ($resource) {
       }
     });
 });
+
+angular.module(services.name).factory('District', function ($resource) {
+  return $resource('/resources/district/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT'
+      }
+    });
+});
+
+
+angular.module(services.name).factory('Diagnosis', function ($resource) {
+  return $resource('/resources/diagnosis/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT'
+      }
+    });
+});
+
+
+angular.module(services.name).factory('Symptom', function ($resource) {
+  return $resource('/resources/symptom/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT'
+      }
+    });
+});
+
+angular.module(services.name).factory('District', function ($resource) {
+  return $resource('/resources/district/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT'
+      }
+    });
+});
+
+
+angular.module(services.name).factory('Diagnosis', function ($resource) {
+  return $resource('/resources/diagnosis/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT'
+      }
+    });
+});
+
+
+angular.module(services.name).factory('Symptom', function ($resource) {
+  return $resource('/resources/symptom/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT'
+      }
+    });
+});

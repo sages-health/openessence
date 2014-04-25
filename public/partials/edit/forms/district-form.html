@@ -1,0 +1,51 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>District</h4>
+</div>
+
+<div class="modal-body">
+  <form name="recordForm" class="form-horizontal" ng-submit="submit(recordForm)" novalidate>
+    <fieldset>
+
+      <!-- TODO red text on white background instead of alert -->
+      <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name)}">
+        <label class="col-md-4 control-label" for="entry-district-name" translate>Name</label>
+
+        <div class="col-md-6">
+          <div class="input-group">
+            <input class="form-control" id="entry-district-name" name="name" ng-model="district.name" required>
+          </div>
+          <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
+            Please enter a valid District name
+          </span>
+        </div>
+      </div>
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.phoneId)}">
+        <label class="col-md-4 control-label" for="entry-district-phoneId" translate>Phone ID</label>
+
+        <div class="col-md-6">
+          <div class="input-group">
+            <input class="form-control" id="entry-district-phoneId" name="phoneId" ng-model="district.phoneId">
+          </div>
+          <span ng-show="isInvalid(recordForm.phoneId)" class="help-block" translate>
+            Please enter a valid Phone ID
+          </span>
+        </div>
+      </div>
+
+    </fieldset>
+
+  </form>
+</div>
+<div class="modal-footer">
+  <!-- include i18n-friendly images -->
+  <button class="btn btn-warning" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="submit(recordForm)">
+    <span class="icon-ok"></span>
+    <span translate>Save</span>
+  </button>
+</div>

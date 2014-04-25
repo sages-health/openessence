@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 var changeCase = require('change-case');
+var logger = require('../conf').logger;
+var errors = require('./errors');
 
 function Model (options) {
   options = _.assign({
@@ -46,6 +48,14 @@ function Model (options) {
    */
   this.sql = options.sql;
 }
+
+/**
+ * Called when constraints on a record need to be checked. The default implementation does no constraint checking.
+ * Currently only called on index requests.
+ */
+Model.prototype.checkConstraints = function (params, callback) {
+  callback(null);
+};
 
 // Bulk operations
 Model.prototype.bulk = function (params, callback) {
@@ -128,7 +138,20 @@ Model.prototype.insert = function (params, callback) {
     type: this.type,
     refresh: true
   }, params);
-  this.client.index(params, callback);
+
+  this.checkConstraints(params, function (err, failure) {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    if (failure) {
+      callback(new errors.ConstraintError(failure.message));
+    } else {
+      // all good, we can proceed with the write
+      this.client.index(params, callback);
+    }
+  }.bind(this));
 };
 
 // Get the contents of multiple records

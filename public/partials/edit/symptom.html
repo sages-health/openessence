@@ -1,0 +1,20 @@
+<edit-view title="strings.symptoms" button-text="strings.newSymptom" on-create="createRecord()">
+  <div class="table-responsive">
+    <table class="table table-striped table-hover" frable="tableParams">
+      <tr ng-repeat="record in $data">
+        <td data-title="strings.name" sortable="'name'">{{record._source.name}}</td>
+        <td data-title="strings.phoneId" sortable="'phoneId'">{{record._source.phoneId}}</td>
+        <td data-title="strings.edit">
+          <div class="btn-group btn-group-xs pull-right">
+            <button type="button" class="btn btn-default" ng-click="editRecord(record)">
+              <span class="icon-pencil"></span>
+            </button>
+            <button type="button" class="btn btn-danger" ng-click="deleteRecord(record)">
+              <span class="icon-trash"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</edit-view>

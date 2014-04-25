@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-  braph: require('./braph')
+  braph: require('./braph'),
+  editView: require('./editView')
 };

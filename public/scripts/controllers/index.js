@@ -6,5 +6,8 @@ module.exports = {
   notFound: require('./NotFoundCtrl'),
   relogin: require('./ReloginCtrl'),
   report: require('./ReportCtrl'),
-  workbench: require('./WorkbenchCtrl')
+  workbench: require('./WorkbenchCtrl'),
+  districtEdit: require('./edit/DistrictEditCtrl') ,
+  symptomEdit: require('./edit/SymptomEditCtrl')  ,
+  diagnosisEdit: require('./edit/DiagnosisEditCtrl')
 };

@@ -226,7 +226,7 @@ var indexRequests = [
       index: 'symptom',
       body: {
         mappings: {
-          district: {
+          symptom: {
             properties: {
               name: {
                 type: 'string',
