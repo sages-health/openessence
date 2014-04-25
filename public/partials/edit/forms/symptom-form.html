@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Diagnosis</h4>
+  <h4 class="modal-title" translate>Symptom</h4>
 </div>
 
 <div class="modal-body">
@@ -10,25 +10,23 @@
       <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
 
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name)}">
-        <label class="col-md-4 control-label" for="entry-record-name" translate>Name</label>
+        <label class="col-md-4 control-label" for="entry-symptom-name" translate>Name</label>
 
         <div class="col-md-6">
           <div class="input-group">
-            <input class="form-control" id="entry-record-name" name="name"
-                   ng-model="recordData.name" required>
+            <input class="form-control" id="entry-symptom-name" name="name" ng-model="symptom.name" required>
           </div>
           <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
-            Please enter a valid Diagnosis name
+            Please enter a valid Symptom name
           </span>
         </div>
       </div>
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.phoneId)}">
-        <label class="col-md-4 control-label" for="entry-record-phoneId" translate>Phone ID</label>
+        <label class="col-md-4 control-label" for="entry-symptom-phoneId" translate>Phone ID</label>
 
         <div class="col-md-6">
           <div class="input-group">
-            <input class="form-control" id="entry-record-phoneId" name="phoneId"
-                   ng-model="recordData.phoneId">
+            <input class="form-control" id="entry-symptom-phoneId" name="phoneId" ng-model="symptom.phoneId">
           </div>
           <span ng-show="isInvalid(recordForm.phoneId)" class="help-block" translate>
             Please enter a valid Phone ID

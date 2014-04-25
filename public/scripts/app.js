@@ -139,7 +139,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     .state('edit.district', {
       url: '/district',
       template: require('../partials/edit/district.html'),
-      controller: 'DistrictsEditCtrl'
+      controller: 'DistrictEditCtrl'
     })
     .state('edit.symptom', {
       url: '/symptom',

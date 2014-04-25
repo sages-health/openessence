@@ -7,7 +7,7 @@ module.exports = {
   relogin: require('./ReloginCtrl'),
   report: require('./ReportCtrl'),
   workbench: require('./WorkbenchCtrl'),
-  districtEdit: require('./edit/DistrictsEditCtrl') ,
+  districtEdit: require('./edit/DistrictEditCtrl') ,
   symptomEdit: require('./edit/SymptomEditCtrl')  ,
   diagnosisEdit: require('./edit/DiagnosisEditCtrl')
 };

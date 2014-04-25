@@ -3,12 +3,6 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-var lookupSearchParams = {
-  from: 0,
-  size: 10000,
-  sort: 'name'// we only support one level of sorting
-};
-
 var pluckName = function (r) {
   return r._source.name;
 };
@@ -16,7 +10,7 @@ var pluckName = function (r) {
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientForm', function ($http, gettextCatalog, OutpatientVisit, District,
+angular.module(directives.name).directive('outpatientForm', function (gettextCatalog, OutpatientVisit, District,
                                                                       Diagnosis, Symptom) {
   return {
     restrict: 'E',
@@ -37,13 +31,18 @@ angular.module(directives.name).directive('outpatientForm', function ($http, get
           scope.weightPlaceholder = gettextCatalog.getString('Patient\'s weight');
           scope.yellAtUser = false;
 
-          District.get(lookupSearchParams, function (response) {
+          // TODO use multi-get so we only have one XHR request
+          var searchParams = {
+            size: 100, // TODO search on demand if response indicates there are more records
+            sort: 'name'
+          };
+          District.get(searchParams, function (response) {
             scope.districts = response.results.map(pluckName);
           });
-          Symptom.get(lookupSearchParams, function (response) {
+          Symptom.get(searchParams, function (response) {
             scope.symptoms = response.results.map(pluckName);
           });
-          Diagnosis.get(lookupSearchParams, function (response) {
+          Diagnosis.get(searchParams, function (response) {
             scope.diagnoses = response.results.map(pluckName);
           });
 
@@ -52,8 +51,8 @@ angular.module(directives.name).directive('outpatientForm', function ($http, get
               // if the user has already tried to submit, show them all the fields they're required to submit
               return field.$invalid;
             } else {
-              // only show a field's error message if the user has already interacted with it, this prevents a ton of red
-              // before the user has even interacted with the form
+              // only show a field's error message if the user has already interacted with it, this prevents a ton of
+              // red before the user has even interacted with the form
               return field.$invalid && !field.$pristine;
             }
           };

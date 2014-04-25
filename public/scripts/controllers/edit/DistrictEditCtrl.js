@@ -3,13 +3,13 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
-                                                                         FrableParams, Symptom, sortString) {
+angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
+                                                                          FrableParams, District, sortString) {
 
   // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {
-    symptoms: gettextCatalog.getString('Symptoms'),
-    newSymptom: gettextCatalog.getString('New symptom'),
+    district: gettextCatalog.getString('District'),
+    newDistrict: gettextCatalog.getString('New district'),
     edit: gettextCatalog.getString('Edit'),
     phoneId: gettextCatalog.getString('Phone ID'),
     name: gettextCatalog.getString('Name')
@@ -28,7 +28,7 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
       $data: {}
     },
     getData: function ($defer, params) {
-      Symptom.get({
+      District.get({
 //          q: scope.queryString,
         from: (params.page() - 1) * params.count(),
         size: params.count(),
@@ -46,10 +46,10 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
 
   var openDialog = function (record) {
     return $modal.open({
-      template: require('../../../partials/edit/forms/symptom-form.html'),
+      template: require('../../../partials/edit/forms/district-form.html'),
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.record = record || {};
-        $scope.symptom = angular.copy($scope.record._source) || {};
+        $scope.district = angular.copy($scope.record._source) || {};
         $scope.yellAtUser = false;
 
         $scope.isInvalid = function (field) {
@@ -76,11 +76,11 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            Symptom.update(angular.extend({_id: $scope.record._id}, $scope.symptom), function () {
+            District.update(angular.extend({_id: $scope.record._id}, $scope.district), function () {
               cleanup();
             }); // TODO handle error
           } else {
-            Symptom.save($scope.symptom, function () {
+            District.save($scope.district, function () {
               cleanup();
             });
           }
@@ -111,7 +111,7 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.record = record;
         $scope.delete = function () {
-          Symptom.remove({_id: record._id}, function () {
+          District.remove({_id: record._id}, function () {
             $modalInstance.close(record);
           });
         };
