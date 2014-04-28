@@ -20,11 +20,10 @@
   <br>
 
   <!-- filters -->
-  <div class="row" ng-repeat="r in filterRows">
+  <div class="row" ng-repeat="r in filterGrid.rows">
     <div class="col-md-3" ng-repeat="filter in r track by filter.id" ng-switch="filter.plus">
       <div class="btn-group" ng-switch-when="true">
-        <button id="add-filter-btn" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
-                type="button">
+        <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
           <span class="icon-plus"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="add-filter-btn">
@@ -41,14 +40,14 @@
 
 <!-- visualizations -->
 <div class="container">
-  <div class="row" ng-repeat="row in vizRows">
+  <div class="row" ng-repeat="row in vizGrid.rows">
     <!-- track by viz.id to preserve state when we delete a grid element -->
     <div class="col-md-6" ng-repeat="viz in row track by viz.id" ng-switch="viz.plus">
       <button type="button" class="btn btn-primary btn-lg" ng-switch-when="true" ng-click="addVisualization()">
         <span class="icon-plus"></span>
       </button>
       <outpatient-visualization query-string="queryString"
-                                on-close="removeVisualization($parent.$parent.$index, $index)"
+                                on-close="removeVisualization(viz)"
                                 ng-switch-default></outpatient-visualization>
     </div>
   </div>

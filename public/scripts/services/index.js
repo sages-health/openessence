@@ -3,6 +3,7 @@
 module.exports = {
   csrfToken: require('./csrfToken'),
   errorInterceptor: require('./errorInterceptor'),
+  FracasGrid: require('./FracasGrid'),
   login: require('./login'),
   notification: require('./notification'),
   persona: require('./persona'),
