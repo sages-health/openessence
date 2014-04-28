@@ -5,6 +5,7 @@ var controllers = require('../../modules').controllers;
 
 angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
                                                                           FrableParams, District, sortString) {
+  $scope.errorOnRecordSave = '';
 
   // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {
@@ -19,7 +20,7 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
     page: 1,
     count: 10,
     sorting: {
-      name: 'asc'
+      'name.raw' : 'asc'
     }
   }, {
     total: 0,
@@ -75,13 +76,23 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
             $modalInstance.close();
           };
 
+          var showError = function (data) {
+            if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
+              $scope.errorOnRecordSave = data.data.error.name;
+            }
+          };
+
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
             District.update(angular.extend({_id: $scope.record._id}, $scope.district), function () {
               cleanup();
-            }); // TODO handle error
+            }, function (data) {
+              showError(data);
+            });
           } else {
             District.save($scope.district, function () {
               cleanup();
+            }, function (data) {
+              showError(data);
             });
           }
         };

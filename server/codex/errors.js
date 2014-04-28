@@ -2,10 +2,10 @@
 
 var util = require('util');
 
-function ConstraintError (message) {
+function ConstraintError (name, message) {
   Error.call(this, message);
   this.message = message;
-  this.name = this.constructor.name;
+  this.name = name; //this.constructor.name;
   this.status = 400;
   Error.captureStackTrace(this, ConstraintError);
 }

@@ -21,7 +21,10 @@ exports.middleware = function errorMiddleware (err, req, res, next) {
     },
     json: function () {
       res.send({
-        error: (err && err.message) || 'Server error'
+        error: {
+          name: (err && err.name) || 'ServerError',
+          message: (err && err.message) || 'Server error'
+        }
       });
     }
   });

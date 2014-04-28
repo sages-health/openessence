@@ -146,7 +146,7 @@ Model.prototype.insert = function (params, callback) {
     }
 
     if (failure) {
-      callback(new errors.ConstraintError(failure.message));
+      callback(new errors.ConstraintError(failure.name, failure.message));
     } else {
       // all good, we can proceed with the write
       this.client.index(params, callback);
