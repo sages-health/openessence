@@ -20,7 +20,7 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
     page: 1,
     count: 10,
     sorting: {
-      name: 'asc'
+      'name.raw' : 'asc'
     }
   }, {
     total: 0,

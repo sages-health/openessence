@@ -19,7 +19,7 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
     page: 1,
     count: 10,
     sorting: {
-      name: 'asc'
+      'name.raw' : 'asc'
     }
   }, {
     total: 0,
