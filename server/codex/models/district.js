@@ -16,6 +16,8 @@ District.prototype.checkConstraints = function (params, callback) { // TODO refa
   var name = params.body.name;
 
   this.client.search({
+    index: this.index,
+    type: this.type,
     body: {
       query: {
         'constant_score': {
@@ -42,6 +44,7 @@ District.prototype.checkConstraints = function (params, callback) { // TODO refa
 
     if (results.length === 1 && params.id !== results[0]._id) {
       callback(null, {
+        name: 'UniqueConstraintViolationError',
         message: 'Unique constraint violation for name:"' + name + '"'
       });
     } else {

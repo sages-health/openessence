@@ -16,6 +16,8 @@ Diagnosis.prototype.checkConstraints = function (params, callback) {
   var name = params.body.name;
 
   this.client.search({
+    index: this.index,
+    type: this.type,
     body: {
       query: {
         'constant_score': {
@@ -43,6 +45,7 @@ Diagnosis.prototype.checkConstraints = function (params, callback) {
 
     if (results.length === 1 && params.id !== results[0]._id) {
       callback(null, {
+        name: 'UniqueConstraintViolationError',
         message: 'Unique constraint violation for name:"' + name + '"'
       });
     } else {

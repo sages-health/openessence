@@ -22,7 +22,12 @@ angular.module(services.name).factory('District', function ($resource) {
     },
     {
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
       }
     });
 });
@@ -35,7 +40,12 @@ angular.module(services.name).factory('Diagnosis', function ($resource) {
     },
     {
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
       }
     });
 });
@@ -48,7 +58,12 @@ angular.module(services.name).factory('Symptom', function ($resource) {
     },
     {
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
       }
     });
 });
@@ -60,7 +75,12 @@ angular.module(services.name).factory('District', function ($resource) {
     },
     {
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
       }
     });
 });
@@ -73,7 +93,12 @@ angular.module(services.name).factory('Diagnosis', function ($resource) {
     },
     {
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
       }
     });
 });
@@ -86,7 +111,12 @@ angular.module(services.name).factory('Symptom', function ($resource) {
     },
     {
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
       }
     });
 });

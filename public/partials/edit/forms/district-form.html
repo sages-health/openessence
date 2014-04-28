@@ -9,7 +9,7 @@
       <!-- TODO red text on white background instead of alert -->
       <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
 
-      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name)}">
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || errorOnRecordSave.length > 0}">
         <label class="col-md-4 control-label" for="entry-district-name" translate>Name</label>
 
         <div class="col-md-6">
@@ -19,6 +19,11 @@
           <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
             Please enter a valid District name
           </span>
+          <div class="animate-switch-container" ng-switch on="errorOnRecordSave">
+            <span class="help-block animate-switch" ng-switch-when="UniqueConstraintViolationError">
+              <span translate>Sorry, this name is already in use</span>
+            </span>
+          </div>
         </div>
       </div>
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.phoneId)}">

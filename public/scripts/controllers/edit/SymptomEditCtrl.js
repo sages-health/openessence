@@ -5,6 +5,7 @@ var controllers = require('../../modules').controllers;
 
 angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
                                                                          FrableParams, Symptom, sortString) {
+  $scope.errorOnRecordSave = '';
 
   // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {
@@ -75,13 +76,23 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
             $modalInstance.close();
           };
 
+          var showError = function (data) {
+            if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
+              $scope.errorOnRecordSave = data.data.error.name;
+            }
+          };
+
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
             Symptom.update(angular.extend({_id: $scope.record._id}, $scope.symptom), function () {
               cleanup();
-            }); // TODO handle error
+            }, function (data) {
+              showError(data);
+            });
           } else {
             Symptom.save($scope.symptom, function () {
               cleanup();
+            }, function (data) {
+              showError(data);
             });
           }
         };
