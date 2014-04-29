@@ -3,7 +3,7 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-angular.module(services.name).factory('login', function ($location, $window, $rootScope, user, persona, Session) {
+angular.module(services.name).factory('login', function ($location, $window, $rootScope, $log, user, persona, Session) {
   // including persona script kills phantomjs
   if (persona) { // TODO do this by injecting NOOP navigator
     navigator.id.watch({
@@ -20,7 +20,7 @@ angular.module(services.name).factory('login', function ($location, $window, $ro
           })
           .catch(function () {
             // bad login
-            console.error('bad login'); // TODO do something better
+            $log.error('bad login'); // TODO do something better
             navigator.id.logout(); // this is required by Persona on bad login
           });
       },
@@ -33,7 +33,10 @@ angular.module(services.name).factory('login', function ($location, $window, $ro
             $rootScope.$broadcast('logout');
           })
           .catch(function () {
-            console.error('Logout failure'); // TODO do something better
+            // "Note that Persona may automatically call either onlogin or onlogout when your page loads, but not both."
+            // Firefox likes to automatically call onlogout, even though it will return 401 Unauthorized.
+            // Not really much else you can do on a logout error anyway
+            $log.info('Error logging out');
           });
       }
     });
