@@ -55,24 +55,28 @@ app.use(helmet.iexss()); // XSS protection for IE
 app.use(helmet.ienoopen()); // force users to save downloads in IE instead of open them, we might want to turn this off
 app.use(helmet.contentTypeOptions()); // X-Content-Type-Options: nosniff
 
-app.use((function () {
+app.use(function (req, res, next) {
+  if (/^\/kibana(\/|$)/.test(req.path)) {
+    // Kibana uses inline scripts and doesn't have ngCsp enabled
+    next();
+    return;
+  }
+
   var self = '\'self\'';
   var none = '\'none\'';
-  helmet.csp.policy({
-    defaultPolicy: {
-      'default-src': [self],
-      'script-src': [self, 'https://login.persona.org'],
-      // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
-      'style-src': [self, 'fonts.googleapis.com', '\'unsafe-inline\''],
-      'img-src': [self],
-      'font-src': [self, 'themes.googleusercontent.com'],
-      'frame-src': ['https://login.persona.org'],
-      'media-src': [self], // someday we might use <audio> and/or <video>
-      'object-src': [none] // I really hope we never need Flash or any other plugins
-    }
-  });
-  return helmet.csp();
-})());
+
+  helmet.csp({
+    'default-src': [self],
+    'script-src': [self, 'https://login.persona.org'],
+    // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
+    'style-src': [self, 'fonts.googleapis.com', '\'unsafe-inline\''],
+    'img-src': [self],
+    'font-src': [self, 'themes.googleusercontent.com'],
+    'frame-src': ['https://login.persona.org'],
+    'media-src': [self], // someday we might use <audio> and/or <video>
+    'object-src': [none] // I really hope we never need Flash or any other plugins
+  })(req, res, next);
+});
 
 // csrf
 app.use((function () {
