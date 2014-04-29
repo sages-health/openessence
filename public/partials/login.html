@@ -1,14 +1,32 @@
 <div class="container">
   <div class="row">
     <div class="col-md-4 col-md-offset-4">
-      <header>
+      <header class="login-header">
         <h3>Fracas</h3>
       </header>
-      <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()" translate>Login
+      <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()" translate>
+        Sign in / Sign up with Mozilla Persona
       </button>
-      <footer>
-        <h4 class="pull-right" translate>...for disease surveillance</h4>
-      </footer>
+      <div class="hr-text-container">
+        <hr>
+        <span class="hr-text text-muted">or</span>
+      </div>
+      <form role="form">
+        <div class="form-group">
+          <label for="login-username-email" translate>Username or email</label>
+          <input type="text" class="form-control" id="login-username-email">
+        </div>
+        <div class="form-group">
+
+          <!-- TODO implement password reset -->
+          <!--<a class="pull-right">Forgot password?</a>-->
+
+          <label for="login-password">Password</label>
+          <input type="password" class="form-control" id="login-password">
+        </div>
+        <button type="submit" class="btn btn btn-primary" translate>Sign in</button>
+        <span class="h4 pull-right">&hellip;for disease surveillance</span>
+      </form>
     </div>
   </div>
 </div>

@@ -123,6 +123,38 @@ ul[datepicker-popup-wrap] {
   }
 }
 
+.login-header {
+  padding-bottom: @padding-large-vertical;
+}
+
+// a horizontal rule with text in the middle, e.g. ------- text --------
+.hr-text-container {
+  position: relative;
+  font-size: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  > hr {
+    background-color: @text-muted;
+    height: 1px;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+  }
+
+  .hr-text {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: -2px;
+    margin-left: -25px;
+    background-color: @body-bg; // so hr doesn't go through text
+    width: 50px;
+    text-align: center;
+  }
+}
+
 // animations
 .alert-show-hide.ng-hide-add,
 .alert-show-hide.ng-hide-remove {
