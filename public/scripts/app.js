@@ -9,6 +9,12 @@ require('angular-ui-router');
 require('angular-ui-select2');
 require('angular-gettext');
 
+// explicitly require d3 and friends due to weird browserify issues,
+// see https://github.com/ForbesLindesay/browserify-middleware/issues/43
+require('d3');
+require('nvd3');
+require('angular-nvd3');
+
 var frable = require('../frable');
 require('../select2');
 require('../hinge');
@@ -24,7 +30,7 @@ require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    frable.name]
+                    'nvd3ChartDirectives', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));

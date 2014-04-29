@@ -63,12 +63,12 @@ exports.queryAll = function (req, callback) {
     };
   }
 
-  var aggregate = req.param('aggregations') || req.param('aggs');
+  // aggregations have to be in body, plus that's the only way for them to be parsed as JSON
+  var aggregations = req.body.aggregations || req.body.aggs;
 
   // Support aggregations TODO whitelist acceptable aggregations
-  if (aggregate) {
-    // aggregations have to be in body, plus that's the only way for them to be parsed as JSON
-    request.body.aggregations = req.body.aggregations;
+  if (aggregations) {
+    request.body.aggregations = aggregations;
   }
 
   // Search the model on the request
@@ -84,7 +84,7 @@ exports.queryAll = function (req, callback) {
       total: esr.hits.total
     };
 
-    if (aggregate) {
+    if (aggregations) {
       response.aggregations = esr.aggregations;
     }
 

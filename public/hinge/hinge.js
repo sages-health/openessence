@@ -40,7 +40,7 @@ angular.module(directives.name).directive('hinge', function (gettextCatalog) {
       },
       post: function (scope, element) {
         var updateViz = function (rows, cols) {
-          if (rows.length === 0 && cols.length === 0) {
+          if (rows.length === 0 && cols.length === 0 && scope.visualization.name === 'crosstab') {
             // crosstab doesn't make sense with no pivots (unless they wanted to see aggregations...)
             scope.visualization.name = 'table';
           } else {
