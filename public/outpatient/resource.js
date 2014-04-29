@@ -37,7 +37,6 @@ angular.module(services.name).factory('District', function ($resource) {
     });
 });
 
-
 angular.module(services.name).factory('Diagnosis', function ($resource) {
   return $resource('/resources/diagnosis/:_id',
     {
@@ -54,7 +53,6 @@ angular.module(services.name).factory('Diagnosis', function ($resource) {
       }
     });
 });
-
 
 angular.module(services.name).factory('Symptom', function ($resource) {
   return $resource('/resources/symptom/:_id',
@@ -90,7 +88,6 @@ angular.module(services.name).factory('District', function ($resource) {
     });
 });
 
-
 angular.module(services.name).factory('Diagnosis', function ($resource) {
   return $resource('/resources/diagnosis/:_id',
     {
@@ -108,9 +105,25 @@ angular.module(services.name).factory('Diagnosis', function ($resource) {
     });
 });
 
-
 angular.module(services.name).factory('Symptom', function ($resource) {
   return $resource('/resources/symptom/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      }
+    });
+});
+
+angular.module(services.name).factory('User', function ($resource) {
+  return $resource('/resources/user/:_id',
     {
       _id: '@_id'
     },

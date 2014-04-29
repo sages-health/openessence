@@ -173,7 +173,13 @@ var indexRequests = [
 
                   // The administrative subdivision of this facility. Could be state, county, school district, etc.
                   district: {
-                    type: 'string' // we only have district name right now
+                    type: 'string',
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
                   }
                 }
               },
@@ -246,12 +252,89 @@ var indexRequests = [
         }
       }
     }, callback);
+  },
+
+  function user (callback) {
+    client.indices.create({
+      index: 'user',
+      body: {
+        mappings: {
+          user: {
+            properties: {
+              username: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              email: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              password: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              firstName: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              lastName: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              disabled: {
+                type: 'boolean'
+              },
+              roles: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              districts: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              audit: {
+                properties: {
+                  // when the record was added to the system
+                  creation: {
+                    properties: {
+                      // Date record was created
+                      date: {
+                        type: 'date'
+                      },
+                      // User that created this record
+                      user: {
+                        type: 'string' // no need to store whole user object here
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }, callback);
   }
 ];
 
 Promise.settle(indexRequests.map(function (ir) {
-  return Promise.promisify(ir)();
-}))
+    return Promise.promisify(ir)();
+  }))
   .then(function (promiseInspections) {
     var errors = promiseInspections.filter(function (pi) {
       return pi.isRejected();

@@ -12,4 +12,8 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
   $scope.promptForLogin = function () {
     login.prompt();
   };
+
+  $scope.submit = function (form){
+    // check user credentials
+  };
 });

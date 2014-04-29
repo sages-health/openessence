@@ -156,6 +156,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/diagnosis',
       template: require('../partials/edit/diagnosis.html'),
       controller: 'DiagnosisEditCtrl'
+    })
+    .state('edit.user', {
+      url: '/user',
+      template: require('../partials/edit/user.html'),
+      controller: 'UserEditCtrl'
     });
 });
 

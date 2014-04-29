@@ -9,5 +9,6 @@ module.exports = {
   workbench: require('./WorkbenchCtrl'),
   districtEdit: require('./edit/DistrictEditCtrl') ,
   symptomEdit: require('./edit/SymptomEditCtrl')  ,
-  diagnosisEdit: require('./edit/DiagnosisEditCtrl')
+  diagnosisEdit: require('./edit/DiagnosisEditCtrl'),
+  userEdit: require('./edit/UserEditCtrl')
 };
