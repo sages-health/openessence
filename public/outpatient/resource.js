@@ -11,6 +11,10 @@ angular.module(services.name).factory('OutpatientVisit', function ($resource) {
     {
       update: {
         method: 'PUT'
+      },
+      search: {
+        method: 'POST', // really should be GET with body, but you can't do that in HTTP
+        url: '/resources/outpatient-visit/search'
       }
     });
 });
