@@ -13,11 +13,7 @@ exports.libs = function () {
   // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention
   var npmLibsForBrowser = packageJson['browser-libs'];
 
-  return bowerLibs.concat(npmLibsForBrowser).filter(function (l) {
-    // FIXME d3 is not defined when its in the external bundle
-    // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
-    return l !== 'd3' && l !== 'nvd3';
-  });
+  return bowerLibs.concat(npmLibsForBrowser);
 };
 
 /**
