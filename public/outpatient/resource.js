@@ -14,7 +14,8 @@ angular.module(services.name).factory('OutpatientVisit', function ($resource) {
       },
       search: {
         method: 'POST', // really should be GET with body, but you can't do that in HTTP
-        url: '/resources/outpatient-visit/search'
+        url: '/resources/outpatient-visit/search',
+        headers: { 'Accept': 'application/json' }
       }
     });
 });

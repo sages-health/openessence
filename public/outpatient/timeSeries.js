@@ -22,18 +22,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             return d3.time.format('%Y-%m-%d')(new Date(d));
           };
 
-          var dateAgg = {
-            'date_histogram': {
-              field: 'reportDate',
-              interval: 'day', // TODO make this configurable and auto-select based on data
-              'min_doc_count': 0, // distinguish between 0 and nulls
-              'extended_bounds': { // include 0s that preceed start of data, see bit.ly/1fpqRAP
-                // TODO get date range
-                min: '2014-01-29',
-                max: '2014-04-29'
-              }
-            }
-          };
+          scope.interval = 'day'; // TODO auto-select based on date range
 
           var extractCounts = function (agg) {
             return agg.buckets.map(function (b) {
@@ -44,6 +33,19 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
           var reload = function () {
             var aggs = {};
+            var dateAgg = {
+              'date_histogram': {
+                field: 'reportDate',
+                interval: scope.interval, // TODO make this configurable and auto-select based on data
+                'min_doc_count': 0, // distinguish between 0 and nulls
+                'extended_bounds': { // include 0s that preceed start of data, see bit.ly/1fpqRAP
+                  // TODO get date range
+                  min: '2014-01-29',
+                  max: '2014-04-29'
+                }
+              }
+            };
+
             if (scope.series.length > 0) {
               scope.series.forEach(function (s) {
                 aggs[s] = outpatientAggregation.getAggregation(s);
@@ -82,11 +84,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             });
           };
 
-          scope.$watchCollection('series', function () {
-            reload();
-          });
-
-          scope.$watch('queryString', function () {
+          scope.$watchCollection('[series, queryString, interval]', function () {
             reload();
           });
         }
