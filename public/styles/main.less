@@ -43,8 +43,12 @@
   background-image: none; // TODO see if this breaks IE
 }
 
-// for ng-bootstrap
+// for ng-bootstrap, see http://angular-ui.github.io/bootstrap
 .nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
+
+a[ng-click] {
   cursor: pointer;
 }
 
