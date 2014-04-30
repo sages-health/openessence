@@ -25,12 +25,7 @@
       <crosstab records="tabularData" options="pivot"></crosstab>
     </div>
     <div class="animation-switch" ng-switch-when="line">
-      <!-- TODO zoom controls -->
-      <!-- useInteractiveGuideLine fixes https://github.com/novus/nvd3/issues/368 -->
-      <nvd3-line-chart data="tsData" showXAxis="true" showYAxis="true" tooltips="true" useInteractiveGuideLine="true"
-                       xAxisTickFormat="xAxisTickFormat">
-        <svg></svg>
-      </nvd3-line-chart>
+      <outpatient-time-series query-string="queryString" series="pivot.cols"></outpatient-time-series>
     </div>
     <div class="animation-switch" ng-switch-when="pie">TODO pie char</div>
     <div class="animation-switch" ng-switch-when="bar">TODO bar chart</div>
