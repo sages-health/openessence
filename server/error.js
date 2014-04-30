@@ -12,22 +12,22 @@ exports.middleware = function errorMiddleware (err, req, res, next) {
 
   logger.error(err);
 
-  res.status(res.statusCode || 500);
-  res.format({
-    html: function () {
-      res.render('error.html', {
-        error: err
-      });
-    },
-    json: function () {
-      res.send({
-        error: {
-          name: (err && err.name) || 'ServerError',
-          message: (err && err.message) || 'Server error'
-        }
-      });
-    }
-  });
+  res.status(err.status || 500)
+    .format({
+      html: function () {
+        res.render('error.html', {
+          error: err
+        });
+      },
+      json: function () {
+        res.send({
+          error: {
+            name: err.name || 'ServerError',
+            message: err.message || 'Server error'
+          }
+        });
+      }
+    });
 };
 
 exports.notFound = function notFound (req, res) {

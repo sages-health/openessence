@@ -405,19 +405,14 @@ exports.controller = function () {
   });
 
   app.use(function (err, req, res, next) {
-    // If the error has a status, use that (codex custom errors do this)
-    if (err.status) {
-      res.status(err.status);
-    }
-
-    // ElasticSearch client does terrible error handling
-    // Look at the error message and correct the error status
+    // If the error has a status, use that (codex custom errors do this).
+    // Otherwise, try to assign an appropriate HTTP status code based on error
     // TODO: Expand this to accommodate other ES errors
-    else if (err.constructor.name === 'StatusCodeError') {
+    if (!err.status && err.constructor.name === 'StatusCodeError') {
       if (/^Not Found/.test(err.message) || /^IndexMissingException/.test(err.message)) {
-        res.status(404);
+        err.status = 404;
       } else if (/^Bad Request/.test(err.message)) {
-        res.status(400);
+        err.status = 400;
       }
     }
 
