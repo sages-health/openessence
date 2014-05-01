@@ -52,6 +52,17 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     }
   );
 
+  $scope.$watchCollection(
+    function () {
+      return $scope.filterGrid.toArray();
+    },
+    function (filters) {
+      $scope.filters = filters.filter(function (f) {
+        return !f.plus;
+      });
+    }
+  );
+
   $scope.vizGrid = new FracasGrid(2);
 
   $scope.addVisualization = function () {

@@ -46,7 +46,7 @@
       <button type="button" class="btn btn-primary btn-lg" ng-switch-when="true" ng-click="addVisualization()">
         <span class="icon-plus"></span>
       </button>
-      <outpatient-visualization query-string="queryString"
+      <outpatient-visualization query-string="queryString" filters="filters"
                                 on-close="removeVisualization(viz)"
                                 ng-switch-default></outpatient-visualization>
     </div>

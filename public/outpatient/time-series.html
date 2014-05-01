@@ -1,6 +1,9 @@
-<div class="row">
-  <div class="col-md-12">
-    <form class="form-inline viz-toolbar" role="form">
+<div class="row viz-toolbar">
+  <div class="col-md-3">
+    <a class="icon-zoom-out" ng-click="zoom(2)" translate>Zoom out</a>
+  </div>
+  <div class="col-md-9">
+    <form class="form-inline" role="form">
       <!-- time series options -->
       <!--<label class="checkbox-inline">-->
         <!--<input type="checkbox" checked>-->
@@ -36,6 +39,8 @@
   <div class="col-md-12">
     <!-- useInteractiveGuideLine fixes https://github.com/novus/nvd3/issues/368 -->
     <nvd3-line-chart data="data" showXAxis="true" showYAxis="true" tooltips="true" useInteractiveGuideLine="true"
-                     xAxisTickFormat="xAxisTickFormat"><svg></svg></nvd3-line-chart>
+                     xAxisTickFormat="xAxisTickFormat" showLegend="true" height="300" forcex="{{forceX}}">
+      <svg></svg>
+    </nvd3-line-chart>
   </div>
 </div>

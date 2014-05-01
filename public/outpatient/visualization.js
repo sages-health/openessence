@@ -11,7 +11,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
     restrict: 'E',
     template: require('./visualization.html'),
     scope: {
-      queryString: '=',
+      filters: '=',
+      queryString: '=', // TODO use filters instead
       close: '&onClose'
     },
     link: {

@@ -20,12 +20,12 @@ angular.module(directives.name).directive('outpatientDateFilter', function (gett
           end: gettextCatalog.getString('End')
         };
 
-        scope.range = {};
-        if (scope.filter.row === 0 && scope.filter.col === 0) {
+        // TODO get rid of row and col from filter (but might be useful to see if filter has been added to panel yet)
+        if (scope.filter.row === 0 && scope.filter.col === 0 && !scope.filter.from && !scope.filter.to) {
           var now = new Date();
           now.setDate(now.getDate() - 90); // 90 days back
-          scope.range.start = now;
-          scope.range.end = new Date();
+          scope.filter.from = now; // match elasticsearch terminology
+          scope.filter.to = new Date();
         }
 
         var toQueryString = function (start, end) {
@@ -35,7 +35,7 @@ angular.module(directives.name).directive('outpatientDateFilter', function (gett
           return 'reportDate: [' + start + ' TO ' + end + ']';
         };
 
-        scope.$watchCollection('[range.start, range.end]', function (range) {
+        scope.$watchCollection('[filter.from, filter.to]', function (range) {
           scope.filter.queryString = toQueryString(range[0], range[1]);
         });
       }
