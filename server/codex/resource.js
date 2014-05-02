@@ -3,6 +3,7 @@
 var util = require('util');
 var _ = require('lodash');
 var express = require('express');
+var logger = require('../conf').logger;
 
 function SerializationError (message) {
   Error.call(this, message);
@@ -309,7 +310,10 @@ exports.controller = function () {
     } catch (e) {
       // yes, we're actually using exceptions in Node
       if (e.code === 'MODULE_NOT_FOUND') {
-        next(new Error('No such model: ' + model));
+        // MODULE_NOT_FOUND is thrown if the model doesn't exist, or if the model tried to require() something that
+        // doesn't exist
+        logger.error('Error loading model %s', model);
+        next(e);
       } else {
         throw e;
       }
