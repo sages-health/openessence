@@ -13,8 +13,7 @@
             <tr ng-repeat="record in $data">
               <td data-title="strings.username" sortable="'username.raw'">{{record._source.username}}</td>
               <td data-title="strings.email" sortable="'email'">{{record._source.email}}</td>
-              <td data-title="strings.lastName" sortable="'lastName'">{{record._source.lastName}}</td>
-              <td data-title="strings.firstName" sortable="'firstName'">{{record._source.firstName}}</td>
+              <td data-title="strings.name" sortable="'name'">{{record._source.name}}</td>
               <td data-title="strings.disabled" sortable="'disabled'">{{record._source.disabled}}
               </td>
               <td data-title="strings.roles">{{record._source.roles | join | truncate:30}}</td>

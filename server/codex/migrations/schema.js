@@ -278,11 +278,7 @@ var indexRequests = [
                 type: 'string',
                 index: 'not_analyzed'
               },
-              firstName: {
-                type: 'string',
-                index: 'not_analyzed'
-              },
-              lastName: {
+              name: {
                 type: 'string',
                 index: 'not_analyzed'
               },

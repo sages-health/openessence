@@ -7,7 +7,8 @@ var pluckName = function (r) {
   return r._source.name;
 };
 
-angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog, FrableParams, User, sortString, District) {
+angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
+                                                                      FrableParams, User, sortString, District) {
   $scope.errorOnRecordSave = '';
 
   // strings that we can't translate in the view, usually because they're in attributes
@@ -17,8 +18,7 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
     edit: gettextCatalog.getString('Edit'),
     username: gettextCatalog.getString('User Name'),
     email: gettextCatalog.getString('Email'),
-    firstName: gettextCatalog.getString('First Name'),
-    lastName: gettextCatalog.getString('Last Name'),
+    name: gettextCatalog.getString('Name'),
     disabled: gettextCatalog.getString('Disabled'),
     roles: gettextCatalog.getString('Roles'),
     changePasswordTitle: gettextCatalog.getString('Change Password'),
