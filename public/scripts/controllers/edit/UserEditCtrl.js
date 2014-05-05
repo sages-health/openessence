@@ -65,8 +65,6 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
         $scope.user = angular.copy($scope.record._source) || {};
         $scope.yellAtUser = false;
         $scope.minPasswordLength = 4;
-        $scope.rolePlaceholder = gettextCatalog.getString('Please select user role(s)');
-        $scope.districtPlaceholder = gettextCatalog.getString('Please select district(s)');
         $scope.roles = ['Admin', 'DataEntry', 'AllDistricts'];
         $scope.isShort = function (field) {
           return field.$modelValue && field.$modelValue.length < $scope.minPasswordLength;

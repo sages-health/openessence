@@ -66,8 +66,7 @@
 
       <div class="form-group">
         <label for="entry-user-roles" translate>Roles</label>
-        <select class="form-control select2-multiple" id="entry-user-roles" multiple ui-select2
-                ng-model="user.roles" data-placeholder="{{rolePlaceholder}}">
+        <select class="form-control select2-multiple" id="entry-user-roles" multiple ui-select2 ng-model="user.roles">
           <option ng-repeat="role in roles" value="{{role}}">{{role}}</option>
         </select>
       </div>
@@ -75,7 +74,7 @@
       <div class="form-group">
         <label for="entry-user-districts" translate>Districts</label>
         <select class="form-control select2-multiple" id="entry-user-districts" multiple ui-select2
-                ng-model="user.districts" data-placeholder="{{districtPlaceholder}}">
+                ng-model="user.districts">
           <option ng-repeat="district in districts" value="{{district}}">{{district}}</option>
         </select>
       </div>
