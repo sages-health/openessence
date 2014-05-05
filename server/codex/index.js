@@ -4,7 +4,6 @@ var path = require('path');
 var express = require('express');
 var glob = require('glob');
 var conf = require('../conf');
-var resource = require('./resource');
 
 module.exports = function () {
   var app = express();
@@ -36,7 +35,7 @@ module.exports = function () {
   });
 
   // Default handlers for resource CRUD and querying
-  app.use(resource.controller());
+  app.use(require('./controller')().middleware());
 
   return app;
 };

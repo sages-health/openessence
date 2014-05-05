@@ -1,33 +1,20 @@
 'use strict';
 
-var util = require('util');
 var _ = require('lodash');
 var express = require('express');
+var errors = require('./errors');
 var logger = require('../conf').logger;
 
-function SerializationError (message) {
-  Error.call(this, message);
-  this.message = message;
-  this.name = this.constructor.name;
-  this.status = 500;
-  Error.captureStackTrace(this, SerializationError);
+function Controller () {
+  if (!(this instanceof Controller)) {
+    return new Controller();
+  }
 }
-util.inherits(SerializationError, Error);
 
-function FormatError (message) {
-  Error.call(this, message);
-  this.message = message;
-  this.name = this.constructor.name;
-  this.status = 400;
-  Error.captureStackTrace(this, FormatError);
-}
-util.inherits(FormatError, Error);
-
-
-exports.queryAll = function (req, callback) {
+Controller.prototype.queryAll = function (req, callback) {
   // The model must have been deserialized from the request
   if (!req.model) {
-    callback(new SerializationError('No model present on request'));
+    callback(new errors.SerializationError('No model present on request'));
     return;
   }
 
@@ -94,16 +81,16 @@ exports.queryAll = function (req, callback) {
   });
 };
 
-exports.updateAll = function (req, callback) {
+Controller.prototype.updateAll = function (req, callback) {
   // The model must have been deserialized from the request
   if (!req.model) {
-    callback(new SerializationError('No model present on request'));
+    callback(new errors.SerializationError('No model present on request'));
     return;
   }
 
   // The body must be an array of objects (we're replacing the whole collection)
-  if (!(req.body && _.isArray(req.body))) {
-    callback(new FormatError('Invalid update format'));
+  if (!req.body || !Array.isArray(req.body)) {
+    callback(new errors.FormatError('Invalid update format'));
     return;
   }
 
@@ -166,10 +153,10 @@ exports.updateAll = function (req, callback) {
 
 };
 
-exports.deleteAll = function (req, callback) {
+Controller.prototype.deleteAll = function (req, callback) {
   // The model must have been deserialized from the request
   if (!req.model) {
-    callback(new SerializationError('No model present on request'));
+    callback(new errors.SerializationError('No model present on request'));
     return;
   }
 
@@ -187,16 +174,16 @@ exports.deleteAll = function (req, callback) {
   });
 };
 
-exports.query = function (req, callback) {
+Controller.prototype.query = function (req, callback) {
   // The model must have been deserialized from the request
   if (!req.model) {
-    callback(new SerializationError('No model present on request'));
+    callback(new errors.SerializationError('No model present on request'));
     return;
   }
 
   // The instance ID must have been deserialized from the request
   if (!req.instance) {
-    callback(new SerializationError('No instance present on request'));
+    callback(new errors.SerializationError('No instance present on request'));
     return;
   }
 
@@ -219,16 +206,16 @@ exports.query = function (req, callback) {
   });
 };
 
-exports.update = function (req, callback) {
+Controller.prototype.update = function (req, callback) {
   // The model must have been deserialized from the request
   if (!req.model) {
-    callback(new SerializationError('No model present on request'));
+    callback(new errors.SerializationError('No model present on request'));
     return;
   }
 
   // The body must be a single object to insert or update
   if (!(req.body && _.isObject(req.body) && !Array.isArray(req.body))) {
-    callback(new FormatError('Invalid record format'));
+    callback(new errors.FormatError('Invalid record format'));
     return;
   }
 
@@ -266,16 +253,16 @@ exports.update = function (req, callback) {
   });
 };
 
-exports.delete = function (req, callback) {
+Controller.prototype.delete = function (req, callback) {
   // The model must have been deserialized from the request
   if (!req.model) {
-    callback(new SerializationError('No model present on request'));
+    callback(new errors.SerializationError('No model present on request'));
     return;
   }
 
   // The instance ID must have been deserialized from the request
   if (!req.instance) {
-    callback(new SerializationError('No instance present on request'));
+    callback(new errors.SerializationError('No instance present on request'));
     return;
   }
 
@@ -299,8 +286,49 @@ exports.delete = function (req, callback) {
   });
 };
 
-exports.controller = function () {
+/**
+ * Formats the response from elasticsearch and sends it to the client. Subclasses can override this method to send
+ * custom responses to the client, e.g. including extra data.
+ */
+Controller.prototype.respond = function (err, esResponse, res, next) {
+  if (err) {
+    next(err);
+    return;
+  }
+  var status = esResponse.status || 200;
+
+  // this duplicates the whitelisting we do in the dao methods b/c we're being extra cautious about not
+  // returning sensitive fields
+  var data = {
+    results: esResponse.results
+  };
+  if (esResponse.total) {
+    data.total = esResponse.total;
+  }
+  if (esResponse.aggregations) {
+    data.aggregations = esResponse.aggregations;
+  }
+
+  if (esResponse.results) {
+    res.json(status, data);
+  } else {
+    res.status(status);
+    res.end();
+  }
+};
+
+/**
+ *
+ * @returns {*} express middleware
+ */
+Controller.prototype.middleware = function () {
   var app = express();
+  var controller = this;
+
+  // Make sure we include the middleware we need so we can test this controller in isolation.
+  // It's not a big deal that body-parser is also included in ../index.js, since it checks to see if it's already been
+  // included: `if (req._body) return next();`
+  app.use(require('body-parser')());
 
   app.param('model', function (req, res, next, model) {
     try {
@@ -330,81 +358,53 @@ exports.controller = function () {
     }
   });
 
-  // Format and return the standard response from each endpoint
-  var standardResponse = function (err, esResponse, res, next) {
-    if (err) {
-      next(err);
-      return;
-    }
-    var status = esResponse.status || 200;
-
-    // this duplicates the whitelisting we do in the dao methods b/c we're being extra cautious about not
-    // returning sensitive fields
-    var data = {
-      results: esResponse.results
-    };
-    if (esResponse.total) {
-      data.total = esResponse.total;
-    }
-    if (esResponse.aggregations) {
-      data.aggregations = esResponse.aggregations;
-    }
-
-    if (esResponse.results) {
-      res.json(status, data);
-    } else {
-      res.status(status);
-      res.end();
-    }
-  };
-
   app.get('/:model', function (req, res, next) {
-    exports.queryAll(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.queryAll(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
   app.get('/:model/:id', function (req, res, next) {
-    exports.query(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.query(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
   app.post('/:model', function (req, res, next) {
-    exports.update(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.update(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
   // POST /:model/:id doesn't make sense
 
   app.post('/:model/search', function (req, res, next) {
-    exports.queryAll(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.queryAll(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
   app.put('/:model', function (req, res, next) {
-    exports.updateAll(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.updateAll(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
   app.put('/:model/:id', function (req, res, next) {
-    exports.update(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.update(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
   app.delete('/:model', function (req, res, next) {
-    exports.deleteAll(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.deleteAll(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
   app.delete('/:model/:id', function (req, res, next) {
-    exports.delete(req, function (err, esResponse) {
-      standardResponse(err, esResponse, res, next);
+    controller.delete(req, function (err, esResponse) {
+      controller.respond(err, esResponse, res, next);
     });
   });
 
@@ -428,3 +428,4 @@ exports.controller = function () {
   return app;
 };
 
+module.exports = Controller;
