@@ -7,7 +7,7 @@ var nock = require('nock');
 var request = require('supertest');
 var express = require('express');
 
-var OutpatientVisitController = require('../../../server/codex/controllers/outpatient-visit');
+var codex = require('../../../server/codex');
 var conf = require('../../../server/conf');
 
 describe('OutpatientVisitController', function () {
@@ -15,13 +15,26 @@ describe('OutpatientVisitController', function () {
     nock.cleanAll();
   });
 
-  describe('GET /resources/outpatient-visit/:id', function () {
-    var controller;
-    beforeEach(function (done) {
-      controller = new OutpatientVisitController();
-      done();
-    });
+  var notFoundRecord = {
+    _index: 'outpatient',
+    _type: 'visit',
+    _id: '1'
+  };
 
+  var expectedRecord = {
+    _index: 'outpatient',
+    _type: 'visit',
+    _id: '1',
+    _version: 1,
+    _source: {
+      foo: 'bar',
+      medicalFacility: {
+        district: 'District 1'
+      }
+    }
+  };
+
+  describe('GET /resources/outpatient-visit/:id', function () {
     it('should return no results for bogus ID', function (done) {
       // mock elasticsearch
       nock(conf.elasticsearch.host)
@@ -33,7 +46,7 @@ describe('OutpatientVisitController', function () {
           found: false
         });
 
-      request(controller.middleware())
+      request(codex())
         .get('/outpatient-visit/bogus')
         .expect(404)
         .end(function (err, res) {
@@ -42,7 +55,8 @@ describe('OutpatientVisitController', function () {
             return;
           }
 
-          expect(Object.keys(res.body)).to.be.empty;
+          // TODO this will change when we don't return error on 404
+          expect(res.body).to.deep.equal({});
 
           done();
         });
@@ -76,18 +90,18 @@ describe('OutpatientVisitController', function () {
         next();
       });
 
-      app.use(controller.middleware());
+      app.use(codex());
 
       request(app)
         .get('/outpatient-visit/1')
-        .expect(200)
+        .expect(404)
         .end(function (err, res) {
           if (err) {
             done(err);
             return;
           }
 
-          expect(res.body.results).to.be.empty;
+          expect(res.body).to.deep.equal(notFoundRecord);
 
           done();
         });
@@ -119,18 +133,18 @@ describe('OutpatientVisitController', function () {
         next();
       });
 
-      app.use(controller.middleware());
+      app.use(codex());
 
       request(app)
         .get('/outpatient-visit/1')
-        .expect(200)
+        .expect(404)
         .end(function (err, res) {
           if (err) {
             done(err);
             return;
           }
 
-          expect(res.body.results).to.be.empty;
+          expect(res.body).to.deep.equal(notFoundRecord);
 
           done();
         });
@@ -162,7 +176,7 @@ describe('OutpatientVisitController', function () {
         next();
       });
 
-      app.use(controller.middleware());
+      app.use(codex());
 
       request(app)
         .get('/outpatient-visit/1')
@@ -173,7 +187,7 @@ describe('OutpatientVisitController', function () {
             return;
           }
 
-          expect(res.body.results.length).to.equal(1);
+          expect(res.body).to.deep.equal(expectedRecord);
 
           done();
         });
@@ -205,7 +219,7 @@ describe('OutpatientVisitController', function () {
         next();
       });
 
-      app.use(controller.middleware());
+      app.use(codex());
 
       request(app)
         .get('/outpatient-visit/1')
@@ -216,7 +230,7 @@ describe('OutpatientVisitController', function () {
             return;
           }
 
-          expect(res.body.results.length).to.equal(1);
+          expect(res.body).to.deep.equal(expectedRecord);
 
           done();
         });
@@ -247,7 +261,7 @@ describe('OutpatientVisitController', function () {
         next();
       });
 
-      app.use(controller.middleware());
+      app.use(codex());
 
       request(app)
         .get('/outpatient-visit/1')
@@ -258,7 +272,7 @@ describe('OutpatientVisitController', function () {
             return;
           }
 
-          expect(res.body.results.length).to.equal(1);
+          expect(res.body).to.deep.equal(expectedRecord);
 
           done();
         });

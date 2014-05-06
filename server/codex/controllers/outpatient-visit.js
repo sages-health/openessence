@@ -8,50 +8,58 @@ function OutpatientVisitController () {
 }
 util.inherits(OutpatientVisitController, Controller);
 
-OutpatientVisitController.prototype.query = function (req, callback) {
-  Controller.prototype.query.call(this, req, function (err, esResponse) {
+OutpatientVisitController.prototype.query = function (req, res, next) {
+  req.model.get({id: req.instance}, function (err, esResponse) {
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
-    if (esResponse.results.length === 0) {
+    var send = function (esr) {
+      var record = {
+        _index: esr._index,
+        _type: esr._type,
+        _id: esr._id
+      };
+
+      if (esr.found) {
+        res.status(200);
+        record._version = esr._version;
+        record._source = esr._source;
+      } else {
+        res.status(404);
+        // don't add anything else to record
+      }
+
+      res.send(record);
+    };
+
+    if (!esResponse.found) {
       // nothing to filter
-      callback(null, esResponse);
+      send(esResponse);
       return;
     }
 
-    if (esResponse.results.length > 1) {
-      callback(new Error('Multiple records with the same _id'));
-      return;
-    }
-
-    var facility = esResponse.results[0]._source.medicalFacility;
+    var facility = esResponse._source.medicalFacility;
     if (!facility) {
       // no facility, so no access control necessary
-      callback(null, esResponse);
+      send(esResponse);
       return;
     }
 
     var district = facility.district;
     if (!district || !req.user.districts) {
-      callback(null, esResponse);
+      send(esResponse);
       return;
     }
 
     if (req.user.districts.indexOf('_all') !== -1 || req.user.districts.indexOf(district) !== -1) {
       // user has access rights to this district
-      callback(null, esResponse);
+      send(esResponse);
     } else {
-      callback(null, {
-        results: [],
-        total: 0
-      });
+      esResponse.found = false;
+      send(esResponse);
     }
-
-
-
-    callback(null, esResponse);
   });
 };
 

@@ -1,9 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-var express = require('express');
 var errors = require('./errors');
-var logger = require('../conf').logger;
 
 function Controller () {
   if (!(this instanceof Controller)) {
@@ -11,42 +9,36 @@ function Controller () {
   }
 }
 
-Controller.prototype.queryAll = function (req, callback) {
-  // The model must have been deserialized from the request
-  if (!req.model) {
-    callback(new errors.SerializationError('No model present on request'));
-    return;
-  }
-
-  var request = {
+Controller.prototype.queryAll = function (req, res, next) {
+  var esRequest = {
     body: {}
   };
 
   // Support pagination
   var from = req.param('from');
   if (from || from === 0) {
-    request.from = parseInt(from, 10);
+    esRequest.from = parseInt(from, 10);
   }
   var size = req.param('size');
   if (size || size === 0) {
-    request.size = parseInt(size, 10);
+    esRequest.size = parseInt(size, 10);
   }
 
   // Support sorting
   if (req.param('sort')) { // sort is always a string
     // TODO test this for potential injection attacks
-    request.sort = req.param('sort');
+    esRequest.sort = req.param('sort');
   }
 
   if (req.param('q')) { // req.param because parameter can be in query string or body
     // have to use body instead of q because we might have aggregations
-    request.body.query = {
+    esRequest.body.query = {
       'query_string': {
         query: req.param('q')
       }
     };
   } else {
-    request.body.query = {
+    esRequest.body.query = {
       'match_all': {}
     };
   }
@@ -56,14 +48,14 @@ Controller.prototype.queryAll = function (req, callback) {
 
   // Support aggregations TODO whitelist acceptable aggregations
   if (aggregations) {
-    request.body.aggregations = aggregations;
+    esRequest.body.aggregations = aggregations;
   }
 
   // Search the model on the request
-  req.model.search(request, function (err, esr) {
+  req.model.search(esRequest, function (err, esr) {
     // Pass errors to the remainder of the filter chain
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
@@ -76,21 +68,14 @@ Controller.prototype.queryAll = function (req, callback) {
       response.aggregations = esr.aggregations;
     }
 
-    // Otherwise, terminate the chain with the query results
-    callback(null, response);
+    res.json(response);
   });
 };
 
-Controller.prototype.updateAll = function (req, callback) {
-  // The model must have been deserialized from the request
-  if (!req.model) {
-    callback(new errors.SerializationError('No model present on request'));
-    return;
-  }
-
+Controller.prototype.updateAll = function (req, res, next) {
   // The body must be an array of objects (we're replacing the whole collection)
   if (!req.body || !Array.isArray(req.body)) {
-    callback(new errors.FormatError('Invalid update format'));
+    next(new errors.FormatError('Invalid update format'));
     return;
   }
 
@@ -98,7 +83,7 @@ Controller.prototype.updateAll = function (req, callback) {
   // truncating the index first
   var populate = function (err) {
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
@@ -118,7 +103,7 @@ Controller.prototype.updateAll = function (req, callback) {
 
     req.model.bulk(request, function (err, esr) {
       if (err) {
-        callback(err);
+        next(err);
         return;
       }
 
@@ -128,94 +113,81 @@ Controller.prototype.updateAll = function (req, callback) {
       esr.items.forEach(function (item) {
         results.push(_.pick(item.index, outerProps));
       });
-      callback(null, {
+      req.controller.respond({
         results: results,
         status: 201
-      });
+      }, res);
     });
   };
 
   // Make sure the index exists before truncating it
   req.model.indices.exists({} /* Use defaults */, function (err, exists) {
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
     // If it does, then delete it
     if (exists) {
+      // TODO this drops mapping too
       req.model.indices.delete({} /* Use defaults */, populate);
       // Otherwise, just do the bulk insert
     } else {
       populate(null);
     }
   });
-
 };
 
-Controller.prototype.deleteAll = function (req, callback) {
-  // The model must have been deserialized from the request
-  if (!req.model) {
-    callback(new errors.SerializationError('No model present on request'));
-    return;
-  }
-
+Controller.prototype.deleteAll = function (req, res, next) {
   // Truncate the index
   req.model.indices.delete({} /* Use defaults */, function (err, esr) {
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
     // Properly acknowledge the deletion by status code only
-    callback(null, {
+    req.controller.respond({
       status: esr.acknowledged ? 204 : 202
-    });
+    }, res);
   });
 };
 
-Controller.prototype.query = function (req, callback) {
-  // The model must have been deserialized from the request
-  if (!req.model) {
-    callback(new errors.SerializationError('No model present on request'));
-    return;
-  }
-
-  // The instance ID must have been deserialized from the request
-  if (!req.instance) {
-    callback(new errors.SerializationError('No instance present on request'));
-    return;
-  }
-
+Controller.prototype.query = function (req, res, next) {
   // Build a get request, relying on the defaults
   var request = {
     id: req.instance
   };
   req.model.get(request, function (err, esr) {
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
-    // Specifically sub-sample the response to include only the needed fields
-    callback(null, {
-      results: [
-        _.pick(esr, ['_id', '_version', '_index', '_type', '_source'])
-      ]
-    });
+    // send response ourselves, don't call controller.respond()
+    var record = {
+      _index: esr._index,
+      _type: esr._type,
+      _id: esr._id
+    };
+
+    if (esr.found) {
+      res.status(200);
+      record._version = esr._version;
+      record._source = esr._source;
+    } else {
+      // TODO elasticsearch.js returns error on 404, so this will never get called
+      res.status(404);
+    }
+
+    res.json(record);
   });
 };
 
-Controller.prototype.update = function (req, callback) {
-  // The model must have been deserialized from the request
-  if (!req.model) {
-    callback(new errors.SerializationError('No model present on request'));
-    return;
-  }
-
+Controller.prototype.update = function (req, res, next) {
   // The body must be a single object to insert or update
   if (!(req.body && _.isObject(req.body) && !Array.isArray(req.body))) {
-    callback(new errors.FormatError('Invalid record format'));
+    next(new errors.FormatError('Invalid record format'));
     return;
   }
 
@@ -238,50 +210,43 @@ Controller.prototype.update = function (req, callback) {
   // Insert or update the document
   req.model.insert(request, function (err, esr) {
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
     // Make sure to respond with a creation or update status
     // Only returns the key fields. Does not include the source (not available); would require an additional query
-    callback(null, {
+    req.controller.respond({
       results: [
         _.pick(esr, outerProps)
       ],
       status: (esr._version > 1) ? 200 : 201
-    });
+    }, res);
   });
 };
 
-Controller.prototype.delete = function (req, callback) {
-  // The model must have been deserialized from the request
-  if (!req.model) {
-    callback(new errors.SerializationError('No model present on request'));
-    return;
-  }
-
-  // The instance ID must have been deserialized from the request
-  if (!req.instance) {
-    callback(new errors.SerializationError('No instance present on request'));
-    return;
-  }
-
+Controller.prototype.delete = function (req, res, next) {
   // Build a deletion request, relying on the defaults
   var request = {
     id: req.instance
   };
   req.model.delete(request, function (err, esr) {
     if (err) {
-      callback(err);
+      next(err);
       return;
     }
 
-    // Return just the key fields
-    // Unlike collection deletion, extra properties are returned, making this 200 instead of 202/204
-    callback(null, {
-      results: [
-        _.pick(esr, ['_id', '_version', '_index', '_type'])
-      ]
+    if (esr.found) {
+      res.status(404);
+    } else {
+      res.status(200);
+    }
+
+    res.json({
+      _index: esr._index,
+      _type: esr._type,
+      _id: esr._id,
+      _version: esr._version
     });
   });
 };
@@ -290,15 +255,11 @@ Controller.prototype.delete = function (req, callback) {
  * Formats the response from elasticsearch and sends it to the client. Subclasses can override this method to send
  * custom responses to the client, e.g. including extra data.
  */
-Controller.prototype.respond = function (err, esResponse, res, next) {
-  if (err) {
-    next(err);
-    return;
-  }
+Controller.prototype.respond = function (esResponse, res) { // TODO get rid of this method
   var status = esResponse.status || 200;
 
   // this duplicates the whitelisting we do in the dao methods b/c we're being extra cautious about not
-  // returning sensitive fields
+  // returning sensitive fields, and b/c the dao adds some fields like status
   var data = {
     results: esResponse.results
   };
@@ -315,117 +276,6 @@ Controller.prototype.respond = function (err, esResponse, res, next) {
     res.status(status);
     res.end();
   }
-};
-
-/**
- *
- * @returns {*} express middleware
- */
-Controller.prototype.middleware = function () {
-  var app = express();
-  var controller = this;
-
-  // Make sure we include the middleware we need so we can test this controller in isolation.
-  // It's not a big deal that body-parser is also included in ../index.js, since it checks to see if it's already been
-  // included: `if (req._body) return next();`
-  app.use(require('body-parser')());
-
-  app.param('model', function (req, res, next, model) {
-    try {
-      var Model = require('./models/' + model.toLowerCase());
-      req.model = new Model();
-      next();
-    } catch (e) {
-      // yes, we're actually using exceptions in Node
-      if (e.code === 'MODULE_NOT_FOUND') {
-        // MODULE_NOT_FOUND is thrown if the model doesn't exist, or if the model tried to require() something that
-        // doesn't exist
-        logger.error('Error loading model %s', model);
-        next(e);
-      } else {
-        throw e;
-      }
-    }
-  });
-
-  app.param('id', function (req, res, next, id) {
-    if (/^[\w-]+$/.test(id)) {
-      req.instance = id;
-      next();
-    } else {
-      // skip this route
-      next('route');
-    }
-  });
-
-  app.get('/:model', function (req, res, next) {
-    controller.queryAll(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  app.get('/:model/:id', function (req, res, next) {
-    controller.query(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  app.post('/:model', function (req, res, next) {
-    controller.update(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  // POST /:model/:id doesn't make sense
-
-  app.post('/:model/search', function (req, res, next) {
-    controller.queryAll(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  app.put('/:model', function (req, res, next) {
-    controller.updateAll(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  app.put('/:model/:id', function (req, res, next) {
-    controller.update(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  app.delete('/:model', function (req, res, next) {
-    controller.deleteAll(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  app.delete('/:model/:id', function (req, res, next) {
-    controller.delete(req, function (err, esResponse) {
-      controller.respond(err, esResponse, res, next);
-    });
-  });
-
-  app.use(function (err, req, res, next) {
-    // If the error has a status, use that (codex custom errors do this).
-    // Otherwise, try to assign an appropriate HTTP status code based on error
-    // TODO: Expand this to accommodate other ES errors
-    if (!err.status && err.constructor.name === 'StatusCodeError') {
-      if (/^Not Found/.test(err.message) || /^IndexMissingException/.test(err.message)) {
-        err.status = 404;
-      } else if (/^Bad Request/.test(err.message)) {
-        err.status = 400;
-      }
-    }
-
-    // This handler only corrects status codes from ElasticSearch / these methods
-    // TODO: File a pull request with ES to get their StatusCodeError fixed
-    next(err);
-  });
-
-  return app;
 };
 
 module.exports = Controller;
