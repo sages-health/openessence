@@ -1,11 +1,13 @@
 'use strict';
 
-var _ = require('lodash');
-var defaults = require('./defaults');
+/**
+ * Given the current settings, returns settings specific to the development environment.
+ * @param settings current settings
+ * @returns {*} settings
+ */
+module.exports = function (settings) {
+  settings.sessionSecret = 'superSecretSessionKey';
+  settings.phantom.enabled = false;
 
-module.exports = _.assign(defaults, {
-  sessionSecret: 'someGoodSecret',
-  elasticsearch: _.assign(defaults.elasticsearch, {
-    url: 'http://elasticsear.ch:1234'
-  })
-});
+  return settings;
+};
