@@ -31,7 +31,7 @@ var logger = conf.logger;
 var engine = phantomCluster.createQueued({
   workers: 2,
   workerIterators: 4, // default of 100 is a little high when we might only get 1 report a day
-  phantomBasePort: conf.phantomBasePort,
+  phantomBasePort: conf.phantom.basePort,
   phantomArguments: [/*'--ignore-ssl-errors=true'*/]
 });
 

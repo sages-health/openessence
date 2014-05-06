@@ -3,13 +3,9 @@
 var app = require('./server/index');
 var conf = require('./server/conf');
 var logger = conf.logger;
-var phantom = require('./server/phantom');
 
-if (!module.parent) {
-  logger.info('Running in %s mode', conf.env);
-
-  var port = conf.port;
-
+var startPhantom = function () {
+  var phantom = require('./server/phantom');
   var fork = require('child_process').fork;
   var phantomChild = fork(__dirname + '/server/phantom');
 
@@ -25,6 +21,18 @@ if (!module.parent) {
   phantomChild.on('exit', function () {
     logger.info('PhantomJS child process exited');
   });
+};
+
+if (!module.parent) {
+  logger.info('Running in %s mode', conf.env);
+
+  var port = conf.port;
+
+  if (conf.phantom.enabled) {
+    startPhantom();
+  } else {
+    logger.info('Skipping PhantomJS');
+  }
 
   app.listen(port, function () {
     logger.info('Fracas listening on port %s', port);

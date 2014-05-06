@@ -65,10 +65,14 @@ module.exports = {
   // session store for that anyway
   sessionSecret: crypto.randomBytes(1024).toString('hex'),
 
-  // Base port for PhantomJS cluster. Worker n is assigned phantomBasePort + n, e.g. 12301 for the first worker.
-  // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.
-  // https://github.com/dailymuse/phantom-cluster/blob/87ebc9f2c5fc81792aa4c98ae1c6cf44c784cc5e/index.coffee#L105
-  phantomBasePort: 12300,
+  phantom: {
+    enabled: true,
+
+    // Base port for PhantomJS cluster. Worker n is assigned basePort + n, e.g. 12301 for the first worker.
+    // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.
+    // https://github.com/dailymuse/phantom-cluster/blob/87ebc9f2c5fc81792aa4c98ae1c6cf44c784cc5e/index.coffee#L105
+    basePort: 12300
+  },
 
   // elasticsearch settings, duh
   elasticsearch: {
