@@ -13,7 +13,7 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
     login.prompt();
   };
 
-  $scope.submit = function (form){
-    // check user credentials
+  $scope.submit = function () {
+    // TODO login
   };
 });
