@@ -87,7 +87,7 @@ module.exports = {
   sessionSecret: crypto.randomBytes(1024).toString('hex'),
 
   phantom: {
-    enabled: true,
+    enabled: process.env.PHANTOM !== 'false',
 
     // Base port for PhantomJS cluster. Worker n is assigned basePort + n, e.g. 12301 for the first worker.
     // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.

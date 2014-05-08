@@ -6,7 +6,7 @@ var directives = require('../scripts/modules').directives;
 angular.module(directives.name).directive('outpatientFiltersGrid', function (gettextCatalog, FracasGrid) {
   return {
     restrict: 'E',
-    template: require('./FiltersGrid.html'),
+    template: require('./filtersGrid.html'),
     scope: {
       filters: '=',
       filterTypes: '=',
