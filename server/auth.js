@@ -20,7 +20,7 @@ passport.deserializeUser(function (user, done) {
 var token = 'eachUserShouldHaveAnAuthTokenForAPIRequestsOnTheirBehalfE.g.SavingPagesWithPhantomJS';
 
 passport.use(new PersonaStrategy({
-  audience: 'http://localhost:9000'
+  audience: conf.url
 }, function (email, done) {
   // TODO whitelist emails here
   logger.info('%s logged in', email);

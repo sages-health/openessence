@@ -55,10 +55,13 @@ function ElasticSearchLogger () {
   this.close = function () {};
 }
 
+var port = process.env.PORT || 9000;
+
 module.exports = {
   env: env,
-  port: process.env.PORT || 9000,
   logger: logger,
+  port: port,
+  url: process.env.URL || 'http://localhost:' + port,
 
   // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
   // Using a random secret means sessions won't be preserved across server restarts, but we'd need a persistent
