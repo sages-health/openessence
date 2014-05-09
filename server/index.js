@@ -36,7 +36,6 @@ if (conf.env === 'production') {
 }
 
 app.use(require('body-parser')()); // parse JSON + URL encoded request bodies, must be before a lot of other middleware
-app.use(require('method-override')());
 app.use(require('cookie-parser')()); // must be before session
 app.use(require('express-session')({
   secret: conf.sessionSecret,
