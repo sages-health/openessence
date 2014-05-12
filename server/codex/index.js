@@ -4,6 +4,7 @@ var express = require('express');
 var DefaultController = require('./controller');
 var models = require('./models')();
 var controllers = require('./controllers')();
+var esErrors = require('elasticsearch').errors;
 
 module.exports = function () {
   var app = express();
@@ -14,20 +15,24 @@ module.exports = function () {
   app.use(require('body-parser')());
 
   app.param('model', function (req, res, next, model) {
-    var Model = models[model.toLowerCase()];
-    if (!Model) {
-      next(new Error('No such model ' + model));
-      return;
-    }
-    req.model = new Model();
+    if (!req.model) {
+      var Model = models[model.toLowerCase()];
+      if (!Model) {
+        next(new Error('No such model ' + model));
+        return;
+      }
 
-    var Controller = controllers[model.toLowerCase()];
-    if (Controller) {
-      console.log('controller');
-      req.controller = new Controller();
-    } else {
-      console.log('default controller');
-      req.controller = new DefaultController();
+      // TODO pass model to controller instead?
+      req.model = new Model();
+    }
+
+    if (!req.controller) {
+      var Controller = controllers[model.toLowerCase()];
+      if (Controller) {
+        req.controller = new Controller();
+      } else {
+        req.controller = new DefaultController();
+      }
     }
 
     next();
@@ -44,34 +49,39 @@ module.exports = function () {
   });
 
   app.get('/:model', function (req, res, next) {
-    req.controller.queryAll(req, res, next);
+    req.controller.search(req, res, next);
   });
 
   app.get('/:model/:id', function (req, res, next) {
-    req.controller.query(req, res, next);
+    req.controller.get(req, res, next);
   });
 
+  // insert with no ID specified
   app.post('/:model', function (req, res, next) {
-    req.controller.update(req, res, next);
+    req.controller.insert(req, res, next);
   });
 
   // POST /:model/:id doesn't make sense
 
+  // alias for GET /:model that allows clients to specify search parameters as JSON in the POST body
   app.post('/:model/search', function (req, res, next) {
-    req.controller.queryAll(req, res, next);
+    req.controller.search(req, res, next);
   });
 
-  app.put('/:model', function (req, res, next) {
-    req.controller.updateAll(req, res, next);
-  });
+  // risky, and no usecase yet
+//  app.put('/:model', function (req, res, next) {
+//    req.controller.updateAll(req, res, next);
+//  });
 
+  // upsert - replace or insert
   app.put('/:model/:id', function (req, res, next) {
-    req.controller.update(req, res, next);
+    req.controller.insert(req, res, next);
   });
 
-  app.delete('/:model', function (req, res, next) {
-    req.controller.deleteAll(req, res, next);
-  });
+  // risky, and no usecase yet
+//  app.delete('/:model', function (req, res, next) {
+//    req.controller.deleteAll(req, res, next);
+//  });
 
   app.delete('/:model/:id', function (req, res, next) {
     req.controller.delete(req, res, next);
@@ -80,17 +90,28 @@ module.exports = function () {
   app.use(function (err, req, res, next) {
     // If the error has a status, use that (codex custom errors do this).
     // Otherwise, try to assign an appropriate HTTP status code based on error
-    // TODO: Expand this to accommodate other ES errors
-    if (!err.status && err.constructor.name === 'StatusCodeError') {
-      if (/^Not Found/.test(err.message) || /^IndexMissingException/.test(err.message)) {
+    if (!err.status) {
+      // see http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/errors.html
+      if (err instanceof esErrors.ConnectionFault || err instanceof esErrors.NoConnections ||
+          err instanceof esErrors.ServiceUnavailable) {
+        err.status = 503; // Service Unavailable
+      } else if (err instanceof esErrors.RequestTimeout) {
+        err.status = 504; // Gateway Timeout
+      } else if (err instanceof esErrors.PreconditionFailed) {
+        err.status = 412;
+      } else if (err instanceof esErrors.Conflict) {
+        err.status = 409;
+      } else if (err instanceof esErrors.Forbidden) {
+        err.status = 403; // this could happen if you're proxying elasticsearch from codex
+      } else if (err instanceof esErrors.NotFound) {
         err.status = 404;
-      } else if (/^Bad Request/.test(err.message)) {
+      } else if (err instanceof esErrors.BadRequest) {
         err.status = 400;
+      } else {
+        err.status = 500;
       }
     }
 
-    // This handler only corrects status codes from ElasticSearch / these methods
-    // TODO: File a pull request with ES to get their StatusCodeError fixed
     next(err);
   });
 

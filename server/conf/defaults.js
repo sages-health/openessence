@@ -2,6 +2,7 @@
 
 // A place to hold default settings. Useful so environments can reference the defaults when they override
 
+var _ = require('lodash');
 var crypto = require('crypto');
 var bunyan = require('bunyan');
 var PrettyStream = require('bunyan-prettystream');
@@ -14,13 +15,23 @@ prettyStdOut.pipe(process.stdout);
 var env = process.env.NODE_ENV || 'development';
 
 var createLogger = function (name) {
+  var serializers = _.assign({
+    user: function userSerializer (user) {
+      return {
+        id: user.id
+        // possibly more fields we deem useful...
+      };
+    }
+  }, bunyan.stdSerializers);
+
   return bunyan.createLogger({
     name: name,
-    serializers: bunyan.stdSerializers,
+    serializers: serializers,
     streams: [
       // human-readable output on stdout
       {
-        level: 'debug',
+        // we don't want any noise besides the red/green lights when we run tests
+        level: env === 'test' ? 'warn' : 'debug',
         type: 'raw',
         stream: prettyStdOut
       }

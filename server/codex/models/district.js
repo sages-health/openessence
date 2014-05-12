@@ -16,7 +16,7 @@ District.prototype.checkConstraints = function (params, callback) { // TODO refa
   var name = params.body.name;
 
   this.client.search({
-    index: this.index,
+    index: this.index.name,
     type: this.type,
     body: {
       query: {

@@ -10,7 +10,11 @@ exports.middleware = function errorMiddleware (err, req, res, next) {
     return;
   }
 
-  logger.error(err);
+  logger.error({
+    err: err,
+    req: req,
+    user: req.user
+  });
 
   res.status(err.status || 500)
     .format({

@@ -13,33 +13,24 @@ describe('model', function () {
     nock.cleanAll();
   });
 
-  describe('putMapping()', function () {
+  describe('exists()', function () {
     var scope;
     var model;
     beforeEach(function (done) {
       scope = nock(conf.elasticsearch.host)
-        .put('/foo/_mapping/bar', {
-          bar: {
-            type: 'string'
-          }
-        })
-        .reply(200, {
-          acknowledged: true
-        });
+        .head('/foo')
+        .reply(200);
 
       model = new Model({
         index: 'foo',
-        type: 'bar',
-        mapping: {
-          type: 'string'
-        }
+        type: 'bar'
       });
 
       done();
     });
 
     it('should handle optional arguments', function (done) {
-      model.indices.putMapping(function (err) {
+      model.index.exists(function (err) {
         if (err) {
           done(err);
           return;
@@ -51,7 +42,7 @@ describe('model', function () {
     });
 
     it('should work if passed null', function (done) {
-      model.indices.putMapping(null, function (err) {
+      model.index.exists(null, function (err) {
         if (err) {
           done(err);
           return;

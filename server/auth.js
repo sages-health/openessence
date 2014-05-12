@@ -27,6 +27,7 @@ passport.use(new PersonaStrategy({
   return done(null, {
     id: 123456789,
     email: email,
+    districts: ['_all'], // TODO remove once we store users
     token: token
     // other attributes can come from DB
   });
