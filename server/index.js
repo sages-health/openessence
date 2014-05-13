@@ -118,7 +118,7 @@ app.use(function (req, res, next) {
   }
   res.locals.lang = req.locale;
   res.locals.persona = true;
-  res.locals.baseHref = req.protocol + '://' + req.host + ':' + conf.port + '/' + req.locale + '/';
+  res.locals.baseHref = conf.url + '/' + req.locale + '/'; // use proxy URL (if applicable), not req.url
   res.locals.environment = conf.env;
 
   next();

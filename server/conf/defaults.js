@@ -72,6 +72,8 @@ module.exports = {
   env: env,
   logger: logger,
   port: port,
+
+  // the URL clients will hit
   url: process.env.URL || 'http://localhost:' + port,
 
   // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
