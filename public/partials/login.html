@@ -13,19 +13,27 @@
       </div>
       <form name="loginForm" role="form" novalidate ng-submit="submit(loginForm)">
         <!-- username -->
-        <div class="form-group">
+        <div class="form-group" ng-class="{'has-error': isInvalid(loginForm.username)}">
           <label for="login-username-email" translate>Username or email</label>
-          <input type="text" class="form-control" id="login-username-email" ng-model="credentials.username" required>
+          <input type="text" class="form-control" id="login-username-email" name="username"
+                 ng-model="credentials.username" required>
         </div>
 
         <!-- password -->
-        <div class="form-group">
+        <div class="form-group" ng-class="{'has-error': isInvalid(loginForm.password) || badCredentials}">
+          <!-- Google's login forms only mark password as invalid so that's what we do. Makes sense since that's
+               probably what's incorrect most of the time -->
 
           <!-- TODO implement password reset -->
-          <!--<a class="pull-right">Forgot password?</a>-->
+          <!--<a class="pull-right" translate>Forgot password?</a>-->
 
-          <label for="login-password">Password</label>
-          <input type="password" class="form-control" id="login-password" ng-model="credentials.password" required>
+          <label for="login-password" translate>Password</label>
+          <input type="password" class="form-control" id="login-password" name="password"
+                 ng-model="credentials.password" required>
+        </div>
+
+        <div class="help-block error-msg" ng-show="badCredentials" translate>
+          The username or password you entered is incorrect.
         </div>
 
         <button type="submit" class="btn btn btn-primary" translate>Sign in</button>

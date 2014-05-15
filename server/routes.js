@@ -5,6 +5,7 @@ var passport = require('passport');
 var conf = require('./conf');
 var logger = conf.logger;
 var auth = require('./auth');
+var errors = require('./error');
 
 function renderIndex (req, res) {
   res.render('index.html');
@@ -46,9 +47,7 @@ exports.server = function () {
         });
       });
     } else {
-      res.json(401, {
-        message: 'Bad credentials'
-      });
+      next(new errors.BadCredentialsError());
     }
   };
 

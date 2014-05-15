@@ -13,6 +13,16 @@ function UnregisteredUserError (message) {
 }
 util.inherits(UnregisteredUserError, Error);
 
+function BadCredentialsError (message) {
+  message = message || 'Bad credentials';
+  Error.call(this, message);
+  this.message = message;
+  this.name = this.constructor.name;
+  this.status = 403;
+  Error.captureStackTrace(this, BadCredentialsError);
+}
+util.inherits(BadCredentialsError, Error);
+
 // catchall error middleware that returns 500
 function errorMiddleware (err, req, res, next) {
   if (!err) {
@@ -66,5 +76,6 @@ function notFound (req, res) { // TODO refactor middleware into errors: errors a
 module.exports = {
   middleware: errorMiddleware,
   notFound: notFound,
+  BadCredentialsError: BadCredentialsError,
   UnregisteredUserError: UnregisteredUserError
 };

@@ -18,17 +18,33 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
   $scope.credentials = {};
 
   $scope.$on('loginError', function (event, response) {
-    if (response.data.error && response.data.error.name === 'UnregisteredUserError') {
+    var error = response.data.error;
+    if (!error) {
+      return;
+    }
+
+    if (error.name === 'UnregisteredUserError') {
       // TODO do something better
       /*jshint quotmark:false */
       $window.alert("Sorry, but you're not registered. Please contact your site admin to sign up.");
-    } else {
-      // TODO mark form as invalid instead
-      $window.alert(response.data.message);
+    } else if (error.name === 'BadCredentialsError') {
+      $scope.badCredentials = true;
     }
   });
 
+  $scope.isInvalid = function (field) {
+    if ($scope.yellAtUser) {
+      // if the user has already tried to submit, show them all the fields they're required to submit
+      return field.$invalid;
+    } else {
+      // only show a field's error message if the user has already interacted with it, this prevents a ton of red
+      // before the user has even interacted with the form
+      return field.$invalid && !field.$pristine;
+    }
+  };
+
   $scope.submit = function (form) {
+    $scope.badCredentials = false; // so that the bad credentials message can reappear if need be
     if (form.$invalid) {
       $scope.yellAtUser = true;
     } else {
