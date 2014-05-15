@@ -200,7 +200,15 @@ User.prototype.findByUsername = function (username, callback) {
  * @param callback
  */
 User.checkPassword = function (actualPassword, expectedPassword, callback) {
-  scrypt.verify(actualPassword, expectedPassword, callback);
+  scrypt.verify(actualPassword, expectedPassword, function (err, result) {
+    /*jshint camelcase:false */
+    if (err && err.scrypt_err_code === 11) {
+      // convert scrypt's "password is incorrect" into a false return value
+      callback(null, false);
+    } else {
+      callback(err, result);
+    }
+  });
 };
 
 module.exports = User;

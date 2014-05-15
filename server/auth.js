@@ -70,15 +70,12 @@ passport.use(new LocalStrategy(function (username, password, callback) {
     }
 
     if (!user) {
-      // Hash anyway to prevent timing attacks.
-      // No idea what this hash is (not that it matters), but it's taken from https://gist.github.com/damianb/4190316
-      User.checkPassword('$2a$10$va3CGzjy.g/Z8cuEcO844O', 'test', function (err) {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null, false);
-        }
-      });
+      // Hash anyway to prevent timing attacks. FYI: this string is "admin" hashed by scrypt with our parameters
+      User.checkPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
+        new Buffer(password, 'utf8'), function (err) {
+          // always pass false (even if they did guess our fake password right)
+          callback(err, false);
+        });
 
       return;
     }
