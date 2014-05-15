@@ -3,7 +3,11 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisit, outpatientEditModal, outpatientDeleteModal, outpatientAggregation) {
+angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter,
+                                                                               gettextCatalog, sortString, FrableParams,
+                                                                               OutpatientVisit, outpatientEditModal,
+                                                                               outpatientDeleteModal,
+                                                                               outpatientAggregation) {
   return {
     restrict: 'E',
     template: require('./visualization.html'),
@@ -14,7 +18,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
-      pre: function (scope, element) {
+      pre: function (scope) {
 
         scope.visualization = {
           name: 'table'
@@ -65,16 +69,6 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           edit: gettextCatalog.getString('Edit')
         };
 
-//        var d3_category20 = [ "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5" ];
-//        var d3_category20b = [ "#393b79", "#5254a3", "#6b6ecf", "#9c9ede", "#637939", "#8ca252", "#b5cf6b", "#cedb9c", "#8c6d31", "#bd9e39", "#e7ba52", "#e7cb94", "#843c39", "#ad494a", "#d6616b", "#e7969c", "#7b4173", "#a55194", "#ce6dbd", "#de9ed6" ];
-//        var d3_category20c = [ "#3182bd", "#6baed6", "#9ecae1", "#c6dbef", "#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2", "#31a354", "#74c476", "#a1d99b", "#c7e9c0", "#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb", "#636363", "#969696", "#bdbdbd", "#d9d9d9" ];
-//
-//        scope.colorFunction = function() {
-//          return function(d, i) {
-//            return d3_category20[i % 20];
-//          };
-//        }
-
         var buildAggregation = function (field) {
           var agg = {};
           agg[field] = outpatientAggregation.getAggregation(field, 10);
@@ -97,7 +91,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             query = buildAggregation(first);
             //if a second exists, add to first aggregation object
             if (second) {
-              query[first]['aggs'] = buildAggregation(second);
+              query[first].aggs = buildAggregation(second);
             }
           }
           return query;
@@ -122,6 +116,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             if (col && !row) {
               aggs[col].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                /*jshint camelcase:false */
                 missingCount -= entry.doc_count;
                 slice = {col: col, colName: keyStr, key: keyStr, value: entry.doc_count};
                 pieData.push(slice);
@@ -137,6 +132,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             if (!col && row) {
               aggs[row].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                /*jshint camelcase:false */
                 missingCount -= entry.doc_count;
                 slice = {row: row, rowName: keyStr, key: keyStr, value: entry.doc_count};
                 pieData.push(slice);
@@ -153,6 +149,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
               aggs[col].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                /*jshint camelcase:false */
                 missingTotalCount -= entry.doc_count;
                 var missingCount = entry.doc_count;
                 var data = [];
@@ -205,11 +202,9 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
         var reload = function () {
           if (scope.visualization.name === 'table') {
             scope.tableParams.reload();
-          }
-          if (scope.visualization.name === 'pie') {
+          } else if (scope.visualization.name === 'pie') {
             aggReload();
-          }
-          if (scope.visualization.name === 'bar') {
+          } else if (scope.visualization.name === 'bar') {
             aggReload();
           }
         };
@@ -284,7 +279,6 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               type: event.point.col,
               value: event.point.colName
             };
-            //scope.$apply(function(){scope.filters.push(filter);});
             scope.$emit('aggClick', filter, true);
           }
           if (event.point.row && !event.point.rowName.startsWith('missing')) {
@@ -292,7 +286,6 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               type: event.point.row,
               value: event.point.rowName
             };
-            //scope.$apply(function(){scope.filters.push(filter);});
             scope.$emit('aggClick', filter, true);
           }
         });
