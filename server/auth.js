@@ -1,11 +1,14 @@
 'use strict';
 
 var passport = require('passport');
-var PersonaStrategy = require('passport-persona').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy; // for API clients
+var LocalStrategy = require('passport-local').Strategy;
+var PersonaStrategy = require('passport-persona').Strategy;
 
 var conf = require('./conf');
 var logger = conf.logger;
+var User = require('./codex/models/user');
+var errors = require('./error');
 
 passport.serializeUser(function (user, done) {
   // store entire user object in session so we don't have to deserialize it from data store
@@ -17,32 +20,91 @@ passport.deserializeUser(function (user, done) {
   done(null, user);
 });
 
-var token = 'eachUserShouldHaveAnAuthTokenForAPIRequestsOnTheirBehalfE.g.SavingPagesWithPhantomJS';
-
 passport.use(new PersonaStrategy({
+  // audience must match the URL clients use to hit the site, otherwise Persona will think we're phishing and error out
   audience: conf.url
-}, function (email, done) {
-  // TODO whitelist emails here
-  logger.info('%s logged in', email);
-  return done(null, {
-    id: 123456789,
-    email: email,
-    districts: ['_all'], // TODO remove once we store users
-    token: token
-    // other attributes can come from DB
+}, function (email, callback) {
+
+  var localUser = conf.users[email];
+  if (localUser) {
+    localUser.username = email;
+    localUser.authType = 'persona';
+    logger.info({user: localUser}, '%s logged in with Persona via file system whitelist', email);
+    callback(null, localUser);
+    return;
+  }
+
+  // This means that to switch between Persona and local, your local username must be your email.
+  // We may need to reevaluate that in the future.
+  new User().findByUsername(email, function (err, user) {
+    delete user.password; // don't keep (hashed) password in memory any more than we have to
+
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    if (!user) {
+      /*jshint quotmark:false */
+      logger.info({user: user}, "%s logged in successfully with Persona, but they're not recognized by codex", email);
+      callback(new errors.UnregisteredUserError());
+      return;
+    }
+
+    logger.info({user: user}, '%s logged in using Persona', email);
+    user.authType = 'persona';
+
+    callback(null, user);
   });
 }));
 
-// TODO get this from data-thing/elasticsearch
-var users = {};
-users[token] = {
-  id: 999999,
-  username: 'Gabe',
-  email: 'gabe@localhost'
-};
+passport.use(new LocalStrategy(function (username, password, callback) {
+  new User().findByUsername(username, function (err, user) {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    if (!user) {
+      // Hash anyway to prevent timing attacks.
+      // No idea what this hash is (not that it matters), but it's taken from https://gist.github.com/damianb/4190316
+      User.checkPassword('$2a$10$va3CGzjy.g/Z8cuEcO844O', 'test', function (err) {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, false);
+        }
+      });
+
+      return;
+    }
+
+    // Check password before we check if user is disabled. Again, this is to prevent timing attacks.
+    User.checkPassword(new Buffer(user._source.password, 'hex'), new Buffer(password, 'utf8'), function (err, match) {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      if (!match) {
+        // Security 101: don't tell the user if it was the username or password that was wrong
+        callback(null, false, {message: 'Incorrect username/password'});
+      } else if (user._source.disabled === true) {
+        logger.info('%s tried to log in, but their account is disabled', username);
+        callback(null, false, {message: 'Account disabled'});
+      } else {
+        logger.info({user: user}, '%s logged in using local auth', username);
+        user._source.authType = 'local';
+
+        callback(null, user._source);
+      }
+    });
+  });
+}));
 
 passport.use(new BearerStrategy({}, function (token, done) {
-  var user = users[token];
+  var user = {}; // TODO lookup user by token
+
   if (!user) {
     done(null, false);
     return;

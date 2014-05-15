@@ -36,18 +36,8 @@ function FormatError (message) {
 }
 util.inherits(FormatError, Error);
 
-function SerializationError (message) {
-  Error.call(this, message);
-  this.message = message;
-  this.name = this.constructor.name;
-  this.status = 500;
-  Error.captureStackTrace(this, SerializationError);
-}
-util.inherits(SerializationError, Error);
-
 module.exports = {
   AccessDeniedError: AccessDeniedError,
   ConstraintError: ConstraintError,
-  FormatError: FormatError,
-  SerializationError: SerializationError
+  FormatError: FormatError
 };

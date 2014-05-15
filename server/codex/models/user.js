@@ -69,6 +69,7 @@ User.prototype.insert = function (params, callback) {
     refresh: true
   }, params);
 
+  var user = this;
   this.checkConstraints(params, function (err, failure) {
     if (err) {
       callback(err);
@@ -79,35 +80,38 @@ User.prototype.insert = function (params, callback) {
       callback(new errors.ConstraintError(failure.name, failure.message));
     } else {
 
-      var saveRecord = function (error, result) {
-        if (error) {
-          callback(error);
-          return;
-        }
-        params.body.password = result.toString('hex');
-        this.client.index(params, callback);
-      }.bind(this);
-
       // if existing user
       if (params.id && !params.body.password) {
         // Editing user info or access list - retrieve old password and use it
-        this.client.get({index: this.index.name, type: this.type, id: params.id}, function (err, esr) {
+        user.client.get({index: this.index.name, type: this.type, id: params.id}, function (err, esr) {
           if (err) {
             callback(err);
             return;
           }
           params.body.password = esr._source.password;
-          this.client.index(params, callback);
-        }.bind(this));
-      }
-      // if a new user or coming from change password screen, scrypt their password
-      else {
+          user.client.index(params, callback);
+        });
+      } else {
+        // if a new user or coming from change password screen, hash their password
         scrypt.params(0.1, function (err, scryptParameters) {
-          scrypt.hash(new Buffer(params.body.password, 'utf8'), scryptParameters, saveRecord);
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          scrypt.hash(new Buffer(params.body.password, 'utf8'), scryptParameters, function (error, result) {
+            if (error) {
+              callback(error);
+              return;
+            }
+
+            params.body.password = result.toString('hex');
+            user.client.index(params, callback);
+          });
         });
       }
     }
-  }.bind(this));
+  });
 };
 
 // Run a query on the index
@@ -156,6 +160,48 @@ User.isAdmin = function (user) {
 User.hasAllDistricts = function (user) {
   // TODO decide on a standard for this, maybe replace districts with an all_districts role?
   return user.districts && user.districts.indexOf('_all') !== -1;
+};
+
+User.prototype.findByUsername = function (username, callback) {
+  this.client.search({
+    index: this.index.name,
+    type: this.type,
+    body: {
+      query: {
+        'constant_score': {
+          filter: {
+            term: {
+              'username.raw': username
+            }
+          }
+        }
+      }
+    }
+  }, function (err, response) {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    var results = response.hits.hits;
+
+    if (results.length > 1) {
+      callback(new Error('Existing records violate unique constraint'));
+    } else if (results.length === 0) {
+      callback(null, null);
+    } else {
+      callback(null, results[0]);
+    }
+  });
+};
+
+/**
+ * @param actualPassword the actual, hashed password
+ * @param expectedPassword unhashed password to test
+ * @param callback
+ */
+User.checkPassword = function (actualPassword, expectedPassword, callback) {
+  scrypt.verify(actualPassword, expectedPassword, callback);
 };
 
 module.exports = User;

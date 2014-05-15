@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width">
 
   <!-- you can also use ng-init, but that won't get populated until after angular bootstraps -->
-  <meta name="_email" content="[[= (user && user.email) ? user.email : '' ]]">
+  <meta name="_user" content="[[= user ? JSON.stringify(user) : '' ]]">
   <meta name="_csrf" content="[[= csrfToken ]]">
   <meta name="_persona" content="[[= persona ]]">
   <meta name="_environment" content="[[= environment ]]">

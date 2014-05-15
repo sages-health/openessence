@@ -90,7 +90,6 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
 
   $stateProvider
     .state('home', {
-      abstract: true,
       template: require('../partials/home.html'),
       controller: 'MainCtrl'
     })

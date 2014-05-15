@@ -3,17 +3,17 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, login) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user) {
   $scope.user = user;
   $scope.logout = function () {
-    login.logout();
+    user.logout();
 
     // wait for acknowledgement of logout from server before reloading
-    $scope.$on('logout', function () {
+    $scope.$on('logout', function () { // TODO move to user service
       // TODO implement logout view with a nice message like "Sorry to see you go"
 
-      // reload page for added security so stale data doesn't remain
-      $window.location.reload();
+      // for page load for added security so stale data doesn't remain
+      $window.location.href = '/';
     });
   };
 
