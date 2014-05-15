@@ -2,51 +2,18 @@
 
 var _ = require('lodash');
 var changeCase = require('change-case');
-var logger = require('../conf').logger;
 var errors = require('./errors');
+var Index = require('./es-index');
 
 function Model (options) {
   options = _.assign({
     // we use param-case since that's the de facto REST standard for resources, even if elasticsearch uses snake_case
-    index: this.constructor.INDEX || changeCase.paramCase(this.constructor.name),
-    // type depends on index
-    mapping: this.constructor.MAPPING,
-    indexSettings: this.constructor.INDEX_SETTINGS,
-    sql: this.constructor.SQL,
-    transformMapping: function (mapping) {
-      var mappings = {};
-      mappings[this.type] = mapping;
-      return mappings; // this probably should be async, but we'll implement that when we need it
-    }.bind(this)
+    index: this.constructor.INDEX || changeCase.paramCase(this.constructor.name)
   }, options);
 
-  // Bind the inner functions to the model so they can reference the
-  // instance properties below
-  var instance = this;
-  _.forOwn(this.indices, function (value, key, obj) {
-    obj[key] = _.bind(value, instance);
-  });
-
-  this.index = options.index;
   this.type = options.type || this.constructor.TYPE || this.index;
-
-  /**
-   * Function called before a mapping is submitted to elasticsearch. It's return value is the mapping that
-   * should be sent to elasticsearch.
-   */
-  this.transformMapping = options.transformMapping;
-
-  // don't store original mapping and risk forgetting to call transformMapping()
-  this.mapping = this.transformMapping(options.mapping);
-
-  this.indexSettings = options.indexSettings;
   this.client = options.client || require('./client'); // delay instantiating client
-
-  /**
-   * SQL to use when importing this model's data from a relational database
-   * @type {string}
-   */
-  this.sql = options.sql;
+  this.index = _.isString(options.index) ? new Index(options.index, this.client) : options.index;
 }
 
 /**
@@ -66,7 +33,7 @@ Model.prototype.bulk = function (params, callback) {
   // Bulk has two modes, but uses the index and type as fallback defaults
   // so they can always be specified
   params = _.assign({
-    index: this.index,
+    index: this.index.name,
     type: this.type,
     refresh: true // we have a very low write volume, so we favor consistency over speed by default
   }, params);
@@ -80,7 +47,7 @@ Model.prototype.delete = function (params, callback) {
     params = null;
   }
   params = _.assign({
-    index: this.index,
+    index: this.index.name,
     type: this.type,
     refresh: true
   }, params);
@@ -94,7 +61,7 @@ Model.prototype.deleteByQuery = function (params, callback) {
     params = null;
   }
   params = _.assign({
-    index: this.index,
+    index: this.index.name,
     type: this.type,
     refresh: true
   }, params);
@@ -108,7 +75,7 @@ Model.prototype.exists = function (params, callback) {
     params = null;
   }
   params = _.assign({
-    index: this.index,
+    index: this.index.name,
     type: this.type
   }, params);
   this.client.exists(params, callback);
@@ -121,7 +88,7 @@ Model.prototype.get = function (params, callback) {
     params = null;
   }
   params = _.assign({
-    index: this.index,
+    index: this.index.name,
     type: this.type
   }, params);
   this.client.get(params, callback);
@@ -134,7 +101,7 @@ Model.prototype.insert = function (params, callback) {
     params = null;
   }
   params = _.assign({
-    index: this.index,
+    index: this.index.name,
     type: this.type,
     refresh: true
   }, params);
@@ -164,7 +131,7 @@ Model.prototype.mget = function (params, callback) {
   // Only provide default index and type for the latter case
   if (params && params.body.ids) {
     params = _.assign({
-      index: this.index,
+      index: this.index.name,
       type: this.type
     }, params);
   }
@@ -178,132 +145,10 @@ Model.prototype.search = function (params, callback) {
     params = null;
   }
   params = _.assign({
-    index: this.index,
+    index: this.index.name,
     type: this.type
   }, params);
   this.client.search(params, callback);
-};
-
-// Index manipulation methods
-Model.prototype.indices = {};
-
-// Create a new index
-Model.prototype.indices.create = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-
-  params = _.assign({
-    index: this.index,
-    body: {
-      settings: this.indexSettings,
-      mappings: this.mapping
-      // aliases might also be useful here once we move to 1.1.0
-    }
-  }, params);
-  this.client.indices.create(params, callback);
-};
-
-// Delete the entire index
-Model.prototype.indices.delete = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index
-  }, params);
-  this.client.indices.delete(params, callback);
-};
-
-// Check if the index exists
-Model.prototype.indices.exists = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index
-  }, params);
-  this.client.indices.exists(params, callback);
-};
-
-// Check if an alias exists
-Model.prototype.indices.existsAlias = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index
-  }, params);
-  this.client.indices.exists(params, callback);
-};
-
-// Delete a specific alias
-Model.prototype.indices.deleteAlias = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index
-  }, params);
-  this.client.indices.deleteAlias(params, callback);
-};
-
-// Delete a specific mapping
-Model.prototype.indices.deleteMapping = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index,
-    type: this.type
-  }, params);
-  this.client.indices.deleteMapping(params, callback);
-};
-
-// Create an alias for the index
-Model.prototype.indices.putAlias = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index
-  }, params);
-  this.client.indices.putAlias(params, callback);
-};
-
-// Create a mapping for the index and type
-Model.prototype.indices.putMapping = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index,
-    type: this.type,
-    body: this.mapping
-  }, params);
-  this.client.indices.putMapping(params, callback);
-};
-
-// http://www.elasticsearch.org/guide/en/elasticsearch/reference/1.x/indices-update-settings.html
-Model.prototype.indices.putSettings = function (params, callback) {
-  if (arguments.length < 2) {
-    callback = arguments[0];
-    params = null;
-  }
-  params = _.assign({
-    index: this.index,
-    type: this.type,
-    body: this.indexSettings
-  }, params);
-  this.client.indices.putSettings(params, callback);
 };
 
 module.exports = Model;

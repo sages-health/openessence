@@ -2,6 +2,16 @@
 
 var util = require('util');
 
+function AccessDeniedError (message) {
+  message = message || 'Access denied';
+  Error.call(this, message);
+  this.message = message;
+  this.name = this.constructor.name;
+  this.status = 403;
+  Error.captureStackTrace(this, AccessDeniedError);
+}
+util.inherits(AccessDeniedError, Error);
+
 /**
  * Error involving a constraint violation, e.g. a unique constraint
  * @param name the name of the specific contstaint violated, e.g. "UniqueConstraint"
@@ -26,17 +36,8 @@ function FormatError (message) {
 }
 util.inherits(FormatError, Error);
 
-function SerializationError (message) {
-  Error.call(this, message);
-  this.message = message;
-  this.name = this.constructor.name;
-  this.status = 500;
-  Error.captureStackTrace(this, SerializationError);
-}
-util.inherits(SerializationError, Error);
-
 module.exports = {
+  AccessDeniedError: AccessDeniedError,
   ConstraintError: ConstraintError,
-  FormatError: FormatError,
-  SerializationError: SerializationError
+  FormatError: FormatError
 };

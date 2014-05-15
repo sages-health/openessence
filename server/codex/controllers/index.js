@@ -9,9 +9,9 @@ module.exports = function () {
       // exclude current file
       return path.basename(filename) !== path.basename(__filename);
     })
-    .reduce(function (models, filename) {
+    .reduce(function (controllers, filename) {
       var name = path.basename(filename, '.js');
-      models[name] = require('./' + name);
-      return models;
+      controllers[name] = require('./' + name);
+      return controllers;
     }, {});
 };

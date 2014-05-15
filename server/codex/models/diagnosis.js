@@ -16,7 +16,7 @@ Diagnosis.prototype.checkConstraints = function (params, callback) {
   var name = params.body.name;
 
   this.client.search({
-    index: this.index,
+    index: this.index.name,
     type: this.type,
     body: {
       query: {

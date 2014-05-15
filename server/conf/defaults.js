@@ -2,6 +2,7 @@
 
 // A place to hold default settings. Useful so environments can reference the defaults when they override
 
+var _ = require('lodash');
 var crypto = require('crypto');
 var bunyan = require('bunyan');
 var PrettyStream = require('bunyan-prettystream');
@@ -14,13 +15,28 @@ prettyStdOut.pipe(process.stdout);
 var env = process.env.NODE_ENV || 'development';
 
 var createLogger = function (name) {
+  var serializers = _.assign({
+    user: function userSerializer (user) {
+      if (!user) {
+        return null;
+      }
+      return {
+        id: user.id,
+        username: user.username,
+        roles: user.roles
+        // possibly more fields we deem useful...
+      };
+    }
+  }, bunyan.stdSerializers);
+
   return bunyan.createLogger({
     name: name,
-    serializers: bunyan.stdSerializers,
+    serializers: serializers,
     streams: [
       // human-readable output on stdout
       {
-        level: 'debug',
+        // we don't want any noise besides the red/green lights when we run tests
+        level: env === 'test' ? 'warn' : 'debug',
         type: 'raw',
         stream: prettyStdOut
       }
@@ -61,6 +77,8 @@ module.exports = {
   env: env,
   logger: logger,
   port: port,
+
+  // the URL clients will hit
   url: process.env.URL || 'http://localhost:' + port,
 
   // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
@@ -75,6 +93,22 @@ module.exports = {
     // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.
     // https://github.com/dailymuse/phantom-cluster/blob/87ebc9f2c5fc81792aa4c98ae1c6cf44c784cc5e/index.coffee#L105
     basePort: 12300
+  },
+
+  // Define extra users. The auth layers checks if a user is defined here first and then checks if the user is in the
+  // data store. This is useful for development: instead of every Fracas instance having a known set of test users,
+  // e.g. "admin", "test", etc. and having to make sure those accounts are disabled or their passwords changed before
+  // deployment, you can include them in conf instead.
+  users: {
+    // example local user
+//    admin: {
+//      roles: ['admin']
+//    }
+
+    // example Persona user
+//    'foo@bar.com' : {
+//      roles: ['entry']
+//    }
   },
 
   // elasticsearch settings, duh

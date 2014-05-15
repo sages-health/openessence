@@ -22,30 +22,45 @@ exports.server = function () {
     res.redirect(307, '/session/browserid');
   });
 
+  var login = function (err, user, req, res, next) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    if (user) {
+      req.login(user, function (err) {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        res.json(200, {
+          // whitelist user properties that are OK to send to client
+          username: user.username,
+          email: user.email,
+          name: user.name,
+          roles: user.roles,
+          districts: user.districts,
+          authType: user.authType
+        });
+      });
+    } else {
+      res.json(401, {
+        message: 'Bad credentials'
+      });
+    }
+  };
+
   app.post('/session/browserid', function (req, res, next) {
     passport.authenticate('persona', function (err, user) {
-      if (err) {
-        next(err);
-        return;
-      }
+      login(err, user, req, res, next);
+    })(req, res, next);
+  });
 
-      if (user) {
-        req.login(user, function (err) {
-          if (err) {
-            next(err);
-            return;
-          }
-
-          res.json(200, {
-            // whitelist user properties that are OK to send to client
-            email: user.email
-          });
-        });
-      } else {
-        res.json(401, {
-          message: 'Bad credentials'
-        });
-      }
+  app.post('/session/local', function (req, res, next) {
+    passport.authenticate('local', function (err, user) {
+      login(err, user, req, res, next);
     })(req, res, next);
   });
 
@@ -53,17 +68,19 @@ exports.server = function () {
   app.get('/login', renderIndex);
 
   // all routes below this require authenticating
-  app.all('*', auth.denyAnonymousAccess);
+  app.use(auth.denyAnonymousAccess);
 
-  app.delete('/session', function (req, res) {
-    res.redirect(307, '/session/browserid');
-  });
-
-  app.delete('/session/browserid', function (req, res) {
-    logger.info('%s logged out', req.user.email);
+  var logout = function (req, res) {
+    logger.info({user: req.user}, 'Logging %s out', req.user.username);
     req.logout();
     res.send(204); // No Content
-  });
+  };
+
+  app.delete('/session', logout);
+
+  // extra end points for symmetry with POST
+  app.delete('/session/browserid', logout);
+  app.delete('/session/local', logout);
 
   // don't need http-bearer routes because there's no session to setup or teardown
 

@@ -11,21 +11,28 @@
         <hr>
         <span class="hr-text text-muted">or</span>
       </div>
-      <form name="loginForm" role="form" ng-submit="submit(loginForm)">
+      <form name="loginForm" role="form" novalidate ng-submit="submit(loginForm)">
+        <!-- username -->
         <div class="form-group">
           <label for="login-username-email" translate>Username or email</label>
-          <input type="text" class="form-control" id="login-username-email">
+          <input type="text" class="form-control" id="login-username-email" ng-model="credentials.username" required>
         </div>
+
+        <!-- password -->
         <div class="form-group">
 
           <!-- TODO implement password reset -->
           <!--<a class="pull-right">Forgot password?</a>-->
 
           <label for="login-password">Password</label>
-          <input type="password" class="form-control" id="login-password">
+          <input type="password" class="form-control" id="login-password" ng-model="credentials.password" required>
         </div>
+
         <button type="submit" class="btn btn btn-primary" translate>Sign in</button>
-        <span class="h4 pull-right">&hellip;for disease surveillance</span>
+        <!-- TODO prompt user for required fields-->
+
+        <!-- tagline -->
+        <span class="h4 pull-right" translate>&hellip;for disease surveillance</span>
       </form>
     </div>
   </div>

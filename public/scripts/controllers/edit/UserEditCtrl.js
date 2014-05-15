@@ -63,9 +63,9 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.record = record || {};
         $scope.user = angular.copy($scope.record._source) || {};
+        $scope.roles = ['admin', 'data_entry', 'district_all'];
         $scope.yellAtUser = false;
-        $scope.minPasswordLength = 4;
-        $scope.roles = ['Admin', 'DataEntry', 'AllDistricts'];
+        $scope.minPasswordLength = 4; // TODO don't use this on the client
         $scope.isShort = function (field) {
           return field.$modelValue && field.$modelValue.length < $scope.minPasswordLength;
         };
