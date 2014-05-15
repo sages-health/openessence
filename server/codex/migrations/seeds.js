@@ -18,7 +18,7 @@ function bulkInsert (Model, data, callback) {
     refresh: false,
     body: data.reduce(function (prev, current) { // add operation before every piece of data
       // push to save memory over concat
-      prev.push({index: {_index: model.index, _type: model.type}});
+      prev.push({index: {_index: model.index.name, _type: model.type}});
       prev.push(current);
       return prev;
     }, [])

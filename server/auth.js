@@ -37,8 +37,6 @@ passport.use(new PersonaStrategy({
   // This means that to switch between Persona and local, your local username must be your email.
   // We may need to reevaluate that in the future.
   new User().findByUsername(email, function (err, user) {
-    delete user.password; // don't keep (hashed) password in memory any more than we have to
-
     if (err) {
       callback(err);
       return;
@@ -50,6 +48,12 @@ passport.use(new PersonaStrategy({
       callback(new errors.UnregisteredUserError());
       return;
     }
+
+    if (user._source) {
+      user._source.id = user._id;
+      user = user._source;
+    }
+    delete user.password; // don't keep (hashed) password in memory any more than we have to
 
     logger.info({user: user}, '%s logged in using Persona', email);
     user.authType = 'persona';
@@ -79,8 +83,16 @@ passport.use(new LocalStrategy(function (username, password, callback) {
       return;
     }
 
+    if (user._source) {
+      user._source.id = user._id;
+      user = user._source;
+    }
+
     // Check password before we check if user is disabled. Again, this is to prevent timing attacks.
-    User.checkPassword(new Buffer(user._source.password, 'hex'), new Buffer(password, 'utf8'), function (err, match) {
+    User.checkPassword(new Buffer(user.password, 'hex'), new Buffer(password, 'utf8'), function (err, match) {
+      delete user.password;
+      password = null; // can't hurt
+
       if (err) {
         callback(err);
         return;
@@ -89,14 +101,14 @@ passport.use(new LocalStrategy(function (username, password, callback) {
       if (!match) {
         // Security 101: don't tell the user if it was the username or password that was wrong
         callback(null, false, {message: 'Incorrect username/password'});
-      } else if (user._source.disabled === true) {
+      } else if (user.disabled === true) {
         logger.info('%s tried to log in, but their account is disabled', username);
         callback(null, false, {message: 'Account disabled'});
       } else {
         logger.info({user: user}, '%s logged in using local auth', username);
-        user._source.authType = 'local';
+        user.authType = 'local';
 
-        callback(null, user._source);
+        callback(null, user);
       }
     });
   });

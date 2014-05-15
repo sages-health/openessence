@@ -83,7 +83,7 @@ User.prototype.insert = function (params, callback) {
       // if existing user
       if (params.id && !params.body.password) {
         // Editing user info or access list - retrieve old password and use it
-        user.client.get({index: this.index.name, type: this.type, id: params.id}, function (err, esr) {
+        user.client.get({index: user.index.name, type: user.type, id: params.id}, function (err, esr) {
           if (err) {
             callback(err);
             return;
@@ -150,7 +150,7 @@ User.hasRightsToRecord = function (user, record) {
     return true;
   }
 
-  return user.districts.indexOf('_all') !== -1 || user.districts.indexOf(district) !== -1;
+  return User.hasAllDistricts(user) || user.districts.indexOf(district) !== -1;
 };
 
 User.isAdmin = function (user) {
@@ -158,8 +158,7 @@ User.isAdmin = function (user) {
 };
 
 User.hasAllDistricts = function (user) {
-  // TODO decide on a standard for this, maybe replace districts with an all_districts role?
-  return user.districts && user.districts.indexOf('_all') !== -1;
+  return user.roles && user.roles.indexOf('district_all') !== -1;
 };
 
 User.prototype.findByUsername = function (username, callback) {
