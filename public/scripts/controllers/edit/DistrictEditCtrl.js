@@ -5,6 +5,23 @@ var controllers = require('../../modules').controllers;
 
 angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
                                                                           FrableParams, District, sortString) {
+  $scope.filters = [
+    {type: 'name'}
+  ];
+  $scope.filterTypes = [ // TODO let outpatient/filters define this
+    {
+      type: 'name',
+      name: gettextCatalog.getString('Name')
+    },
+    {
+      type: 'phoneid',
+      name: gettextCatalog.getString('Phone ID')
+    }
+  ];
+  $scope.$watchCollection('queryString', function () {
+    $scope.tableParams.reload();
+  });
+
   $scope.errorOnRecordSave = '';
 
   // strings that we can't translate in the view, usually because they're in attributes
@@ -29,8 +46,16 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
       $data: {}
     },
     getData: function ($defer, params) {
+      if (!angular.isDefined($scope.queryString)) {
+        // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
+        // If you really don't want a filter, set queryString='' or null
+        // TODO there's probably a more Angular-y way to do this
+        $defer.resolve([]);
+        return;
+      }
+
       District.get({
-//          q: scope.queryString,
+        q: $scope.queryString,
         from: (params.page() - 1) * params.count(),
         size: params.count(),
         sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting

@@ -1,0 +1,33 @@
+<!-- search box -->
+<div class="row">
+  <div class="col-md-12">
+    <form role="form" class="form" novalidate>
+      <div class="input-group">
+        <label class="sr-only" for="query-string" translate>Query</label>
+        <input class="form-control" id="query-string" name="queryString" ng-model="queryString" type="text"
+               spellcheck="false">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default"><span class="icon-search"></span></button>
+          </span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<br>
+
+<div class="row" ng-repeat="r in filterGrid.rows">
+  <div class="col-md-3" ng-repeat="filter in r track by filter.id" ng-switch="filter.plus">
+    <div class="btn-group" ng-switch-when="true">
+      <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
+        <span class="icon-plus"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="add-filter-btn">
+        <li ng-repeat="filter in filterTypes">
+          <a ng-click="addFilter(filter)">{{filter.name}}</a>
+        </li>
+      </ul>
+    </div>
+    <div ng-switch-default outpatient-filter="filter" on-close="removeFilter(filter)"></div>
+  </div>
+</div>

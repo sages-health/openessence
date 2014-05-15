@@ -3,13 +3,13 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams,
-                                                                       OutpatientVisit, sortString) {
+angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams, OutpatientVisit, sortString) {
   return {
     restrict: 'E',
     template: require('./table.html'),
     scope: {
-      records: '=?'
+      records: '=?',
+      queryString: '='
     },
     compile: function (element, attrs) {
       var condensed = angular.isDefined(attrs.condensed) && attrs.condensed !== 'false';
@@ -54,13 +54,22 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
             $scope: {
               $data: {}
             },
-            getData: function($defer, params) {
+            getData: function ($defer, params) {
               if (scope.records) {
                 var orderedData = params.sorting() ? orderByFilter(scope.records, params.orderBy()) : scope.records;
                 $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
               } else {
+                if (!angular.isDefined(scope.queryString)) {
+                  // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
+                  // If you really don't want a filter, set queryString='' or null
+                  // TODO there's probably a more Angular-y way to do this
+                  $defer.resolve([]);
+                  return;
+                }
+
                 OutpatientVisit.get(
                   {
+                    q: scope.queryString,
                     from: (params.page() - 1) * params.count(),
                     size: params.count(),
                     sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting
@@ -71,6 +80,10 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
                   });
               }
             }
+          });
+
+          scope.$watchCollection('queryString', function () {
+            scope.tableParams.reload();
           });
 
           if (scope.records) {

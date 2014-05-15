@@ -71,8 +71,30 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
   };
 });
 
-angular.module(controllers.name).controller('OutpatientEditCtrl', function ($scope, $modal, outpatientEditModal,
-                                                                            outpatientDeleteModal) {
+angular.module(controllers.name).controller('OutpatientEditCtrl', function ($scope, $modal, outpatientEditModal, //
+                                                                            gettextCatalog, outpatientDeleteModal) {
+  $scope.filters = [
+    {type: 'date'}
+  ];
+  $scope.filterTypes = [
+    {
+      type: 'age',
+      name: gettextCatalog.getString('Age')
+    },
+    {
+      type: 'date',
+      name: gettextCatalog.getString('Date')
+    },
+    {
+      type: 'sex',
+      name: gettextCatalog.getString('Sex')
+    },
+    {
+      type: 'symptoms',
+      name: gettextCatalog.getString('Symptom')
+    }
+  ];
+
   $scope.createVisit = function () {
     outpatientEditModal.open().result
       .then(function () {
