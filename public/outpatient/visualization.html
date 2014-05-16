@@ -27,8 +27,39 @@
     <div class="animation-switch" ng-switch-when="line">
       <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"></outpatient-time-series>
     </div>
-    <div class="animation-switch" ng-switch-when="pie">TODO pie char</div>
-    <div class="animation-switch" ng-switch-when="bar">TODO bar chart</div>
+    <div class="animation-switch" ng-switch-when="pie">
+      <nvd3-pie-chart
+        data="aggData"
+        x="xFunction()"
+        y="yFunction()"
+        width="500"
+        height="400"
+        showLegend="false"
+        showLabels="true"
+        interactive="true"
+        tooltips="true">
+        <svg></svg>
+      </nvd3-pie-chart>
+    </div>
+    <div class="animation-switch" ng-switch-when="bar">
+      <nvd3-multi-bar-horizontal-chart
+        data="aggData"
+        width="500"
+        height="400"
+        x="xFunction()"
+        y="yFunction()"
+        margin="{left:150}"
+        showXAxis="true"
+        showYAxis="true"
+        staggerLabels="true"
+        showValues="true"
+        showLegend="true"
+        showLabels="true"
+        interactive="true"
+        tooltips="true">
+        <svg></svg>
+      </nvd3-multi-bar-horizontal-chart>
+    </div>
     <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
   </div>
 </hinge>

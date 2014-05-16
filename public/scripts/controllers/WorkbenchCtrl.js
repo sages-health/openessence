@@ -17,13 +17,18 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     {
       type: 'sex',
       name: gettextCatalog.getString('Sex')
+    },
+    {
+      type: 'symptoms',
+      name: gettextCatalog.getString('Symptom')
     }
   ];
 
+  $scope.filters = [];
   $scope.filterGrid = new FracasGrid(4);
 
-  $scope.addFilter = function (type) {
-    $scope.filterGrid.add({type: type});
+  $scope.addFilter = function (filter) {
+    $scope.filterGrid.add(filter);//{type: filter.type});
   };
 
   $scope.removeFilter = function (filter) {
@@ -63,6 +68,16 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     }
   );
 
+  $scope.$on('aggClick', function (event, filter, add) {
+    $scope.$apply(function () {
+      if (add) {
+        $scope.addFilter(filter);
+      } else {
+        $scope.removeFilter(filter);
+      }
+    });
+  });
+
   $scope.vizGrid = new FracasGrid(2);
 
   $scope.addVisualization = function () {
@@ -74,6 +89,6 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
   };
 
   // start with one filter and one visualization
-  $scope.addFilter('date');
+  $scope.addFilter({type: 'date'});
   $scope.addVisualization();
 });
