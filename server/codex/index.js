@@ -18,7 +18,9 @@ module.exports = function () {
     if (!req.model) {
       var Model = models[model.toLowerCase()];
       if (!Model) {
-        next(new Error('No such model ' + model));
+        var err = new Error('No such model ' + model);
+        err.status = 404;
+        next(err);
         return;
       }
 
