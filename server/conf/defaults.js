@@ -111,6 +111,10 @@ module.exports = {
 //    }
   },
 
+  persona: {
+    enabled: true
+  },
+
   // elasticsearch settings, duh
   elasticsearch: {
     host: 'http://localhost:9200',

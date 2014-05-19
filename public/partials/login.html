@@ -4,12 +4,14 @@
       <header class="login-header">
         <h3>Fracas</h3>
       </header>
-      <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()" translate>
-        Sign in / Sign up with Persona
-      </button>
-      <div class="hr-text-container">
-        <hr>
-        <span class="hr-text text-muted">or</span>
+      <div ng-show="persona">
+        <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()" translate>
+          Sign in / Sign up with Persona
+        </button>
+        <div class="hr-text-container">
+          <hr>
+          <span class="hr-text text-muted">or</span>
+        </div>
       </div>
       <form name="loginForm" role="form" novalidate ng-submit="submit(loginForm)">
         <!-- username -->

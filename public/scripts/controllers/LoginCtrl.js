@@ -4,7 +4,7 @@ var angular = require('angular');
 var controllers = require('../modules').controllers;
 
 // `controllers.controller` breaks ngmin, see https://github.com/btford/ngmin#references
-angular.module(controllers.name).controller('LoginCtrl', function ($scope, $location, $window, user) {
+angular.module(controllers.name).controller('LoginCtrl', function ($scope, $location, $window, user, persona) {
   $scope.$on('login', function () {
     // We do this here, instead of in the user service, b/c we only want to redirect to the home page when the user's
     // coming from the login page. In the re-login case, we definitely don't want to redirect to the home page.
@@ -16,6 +16,7 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
   };
 
   $scope.credentials = {};
+  $scope.persona = persona;
 
   $scope.$on('loginError', function (event, response) {
     var error = response.data.error;

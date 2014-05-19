@@ -117,7 +117,7 @@ app.use(function (req, res, next) {
     res.locals.csrfToken = req.csrfToken();
   }
   res.locals.lang = req.locale;
-  res.locals.persona = true;
+  res.locals.persona = conf.persona.enabled;
   res.locals.baseHref = conf.url + '/' + req.locale + '/'; // use proxy URL (if applicable), not req.url
   res.locals.environment = conf.env;
 
