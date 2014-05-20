@@ -8,5 +8,6 @@ module.exports = {
   persona: require('./persona'),
   Report: require('./Report'),
   sortString: require('./sortString'),
-  user: require('./user')
+  user: require('./user'),
+  visualization: require('./visualization')
 };

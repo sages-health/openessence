@@ -7,20 +7,22 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
                                                                                gettextCatalog, sortString, FrableParams,
                                                                                OutpatientVisit, outpatientEditModal,
                                                                                outpatientDeleteModal,
-                                                                               outpatientAggregation) {
+                                                                               outpatientAggregation, visualization) {
   return {
     restrict: 'E',
     template: require('./visualization.html'),
     scope: {
       filters: '=',
       queryString: '=', // TODO use filters instead
-      close: '&onClose'
+      close: '&onClose',
+      options: '=?' // settings as single object, useful for loading persisted state
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
       pre: function (scope) {
+        scope.options = scope.options || {};
 
-        scope.visualization = {
+        scope.visualization = scope.options.visualization || {
           name: 'table'
         };
 
@@ -40,7 +42,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           };
         };
 
-        scope.pivot = {
+        scope.pivot = scope.options.pivot || {
           rows: [],
           cols: []
         };
@@ -68,6 +70,15 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           symptoms: gettextCatalog.getString('Symptoms'),
           edit: gettextCatalog.getString('Edit')
         };
+
+        scope.$on('export', function () {
+          if (scope.visualization.name === 'line') {
+            // let timeSeries directive handle it
+            return;
+          }
+
+          visualization.save(visualization.state(scope));
+        });
 
         var buildAggregation = function (field) {
           var agg = {};

@@ -37,6 +37,11 @@ angular.module(directives.name).directive('hinge', function (gettextCatalog) {
             };
           })
         };
+
+        scope.exportViz = function () {
+          // broadcast on parent since transcluded scope is our sibling
+          scope.$parent.$broadcast('export');
+        };
       },
       post: function (scope, element) {
         var updateViz = function (rows, cols) {

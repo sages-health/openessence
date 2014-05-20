@@ -5,11 +5,12 @@ var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientTimeSeries', function (gettextCatalog, outpatientAggregation,
-                                                                            OutpatientVisit) {
+                                                                            visualization, OutpatientVisit) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
     scope: {
+      options: '=?',
       queryString: '=',
       filters: '=',
       series: '=?' // array of strings denoting series to graph
@@ -17,13 +18,26 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
     compile: function () {
       return {
         pre: function (scope) {
-          scope.series = scope.series || [];
+
+          scope.options = scope.options || {};
+          scope.series = scope.series || scope.options.series || [];
 
           scope.xAxisTickFormat = function (d) {
             return d3.time.format('%Y-%m-%d')(new Date(d));
           };
 
-          scope.interval = 'day'; // TODO auto-select based on date range
+          scope.interval = scope.options.interval || 'day'; // TODO auto-select based on date range
+
+          scope.$on('export', function () {
+            visualization.save(angular.extend({}, visualization.state(scope), {
+              visualization: {
+                name: 'line'
+              },
+              pivot: {
+                cols: scope.series
+              }
+            }));
+          });
 
           // TODO zoom in via brush control, see http://bl.ocks.org/mbostock/1667367
 

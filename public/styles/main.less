@@ -86,10 +86,15 @@ ul[datepicker-popup-wrap] {
 .panel-heading {
   padding: @padding-base-vertical @padding-base-horizontal;
 
-  .close {
+  .panel-control {
     position: relative;
     top: -@padding-base-vertical;
     right: -@padding-base-horizontal;
+    float: right;
+
+    .icon-export {
+      font-size: 20px; // default of 22.5px is too big
+    }
   }
 
   // ensure panel title is vertically centered when we have weird layout in header,
@@ -102,8 +107,7 @@ ul[datepicker-popup-wrap] {
   &.condensed {
     padding: @padding-small-vertical @padding-small-horizontal;
 
-    .close {
-      position: relative;
+    .panel-control {
       top: -@padding-small-vertical;
       right: -@padding-small-horizontal;
     }
@@ -135,6 +139,10 @@ ul[datepicker-popup-wrap] {
 
 .error-msg {
   color: @brand-danger;
+}
+
+.export {
+  .close();
 }
 
 // a horizontal rule with text in the middle, e.g. ------- text --------

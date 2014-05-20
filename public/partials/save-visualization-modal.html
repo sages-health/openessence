@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Save this visualization</h4>
+</div>
+<div class="modal-body">
+<form class="form" role="form" novalidate name="visualizationForm">
+    <div class="form-group" ng-class="{'has-error': yellAtUser}">
+      <label for="save-viz-name" translate>Name</label>
+      <input type="text" class="form-control" id="save-viz-name" name="name" ng-model="viz.name" required>
+      <div class="help-block" ng-show="yellAtUser" translate>
+        Please name this visualization
+      </div>
+    </div>
+</form>
+
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="save(visualizationForm)">
+    <span class="icon-ok"></span>
+    <span translate>Save</span>
+  </button>
+</div>
