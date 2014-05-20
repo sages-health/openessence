@@ -17,8 +17,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
     },
     compile: function () {
       return {
-        pre: function (scope) {
-
+        pre: function (scope, element) {
           scope.options = scope.options || {};
           scope.series = scope.series || scope.options.series || [];
 
@@ -105,7 +104,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            * @param from is the start date (i.e. x-axis minimum on the graph)
            * @param to is the end date (i.e. x-axis maximum on the graph)
            */
-          scope.zoomWithRange = function(from, to) {
+          scope.zoomWithRange = function (from, to) {
             var dateFilters = scope.filters.filter(function (f) {
               return f.type === 'date';
             });
@@ -182,20 +181,20 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            * and circles.
            * @param event
            */
-          scope.timeSeriesHover = function(event) {
+          scope.timeSeriesHover = function (event) {
             if (scope.down) { // dragging
               scope.timeSeriesDrag(event);
             }
-            var chart = d3.select('.custom-timeseries g.chart');
+            var chart = d3.select(element[0]).select('g.chart');
             var guideX = -1;
             var highlightedPairs = [];
 
             chart.selectAll('circle.highlightedDot').remove();
             // for each pivot, find the closest point and draw a circle there
-            angular.forEach(scope.data, function(pivot, pivotKey) {
+            angular.forEach(scope.data, function (pivot, pivotKey) {
               var minDistance = -1;
               var minKey = -1;
-              angular.forEach(pivot.values, function(pair, pairKey) {
+              angular.forEach(pivot.values, function (pair, pairKey) {
                 var distance = Math.abs(scope.timeseries.xscale(pair[0]) - event.offsetX);
                 if (minDistance === -1 || distance < minDistance) {
                   minDistance = distance;
@@ -216,7 +215,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               }
             });
 
-
             // draw the mouse guideline
             chart.selectAll('.mouseguide').remove();
             chart.append('svg:line')
@@ -228,27 +226,31 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             // Create tooltip
             var tooltipHtml = '';
-            angular.forEach(highlightedPairs, function(pair, index) {
+            angular.forEach(highlightedPairs, function (pair, index) {
               if (typeof pair[0] !== 'undefined') {
                 if (index === 0) {
                   tooltipHtml += '<strong>' + readableDate(pair[0]) + '</strong></br>';
                   tooltipHtml += '<table>';
                 }
-                tooltipHtml += '<tr><td><div class="colorcircle" style="background-color: ' + scope.timeseries.palette[index] + ';"></div></td>';
+                tooltipHtml +=
+                  '<tr><td><div class="colorcircle" style="background-color: ' + scope.timeseries.palette[index] + ';"></div></td>';
                 tooltipHtml += '<td>' + scope.data[index].key + ':</td><td> ' + pair[1] + '</td></tr>';
               }
             });
 
             angular.element('.timeseries_tooltip').remove();
             if (tooltipHtml.length > 0) {
-              angular.element('.custom-timeseries')
+              element.find('.custom-timeseries')
                 .parent()
                 .append('<div class="timeseries_tooltip"></div>');
 
-              angular.element('.timeseries_tooltip')
+              var ttHeight = element.find('.timeseries_tooltip')
                 .html(tooltipHtml)
+                .height();
+
+              element.find('.timeseries_tooltip')
                 .css({
-                  'top': event.offsetY,
+                  'top': event.offsetY - (ttHeight / 2),
                   'left': guideX + 40
                 });
             }
@@ -258,11 +260,22 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            * Called on mouseout from timeseries
            * Removes the mouseguide, tooltip and any highlighted dots
            */
-          scope.timeSeriesLeave = function() {
-            var chart = d3.select('.custom-timeseries g.chart');
+          scope.timeSeriesLeave = function () {
+            var chart = d3.select(element[0]).select('g.chart');
             chart.selectAll('.mouseguide').remove();
             chart.selectAll('.custom-timeseries circle.highlightedDot').remove();
-            angular.element('.timeseries_tooltip').remove();
+            element.find('.timeseries_tooltip').remove();
+          };
+
+          /**
+           * Called onmousedown on the chart
+           * Sets scope.down as true for left clicks only
+           * @param event
+           */
+          scope.timeSeriesMouseDown = function (event) {
+            if (event.which === 1) {
+              scope.down = true;
+            }
           };
 
           /**
@@ -270,21 +283,24 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            * Converts coords to dates and calls scope.zoomWithRange
            * @param event
            */
-          scope.timeSeriesZoomIn = function(event) {
-            if (scope.dragging) {
-              d3.selectAll('rect.highlight-rect').remove();
+          scope.timeSeriesZoomIn = function (event) {
+            if (scope.down) {
+              d3.select(element[0]).selectAll('rect.highlight-rect').remove();
               scope.dragging = false;
 
               var startX = Math.min(scope.dragStartX, event.offsetX);
               var endX = Math.max(scope.dragStartX, event.offsetX);
-              var revx = d3.scale.linear()
-                .domain([scope.timeseries.xmargin, scope.timeseries.width - scope.timeseries.xmargin])
-                .range([scope.timeseries.xmin, scope.timeseries.xmax]);
-              var fromDate = new Date(revx(startX));
-              var toDate = new Date(revx(endX));
+              if (endX - startX > 5) {
+                var revx = d3.scale.linear()
+                  .domain([scope.timeseries.xmargin, scope.timeseries.width - scope.timeseries.xmargin])
+                  .range([scope.timeseries.xmin, scope.timeseries.xmax]);
+                var fromDate = new Date(revx(startX));
+                var toDate = new Date(revx(endX));
 
-              scope.zoomWithRange(fromDate, toDate);
+                scope.zoomWithRange(fromDate, toDate);
+              }
             }
+            scope.down = false;
           };
 
           /**
@@ -292,17 +308,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            * Draws the highlight box and stores the starting drag point
            * @param event
            */
-          scope.timeSeriesDrag = function(event) {
+          scope.timeSeriesDrag = function (event) {
             if (!scope.dragging) {
               scope.dragStartX = event.offsetX;
             }
-            d3.selectAll('g.highlight-display rect.highlight-rect').remove();
+            d3.select(element[0]).selectAll('g.highlight-display rect.highlight-rect').remove();
 
             var width = event.offsetX - scope.dragStartX;
             var x = scope.dragStartX + (width < 0 ? width : 0);
             width = Math.abs(width);
             var transformY = scope.timeseries.yscale(scope.timeseries.ymax) + scope.timeseries.legendHeight + 5;
-            d3.select('g.highlight-display')
+            d3.select(element[0]).select('g.highlight-display')
               .attr('transform', 'translate(0, ' + transformY + ')') //5 so labels aren't cut off
               .append('svg:rect')
               .attr('class', 'highlight-rect')
@@ -318,7 +334,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            * @param millis is the time since epoch
            * @returns {string}
            */
-          var readableDate = function(millis) {
+          var readableDate = function (millis) {
             var date = new Date(millis);
             var month = date.getUTCMonth() + 1; // currently universal time. Remove UTC for local?
             var day = date.getUTCDate();
@@ -329,7 +345,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           /**
            * Draw the timeseries graph
            */
-          scope.redraw = function() {
+          scope.redraw = function () {
             var data = scope.data;
 
             var dateFilters = scope.filters.filter(function (f) {
@@ -339,59 +355,66 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             var dateFilter = dateFilters[0];
 
             // Pick correct date range. Using filter date and extremes in data
-            var xmin1 = d3.min(data, function(pivot) {
-              return d3.min(pivot.values, function(datum) {
+            var xmin1 = d3.min(data, function (pivot) {
+              return d3.min(pivot.values, function (datum) {
                 return +datum[0];
               });
             });
 
             var xmin2 = dateFilter.from === null ? 0 : dateFilter.from.getTime();
-            if (typeof xmin1 === 'undefined') { xmin1 = xmin2; }
+            if (typeof xmin1 === 'undefined') {
+              xmin1 = xmin2;
+            }
 
-            var xmax1 = d3.max(data, function(pivot) {
-              return  d3.max(pivot.values, function(datum) {
+            var xmax1 = d3.max(data, function (pivot) {
+              return  d3.max(pivot.values, function (datum) {
                 return +datum[0];
               });
             });
 
             var xmax2 = dateFilter.to === null ? 0 : dateFilter.to.getTime();
-            if (typeof xmax1 === 'undefined') { xmax1 = xmax2; }
+            if (typeof xmax1 === 'undefined') {
+              xmax1 = xmax2;
+            }
 
             var xmin = (xmin2 < xmin1 && xmin2 !== 0) ? xmin2 : xmin1;
             var xmax = Math.max(xmax1, xmax2);
 
             // Get Y range, default is (0,1) if no maxes or mins
-            var ymin = d3.min(data, function(pivot) {
-              return d3.min(pivot.values, function(datum) {
+            var ymin = d3.min(data, function (pivot) {
+              return d3.min(pivot.values, function (datum) {
                 return +datum[1];
               });
             });
 
-            var ymax = d3.max(data, function(pivot) {
-              return d3.max(pivot.values, function(datum) {
+            var ymax = d3.max(data, function (pivot) {
+              return d3.max(pivot.values, function (datum) {
                 return +datum[1];
               });
             });
 
-            if (typeof ymin === 'undefined') { ymin = 0; }
-            if (typeof ymax === 'undefined') { ymax = ymin + 1; }
+            if (typeof ymin === 'undefined') {
+              ymin = 0;
+            }
+            if (typeof ymax === 'undefined') {
+              ymax = ymin + 1;
+            }
 
             // Set time series dimensions
-            var legendHeight = 50;
             var height = 300;
-            var width = angular.element('.custom-timeseries').parent().width();
+            var width = element.find('.custom-timeseries').parent().width();
             var ymargin = 20;
             var xmargin = 40;
 
             // Get the width of the longest Y label
-            angular.element('body').append('<div class="str_width">' + ymax + '</div>');
+            element.append('<div class="str_width">' + ymax + '</div>');
             var yLabelWidth = angular.element('.str_width').width();
-            angular.element('.str_width').remove();
+            element.find('.str_width').remove();
 
             // Get the width of half of an x label in case it is longer than a full Y label (leftmost x sticks out)
-            angular.element('body').append('<div class="str_width">' + readableDate(xmin) + '</div>');
+            element.append('<div class="str_width">' + readableDate(xmin) + '</div>');
             var xLabelHalf = angular.element('.str_width').width();
-            angular.element('.str_width').remove();
+            element.find('.str_width').remove();
             xLabelHalf /= 2;
 
             xmargin = 5 + Math.max(yLabelWidth, xLabelHalf); // 5 extra for padding
@@ -403,25 +426,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               .domain([0, ymax])
               .range([0 + ymargin, height - ymargin]);
 
-            var timeseries = d3.select('.custom-timeseries')
-              .attr('width', width)
-              .attr('height', height + legendHeight);
-
-            var g = timeseries.select('g.chart')
-              .attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) +')') //5 so labels aren't cut off
-              .attr('width', width)
-              .attr('height', height);
-
-            var topLayer = timeseries.select('g.ts-top-layer')
-              .attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) +')') //5 so labels aren't cut off
-              .attr('width', width)
-              .attr('height', height);
-
-            topLayer.select('rect.mouse-detector')
-              .attr('width', width - xmargin)
-              .attr('height', height - 2 * ymargin)
-              .attr('x', xmargin)
-              .attr('y', - (height - ymargin));
+            var timeseries = d3.select(element[0]).select('.custom-timeseries');
+            var g = timeseries.select('g.chart');
+            var topLayer = timeseries.select('g.ts-top-layer');
 
             g.selectAll('path').remove();
             g.selectAll('circle.point').remove();
@@ -461,7 +468,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               .attr('x', xmargin - yLabelWidth - 2)
               .attr('y', -1 * y(ymax) + 5)
               .attr('text-anchor', 'left');
-
 
             // Logic to pick the number of x ticks
             var xTickPadding = 20; // in pixels
@@ -511,28 +517,25 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               .attr('y2', -1 * y(ymax));
 
             var paletteInUse = [];
-            var legend = timeseries.select('g.legend')
-              .attr('width', width)
-              .attr('height', legendHeight)
-              .attr('transform', 'translate(0, ' + legendHeight + ')');
+            var legend = timeseries.select('g.legend');
             legend.selectAll('circle').remove();
             legend.selectAll('text').remove();
             var currLegendItemOffset = 0;
             var currLegendItemCol = 0;
 
             // For each pivot, pick a color, draw a line, add it to the legend
-            angular.forEach(data, function(value, key) {
+            angular.forEach(data, function (value, key) {
               var color;
               color = d3.scale.category20().range()[key % 20];
               paletteInUse.push(color);
 
               var line = d3.svg.line()
-                .x(function(d) {
+                .x(function (d) {
                   return x(d[0]);
                 })
-                .y(function(d) {
+                .y(function (d) {
                   return -1 * y(d[1]);
-                }).defined(function(d) {
+                }).defined(function (d) {
                   return !isNaN(d[1]);
                 });
               // Graph
@@ -550,7 +553,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                   .attr('cy', ycoord)
                   .attr('r', 3)
                   .style({
-                    'fill' : color
+                    'fill': color
                   });
 
               }
@@ -568,40 +571,63 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                 .attr('cx', currLegendItemOffset + 13 + xmargin)
                 .attr('cy', -15 * currLegendItemCol - 15)
                 .attr('r', 5)
-                .style('fill',  color);
+                .style('fill', color);
               currLegendItemOffset += 20;
 
               text.attr('x', currLegendItemOffset + xmargin);
               text.attr('y', -15 * currLegendItemCol - 10);
 
               currLegendItemOffset += textWidth;
-              if (currLegendItemOffset >= width - xmargin) {
+              if (currLegendItemOffset >= width - (2 * xmargin)) {
                 currLegendItemOffset = 0;
                 currLegendItemCol++;
               }
 
               angular.element('.custom-timeseries g .path' + key).css({
-                'stroke' : color,
-                'stroke-width' : 2,
-                'fill' : 'none'
+                'stroke': color,
+                'stroke-width': 2,
+                'fill': 'none'
               });
             });
-            //angular.extend(scope.timeseries, {'palette' : paletteInUse});
+
+            var legendHeight = (currLegendItemCol + 1) * 15 + 10;
+
+            timeseries.attr('width', width)
+              .attr('height', height + legendHeight);
+
+            legend.attr('width', width)
+              .attr('height', legendHeight)
+              .attr('transform', 'translate(0, ' + legendHeight + ')');
+
+            timeseries.select('g.chart')
+              .attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) + ')') //5 so labels aren't cut off
+              .attr('width', width)
+              .attr('height', height);
+
+            topLayer.attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) + ')') //5 so labels aren't cut off
+              .attr('width', width)
+              .attr('height', height);
+
+            topLayer.select('rect.mouse-detector')
+              .attr('width', width - xmargin)
+              .attr('height', height - 2 * ymargin)
+              .attr('x', xmargin)
+              .attr('y', -(height - ymargin));
 
             // Save info in scope for use by zoom etc.
             scope.timeseries = {
-              'xmin' : xmin,
-              'xmax' : xmax,
-              'ymin' : ymin,
-              'ymax' : ymax,
-              'legendHeight' : legendHeight,
-              'height' : height,
-              'width' : width,
-              'ymargin' : ymargin,
-              'xmargin' : xmargin,
-              'xscale' : x,
-              'yscale' : y,
-              'palette' : paletteInUse
+              'xmin': xmin,
+              'xmax': xmax,
+              'ymin': ymin,
+              'ymax': ymax,
+              'legendHeight': legendHeight,
+              'height': height,
+              'width': width,
+              'ymargin': ymargin,
+              'xmargin': xmargin,
+              'xscale': x,
+              'yscale': y,
+              'palette': paletteInUse
             };
           };
 

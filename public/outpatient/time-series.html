@@ -44,11 +44,11 @@
       <g class="highlight-display"></g>
       <g class="ts-top-layer">
         <rect class="mouse-detector" height="0" width="0"
-              ng-init="down=false; dragging=false;"
+              ng-init="down=false;"
               ng-mousemove="timeSeriesHover($event);"
               ng-mouseleave="timeSeriesLeave()"
-              ng-mousedown="down=true;"
-              ng-mouseup="timeSeriesZoomIn($event); down=false; dragging=false">
+              ng-mousedown="timeSeriesMouseDown($event)"
+              ng-mouseup="timeSeriesZoomIn($event);">
         </rect>
       </g>
     </svg>
