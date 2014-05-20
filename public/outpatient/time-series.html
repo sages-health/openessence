@@ -6,8 +6,8 @@
     <form class="form-inline" role="form">
       <!-- time series options -->
       <!--<label class="checkbox-inline">-->
-        <!--<input type="checkbox" checked>-->
-        <!--<span translate>Lines</span>-->
+      <!--<input type="checkbox" checked>-->
+      <!--<span translate>Lines</span>-->
       <!--</label>-->
       <!-- TODO bars, stack, percent, legend options, like Kibana has -->
       <!-- might have to forgo nvd3 and use d3 or flot directly to draw lines + bars on same graph -->
@@ -37,10 +37,20 @@
 
 <div class="row">
   <div class="col-md-12">
-    <!-- useInteractiveGuideLine fixes https://github.com/novus/nvd3/issues/368 -->
-    <nvd3-line-chart data="data" showXAxis="true" showYAxis="true" tooltips="true" useInteractiveGuideLine="true"
-                     xAxisTickFormat="xAxisTickFormat" showLegend="true" height="300" forcex="{{forceX}}">
-      <svg></svg>
-    </nvd3-line-chart>
+    <svg class="custom-timeseries">
+      <!-- g's must stay in this order. the layering matters for functionality (mouseover detecting) -->
+      <g class="legend"></g>
+      <g class="chart"></g>
+      <g class="highlight-display"></g>
+      <g class="ts-top-layer">
+        <rect class="mouse-detector" height="0" width="0"
+              ng-init="down=false; dragging=false;"
+              ng-mousemove="timeSeriesHover($event);"
+              ng-mouseleave="timeSeriesLeave()"
+              ng-mousedown="down=true;"
+              ng-mouseup="timeSeriesZoomIn($event); down=false; dragging=false">
+        </rect>
+      </g>
+    </svg>
   </div>
 </div>
