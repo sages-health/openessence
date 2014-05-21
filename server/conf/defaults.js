@@ -98,8 +98,9 @@ module.exports = {
   // Define extra users. The auth layers checks if a user is defined here first and then checks if the user is in the
   // data store. This is useful for development: instead of every Fracas instance having a known set of test users,
   // e.g. "admin", "test", etc. and having to make sure those accounts are disabled or their passwords changed before
-  // deployment, you can include them in conf instead.
-  users: {
+  // deployment, you can include them in conf instead. Settings users to `false` will disable the pre-registration
+  // requirement and grant all Persona users admin privileges.
+  users: process.env.USERS === 'false' ? false : {
     // example local user
 //    admin: {
 //      roles: ['admin']
