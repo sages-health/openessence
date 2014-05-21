@@ -55,6 +55,7 @@ app.use((function () {
   return session({
     store: store,
     secret: conf.session.secret,
+    proxy: conf.proxy.enabled,
     cookie: {
       path: '/',
       httpOnly: true,

@@ -111,6 +111,11 @@ module.exports = {
     enabled: true
   },
 
+  proxy: {
+    // true if Fracas is running behind a reverse proxy
+    enabled: !!process.env.PROXY || false
+  },
+
   session: {
     store: process.env.SESSION_STORE || 'memory', // 'redis' is also accepted
     secret: process.env.SESSION_SECRET || crypto.randomBytes(1024).toString('hex')
