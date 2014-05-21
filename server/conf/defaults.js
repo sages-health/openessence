@@ -81,11 +81,6 @@ module.exports = {
   // the URL clients will hit
   url: process.env.URL || 'http://localhost:' + port,
 
-  // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
-  // Using a random secret means sessions won't be preserved across server restarts, but we'd need a persistent
-  // session store for that anyway
-  sessionSecret: crypto.randomBytes(1024).toString('hex'),
-
   phantom: {
     enabled: process.env.PHANTOM !== 'false',
 
@@ -114,6 +109,15 @@ module.exports = {
 
   persona: {
     enabled: true
+  },
+
+  session: {
+    store: process.env.SESSION_STORE || 'memory', // 'redis' is also accepted
+    secret: process.env.SESSION_SECRET || crypto.randomBytes(1024).toString('hex')
+  },
+
+  redis: {
+    url: process.env.REDIS_URL || 'redis://localhost:6379'
   },
 
   // elasticsearch settings, duh
