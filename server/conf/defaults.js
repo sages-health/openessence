@@ -118,7 +118,7 @@ module.exports = {
 
   // elasticsearch settings, duh
   elasticsearch: {
-    host: 'http://localhost:9200',
+    host: process.env.ELASTICSEARCH_HOST || 'http://localhost:9200',
     log: ElasticSearchLogger,
     apiVersion: '1.0'
   },
