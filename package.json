@@ -35,7 +35,8 @@
     "csurf": "~1.1.0",
     "morgan": "~1.0.0",
     "connect-timeout": "~1.0.0",
-    "scrypt": "~3.0.1"
+    "scrypt": "~3.0.1",
+    "connect-redis": "~2.0.0"
   },
   "devDependencies": {
     "browserify": "~3.29.0",

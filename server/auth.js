@@ -25,6 +25,16 @@ passport.use(new PersonaStrategy({
   audience: conf.url
 }, function (email, callback) {
 
+  if (!conf.users) {
+    // "Demo" mode: give any user who logs in via Persona full admin rights
+    callback(null, {
+      username: email,
+      authType: 'persona',
+      roles: ['admin']
+    });
+    return;
+  }
+
   var localUser = conf.users[email];
   if (localUser) {
     localUser.username = email;

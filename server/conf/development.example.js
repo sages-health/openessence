@@ -6,7 +6,7 @@
  * @returns {*} settings
  */
 module.exports = function (settings) {
-  settings.sessionSecret = 'superSecretSessionKey';
+  settings.session.secret = 'superSecretSessionKey';
   settings.phantom.enabled = false;
 
   return settings;

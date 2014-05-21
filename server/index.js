@@ -2,15 +2,18 @@
 
 var helmet = require('helmet');
 var locale = require('locale');
+var url = require('url');
 var _ = require('lodash');
 
 var conf = require('./conf');
+var logger = conf.logger;
 var assets = require('./assets');
 var supportedLocales = require('./locales').getSupportedLocalesSync();
 var auth = require('./auth');
 var routes = require('./routes');
 
 var app = require('express')();
+var https = url.parse(conf.url).protocol === 'https:';
 
 // Times out requests after 30 seconds. This is more conservative than the default of 5s b/c we're not as concerned
 // about availability for other users, since we're not going to have a lot of concurrent users.
@@ -26,7 +29,7 @@ app.use((function () {
   if (conf.env === 'development') {
     return favicon('public/images/favicon.ico');
   } else {
-    return favicon('dist/images/favicon.ico');
+    return favicon('dist/public/images/favicon.ico');
   }
 })());
 
@@ -37,19 +40,36 @@ if (conf.env === 'production') {
 
 app.use(require('body-parser')()); // parse JSON + URL encoded request bodies, must be before a lot of other middleware
 app.use(require('cookie-parser')()); // must be before session
-app.use(require('express-session')({
-  secret: conf.sessionSecret,
-  cookie: {
-    path: '/',
-    httpOnly: true,
-    maxAge: null
-//    secure: conf.env === 'production' // force HTTPS, this should be turned on after development
+app.use((function () {
+  var session = require('express-session');
+  var store = null;
+
+  if (conf.session.store === 'redis') {
+    logger.info('Using Redis session store');
+    var RedisStore = require('connect-redis')(session);
+    store = new RedisStore({
+      url: conf.redis.url
+    });
   }
-}));
+
+  return session({
+    store: store,
+    secret: conf.session.secret,
+    proxy: conf.proxy.enabled,
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      maxAge: null, // cookie (and thus session) destroyed when user closes browser
+      secure: https
+    }
+  });
+})());
 app.use(require('connect-flash')());
 
 app.use(helmet.xframe('deny')); // change this if you want to embed Fracas in an iframe
-//app.use(helmet.hsts()); // TODO turn this on when we support TLS
+if (https) {
+  app.use(helmet.hsts());
+}
 app.use(helmet.iexss()); // XSS protection for IE
 app.use(helmet.ienoopen()); // force users to save downloads in IE instead of open them, we might want to turn this off
 app.use(helmet.contentTypeOptions()); // X-Content-Type-Options: nosniff

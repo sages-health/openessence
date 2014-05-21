@@ -396,4 +396,6 @@ gulp.task('migrations', function (done) {
   importData(strategy, done);
 });
 
+gulp.task('heroku', ['build']);
+
 gulp.task('default', ['build']);

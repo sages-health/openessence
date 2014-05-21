@@ -1,13 +1,12 @@
 node_modules/
-npm-debug.log
 dist/
 .tmp/
-.sass-cache/
 .vagrant/
+*.log
 *.mo
 
-# developer-specific settings
-/dev.js
+# Foreman environment variables
+.env
 
 # I know this is controversial, but it's what the generator does by default
 /public/bower_components

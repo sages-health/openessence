@@ -81,13 +81,8 @@ module.exports = {
   // the URL clients will hit
   url: process.env.URL || 'http://localhost:' + port,
 
-  // Connect session middleware secret: http://www.senchalabs.org/connect/session.html
-  // Using a random secret means sessions won't be preserved across server restarts, but we'd need a persistent
-  // session store for that anyway
-  sessionSecret: crypto.randomBytes(1024).toString('hex'),
-
   phantom: {
-    enabled: true,
+    enabled: process.env.PHANTOM !== 'false',
 
     // Base port for PhantomJS cluster. Worker n is assigned basePort + n, e.g. 12301 for the first worker.
     // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.
@@ -98,8 +93,9 @@ module.exports = {
   // Define extra users. The auth layers checks if a user is defined here first and then checks if the user is in the
   // data store. This is useful for development: instead of every Fracas instance having a known set of test users,
   // e.g. "admin", "test", etc. and having to make sure those accounts are disabled or their passwords changed before
-  // deployment, you can include them in conf instead.
-  users: {
+  // deployment, you can include them in conf instead. Settings users to `false` will disable the pre-registration
+  // requirement and grant all Persona users admin privileges.
+  users: process.env.USERS === 'false' ? false : {
     // example local user
 //    admin: {
 //      roles: ['admin']
@@ -115,9 +111,23 @@ module.exports = {
     enabled: true
   },
 
+  proxy: {
+    // true if Fracas is running behind a reverse proxy
+    enabled: !!process.env.PROXY || false
+  },
+
+  session: {
+    store: process.env.SESSION_STORE || 'memory', // 'redis' is also accepted
+    secret: process.env.SESSION_SECRET || crypto.randomBytes(1024).toString('hex')
+  },
+
+  redis: {
+    url: process.env.REDIS_URL || 'redis://localhost:6379'
+  },
+
   // elasticsearch settings, duh
   elasticsearch: {
-    host: 'http://localhost:9200',
+    host: process.env.ELASTICSEARCH_HOST || 'http://localhost:9200',
     log: ElasticSearchLogger,
     apiVersion: '1.0'
   },
