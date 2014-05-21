@@ -26,7 +26,7 @@ app.use((function () {
   if (conf.env === 'development') {
     return favicon('public/images/favicon.ico');
   } else {
-    return favicon('dist/images/favicon.ico');
+    return favicon('dist/public/images/favicon.ico');
   }
 })());
 
