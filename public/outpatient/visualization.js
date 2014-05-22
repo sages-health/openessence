@@ -7,7 +7,9 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
                                                                                gettextCatalog, sortString, FrableParams,
                                                                                OutpatientVisit, outpatientEditModal,
                                                                                outpatientDeleteModal,
-                                                                               outpatientAggregation, visualization) {
+                                                                               outpatientAggregation, visualization,
+                                                                               $rootScope) {
+
   return {
     restrict: 'E',
     template: require('./visualization.html'),
@@ -290,14 +292,14 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               type: event.point.col,
               value: event.point.colName
             };
-            scope.$emit('aggClick', filter, true);
+            $rootScope.$emit('filterChange', filter, true);
           }
           if (event.point.row && !event.point.rowName.startsWith('missing')) {
             filter = {
               type: event.point.row,
               value: event.point.rowName
             };
-            scope.$emit('aggClick', filter, true);
+            $rootScope.$emit('filterChange', filter, true);
           }
         });
       }
