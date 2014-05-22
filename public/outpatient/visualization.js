@@ -3,12 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter,
-                                                                               gettextCatalog, sortString, FrableParams,
-                                                                               OutpatientVisit, outpatientEditModal,
-                                                                               outpatientDeleteModal,
-                                                                               outpatientAggregation, visualization,
-                                                                               $rootScope) {
+angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisit, outpatientEditModal, outpatientDeleteModal, outpatientAggregation, visualization, $rootScope) {
 
   return {
     restrict: 'E',
@@ -292,16 +287,30 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               type: event.point.col,
               value: event.point.colName
             };
-            $rootScope.$emit('filterChange', filter, true);
+            $rootScope.$emit('filterChange', filter, true, true);
           }
           if (event.point.row && !event.point.rowName.startsWith('missing')) {
             filter = {
               type: event.point.row,
               value: event.point.rowName
             };
-            $rootScope.$emit('filterChange', filter, true);
+            $rootScope.$emit('filterChange', filter, true, true);
           }
         });
+
+        scope.tableFilter = function (field, value) {
+          //TODO multiselect if value.length > ?
+          if (value) {
+            var a = [].concat(value);
+            a.forEach(function (v) {
+              var filter = {
+                type: field,
+                value: v
+              };
+              $rootScope.$emit('filterChange', filter, true, false);
+            });
+          }
+        };
       }
     }
   };

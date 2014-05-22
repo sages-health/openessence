@@ -26,7 +26,6 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     }
   ];
 
-
   $scope.vizGrid = new FracasGrid(2);
 
   $scope.addVisualization = function () {
