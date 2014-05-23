@@ -18,12 +18,13 @@
               <a ng-click="tableFilter('symptoms', visit._source.symptoms)">{{visit._source.symptoms | join |
                 truncate:30}}</a>
             </td>
-            <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
-              <span class="icon-pencil"></span>
-            </button>
-            <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
-              <span class="icon-trash"></span>
-            </button>
+            <td data-title="strings.edit" class="btn-group btn-group-xs">
+              <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
+                <span class="icon-pencil"></span>
+              </button>
+              <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
+                <span class="icon-trash"></span>
+              </button>
             </td>
           </tr>
         </table>
