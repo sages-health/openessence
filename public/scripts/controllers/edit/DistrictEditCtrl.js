@@ -102,23 +102,22 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
           };
 
           var showError = function (data) {
-            if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
+            if (data.status && data.status === 409) {
+              // Get latest record data and update form
+              District.get({_id: $scope.record._id}, function (newData) {
+                $scope.conflictError = true;
+                $scope.record = newData;
+                $scope.district = newData._source;
+              });
+            } else if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
               $scope.errorOnRecordSave = data.data.error.name;
             }
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            District.update(angular.extend({_id: $scope.record._id}, $scope.district), function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            District.update(angular.extend({_id: $scope.record._id, _version: $scope.record._version}, $scope.district), cleanup, showError);
           } else {
-            District.save($scope.district, function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            District.save($scope.district, cleanup, showError);
           }
         };
 

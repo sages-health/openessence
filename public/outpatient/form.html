@@ -3,7 +3,9 @@
 
 <!-- TODO red text on white background instead of alert -->
 <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
-<div class="alert alert-danger alert-show-hide" ng-show="conflictError" translate>{{conflictError}}</div>
+<div class="alert alert-danger alert-show-hide" ng-show="conflictError" translate>
+  Record has been updated by another user. Updated record is loaded.
+</div>
 
 <!-- Date -->
 <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.reportDate)}">

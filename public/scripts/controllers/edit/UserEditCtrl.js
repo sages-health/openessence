@@ -7,8 +7,7 @@ var pluckName = function (r) {
   return r._source.name;
 };
 
-angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
-                                                                      FrableParams, User, sortString, District) {
+angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog, FrableParams, User, sortString, District) {
   $scope.errorOnRecordSave = '';
 
   // strings that we can't translate in the view, usually because they're in attributes
@@ -106,7 +105,14 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
           };
 
           var showError = function (data) {
-            if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
+            if (data.status && data.status === 409) {
+              // Get latest record data and update form
+              User.get({_id: $scope.record._id}, function (newData) {
+                $scope.conflictError = true;
+                $scope.record = newData;
+                $scope.user = newData._source;
+              });
+            } else if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
               $scope.errorOnRecordSave = data.data.error.name;
             }
           };
@@ -117,17 +123,9 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
           }
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            User.update(angular.extend({_id: $scope.record._id}, data), function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            User.update(angular.extend({_id: $scope.record._id, _version: $scope.record._version}, data), cleanup, showError);
           } else {
-            User.save(data, function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            User.save(data, cleanup, showError);
           }
         };
 

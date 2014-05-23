@@ -86,11 +86,9 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
               // if someone else has updated this record before you hit save
               if (data.status && data.status === 409) {
                 // Get latest record data and update form
-                OutpatientVisit.get({
-                  q: '_id: ' + scope.record._id
-                }, function (newData) {
+                OutpatientVisit.get({_id: scope.record._id}, function (newData) {
                   scope.conflictError = 'Record has been updated by another user. Updated record is loaded.';
-                  scope.record = newData.results[0];
+                  scope.record = newData;
                   scope.visit = scope.record._source;
                 });
               }

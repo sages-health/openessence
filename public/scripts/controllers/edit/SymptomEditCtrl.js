@@ -102,23 +102,22 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
           };
 
           var showError = function (data) {
-            if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
+            if (data.status && data.status === 409) {
+              // Get latest record data and update form
+              Symptom.get({_id: $scope.record._id}, function (newData) {
+                $scope.conflictError = true;
+                $scope.record = newData;
+                $scope.symptom = newData._source;
+              });
+            } else if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
               $scope.errorOnRecordSave = data.data.error.name;
             }
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            Symptom.update(angular.extend({_id: $scope.record._id}, $scope.symptom), function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            Symptom.update(angular.extend({_id: $scope.record._id, _version: $scope.record._version}, $scope.symptom), cleanup, showError);
           } else {
-            Symptom.save($scope.symptom, function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            Symptom.save($scope.symptom, cleanup, showError);
           }
         };
 
