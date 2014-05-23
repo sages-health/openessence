@@ -81,6 +81,11 @@ ul[datepicker-popup-wrap] {
 .table {
   // this looks better on all the tables we have so far, but we may need to re-evaluate in the future
   margin-bottom: 0px;
+
+  a {
+    // no idea why bootswatch uses underline, but it looks horrible on the workbench
+    text-decoration: inherit;
+  }
 }
 
 // This is bootstrap's default, but they don't expose it as a variable. We do this in case it ever changes.
