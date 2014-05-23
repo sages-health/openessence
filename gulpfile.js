@@ -343,7 +343,7 @@ gulp.task('clean', function () {
     .pipe(rimraf());
 });
 
-gulp.task('build', ['images', 'fonts', 'html', 'pot', 'translations'/*, 'kibana-build'*/]);
+gulp.task('build', ['images', 'fonts', 'html', 'translations']);
 
 gulp.task('server', ['build'], function (callback) {
   var fork = require('child_process').fork;
