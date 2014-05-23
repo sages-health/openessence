@@ -7,7 +7,6 @@ angular.module(directives.name).directive('outpatientSymptomsFilter', function (
   return {
     restrict: 'E',
     template: require('./symptom.html'),
-    transclude: true,
     scope: {
       filter: '=fracasFilter',
       close: '&onClose'
@@ -15,12 +14,19 @@ angular.module(directives.name).directive('outpatientSymptomsFilter', function (
     link: {
       pre: function (scope) {
         scope.strings = {
-          name: gettextCatalog.getString('Symptoms')
+          name: gettextCatalog.getString('Symptoms'),
+          any: gettextCatalog.getString('Any symptom')
         };
 
         scope.filter.value = scope.filter.value || '*';
 
         scope.$watch('filter.value', function (symptom) {
+          if (!symptom || (Array.isArray(symptom) && symptom.length === 0)) {
+            symptom = '*';
+          } else if (Array.isArray(symptom) && symptom.length > 0) {
+            symptom = '(' + symptom.join(' OR ') + ')';
+          }
+
           symptom = symptom || '*';
           scope.filter.queryString = 'symptoms:' + symptom;
         });
