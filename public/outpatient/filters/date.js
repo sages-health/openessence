@@ -27,6 +27,10 @@ angular.module(directives.name).directive('outpatientDateFilter', function (gett
           scope.filter.from = now; // match elasticsearch terminology
           scope.filter.to = new Date();
         }
+        if (scope.filter.value) {
+          scope.filter.from = scope.filter.value;
+          scope.filter.to = scope.filter.value;
+        }
 
         var toQueryString = function (start, end) {
           var dateFormat = 'yyyy-MM-dd'; // who needs moment.js?

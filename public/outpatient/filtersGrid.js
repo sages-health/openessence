@@ -3,7 +3,8 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientFiltersGrid', function (gettextCatalog, FracasGrid) {
+angular.module(directives.name).directive('outpatientFiltersGrid', function (gettextCatalog, FracasGrid, $rootScope) {
+
   return {
     restrict: 'E',
     template: require('./filtersGrid.html'),
@@ -50,6 +51,21 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
             }
           );
 
+          $rootScope.$on('filterChange', function (event, filter, add, fire) {
+            var apply = function (filter, add) {
+              if (add) {
+                scope.addFilter(filter);
+              } else {
+                scope.removeFilter(filter);
+              }
+            };
+            if (fire) {
+              scope.$apply(apply(filter, add));
+            } else {
+              apply(filter, add);
+            }
+          });
+
           scope.$watchCollection(
             function () {
               return scope.filterGrid.toArray();
@@ -60,9 +76,10 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
               });
             }
           );
-          for(var index in scope.filters){
-            scope.addFilter(scope.filters[index]);
-          }
+
+          angular.forEach(scope.filters, function (value) {
+            scope.addFilter(value);
+          });
         }
       };
     }

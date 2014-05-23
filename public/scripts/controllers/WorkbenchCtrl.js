@@ -26,16 +26,6 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     }
   ];
 
-  $scope.$on('aggClick', function (event, filter, add) {
-    $scope.$apply(function () {
-      if (add) {
-        $scope.addFilter(filter);
-      } else {
-        $scope.removeFilter(filter);
-      }
-    });
-  });
-
   $scope.vizGrid = new FracasGrid(2);
 
   $scope.addVisualization = function () {
