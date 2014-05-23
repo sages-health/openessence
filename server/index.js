@@ -1,8 +1,9 @@
 'use strict';
 
+var url = require('url');
 var helmet = require('helmet');
 var locale = require('locale');
-var url = require('url');
+var useragent = require('useragent');
 var _ = require('lodash');
 
 var conf = require('./conf');
@@ -74,9 +75,17 @@ app.use(helmet.iexss()); // XSS protection for IE
 app.use(helmet.ienoopen()); // force users to save downloads in IE instead of open them, we might want to turn this off
 app.use(helmet.contentTypeOptions()); // X-Content-Type-Options: nosniff
 
+// Content Security Policy headers
 app.use(function (req, res, next) {
+
+  // CSP breaks IE10 (and IE < 10 doesn't support CSP anyway). Not worth the headache.
+  if (useragent.lookup(req.headers['user-agent']).family === 'IE') {
+    next();
+    return;
+  }
+
+  // Kibana uses inline scripts and doesn't have ngCsp enabled
   if (/^\/kibana(\/|$)/.test(req.path)) {
-    // Kibana uses inline scripts and doesn't have ngCsp enabled
     next();
     return;
   }
