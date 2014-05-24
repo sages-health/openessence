@@ -62,6 +62,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
           date: gettextCatalog.getString('Date'),
+          district: gettextCatalog.getString('District'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),

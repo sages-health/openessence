@@ -6,7 +6,9 @@
         <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate | date}}</a>
       </td>
       <td data-title="strings.district" sortable="'medicalFacility.district.raw'">
-        {{visit._source.medicalFacility.district}}
+        <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">
+          {{visit._source.medicalFacility.district}}
+        </a>
       </td>
 
       <td data-title="strings.symptoms">

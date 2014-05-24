@@ -8,6 +8,11 @@
             <td data-title="strings.date" sortable="'reportDate'">
               <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate | date}}</a>
             </td>
+            <td data-title="strings.district">
+              <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">
+                {{visit._source.medicalFacility.district}}
+              </a>
+            </td>
             <td data-title="strings.sex" sortable="'patient.sex'">
               <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
             </td>

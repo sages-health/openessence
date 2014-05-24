@@ -17,6 +17,10 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
       name: gettextCatalog.getString('Date')
     },
     {
+      type: 'districts',
+      name: gettextCatalog.getString('District')
+    },
+    {
       type: 'sex',
       name: gettextCatalog.getString('Sex')
     },
