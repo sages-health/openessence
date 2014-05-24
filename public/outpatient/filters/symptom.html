@@ -2,17 +2,7 @@
   <form class="form" role="form">
     <div class="form-group">
       <select class="form-control" multiple ui-select2 ng-model="filter.value" placeholder="{{strings.any}}">
-        <option value="abdominal pain" translate>Abdominal pain</option>
-        <option value="cold" translate>Cold</option>
-        <option value="cough" translate>Cough</option>
-        <option value="dehydration" translate>Dehydration</option>
-        <option value="diarrhea" translate>Diarrhea</option>
-        <option value="fever" translate>Fever</option>
-        <option value="headache" translate>Headache</option>
-        <option value="rash" translate>Rash</option>
-        <option value="shock" translate>Shock</option>
-        <option value="sore throat" translate>Sore throat</option>
-        <option value="vomit" translate>Vomit</option>
+        <option ng-repeat="symptom in symptoms" value="{{symptom}}">{{symptom}}</option>
       </select>
     </div>
   </form>
