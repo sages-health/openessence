@@ -53,7 +53,20 @@ exports.anonymous = function () {
   } else if (env === 'test') {
     app.use('/test', express.static(__dirname + '/../test'));
   } else if (env === 'production') {
-    // TODO set Cache-Control: max-age=31556926 if resource has hash
+    var cacheOptions = {
+      // 1 year is the max allowed according to the relevant RFC.
+      // Express takes it in milliseconds while HTTP takes it in seconds
+      maxage: 31556926000,
+
+      // ETags are still useful for when the cache does expire
+      etag: true
+    };
+
+    // this means all assets in /styles or /scripts need to be hashed, otherwise they'll be cached too long
+    app.use('/public/styles', express.static(__dirname + '/../dist/public/styles', cacheOptions));
+    app.use('/public/scripts', express.static(__dirname + '/../dist/public/scripts', cacheOptions));
+
+    // don't set Cache-Control on anything else
     app.use('/public', express.static(__dirname + '/../dist/public'));
   } else {
     throw new Error('Unknown environment ' + env);

@@ -18,7 +18,7 @@ angular.module(directives.name).directive('outpatientAgeFilter', function (gette
           name: gettextCatalog.getString('Age')
         };
 
-        scope.filter.value = '';
+        scope.filter.value = scope.filter.value || '';
 
         scope.$watch('filter.value', function (age) {
           age = age || '*';

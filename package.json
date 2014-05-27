@@ -6,7 +6,7 @@
   "dependencies": {
     "connect-flash": "~0.1.1",
     "ejs": "~0.8.5",
-    "express": "~4.0.0",
+    "express": "~4.3.0",
     "lodash": "~2.4.1",
     "passport": "~0.1.18",
     "passport-local": "~0.1.6",
@@ -36,7 +36,8 @@
     "morgan": "~1.0.0",
     "connect-timeout": "~1.0.0",
     "scrypt": "~3.0.1",
-    "connect-redis": "~2.0.0"
+    "connect-redis": "~2.0.0",
+    "useragent": "~2.0.8"
   },
   "devDependencies": {
     "browserify": "~3.29.0",

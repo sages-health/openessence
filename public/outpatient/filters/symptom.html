@@ -1,8 +1,7 @@
 <fracas-filter filter-name="{{strings.name}}" on-close="close()">
   <form class="form" role="form">
     <div class="form-group">
-      <select class="form-control" ng-model="filter.value">
-        <option value="*" selected></option>
+      <select class="form-control" multiple ui-select2 ng-model="filter.value" placeholder="{{strings.any}}">
         <option value="abdominal pain" translate>Abdominal pain</option>
         <option value="cold" translate>Cold</option>
         <option value="cough" translate>Cough</option>
