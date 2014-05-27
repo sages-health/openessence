@@ -25,11 +25,11 @@ if (fs.existsSync(envFile)) {
 // Set computed properties after we're done loading properties.
 var ssl = settings.ssl.enabled;
 var httpPort = process.env.HTTP_PORT || (!settings.ssl.enabled && process.env.PORT) || 9000;
-var httpsPort = process.env.HTTPS_PORT || settings.ssl.enabled ? (process.env.PORT || 9001) : null;
+var httpsPort = process.env.HTTPS_PORT || (settings.ssl.enabled ? (process.env.PORT || 9001) : null);
 
 settings = _.assign({
   httpPort: httpPort,
-  url: process.env.URL || ssl ? 'https://localhost:' + httpsPort : 'http://localhost:' + httpPort
+  url: process.env.URL || (ssl ? 'https://localhost:' + httpsPort : 'http://localhost:' + httpPort)
 }, settings);
 
 settings.ssl = _.assign({
