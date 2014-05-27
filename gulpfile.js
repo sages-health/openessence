@@ -12,6 +12,8 @@ var buffer = require('gulp-buffer');
 var browserify = require('browserify');
 var karma = require('karma');
 var path = require('path');
+var fs = require('fs');
+var async = require('async');
 
 var _ = require('lodash');
 var source = require('vinyl-source-stream');
@@ -259,7 +261,6 @@ gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs'], function () {
 // with references to revved versions.
 gulp.task('inject', ['styles', 'scripts'], function () {
   var inject = require('gulp-inject');
-  var fs = require('fs');
   var glob = require('glob');
 
   var getLatestFile = function (path) {
@@ -394,6 +395,25 @@ gulp.task('migrations', function (done) {
   var importData = require('./server/codex/import');
   var strategy = require('./server/codex/import/db');
   importData(strategy, done);
+});
+
+gulp.task('cert', function (done) {
+  var pem = require('pem');
+  pem.createCertificate({days: 1000, selfSigned: true}, function (err, keys) {
+    if (err) {
+      done(err);
+      return;
+    }
+
+    async.parallel([
+      function (callback) {
+        fs.writeFile(__dirname + '/key.pem', keys.serviceKey, callback);
+      },
+      function (callback) {
+        fs.writeFile(__dirname + '/cert.pem', keys.certificate, callback);
+      }
+    ], done);
+  });
 });
 
 gulp.task('heroku', ['build']);

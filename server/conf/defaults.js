@@ -4,6 +4,7 @@
 
 var _ = require('lodash');
 var crypto = require('crypto');
+var fs = require('fs');
 var bunyan = require('bunyan');
 var PrettyStream = require('bunyan-prettystream');
 
@@ -50,8 +51,6 @@ var createLogger = function (name) {
   });
 };
 
-var logger = createLogger('fracas');
-
 function ElasticSearchLogger () {
   var logger = createLogger('elasticsearch');
 
@@ -71,15 +70,19 @@ function ElasticSearchLogger () {
   this.close = function () {};
 }
 
-var port = process.env.PORT || 9000;
+var certPath = process.env.SSL_CERT || __dirname + '/../../cert.pem';
+var keyPath = process.env.SSL_KEY || __dirname + '/../../key.pem';
 
 module.exports = {
   env: env,
-  logger: logger,
-  port: port,
+  logger: createLogger('fracas'),
 
-  // the URL clients will hit
-  url: process.env.URL || 'http://localhost:' + port,
+  ssl: {
+    enabled: fs.existsSync(certPath) && fs.existsSync(keyPath),
+    certPath: certPath,
+    keyPath: keyPath
+    // more properties are defined in ./index.js
+  },
 
   phantom: {
     enabled: process.env.PHANTOM !== 'false',

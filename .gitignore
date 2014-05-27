@@ -28,3 +28,10 @@ dist/
 # Backup and lock files
 *~
 \#*\#
+
+# Keys and certs
+*.key
+*.cer
+*.crt
+*.der
+*.pem

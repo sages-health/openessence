@@ -37,7 +37,8 @@
     "connect-timeout": "~1.0.0",
     "scrypt": "~3.0.1",
     "connect-redis": "~2.0.0",
-    "useragent": "~2.0.8"
+    "useragent": "~2.0.8",
+    "pem": "~1.4.1"
   },
   "devDependencies": {
     "browserify": "~3.29.0",

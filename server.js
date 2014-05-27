@@ -1,5 +1,9 @@
 'use strict';
 
+var http = require('http');
+var https = require('https');
+var express = require('express');
+
 var app = require('./server/index');
 var conf = require('./server/conf');
 var logger = conf.logger;
@@ -26,23 +30,52 @@ var startPhantom = function () {
 if (!module.parent) {
   logger.info('Running in %s mode', conf.env);
 
-  var port = conf.port;
-
   if (conf.phantom.enabled) {
     startPhantom();
   } else {
     logger.info('Skipping PhantomJS');
   }
 
-  app.listen(port, function () {
-    logger.info('Fracas listening on port %s', port);
+  var serverStarted = function () {
+    // This message isn't just to be friendly. We really only support running Fracas at one URL, since it makes
+    // a lot of things, e.g. redirects, a lot easier. This log statement helps nudge the admin into using the preferred
+    // URL.
+    logger.info('Please use %s for all your disease surveillance needs', conf.url);
 
     // if we have a parent, tell them we started
     if (process.send) {
       process.send({
         started: true,
-        url: 'http://localhost:' + port
+        url: conf.url
       });
     }
-  });
+  };
+
+  if (conf.ssl.enabled) {
+    logger.info('SSL enabled. Starting HTTPS and HTTP server');
+
+    https.createServer({key: conf.ssl.key, cert: conf.ssl.cert}, app)
+      .listen(conf.ssl.port, function () {
+        logger.info('Fracas listening for HTTPS connections on port %d', conf.ssl.port);
+        serverStarted();
+      });
+
+    // create HTTP server that redirects to HTTPS
+    var redirect = express();
+    redirect.use(function (req, res) {
+      // TODO self-signed certs are a nightmare, so don't redirect if req.param('redirect') === false
+      // TODO consider security implications of previous TODO
+      res.redirect(conf.url);
+    });
+    http.createServer(redirect).listen(conf.httpPort, function () {
+      logger.info('Fracas listening for HTTP connections on port %d', conf.httpPort);
+    });
+  } else {
+    logger.info('SSL disabled. Starting HTTP server only');
+
+    http.createServer(app).listen(conf.httpPort, function () {
+      logger.info('Fracas listening for HTTP connections on port %d', conf.httpPort);
+      serverStarted();
+    });
+  }
 }
