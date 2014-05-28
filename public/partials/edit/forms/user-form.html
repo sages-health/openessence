@@ -8,6 +8,7 @@
 
       <!-- TODO red text on white background instead of alert -->
       <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+      <conflict-message ng-show="conflictError"></conflict-message>
 
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.username) || errorOnRecordSave.length > 0}">
         <label for="entry-user-username" translate>Username</label>

@@ -146,7 +146,8 @@ Model.prototype.search = function (params, callback) {
   }
   params = _.assign({
     index: this.index.name,
-    type: this.type
+    type: this.type,
+    version: true
   }, params);
   this.client.search(params, callback);
 };

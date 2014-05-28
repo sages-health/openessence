@@ -3,9 +3,7 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, $modal, orderByFilter,
-                                                                           gettextCatalog, FrableParams, Diagnosis,
-                                                                           sortString) {
+angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog, FrableParams, Diagnosis, sortString) {
   $scope.filters = [
     {type: 'name'}
   ];
@@ -38,7 +36,7 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
     page: 1,
     count: 10,
     sorting: {
-      'name.raw' : 'asc'
+      'name.raw': 'asc'
     }
   }, {
     total: 0,
@@ -103,23 +101,25 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
           };
 
           var showError = function (data) {
-            if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
+            if (data.status === 409) {
+              // Get latest record data and update form
+              Diagnosis.get({_id: $scope.record._id}, function (newData) {
+                $scope.conflictError = true;
+                $scope.record = newData;
+                $scope.diagnosis = newData._source;
+              });
+            } else if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
               $scope.errorOnRecordSave = data.data.error.name;
             }
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            Diagnosis.update(angular.extend({_id: $scope.record._id}, $scope.diagnosis), function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            Diagnosis.update(angular.extend({
+              _id: $scope.record._id,
+              _version: $scope.record._version
+            }, $scope.diagnosis), cleanup, showError);
           } else {
-            Diagnosis.save($scope.diagnosis, function () {
-              cleanup();
-            }, function (data) {
-              showError(data);
-            });
+            Diagnosis.save($scope.diagnosis, cleanup, showError);
           }
         };
 

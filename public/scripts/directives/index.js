@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-  editView: require('./editView')
+  editView: require('./editView'),
+  conflictMessage: require('./conflictMessage')
 };
