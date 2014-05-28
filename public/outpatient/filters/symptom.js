@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientSymptomsFilter', function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientSymptomsFilter', function (gettextCatalog, Symptom) {
   return {
     restrict: 'E',
     template: require('./symptom.html'),
@@ -13,6 +13,16 @@ angular.module(directives.name).directive('outpatientSymptomsFilter', function (
     },
     link: {
       pre: function (scope) {
+        var searchParams = {
+          size: 100, // TODO search on demand if response indicates there are more records
+          sort: 'name'
+        };
+        Symptom.get(searchParams, function (response) {
+          scope.symptoms = response.results.map(function (r) {
+            return r._source.name;
+          });
+        });
+
         scope.strings = {
           name: gettextCatalog.getString('Symptoms'),
           any: gettextCatalog.getString('Any symptom')
@@ -28,6 +38,8 @@ angular.module(directives.name).directive('outpatientSymptomsFilter', function (
           }
 
           symptom = symptom || '*';
+          // TODO: If symptom is fever, it will match all records having fever as substring
+          // This query should do exact match
           scope.filter.queryString = 'symptoms:' + symptom;
         });
       }

@@ -86,6 +86,10 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
       name: gettextCatalog.getString('Date')
     },
     {
+      type: 'districts',
+      name: gettextCatalog.getString('District')
+    },
+    {
       type: 'sex',
       name: gettextCatalog.getString('Sex')
     },

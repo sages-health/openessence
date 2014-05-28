@@ -3,7 +3,8 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams, OutpatientVisit, sortString) {
+angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams,
+                                                                       OutpatientVisit, sortString, $rootScope) {
   return {
     restrict: 'E',
     template: require('./table.html'),
@@ -95,6 +96,20 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
               scope.tableParams.reload();
             });
           }
+
+          scope.tableFilter = function (field, value) {
+            //TODO multiselect if value.length > ?
+            if (value) {
+              var a = [].concat(value);
+              a.forEach(function (v) {
+                var filter = {
+                  type: field,
+                  value: v
+                };
+                $rootScope.$emit('filterChange', filter, true, false);
+              });
+            }
+          };
         }
       };
     }
