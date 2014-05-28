@@ -102,7 +102,7 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
           };
 
           var showError = function (data) {
-            if (data.status && data.status === 409) {
+            if (data.status === 409) {
               // Get latest record data and update form
               District.get({_id: $scope.record._id}, function (newData) {
                 $scope.conflictError = true;
@@ -115,7 +115,10 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            District.update(angular.extend({_id: $scope.record._id, _version: $scope.record._version}, $scope.district), cleanup, showError);
+            District.update(angular.extend({
+              _id: $scope.record._id,
+              _version: $scope.record._version
+            }, $scope.district), cleanup, showError);
           } else {
             District.save($scope.district, cleanup, showError);
           }

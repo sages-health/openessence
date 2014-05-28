@@ -105,7 +105,7 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
           };
 
           var showError = function (data) {
-            if (data.status && data.status === 409) {
+            if (data.status === 409) {
               // Get latest record data and update form
               User.get({_id: $scope.record._id}, function (newData) {
                 $scope.conflictError = true;
@@ -118,12 +118,13 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
           };
 
           var data = angular.copy($scope.user);
-          if (data.passwordConfirm) {
-            delete data.passwordConfirm;
-          }
+          delete data.passwordConfirm;
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            User.update(angular.extend({_id: $scope.record._id, _version: $scope.record._version}, data), cleanup, showError);
+            User.update(angular.extend({
+              _id: $scope.record._id,
+              _version: $scope.record._version
+            }, data), cleanup, showError);
           } else {
             User.save(data, cleanup, showError);
           }

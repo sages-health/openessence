@@ -101,7 +101,7 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
           };
 
           var showError = function (data) {
-            if (data.status && data.status === 409) {
+            if (data.status === 409) {
               // Get latest record data and update form
               Diagnosis.get({_id: $scope.record._id}, function (newData) {
                 $scope.conflictError = true;
@@ -114,7 +114,10 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            Diagnosis.update(angular.extend({_id: $scope.record._id, _version: $scope.record._version}, $scope.diagnosis), cleanup, showError);
+            Diagnosis.update(angular.extend({
+              _id: $scope.record._id,
+              _version: $scope.record._version
+            }, $scope.diagnosis), cleanup, showError);
           } else {
             Diagnosis.save($scope.diagnosis, cleanup, showError);
           }
