@@ -13,6 +13,11 @@ angular.module(directives.name).directive('outpatientSymptomsFilter', function (
     },
     link: {
       pre: function (scope) {
+        scope.strings = {
+          name: gettextCatalog.getString('Symptoms'),
+          any: gettextCatalog.getString('Any symptom')
+        };
+        scope.filter.value = scope.filter.value || '*';
         var searchParams = {
           size: 100, // TODO search on demand if response indicates there are more records
           sort: 'name'
@@ -21,26 +26,27 @@ angular.module(directives.name).directive('outpatientSymptomsFilter', function (
           scope.symptoms = response.results.map(function (r) {
             return r._source.name;
           });
-        });
-
-        scope.strings = {
-          name: gettextCatalog.getString('Symptoms'),
-          any: gettextCatalog.getString('Any symptom')
-        };
-
-        scope.filter.value = scope.filter.value || '*';
-
-        scope.$watch('filter.value', function (symptom) {
-          if (!symptom || (Array.isArray(symptom) && symptom.length === 0)) {
-            symptom = '*';
-          } else if (Array.isArray(symptom) && symptom.length > 0) {
-            symptom = '(' + symptom.join(' OR ') + ')';
+          if (scope.filter.value !== '*') {
+            var index = scope.symptoms.indexOf(scope.filter.value);
+            if (index < 0) {
+              scope.symptoms.push(scope.filter.value);
+            }
           }
-
-          symptom = symptom || '*';
-          // TODO: If symptom is fever, it will match all records having fever as substring
-          // This query should do exact match
-          scope.filter.queryString = 'symptoms:' + symptom;
+          scope.$watch('filter.value', function (symptom) {
+            if (Array.isArray(symptom)) {
+              if (symptom.length > 1) {
+                symptom = '("' + symptom.join('" OR "') + '")';
+              } else if (symptom.length === 1 && symptom[0] !== '*') {
+                symptom = symptom[0] ? ('"' + symptom[0] + '"') : '*';
+              } else {
+                // empty array
+                symptom = '*';
+              }
+            } else if (symptom !== '*') {
+              symptom = symptom ? ('"' + symptom + '"') : '*';
+            }
+            scope.filter.queryString = 'symptoms:' + symptom;
+          });
         });
       }
     }

@@ -13,6 +13,12 @@ angular.module(directives.name).directive('outpatientDistrictsFilter', function 
     },
     link: {
       pre: function (scope) {
+        scope.strings = {
+          name: gettextCatalog.getString('Districts'),
+          any: gettextCatalog.getString('Any district')
+        };
+        scope.filter.value = scope.filter.value || '*';
+
         var searchParams = {
           size: 100, // TODO search on demand if response indicates there are more records
           sort: 'name'
@@ -21,24 +27,28 @@ angular.module(directives.name).directive('outpatientDistrictsFilter', function 
           scope.districts = response.results.map(function (r) {
             return r._source.name;
           });
-        });
-
-        scope.strings = {
-          name: gettextCatalog.getString('Districts'),
-          any: gettextCatalog.getString('Any district')
-        };
-
-        scope.filter.value = scope.filter.value || '*';
-
-        scope.$watch('filter.value', function (district) {
-          if (!district || (Array.isArray(district) && district.length === 0)) {
-            district = '*';
-          } else if (Array.isArray(district) && district.length > 0) {
-            district = '(' + district.join(' OR ') + ')';
+          if (scope.filter.value !== '*') {
+            var index = scope.districts.indexOf(scope.filter.value);
+            if (index < 0) {
+              scope.districts.push(scope.filter.value);
+            }
           }
 
-          district = district || '*';
-          scope.filter.queryString = 'medicalFacility.district:' + district;
+          scope.$watch('filter.value', function (district) {
+            if (Array.isArray(district)) {
+              if (district.length > 1) {
+                district = '("' + district.join('" OR "') + '")';
+              } else if (district.length === 1 && district[0] !== '*') {
+                district = district[0] ? ('"' + district[0] + '"') : '*';
+              } else {
+                // empty array
+                district = '*';
+              }
+            } else if (district !== '*') {
+              district = district ? ('"' + district + '"') : '*';
+            }
+            scope.filter.queryString = 'medicalFacility.district:' + district;
+          });
         });
       }
     }
