@@ -7,5 +7,6 @@ module.exports = {
   resource: require('./resource'),
   table: require('./table'),
   timeSeries: require('./timeSeries'),
-  visualization: require('./visualization')
+  visualization: require('./visualization'),
+  workbenchVisualization: require('./workbenchVisualization')
 };

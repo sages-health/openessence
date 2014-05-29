@@ -30,6 +30,21 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     }
   ];
 
+  $scope.pivotOptions = [
+    {
+      value: 'sex',
+      label: gettextCatalog.getString('Sex')
+    },
+    {
+      value: 'age',
+      label: gettextCatalog.getString('Age')
+    },
+    {
+      value: 'symptoms',
+      label: gettextCatalog.getString('Symptoms')
+    }
+  ];
+
   $scope.vizGrid = new FracasGrid(2);
 
   $scope.addVisualization = function () {
