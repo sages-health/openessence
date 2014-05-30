@@ -8,6 +8,7 @@ require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-ui-select2');
 require('angular-gettext');
+require('angular-loading-bar');
 
 // explicitly require d3 and friends due to weird browserify issues,
 // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
@@ -30,7 +31,7 @@ require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    'nvd3ChartDirectives', frable.name]
+                    'nvd3ChartDirectives', 'angular-loading-bar', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -47,10 +48,17 @@ app.config(function ($httpProvider, csrfToken) {
   });
 });
 
+app.config(function (cfpLoadingBarProvider) {
+  // what's the point of having a spinner when we already have a loading bar?
+  cfpLoadingBarProvider.includeSpinner = false;
+});
+
 var previousState = {};
 var stateChanged = false; // there's probably a better way to track initial state change, but this works
-app.run(function ($rootScope, $state, user) {
+app.run(function ($rootScope, $state, $http, cfpLoadingBar, user) {
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    cfpLoadingBar.start();
+
     if (!stateChanged) {
       // We only "redirect" on initial page load. Once you're in the app, there are better ways of dealing with this
       stateChanged = true;
@@ -72,6 +80,17 @@ app.run(function ($rootScope, $state, user) {
       };
     }
   });
+
+  var incLoadingBar = function () {
+    if ($http.pendingRequests.length > 0) {
+      cfpLoadingBar.inc();
+    } else {
+      cfpLoadingBar.complete();
+    }
+  };
+
+  $rootScope.$on('$stateChangeSuccess', incLoadingBar);
+  $rootScope.$on('$stateChangeError', incLoadingBar);
 });
 
 angular.module(modules.services.name).factory('previousState', function () {

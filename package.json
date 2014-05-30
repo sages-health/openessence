@@ -38,7 +38,8 @@
     "scrypt": "~3.0.1",
     "connect-redis": "~2.0.0",
     "useragent": "~2.0.8",
-    "pem": "~1.4.1"
+    "pem": "~1.4.1",
+    "angular-loading-bar": "~0.4.2"
   },
   "devDependencies": {
     "browserify": "~3.29.0",
@@ -113,7 +114,8 @@
   },
   "browser-libs": [
     "jquery",
-    "humane-js"
+    "humane-js",
+    "angular-loading-bar"
   ],
   "browserify-shim": {
     "angular": {
