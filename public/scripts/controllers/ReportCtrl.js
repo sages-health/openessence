@@ -30,7 +30,7 @@ modalCtrl.$inject = ['$scope', '$modalInstance', '$state', '$log', 'Report', 'ur
 
 angular.module(controllers.name).controller('ReportCtrl', function ($scope, $modal, $stateParams, $window) {
   $modal.open({
-    templateUrl: '/public/partials/save-report-dialog.html',
+    template: require('../../partials/save-report-dialog.html'),
     controller: modalCtrl,
     scope: $scope,
     resolve: {
