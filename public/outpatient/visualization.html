@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="animation-switch" ng-switch-when="crosstab">
-      <crosstab records="tabularData" options="pivot"></crosstab>
+      <crosstab records="crosstabData" options="pivot"></crosstab>
     </div>
     <div class="animation-switch" ng-switch-when="line">
       <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"

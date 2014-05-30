@@ -28,6 +28,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           //{ key: 'Series', values:[{ key: 'One',   value: Math.floor(Math.random()*20) }]} -- bar
         ];
 
+        scope.crosstabData = [];
+
         scope.xFunction = function () {
           return function (d) {
             return d.key;
@@ -215,6 +217,21 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             aggReload();
           } else if (scope.visualization.name === 'bar') {
             aggReload();
+          } else if (scope.visualization.name === 'crosstab') {
+            // TODO do this via aggregation
+            OutpatientVisit.get({
+              size: 999999,
+              q: scope.queryString
+            }, function (data) {
+              scope.crosstabData = data.results.map(function (r) {
+                var source = r._source;
+                return {
+                  sex: source.patient ? source.patient.sex : null,
+                  age: source.patient ? source.patient.age : null,
+                  symptoms: source.symptoms
+                };
+              });
+            });
           }
         };
 
