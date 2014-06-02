@@ -66,9 +66,13 @@ gulp.task('styles', function () {
 });
 
 gulp.task('fonts', function () {
-  return gulp.src(fontExtensions.map(function (ext) {
-      return 'public/fonts/**/*' + ext;
-    }))
+  var getFontFiles = function (path) {
+    return fontExtensions.map(function (ext) {
+      return path + ext;
+    });
+  };
+
+  return gulp.src(getFontFiles('public/fonts/**/*').concat(getFontFiles('public/bower_components/fracas-fonts/**/*')))
     .pipe(gulp.dest('dist/public/fonts'));
 });
 
@@ -398,6 +402,7 @@ gulp.task('migrations', function (done) {
 });
 
 gulp.task('cert', function (done) {
+  // TODO this requires openssl to be on your PATH, see https://github.com/andris9/pem/issues/20
   var pem = require('pem');
   pem.createCertificate({days: 1000, selfSigned: true}, function (err, keys) {
     if (err) {

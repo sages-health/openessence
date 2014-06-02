@@ -49,6 +49,8 @@ exports.anonymous = function () {
     // TODO angular-gettext middleware instead
     app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
 
+    app.use('/public/fonts/lato', express.static(__dirname + '/../public/bower_components/fracas-fonts/lato'));
+
     app.use('/public', express.static(__dirname + '/../public'));
   } else if (env === 'test') {
     app.use('/test', express.static(__dirname + '/../test'));
@@ -65,6 +67,9 @@ exports.anonymous = function () {
     // this means all assets in /styles or /scripts need to be hashed, otherwise they'll be cached too long
     app.use('/public/styles', express.static(__dirname + '/../dist/public/styles', cacheOptions));
     app.use('/public/scripts', express.static(__dirname + '/../dist/public/scripts', cacheOptions));
+
+    // Our fonts aren't going to change. And if they do, we can just change the font names.
+    app.use('/public/fonts/lato', express.static(__dirname + '/../dist/public/fonts/lato', cacheOptions));
 
     // don't set Cache-Control on anything else
     app.use('/public', express.static(__dirname + '/../dist/public'));
