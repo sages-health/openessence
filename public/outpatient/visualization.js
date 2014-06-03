@@ -300,14 +300,14 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
 
         scope.$on('elementClick.directive', function (angularEvent, event) {
           var filter;
-          if (event.point.col && !event.point.colName.startsWith('missing')) {
+          if (event.point.col && event.point.colName.indexOf('missing') !== 0) {
             filter = {
               type: event.point.col,
               value: event.point.colName
             };
             $rootScope.$emit('filterChange', filter, true, true);
           }
-          if (event.point.row && !event.point.rowName.startsWith('missing')) {
+          if (event.point.row && event.point.rowName.indexOf('missing') !== 0) {
             filter = {
               type: event.point.row,
               value: event.point.rowName
