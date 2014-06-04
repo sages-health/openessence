@@ -24,6 +24,17 @@ app.use(require('connect-timeout')(30000));
 // gzip responses
 app.use(require('compression')());
 
+// Redirect to HTTPS if we're not terminating TLS in a reverse proxy. It's important that this middleware runs early
+if (https) {
+  app.use(function (req, res, next) {
+    if (req.secure || (conf.proxy.enabled && req.get('X-Forwarded-Proto') === 'https')) {
+      next();
+    } else {
+      res.redirect(307, conf.url + req.originalUrl);
+    }
+  });
+}
+
 // favicon
 app.use((function () {
   var favicon = require('static-favicon');

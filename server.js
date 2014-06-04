@@ -2,7 +2,6 @@
 
 var http = require('http');
 var https = require('https');
-var express = require('express');
 
 var app = require('./server/index');
 var conf = require('./server/conf');
@@ -60,14 +59,8 @@ if (!module.parent) {
         serverStarted();
       });
 
-    // create HTTP server that redirects to HTTPS
-    var redirect = express();
-    redirect.use(function (req, res) {
-      // TODO self-signed certs are a nightmare, so don't redirect if req.param('redirect') === false
-      // TODO consider security implications of previous TODO
-      res.redirect(conf.url);
-    });
-    http.createServer(redirect).listen(conf.httpPort, function () {
+    // app handles redirects
+    http.createServer(app).listen(conf.httpPort, function () {
       logger.info('Fracas listening for HTTP connections on port %d', conf.httpPort);
     });
   } else {
