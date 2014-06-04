@@ -15,6 +15,7 @@ require('angular-loading-bar');
 require('d3');
 require('nvd3');
 require('angular-nvd3');
+require('text-angular');
 
 var frable = require('../frable');
 require('../select2');
@@ -31,7 +32,7 @@ require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    'nvd3ChartDirectives', 'angular-loading-bar', frable.name]
+                    'nvd3ChartDirectives', 'angular-loading-bar', 'textAngular', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -148,6 +149,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('report.save', {
       url: '/save'
+    })
+    .state('visits-report', {
+      url: '/visits-report',
+      template: require('../partials/reports/visits-report.html'),
+      controller: 'VisitsReportCtrl'
     })
     .state('edit', {
       url: '/edit',

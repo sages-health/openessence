@@ -198,3 +198,18 @@ body {
 .viz-toolbar {
   padding: @padding-base-vertical @padding-base-horizontal;
 }
+
+.ta-editor {
+  min-height: 350px;
+  height: auto;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+  margin:20px 0;
+}
+
+@media print {
+  .ta-toolbar {
+    display: none;
+  }
+}

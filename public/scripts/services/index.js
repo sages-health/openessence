@@ -9,5 +9,6 @@ module.exports = {
   Report: require('./Report'),
   sortString: require('./sortString'),
   user: require('./user'),
+  visitsReportModal: require('./reports/visitsReportModal'),
   visualization: require('./visualization')
 };
