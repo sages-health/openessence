@@ -24,7 +24,7 @@
 //  }
 //}
 
-[class^="icon-"]:before, .glyphicon {
+[class^="icon-"]:before, .glyphicon, .fa {
   font-family: @icon-font-name;
   font-style: normal;
   font-weight: normal;
@@ -60,42 +60,73 @@
 }
 
 // This is formatted by Fontello. Try not to reformat it so it's not a pain when we add new icons.
-.icon-search:before { content: '\e809'; } /* '' */
-.icon-chart-bar:before { content: '\e80a'; } /* '' */
+.icon-folder-open:before { content: '\e800'; } /* '' */
+.icon-floppy:before { content: '\e801'; } /* '' */
+.icon-ok:before { content: '\e802'; } /* '' */
 .icon-cancel:before { content: '\e803'; } /* '' */
 .icon-plus:before { content: '\e804'; } /* '' */
 .icon-home:before { content: '\e805'; } /* '' */
-.icon-export:before { content: '\e818'; } /* '' */
-.icon-pencil:before { content: '\e813'; } /* '' */
 .icon-attention:before { content: '\e806'; } /* '' */
-.icon-trash:before { content: '\e817'; } /* '' */
-.icon-folder-open:before { content: '\e800'; } /* '' */
 .icon-cog:before { content: '\e807'; } /* '' */
-.icon-calendar:before { content: '\e80b'; } /* '' */
-.icon-zoom-in:before { content: '\e819'; } /* '' */
-.icon-zoom-out:before { content: '\e81a'; } /* '' */
-.icon-down-dir:before { content: '\e81c'; } /* '' */
-.icon-ok:before { content: '\e802'; } /* '' */
-.icon-left-open:before { content: '\e80d'; } /* '' */
-.icon-right-open:before { content: '\e80c'; } /* '' */
-.icon-table:before { content: '\e80e'; } /* '' */
-.icon-chart-bar-box:before { content: '\e812'; } /* '' */
-.icon-floppy:before { content: '\e801'; } /* '' */
-.icon-rocket:before { content: '\e80f'; } /* '' */
-.icon-gauge:before { content: '\e814'; } /* '' */
 .icon-spinner:before { content: '\e808'; } /* '' */
-.icon-smile:before { content: '\e815'; } /* '' */
-.icon-frown:before { content: '\e816'; } /* '' */
+.icon-search:before { content: '\e809'; } /* '' */
+.icon-chart-bar:before { content: '\e80a'; } /* '' */
+.icon-calendar:before { content: '\e80b'; } /* '' */
+.icon-right-open:before { content: '\e80c'; } /* '' */
+.icon-left-open:before { content: '\e80d'; } /* '' */
+.icon-table:before { content: '\e80e'; } /* '' */
+.icon-rocket:before { content: '\e80f'; } /* '' */
 .icon-chart-pie:before { content: '\e810'; } /* '' */
 .icon-chart-line:before { content: '\e811'; } /* '' */
-.icon-key:before { content: '\e81d'; } /* '' */
+.icon-chart-bar-box:before { content: '\e812'; } /* '' */
+.icon-pencil:before { content: '\e813'; } /* '' */
+.icon-gauge:before { content: '\e814'; } /* '' */
+.icon-smile:before { content: '\e815'; } /* '' */
+.icon-frown:before { content: '\e816'; } /* '' */
+.icon-trash:before { content: '\e817'; } /* '' */
+.icon-export:before { content: '\e818'; } /* '' */
+.icon-zoom-in:before { content: '\e819'; } /* '' */
+.icon-zoom-out:before { content: '\e81a'; } /* '' */
 .icon-right-dir:before { content: '\e81b'; } /* '' */
+.icon-down-dir:before { content: '\e81c'; } /* '' */
+.icon-key:before { content: '\e81d'; } /* '' */
+.icon-quote-left:before { content: '\e81e'; } /* '' */
+.icon-quote-right:before { content: '\e81f'; } /* '' */
+.icon-bold:before { content: '\e820'; } /* '' */
+.icon-italic:before { content: '\e821'; } /* '' */
+.icon-underline:before { content: '\e822'; } /* '' */
+.icon-list-bullet:before { content: '\e823'; } /* '' */
+.icon-list-numbered:before { content: '\e824'; } /* '' */
+.icon-cw:before { content: '\e825'; } /* '' */
+.icon-ccw:before { content: '\e826'; } /* '' */
+.icon-globe:before { content: '\e827'; } /* '' */
+.icon-block:before { content: '\e828'; } /* '' */
+.icon-align-left:before { content: '\e829'; } /* '' */
+.icon-align-center:before { content: '\e82a'; } /* '' */
+.icon-align-right:before { content: '\e82b'; } /* '' */
+.icon-picture:before { content: '\e82c'; } /* '' */
+.icon-link:before { content: '\e82d'; } /* '' */
+.icon-unlink:before { content: '\e82e'; } /* '' */
 
-// glyphicon shims
+// icon shims
 
 // chevron-left and -right are used by angular-ui-bootstrap's datepicker popup
-.glyphicon-chevron-left:before:extend(.icon-left-open:before) {
-}
+.glyphicon-chevron-left:before:extend(.icon-left-open:before) {}
+.glyphicon-chevron-right:before:extend(.icon-right-open:before) {}
 
-.glyphicon-chevron-right:before:extend(.icon-right-open:before) {
-}
+// font-awesome shims, mostly used by textAngular
+.fa-quoute-right:before:extend(.icon-quote-right:before) {}
+.fa-bold:before:extend(.icon-bold:before) {}
+.fa-italic:before:extend(.icon-italic:before) {}
+.fa-underline:before:extend(.icon-underline:before) {}
+.fa-list-ul:before:extend(.icon-list-bullet:before) {}
+.fa-list-ol:before:extend(.icon-list-numbered:before) {}
+.fa-repeat:before:extend(.icon-cw:before) {}
+.fa-undo:before:extend(.icon-ccw:before) {}
+.fa-ban:before:extend(.icon-block:before) {}
+.fa-align-left:before:extend(.icon-align-left:before) {}
+.fa-align-center:before:extend(.icon-align-center:before) {}
+.fa-align-right:before:extend(.icon-align-right:before) {}
+.fa-picture-o:before:extend(.icon-picture:before) {}
+.fa-link:before:extend(.icon-link:before) {}
+.fa-unlink:before:extend(.icon-unlink:before) {}
