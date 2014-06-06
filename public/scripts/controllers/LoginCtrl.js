@@ -18,6 +18,10 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
   $scope.credentials = {};
   $scope.persona = persona;
 
+  $scope.showLocalSignInForm = function () {
+    $scope.signInForm = true;
+  };
+
   $scope.$on('loginError', function (event, response) {
     var error = response.data.error;
     if (!error) {

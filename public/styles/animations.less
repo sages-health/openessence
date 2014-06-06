@@ -1,0 +1,81 @@
+/*!
+ * Keyframe animations from https://github.com/daneden/animate.css. Licensed under the MIT license.
+ */
+
+@-webkit-keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(20px); // TODO lesshat
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+    -ms-transform: translateY(20px);
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes fade-out-down {
+  0% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+    transform: translateY(20px);
+  }
+}
+@keyframes fade-out-down {
+  0% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+    -ms-transform: translateY(20px);
+    transform: translateY(20px);
+  }
+}
+
+.fade-in-up() {
+  -webkit-animation: fade-in-up 0.5s;
+  animation: fade-in-up 0.5s;
+}
+
+.fade-out-down() {
+  -webkit-animation: fade-out-down 0.5s;
+  animation: fade-out-down 0.5s;
+}
+
+.fade-in-up.ng-hide-remove {
+  .fade-in-up();
+}
+
+.fade-out-down.ng-hide-add {
+  .fade-out-down();
+  display: block !important;
+}

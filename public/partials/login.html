@@ -1,49 +1,58 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-md-5 col-md-offset-4">
       <header class="login-header">
-        <h3>Fracas</h3>
+        <span class="h1">Fracas</span>
+        <span class="h2 tagline"><small>&hellip;for disease surveillance</small></span>
       </header>
+
       <div ng-show="persona">
         <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()" translate>
-          Sign in / Sign up with Persona
+          Sign in
         </button>
-        <div class="hr-text-container">
+        <em class="pull-right" translate>No registration required</em>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 col-md-offset-4">
+      <div class="fade-in-up" ng-show="signInForm || !persona">
+        <div class="hr-text-container" ng-show="persona">
           <hr>
           <span class="hr-text text-muted">or</span>
         </div>
+        <p class="text-info" ng-show="persona" translate>
+          Did your administrator give you a local account? Sign in below!
+        </p>
+        <form name="loginForm" role="form" novalidate ng-submit="submit(loginForm)">
+          <!-- username -->
+          <div class="form-group" ng-class="{'has-error': isInvalid(loginForm.username)}">
+            <label for="login-username-email" translate>Username or email</label>
+            <input type="text" class="form-control" id="login-username-email" name="username"
+                   ng-model="credentials.username" required>
+          </div>
+
+          <!-- password -->
+          <div class="form-group" ng-class="{'has-error': isInvalid(loginForm.password) || badCredentials}">
+            <!-- Google's login forms only mark password as invalid so that's what we do. Makes sense since that's
+                 probably what's incorrect most of the time -->
+
+            <!-- TODO implement password reset -->
+            <!--<a class="pull-right" translate>Forgot password?</a>-->
+
+            <label for="login-password" translate>Password</label>
+            <input type="password" class="form-control" id="login-password" name="password"
+                   ng-model="credentials.password" required>
+          </div>
+
+          <div class="help-block error-msg" ng-show="badCredentials" translate>
+            The username or password you entered is incorrect.
+          </div>
+
+          <button type="submit" class="btn btn btn-primary pull-right" translate>Sign in</button>
+          <!-- TODO prompt user for required fields-->
+        </form>
       </div>
-      <form name="loginForm" role="form" novalidate ng-submit="submit(loginForm)">
-        <!-- username -->
-        <div class="form-group" ng-class="{'has-error': isInvalid(loginForm.username)}">
-          <label for="login-username-email" translate>Username or email</label>
-          <input type="text" class="form-control" id="login-username-email" name="username"
-                 ng-model="credentials.username" required>
-        </div>
-
-        <!-- password -->
-        <div class="form-group" ng-class="{'has-error': isInvalid(loginForm.password) || badCredentials}">
-          <!-- Google's login forms only mark password as invalid so that's what we do. Makes sense since that's
-               probably what's incorrect most of the time -->
-
-          <!-- TODO implement password reset -->
-          <!--<a class="pull-right" translate>Forgot password?</a>-->
-
-          <label for="login-password" translate>Password</label>
-          <input type="password" class="form-control" id="login-password" name="password"
-                 ng-model="credentials.password" required>
-        </div>
-
-        <div class="help-block error-msg" ng-show="badCredentials" translate>
-          The username or password you entered is incorrect.
-        </div>
-
-        <button type="submit" class="btn btn btn-primary" translate>Sign in</button>
-        <!-- TODO prompt user for required fields-->
-
-        <!-- tagline -->
-        <span class="h4 pull-right" translate>&hellip;for disease surveillance</span>
-      </form>
     </div>
   </div>
 </div>
@@ -55,6 +64,7 @@
         <li>
           <a class="navbar-link" href="http://en.wikipedia.org/wiki/Girolamo_Fracastoro">Girolamo Fracastoro</a>
         </li>
+        <li ng-show="persona"><a ng-click="showLocalSignInForm()">Local sign in</a></li>
         <!-- TODO more links -->
       </ul>
     </div>
