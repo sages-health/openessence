@@ -103,14 +103,19 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
            * @param svgHeight
            */
           var showTooltip = function (d, arc, svgWidth, svgHeight) {
-            var tooltipHTML = '<div class="colorcircle" style="float: left; margin-top: 6px; background-color: ' + d._color + ';"></div>';
-            tooltipHTML += '<b>' + getName(d.data) + '</b></br>';
+            hideTooltip();
+            var tooltipHTML = '<div class="colorcircle"></div>';
+            tooltipHTML += '<b>' + getName(d.data) + '</b><br>';
             tooltipHTML += d.value;
             element.append('<div class="timeseries_tooltip">' + tooltipHTML + '</div>');
             element.find('.timeseries_tooltip')
               .css({
                 'top': arc.centroid(d)[1] + svgHeight / 2,
                 'left': arc.centroid(d)[0] + svgWidth / 2
+              });
+            element.find('.timeseries_tooltip .colorcircle')
+              .css({
+                'background-color': d._color
               });
           };
 
@@ -129,14 +134,14 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
             var filter;
             if (data.col) {
               filter = {
-                type: data.col,
+                filterId: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                type: data.row,
+                filterId: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);
@@ -334,16 +339,22 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
 
             var svg = getSVG(svgWidth, svgHeight);
 
+            // TODO: Remove this remove statement and debug transitions
+            // It wipes the slate clean to prevent bugs with transitions that I haven't
+            // been able to debug. e.g. incomplete transitions with attrTween
+            svg.selectAll('.arc').remove();
+
             var data = svg.selectAll('.arc')
               .data(pie(scope.aggData), function (d) {
                 return getName(d.data);
-              })
+              });
+
+            data.exit().remove();
+            var g = data.enter().append('g')
+              .attr('class', 'arc')
               .each(function (d) {
                 this._current = d;
               });
-            data.exit().remove();
-            var g = data.enter().append('g')
-              .attr('class', 'arc');
 
             // data
             data.style('fill', function (d, i) {
@@ -362,7 +373,7 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
                 showTooltip(d, arc, svgWidth, svgHeight);
               });
 
-            data.select('path').transition().attr('d', arc).attrTween('d', function (a) {
+            data.select('path').transition().attrTween('d', function (a) {
               var i = d3.interpolate(this._current, a);
               this._current = i(0);
               return function (t) {

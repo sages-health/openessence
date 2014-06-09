@@ -366,8 +366,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           scope.redraw = function () {
             var data = scope.data;
 
+            // Prevents catastrophic errors when dashboard doesn't set scope.data
             if (typeof data === 'undefined') {
-              console.error('Time series redraw was passed an undefined data object.');
               return;
             }
 
@@ -377,7 +377,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               return f.type === 'date-range';
             });
 
-            // TODO:
             var dateFilter = dateFilters[0];
             if (dateFilter) {
               if (angular.isString(dateFilter.from)) {
@@ -670,7 +669,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           };
 
           scope.$watchCollection('[series, queryString, interval]', function () {
-            console.log('TS: ' + scope.height + ' ' + scope.width);
             reload();
           });
 

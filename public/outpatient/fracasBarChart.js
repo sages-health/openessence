@@ -86,14 +86,19 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
            * @param svgHeight
            */
           var showTooltip = function (d, context, coords) {
-            var tooltipHTML = '<div class="colorcircle" style="float: left; margin-top: 6px; background-color: ' + context._color + ';"></div>';
-            tooltipHTML += '<b>' + getName(d) + '</b></br>';
+            hideTooltip();
+            var tooltipHTML = '<div class="colorcircle"></div>';
+            tooltipHTML += '<b>' + getName(d) + '</b><br>';
             tooltipHTML += d.value;
             element.append('<div class="timeseries_tooltip">' + tooltipHTML + '</div>');
             element.find('.timeseries_tooltip')
               .css({
                 'top': coords[1],
                 'left': coords[0]
+              });
+            element.find('.timeseries_tooltip .colorcircle')
+              .css({
+                'background-color': context._color
               });
           };
 
@@ -112,14 +117,14 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
             var filter;
             if (data.col) {
               filter = {
-                type: data.col,
+                filterId: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                type: data.row,
+                filterId: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);
@@ -224,18 +229,45 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
             }
 
             if (svg.selectAll('.y.axis').empty()) {
-              svg.append('g')
+              var yAxisTicks = svg.append('g')
                 .attr('class', 'y axis')
-                .call(yAxis)
-                .append('text')
+                .call(yAxis);
+
+              yAxisTicks.append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('y', 6)
-                .attr('dy', '-5em')// .71em
+                .attr('dy', '-4em')// .71em
                 .attr('dx', '-8em')
                 .style('text-anchor', 'end')
                 .text('Outpatient Visits');
+
+              yAxisTicks.selectAll('.tick')
+                .append('svg:line')
+                .attr('class', 'gridline')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', function (d) {
+                  if (d % 1 === 0) {
+                    return chartWidth;
+                  }
+                  return 0;
+                })
+                .attr('y2', 0);
             } else {
-              svg.selectAll('.y.axis').call(yAxis);
+              var yAxisTicks = svg.selectAll('.y.axis').call(yAxis);
+              yAxisTicks.selectAll('.tick.gridline').remove();
+              yAxisTicks.selectAll('.tick')
+                .append('svg:line')
+                .attr('class', 'gridline')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', function (d) {
+                  if (d % 1 === 0) {
+                    return chartWidth;
+                  }
+                  return 0;
+                })
+                .attr('y2', 0);
             }
 
             var col = svg.selectAll('.g')
@@ -259,8 +291,14 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
               });
             rect.exit().remove();
 
-            rect.transition().attr('width', x1.rangeBand())
-              .attr('x', function (d) { return x1(d.rowName) ; })
+            rect.transition()
+              .attr('width', function () {
+                return Math.min(x1.rangeBand(), 80);
+              })
+              .attr('x', function (d) {
+                var diff = x1.rangeBand() - Math.min(x1.rangeBand(), 80);
+                return x1(d.rowName) + diff / 2;
+              })
               .attr('y', function (d) { return y(d.value); })
               .attr('height', function(d) { return chartHeight - y(d.value); })
               .style('fill', function (d) { return color(d.rowName); })
@@ -269,20 +307,33 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
               });
 
             rect.enter().append('rect')
-              .attr('width', x1.rangeBand())
-              .attr('x', function (d) { return x1(d.rowName) ; })
+              .attr('width', function () {
+                return Math.min(x1.rangeBand(), 80);
+              })
+              .attr('x', function (d) {
+                var diff = x1.rangeBand() - Math.min(x1.rangeBand(), 80);
+                return x1(d.rowName) + diff / 2;
+              })
               .attr('y', function (d) { return y(d.value); })
               .attr('height', function(d) { return chartHeight - y(d.value); })
               .style('fill', function (d) { return color(d.rowName); })
+              .style('opacity', '.8')
               .each(function (d) {
                 this._color = color(d.rowName);
               })
               .on('mousemove', function (d) {
                 var coords = d3.mouse(this.parentElement.parentElement.parentElement); // meh this is hacky
                 showTooltip(d, this, coords);
+                d3.select(this)
+                  .style('opacity', '1');
               })
               .on('mouseout', function () {
                 hideTooltip();
+                d3.select(this)
+                  .style('opacity', 0.8);
+              })
+              .on('click', function (d) {
+                narrowFilters(d);
               });
 
             var legend = svg.selectAll('.legend')
