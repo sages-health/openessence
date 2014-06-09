@@ -11,6 +11,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
     template: require('./time-series.html'),
     scope: {
       options: '=?',
+      height: '=?',
+      width: '=?',
       queryString: '=',
       filters: '=',
       series: '=?' // array of strings denoting series to graph
@@ -19,6 +21,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
       return {
         pre: function (scope, element) {
           scope.options = scope.options || {};
+          scope.width = scope.width || scope.options.width || 500;
+          scope.height = scope.height || scope.options.height || 400;
+
           scope.series = scope.series || scope.options.series || [];
 
           scope.xAxisTickFormat = function (d) {
@@ -361,10 +366,18 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           scope.redraw = function () {
             var data = scope.data;
 
+            if (typeof data === 'undefined') {
+              console.error('Time series redraw was passed an undefined data object.');
+              return;
+            }
+
+            scope.timeseries = scope.timeseries || {};
+
             var dateFilters = scope.filters.filter(function (f) {
               return f.type === 'date-range';
             });
 
+            // TODO:
             var dateFilter = dateFilters[0];
             if (dateFilter) {
               if (angular.isString(dateFilter.from)) {
@@ -423,11 +436,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             }
 
             // Set time series dimensions
-            var height = 300;
-            var width = element.find('.custom-timeseries').parent().width();
+            var height = scope.height || scope.options.height || scope.timeseries.height || 300;
+            var width = scope.width || scope.options.width || scope.timeseries.width || element.find('.custom-timeseries').parent().width();
             var ymargin = 20;
             var xmargin = 40;
 
+            // TODO: User getComputedTextLength instead of inserting things into the DOM willy nilly
             // Get the width of the longest Y label
             element.append('<div class="str_width">' + ymax + '</div>');
             var yLabelWidth = angular.element('.str_width').width();
@@ -457,6 +471,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             g.selectAll('line').remove();
             g.selectAll('text').remove();
 
+            // TODO: D3 does have methods for picking picking good tick values. Use those instead.
             // Can't use default ticks because we don't want decimal numbers
             // Logic to get between ~4 and 10 whole numbered increments that make sense to a human
             var yrange = ymax - ymin;
@@ -491,6 +506,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               .attr('y', -1 * y(ymax) + 5)
               .attr('text-anchor', 'left');
 
+            // TODO: Once again, this ticks can be picked effectively  by D3. No need to do it manually
             // Logic to pick the number of x ticks
             var xTickPadding = 20; // in pixels
             var numTicks = Math.floor(width / ((2 * xLabelHalf) + xTickPadding));
@@ -624,15 +640,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             timeseries.select('g.chart')
               .attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) + ')') //5 so labels aren't cut off
               .attr('width', width)
-              .attr('height', height);
+              .attr('height', height - legendHeight);
 
             topLayer.attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) + ')') //5 so labels aren't cut off
               .attr('width', width)
-              .attr('height', height);
+              .attr('height', height - legendHeight);
 
             topLayer.select('rect.mouse-detector')
               .attr('width', width - xmargin)
-              .attr('height', height - 2 * ymargin)
+              .attr('height', height - 2 * ymargin - legendHeight)
               .attr('x', xmargin)
               .attr('y', -(height - ymargin));
 
@@ -654,7 +670,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           };
 
           scope.$watchCollection('[series, queryString, interval]', function () {
+            console.log('TS: ' + scope.height + ' ' + scope.width);
             reload();
+          });
+
+          // No need to reload data
+          scope.$watchCollection('[height, width]', function () {
+            scope.redraw();
           });
         }
       };

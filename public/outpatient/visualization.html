@@ -34,45 +34,60 @@
       </table>
     </div>
   </div>
-  <div class="animation-switch" ng-switch-when="crosstab">
-    <crosstab records="crosstabData" options="pivot"></crosstab>
+    <div class="animation-switch" ng-switch-when="crosstab">
+      <crosstab records="crosstabData" options="pivot"></crosstab>
+    </div>
+    <div class="animation-switch" ng-switch-when="line">
+      <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
+                              options="options"></outpatient-time-series>
+    </div>
+    <div class="animation-switch" ng-switch-when="pie">
+      <!--<nvd3-pie-chart-->
+          <!--data="aggData"-->
+          <!--x="xFunction()"-->
+          <!--y="yFunction()"-->
+          <!--width="500"-->
+          <!--height="400"-->
+          <!--showLegend="false"-->
+          <!--showLabels="true"-->
+          <!--interactive="true"-->
+          <!--tooltips="true">-->
+        <!--<svg></svg>-->
+      <!--</nvd3-pie-chart>-->
+      <outpatient-pie-chart
+          filters="filters"
+          query-string="queryString"
+          options="options"
+          pivot="pivot"
+          agg-data="aggData">
+      </outpatient-pie-chart>
+    </div>
+    <div class="animation-switch" ng-switch-when="bar">
+      <!--<nvd3-multi-bar-horizontal-chart-->
+          <!--data="aggData"-->
+          <!--width="500"-->
+          <!--height="400"-->
+          <!--x="xFunction()"-->
+          <!--y="yFunction()"-->
+          <!--margin="{left:150}"-->
+          <!--showXAxis="true"-->
+          <!--showYAxis="true"-->
+          <!--staggerLabels="true"-->
+          <!--showValues="true"-->
+          <!--showLegend="true"-->
+          <!--showLabels="true"-->
+          <!--interactive="true"-->
+          <!--tooltips="true">-->
+        <!--<svg></svg>-->
+      <!--</nvd3-multi-bar-horizontal-chart>-->
+      <outpatient-bar-chart
+          filters="filters"
+          query-string="queryString"
+          options="options"
+          pivot="pivot"
+          agg-data="aggData">
+      </outpatient-bar-chart>
+    </div>
+    <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
   </div>
-  <div class="animation-switch" ng-switch-when="line">
-    <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
-                            options="options"></outpatient-time-series>
-  </div>
-  <div class="animation-switch" ng-switch-when="pie">
-    <nvd3-pie-chart
-        data="aggData"
-        x="xFunction()"
-        y="yFunction()"
-        width="500"
-        height="400"
-        showLegend="false"
-        showLabels="true"
-        interactive="true"
-        tooltips="true">
-      <svg></svg>
-    </nvd3-pie-chart>
-  </div>
-  <div class="animation-switch" ng-switch-when="bar">
-    <nvd3-multi-bar-horizontal-chart
-        data="aggData"
-        width="500"
-        height="400"
-        x="xFunction()"
-        y="yFunction()"
-        margin="{left:150}"
-        showXAxis="true"
-        showYAxis="true"
-        staggerLabels="true"
-        showValues="true"
-        showLegend="true"
-        showLabels="true"
-        interactive="true"
-        tooltips="true">
-      <svg></svg>
-    </nvd3-multi-bar-horizontal-chart>
-  </div>
-  <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
 </div>
