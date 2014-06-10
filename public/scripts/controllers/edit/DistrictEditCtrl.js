@@ -4,23 +4,40 @@ var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
 angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
-                                                                          FrableParams, District, sortString) {
+                                                                          FrableParams, District, sortString, $rootScope) {
   $scope.filters = [
-    {type: 'name'}
+    {filterId: 'name'}
   ];
-  $scope.filterTypes = [ // TODO let outpatient/filters define this
+  $scope.filterTypes = [
     {
-      type: 'name',
+      filterId: 'name',
+      type: 'text',
+      field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      type: 'phoneid',
+      filterId: 'phoneId',
+      type: 'text',
+      field: 'phoneId',
       name: gettextCatalog.getString('Phone ID')
     }
   ];
   $scope.$watchCollection('queryString', function () {
     $scope.tableParams.reload();
   });
+  $scope.tableFilter = function (field, value) {
+    //TODO multiselect if value.length > ?
+    if (value || value === false) {
+      var a = [].concat(value);
+      a.forEach(function (v) {
+        var filter = {
+          filterId: field,
+          value: v
+        };
+        $rootScope.$emit('filterChange', filter, true, false);
+      });
+    }
+  };
 
   $scope.errorOnRecordSave = {};
 

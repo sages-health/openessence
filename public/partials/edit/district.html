@@ -6,8 +6,12 @@
   <div class="table-responsive">
     <table class="table table-striped table-hover" frable="tableParams">
       <tr ng-repeat="record in $data">
-        <td data-title="strings.name" sortable="'name.raw'">{{record._source.name}}</td>
-        <td data-title="strings.phoneId" sortable="'phoneId'">{{record._source.phoneId}}</td>
+        <td data-title="strings.name" sortable="'name.raw'">
+          <a ng-click="tableFilter('name', record._source.name)">{{record._source.name}}</a>
+        </td>
+        <td data-title="strings.phoneId" sortable="'phoneId'">
+          <a ng-click="tableFilter('phoneId', record._source.phoneId)">{{record._source.phoneId}}</a>
+        </td>
         <td data-title="strings.edit">
           <div class="btn-group btn-group-xs pull-right">
             <button type="button" class="btn btn-default" ng-click="editRecord(record)">

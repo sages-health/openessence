@@ -21,12 +21,28 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
           scope.filters = scope.filters ? scope.filters : [];
           scope.filterGrid = new FracasGrid(4);
 
+          var applyConfig = function (filter) {
+            for (var i = 0; i < scope.filterTypes.length; i++) {
+              if (scope.filterTypes[i].filterId === filter.filterId) {
+                // Make a copy of filter config and apply new filter values
+                return angular.extend(angular.copy(scope.filterTypes[i]), filter);
+              }
+            }
+            return null;
+          };
+
           scope.addFilter = function (filter) {
-            scope.filterGrid.add(filter);
+            var filterConfig = applyConfig(filter);
+            if (filterConfig) {
+              scope.filterGrid.add(filterConfig);
+            }
           };
 
           scope.removeFilter = function (filter) {
-            scope.filterGrid.remove(filter);
+            var filterConfig = applyConfig(filter);
+            if (filterConfig) {
+              scope.filterGrid.remove(filterConfig);
+            }
           };
 
           scope.$watchCollection(
@@ -52,18 +68,21 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
           );
 
           $rootScope.$on('filterChange', function (event, filter, add, fire) {
-            var apply = function (filter, add) {
-              if (add) {
-                scope.addFilter(filter);
+
+
+              var apply = function (filter, add) {
+                if (add) {
+                  scope.addFilter(filter);
+                } else {
+                  scope.removeFilter(filter);
+                }
+              };
+              if (fire) {
+                scope.$apply(apply(filter, add));
               } else {
-                scope.removeFilter(filter);
+                apply(filter, add);
               }
-            };
-            if (fire) {
-              scope.$apply(apply(filter, add));
-            } else {
-              apply(filter, add);
-            }
+
           });
 
           scope.$watchCollection(

@@ -3,10 +3,10 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientNameFilter', function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientTextFilter', function (gettextCatalog) {
   return {
     restrict: 'E',
-    template: require('./name.html'),
+    template: require('./text.html'),
     transclude: true,
     scope: {
       filter: '=fracasFilter',
@@ -15,14 +15,13 @@ angular.module(directives.name).directive('outpatientNameFilter', function (gett
     link: {
       pre: function (scope) {
         scope.strings = {
-          name: gettextCatalog.getString('Name')
+          any: gettextCatalog.getString('Any')
         };
-
-        scope.filter.value = '';
+        scope.filter.value = scope.filter.value || '';
 
         scope.$watch('filter.value', function (name) {
           name = name || '*';
-          scope.filter.queryString = 'name:' + name;
+          scope.filter.queryString = scope.filter.field + ':' + name;
         });
       }
     }

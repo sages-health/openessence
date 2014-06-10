@@ -288,14 +288,14 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           var filter;
           if (event.point.col && event.point.colName.indexOf('missing') !== 0) {
             filter = {
-              type: event.point.col,
+              filterId: event.point.col,
               value: event.point.colName
             };
             $rootScope.$emit('filterChange', filter, true, true);
           }
           if (event.point.row && event.point.rowName.indexOf('missing') !== 0) {
             filter = {
-              type: event.point.row,
+              filterId: event.point.row,
               value: event.point.rowName
             };
             $rootScope.$emit('filterChange', filter, true, true);
@@ -304,11 +304,11 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
 
         scope.tableFilter = function (field, value) {
           //TODO multiselect if value.length > ?
-          if (value) {
+          if (value || value === false) {
             var a = [].concat(value);
             a.forEach(function (v) {
               var filter = {
-                type: field,
+                filterId: field,
                 value: v
               };
               $rootScope.$emit('filterChange', filter, true, false);

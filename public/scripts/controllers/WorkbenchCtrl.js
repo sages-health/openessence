@@ -3,29 +3,49 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, gettextCatalog, FracasGrid) {
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, gettextCatalog, FracasGrid, District, Symptom) {
   $scope.filters = [
-    {type: 'date'}
+    {
+      filterId: 'date'
+    }
   ];
   $scope.filterTypes = [
     {
-      type: 'age',
+      filterId: 'age',
+      type: 'numeric-range',
+      field: 'patient.age',
       name: gettextCatalog.getString('Age')
     },
     {
-      type: 'date',
+      filterId: 'date',
+      type: 'date-range',
+      field: 'reportDate',
       name: gettextCatalog.getString('Date')
     },
     {
-      type: 'districts',
+      filterId: 'districts',
+      type: 'multi-select',
+      field: 'medicalFacility.district',
+      store: {
+        resource: District,
+        field: 'name'
+      },
       name: gettextCatalog.getString('District')
     },
     {
+      filterId: 'sex',
       type: 'sex',
+      field: 'patient.sex',
       name: gettextCatalog.getString('Sex')
     },
     {
-      type: 'symptoms',
+      filterId: 'symptoms',
+      type: 'multi-select',
+      field: 'symptoms',
+      store: {
+        resource: Symptom,
+        field: 'name'
+      },
       name: gettextCatalog.getString('Symptom')
     }
   ];

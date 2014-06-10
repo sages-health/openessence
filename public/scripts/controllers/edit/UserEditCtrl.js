@@ -7,7 +7,52 @@ var pluckName = function (r) {
   return r._source.name;
 };
 
-angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog, FrableParams, User, sortString, District) {
+angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog, FrableParams, User, sortString, District, $rootScope) {
+  $scope.filters = [
+    {filterId: 'username'}
+  ];
+  $scope.filterTypes = [
+    {
+      filterId: 'username',
+      type: 'text',
+      field: 'username',
+      name: gettextCatalog.getString('User Name')
+    },
+    {
+      filterId: 'name',
+      type: 'text',
+      field: 'name',
+      name: gettextCatalog.getString('Name')
+    },
+    {
+      filterId: 'email',
+      type: 'text',
+      field: 'email',
+      name: gettextCatalog.getString('Email')
+    },
+    {
+      filterId: 'disabled',
+      type: 'check-box',
+      field: 'disabled',
+      name: gettextCatalog.getString('Disabled')
+    }
+  ];
+  $scope.$watchCollection('queryString', function () {
+    $scope.tableParams.reload();
+  });
+  $scope.tableFilter = function (field, value) {
+    //TODO multiselect if value.length > ?
+    if (value || value === false) {
+      var a = [].concat(value);
+      a.forEach(function (v) {
+        var filter = {
+          filterId: field,
+          value: v
+        };
+        $rootScope.$emit('filterChange', filter, true, false);
+      });
+    }
+  };
   $scope.errorOnRecordSave = {};
 
   // strings that we can't translate in the view, usually because they're in attributes
@@ -39,8 +84,16 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
       $data: {}
     },
     getData: function ($defer, params) {
+      if (!angular.isDefined($scope.queryString)) {
+        // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
+        // If you really don't want a filter, set queryString='' or null
+        // TODO there's probably a more Angular-y way to do this
+        $defer.resolve([]);
+        return;
+      }
+
       User.get({
-//          q: scope.queryString,
+        q: $scope.queryString,
         from: (params.page() - 1) * params.count(),
         size: params.count(),
         sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting

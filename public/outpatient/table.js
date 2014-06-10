@@ -99,11 +99,11 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
 
           scope.tableFilter = function (field, value) {
             //TODO multiselect if value.length > ?
-            if (value) {
+            if (value || value === false) {
               var a = [].concat(value);
               a.forEach(function (v) {
                 var filter = {
-                  type: field,
+                  filterId: field,
                   value: v
                 };
                 $rootScope.$emit('filterChange', filter, true, false);

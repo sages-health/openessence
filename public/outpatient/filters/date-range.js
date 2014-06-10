@@ -3,10 +3,10 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientDateFilter', function (gettextCatalog, dateFilter) {
+angular.module(directives.name).directive('outpatientDateRangeFilter', function (gettextCatalog, dateFilter) {
   return {
     restrict: 'E',
-    template: require('./date.html'),
+    template: require('./date-range.html'),
     transclude: true,
     scope: {
       filter: '=fracasFilter',
@@ -15,7 +15,6 @@ angular.module(directives.name).directive('outpatientDateFilter', function (gett
     link: {
       pre: function (scope) {
         scope.strings = {
-          name: gettextCatalog.getString('Date'),
           start: gettextCatalog.getString('Start'),
           end: gettextCatalog.getString('End')
         };
@@ -36,7 +35,7 @@ angular.module(directives.name).directive('outpatientDateFilter', function (gett
           var dateFormat = 'yyyy-MM-dd'; // who needs moment.js?
           start = dateFilter(start, dateFormat) || '*';
           end = dateFilter(end, dateFormat) || '*';
-          return 'reportDate: [' + start + ' TO ' + end + ']';
+          return scope.filter.field + ': [' + start + ' TO ' + end + ']';
         };
 
         scope.$watchCollection('[filter.from, filter.to]', function (range) {

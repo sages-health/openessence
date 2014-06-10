@@ -3,10 +3,10 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientAgeFilter', function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientNumericRangeFilter', function () {
   return {
     restrict: 'E',
-    template: require('./age.html'),
+    template: require('./numeric-range.html'),
     transclude: true,
     scope: {
       filter: '=fracasFilter',
@@ -14,15 +14,12 @@ angular.module(directives.name).directive('outpatientAgeFilter', function (gette
     },
     link: {
       pre: function (scope) {
-        scope.strings = {
-          name: gettextCatalog.getString('Age')
-        };
 
         scope.filter.value = scope.filter.value || '';
 
-        scope.$watch('filter.value', function (age) {
-          age = age || '*';
-          scope.filter.queryString = 'patient.age:' + age;
+        scope.$watch('filter.value', function (value) {
+          value = value || '*';
+          scope.filter.queryString = scope.filter.field + ': ' + value;
         });
       }
     }
