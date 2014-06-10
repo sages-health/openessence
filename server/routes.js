@@ -77,7 +77,8 @@ exports.server = function () {
 
   app.delete('/session', logout);
 
-  // extra end points for symmetry with POST
+  // Extra end points for symmetry with POST. Note that it doesn't actually matter which end point you use since they
+  // both use the same session store and the session ID is sent via cookie.
   app.delete('/session/browserid', logout);
   app.delete('/session/local', logout);
 
