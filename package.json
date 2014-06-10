@@ -58,6 +58,7 @@
     "gulp-htmlmin": "~0.1.2",
     "gulp-imagemin": "~0.1.5",
     "gulp-inject": "~0.4.1",
+    "gulp-istanbul": "^0.2.0",
     "gulp-jshint": "~1.5.0",
     "gulp-less": "~1.2.1",
     "gulp-livereload": "~1.0.1",

@@ -7,6 +7,7 @@ var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var rev = require('gulp-rev');
 var mocha = require('gulp-mocha');
+var istanbul = require('gulp-istanbul');
 var gettext = require('gulp-angular-gettext');
 var buffer = require('gulp-buffer');
 var browserify = require('browserify');
@@ -393,7 +394,19 @@ gulp.task('client-tests', function (cb) {
   });
 });
 
-gulp.task('tests', ['server-tests']);
+gulp.task('tests', ['server-tests'], function (cb) {
+  gulp.src(['server/**/*.js'])
+    .pipe(istanbul())
+    .on('finish', function () {
+      gulp.src([paths.serverTests])
+        .pipe(mochaTransform())
+        .pipe(istanbul.writeReports({
+          reporters: ['lcov', 'html', 'text'],
+          reportOpts: {dir: './.tmp/coverage'}
+        }))
+        .on('end', cb);
+    });
+});
 
 gulp.task('migrations', function (done) {
   var importData = require('./server/codex/import');
