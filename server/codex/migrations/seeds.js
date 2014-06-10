@@ -18,7 +18,7 @@ function bulkInsert (Model, data, callback) {
     refresh: false,
     body: data.reduce(function (prev, current) { // add operation before every piece of data
       // push to save memory over concat
-      prev.push({index: {_index: model.index.name, _type: model.type}});
+      prev.push({index: {}}); //  don't include _index and _type (they're already on model anyway),
       prev.push(current);
       return prev;
     }, [])
@@ -49,6 +49,10 @@ async.parallel([
       {name: 'Cough', phoneId: 'c'},
       {name: 'Fever', phoneId: 'f'}
     ], callback);
+  },
+
+  function visualizations (callback) {
+    bulkInsert(require('../models/visualization'), require('./visualizations.json'), callback);
   }
 ], function (err) {
   logger.info('Done seeding data');

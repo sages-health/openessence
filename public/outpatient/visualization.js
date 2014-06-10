@@ -11,7 +11,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
     scope: {
       filters: '=',
       queryString: '=', // TODO use filters instead
-      close: '&onClose',
+      visualization: '=?',
+      pivot: '=?',
       options: '=?' // settings as single object, useful for loading persisted state
     },
     link: {
@@ -19,8 +20,13 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
       pre: function (scope) {
         scope.options = scope.options || {};
 
-        scope.visualization = scope.options.visualization || {
+        scope.visualization = scope.visualization || scope.options.visualization || {
           name: 'table'
+        };
+
+        scope.pivot = scope.pivot || scope.options.pivot || {
+          rows: [],
+          cols: []
         };
 
         scope.aggData = [
@@ -40,26 +46,6 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             return d.value;
           };
         };
-
-        scope.pivot = scope.options.pivot || {
-          rows: [],
-          cols: []
-        };
-
-        scope.pivotOptions = [
-          {
-            value: 'sex',
-            label: gettextCatalog.getString('Sex')
-          },
-          {
-            value: 'age',
-            label: gettextCatalog.getString('Age')
-          },
-          {
-            value: 'symptoms',
-            label: gettextCatalog.getString('Symptoms')
-          }
-        ];
 
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {

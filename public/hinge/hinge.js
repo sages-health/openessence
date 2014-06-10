@@ -15,13 +15,24 @@ angular.module(directives.name).directive('hinge', function (gettextCatalog) {
     transclude: true,
     template: require('./hinge.html'),
     scope: {
-      visualization: '=', // what visualization we're working with
-      pivot: '=', // what rows/columns we're currently pivoting on
+      visualization: '=?', // what visualization we're working with
+      pivot: '=?', // what rows/columns we're currently pivoting on
       options: '=', // available options to pivot on
       close: '&onClose'
     },
     link: {
       pre: function (scope) {
+        scope.visualization = scope.visualization || {
+          name: 'table'
+        };
+
+        scope.pivot = scope.options.pivot || {
+          rows: [],
+          cols: []
+        };
+
+        scope.options = scope.options || [];
+
         // TODO think of visualization-independent name, e.g. 'Grouping', but better, or change placeholder depending
         // on the selected visualization
         scope.pivotRowsPlaceholder = gettextCatalog.getString('Pivot rows');

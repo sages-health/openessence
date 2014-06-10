@@ -1,0 +1,53 @@
+<div class="container">
+
+  <div class="panel panel-primary">
+    <div class="panel-heading"><h3>{{report.name}}</h3></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="panel panel-default">
+            <div class="panel-heading" translate>Daily Time Series</div>
+            <outpatient-visualization visualization="viz.visualization" query-string="viz.queryString"
+                                      filters="viz.filters" pivot="viz.pivot" options="viz">
+            </outpatient-visualization>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel">
+            <div text-angular ta-toolbar="[['h2','h3','p','bold','italics','underline','ul']]"
+                 ta-text-editor-class="form-content" ta-html-editor-class="form-content" ta-focussed-class="focussed"
+                 name="someText" ng-model="someText"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading" translate>Bar Chart - Sex</div>
+            <outpatient-visualization visualization="viz1.visualization" query-string="viz1.queryString"
+                                      filters="viz1.filters" pivot="viz1.pivot" options="viz1">
+            </outpatient-visualization>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading" translate>Pie Chart - Symptoms</div>
+            <outpatient-visualization visualization="viz2.visualization" query-string="viz2.queryString"
+                                      filters="viz2.filters" pivot="viz2.pivot" options="viz2">
+            </outpatient-visualization>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="clearfix">
+        <div class="pull-left">{{today}}</div>
+        <div class="pull-right">{{user.username}}</div>
+      </div>
+    </div>
+  </div>
+
+</div>

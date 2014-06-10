@@ -325,6 +325,17 @@ var indexRequests = [
         }
       }
     }, callback);
+  },
+
+  function visualization (callback) {
+    client.indices.create({
+      index: 'visualization',
+      body: {
+        mappings: {
+          visualization: {}
+        }
+      }
+    }, callback);
   }
 ];
 
