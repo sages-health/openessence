@@ -53,13 +53,15 @@ angular.module(services.name).factory('user', function ($resource, $rootScope, $
       },
 
       onlogout: function () {
-        // user logged out with Persona, need to destroy session
-        PersonaSession.delete(afterLogout, function error () {
-          // "Note that Persona may automatically call either onlogin or onlogout when your page loads, but
-          // not both." Firefox likes to automatically call onlogout, even though it will return
-          // 401 Unauthorized. Not really much else you can do on a logout error anyway
-          $log.info('Error logging out');
-        });
+        if (user.authType === 'persona') {
+          // user logged out with Persona, need to destroy session
+          PersonaSession.delete(afterLogout, function error () {
+            // "Note that Persona may automatically call either onlogin or onlogout when your page loads, but
+            // not both." Firefox likes to automatically call onlogout, even though it will return
+            // 401 Unauthorized. Not really much else you can do on a logout error anyway
+            $log.info('Error logging out');
+          });
+        }
       }
     });
   }
