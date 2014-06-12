@@ -52,12 +52,16 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
 
   $scope.pivotOptions = [
     {
-      value: 'sex',
-      label: gettextCatalog.getString('Sex')
-    },
-    {
       value: 'age',
       label: gettextCatalog.getString('Age')
+    },
+    {
+      value: 'districts',
+      label: gettextCatalog.getString('District')
+    },
+    {
+      value: 'sex',
+      label: gettextCatalog.getString('Sex')
     },
     {
       value: 'symptoms',

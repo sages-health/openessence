@@ -4,6 +4,7 @@ module.exports = {
   filter: require('./filter'),
   filtersGrid: require('./filtersGrid'),
   form: require('./form'),
+  leafletMap: require('./leaflet-map'),
   resource: require('./resource'),
   table: require('./table'),
   timeSeries: require('./timeSeries'),

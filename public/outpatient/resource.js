@@ -20,6 +20,20 @@ angular.module(services.name).factory('OutpatientVisit', function ($resource) {
     });
 });
 
+angular.module(services.name).factory('Geometry', function ($resource) {
+  return $resource('/resources/geometry/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      search: {
+        method: 'POST', // really should be GET with body, but you can't do that in HTTP
+        url: '/resources/geometry/search',
+        headers: { 'Accept': 'application/json' }
+      }
+    });
+});
+
 angular.module(services.name).factory('District', function ($resource) {
   return $resource('/resources/district/:_id',
     {
