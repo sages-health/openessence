@@ -10,6 +10,7 @@ angular.module(directives.name).directive('editView', function () {
     transclude: true,
     scope: {
       title: '=',
+      hideButton: '=',
       buttonText: '=',
       createRecord: '&onCreate'
     }

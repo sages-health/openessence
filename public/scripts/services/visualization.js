@@ -3,20 +3,10 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-angular.module(services.name).factory('visualization', function ($resource, $modal, scopeToJson) {
-  var Visualization = $resource('/resources/visualization/:_id',
-    {
-      _id: '@_id'
-    },
-    {
-      update: {
-        method: 'PUT'
-      }
-    });
-
+angular.module(services.name).factory('visualization', function ($resource, $modal, scopeToJson, VisualizationResource) {
   return {
-    // TODO move this to services/resources
-    resource: Visualization,
+    // TODO make clients use this directly
+    resource: VisualizationResource,
 
     state: scopeToJson, // useful abstraction in case we need to introduce custom logic into saving visualizations
 
@@ -41,7 +31,7 @@ angular.module(services.name).factory('visualization', function ($resource, $mod
       })
         .result
         .then(function (name) {
-          new Visualization({
+          new VisualizationResource({
             name: name,
             state: state
           })

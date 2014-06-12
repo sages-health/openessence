@@ -7,6 +7,7 @@ var services = require('../modules').services;
   'Dashboard',
   'District',
   'User',
+  'Visualization',
   'Workbench'
 ].forEach(function (resourceName) {
     var resourceUrl = '/resources/' + resourceName.toLowerCase();

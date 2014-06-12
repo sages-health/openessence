@@ -216,6 +216,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/edit/dashboard.html'),
       controller: 'DashboardEditCtrl'
     })
+    .state('edit.visualization', {
+      url: '/visualization',
+      template: require('../partials/edit/visualization.html'),
+      controller: 'VisualizationEditCtrl'
+    })
     .state('edit.workbench', {
       url: '/workbench',
       template: require('../partials/edit/workbench.html'),

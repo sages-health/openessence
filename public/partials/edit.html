@@ -4,7 +4,8 @@
       <div class="panel panel-default">
         <div class="panel-heading clearfix">
           <h4 class="panel-title pull-left" ng-bind="title"></h4>
-          <button type="button" class="btn btn-primary pull-right" ng-click="createRecord()" ng-bind="buttonText">
+          <!-- TODO get rid of ng-hide. If clients don't want the button they can supply their own template -->
+          <button ng-hide="hideButton" type="button" class="btn btn-primary pull-right" ng-click="createRecord()" ng-bind="buttonText">
           </button>
         </div>
 

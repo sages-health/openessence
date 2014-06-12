@@ -8,6 +8,7 @@ require('./edit/SymptomEditCtrl')  ;
 require('./edit/SyndromeEditCtrl');
 require('./edit/UserEditCtrl');
 require('./edit/VisitTypeEditCtrl');
+require('./edit/VisualizationEditCtrl')
 require('./edit/WorkbenchEditCtrl');
 
 require('./reports/VisitsReportCtrl');
