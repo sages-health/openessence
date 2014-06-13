@@ -13,7 +13,7 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
     },
     symptoms: {
       terms: {
-        field: 'symptoms',
+        field: 'symptoms.raw',
         order: { '_term': 'asc' }
       }
     },

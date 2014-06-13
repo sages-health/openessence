@@ -108,12 +108,24 @@ var indexRequests = [
               // Array of well-known symptoms that the patient presented with. Might be populated by parsing
               // chiefComplaint, or might be used instead of chiefComplaint. Used for syndromic surveillance.
               symptoms: {
-                type: 'string'
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
 
               // Array of well-known diagnoses. Usually used with symptoms.
               diagnoses: {
-                type: 'string'
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
 
               // Array of diseases that warrant reporting. Typically used instead of symptoms.
