@@ -1,6 +1,7 @@
 'use strict';
 
 var util = require('util');
+var Boom = require('boom');
 var logger = require('./conf').logger;
 
 function UnregisteredUserError (message) {
@@ -13,7 +14,7 @@ function UnregisteredUserError (message) {
 }
 util.inherits(UnregisteredUserError, Error);
 
-function BadCredentialsError (message) {
+function BadCredentialsError (message) { // TODO delete
   message = message || 'Bad credentials';
   Error.call(this, message);
   this.message = message;
@@ -37,16 +38,23 @@ function errorMiddleware (err, req, res, next) {
     user: req.user
   });
 
-  res.status(err.status || 500)
+  if (!err.isBoom) {
+    err = Boom.wrap(err);
+  }
+
+  res.status(err.output.statusCode)
     .format({
       // prefer JSON
       json: function () {
-        res.send({
-          error: {
-            name: err.name || 'ServerError',
-            message: err.message || 'Server error'
-          }
-        });
+        res.send(err.data); // output.payload is non-RESTful junk
+
+        // TODO test client
+//        res.send({
+//          error: {
+//            name: err.name || 'ServerError',
+//            message: err.message || 'Server error'
+//          }
+//        });
       },
       html: function () {
         res.render('error.html', {
