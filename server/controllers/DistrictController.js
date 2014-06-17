@@ -33,7 +33,7 @@ module.exports = codex.controller(District, {
         return callback(err);
       }
 
-      if (results.length > 0) {
+      if (results.length > 0 && results[0]._.id !== esRequest.id) {
         return callback(Boom.create(400, 'There\'s already a district with the name ' + esRequest.body.name, {
           error: 'UniqueConstraintViolation',
           field: 'name',
