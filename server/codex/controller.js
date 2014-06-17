@@ -270,9 +270,12 @@ function Controller (Model, options) {
         esRequest.sort = req.param('sort');
       }
 
-      if (req.param('q') !== void 0) {
-        // have to use body instead of q because we might have aggregations
-        esRequest.body.query = {
+      if (req.param('q')) {
+        // We don't check for the empty string here since most of the time you don't want to search for the empty
+        // string, especially since elasticsearch's inverted index doesn't store nulls or the empty string
+        // (you're supposed to use a missing filter instead)
+
+        esRequest.body.query = { // have to use body instead of q because we might have aggregations
           'query_string': {
             query: req.param('q')
           }
