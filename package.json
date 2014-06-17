@@ -115,7 +115,8 @@
     "nvd3": "./public/bower_components/nvd3/nv.d3.js",
     "text-angular": "./public/bower_components/textAngular/src/textAngular.js",
     "text-angular-sanitize": "./public/bower_components/textAngular/src/textAngular-sanitize.js",
-    "text-angular-setup": "./public/bower_components/textAngular/src/textAngularSetup.js"
+    "text-angular-setup": "./public/bower_components/textAngular/src/textAngularSetup.js",
+    "jquery-ui": "./public/bower_components/fracas-jquery-ui/jquery-ui.js"
   },
   "browser-libs": [
     "jquery",
@@ -157,7 +158,8 @@
     "angular-ui-select2": {
       "depends": [
         "angular:angular",
-        "jquery:jQuery"
+        "jquery:jQuery",
+        "jquery-ui"
       ]
     },
     "angular-gettext": {
@@ -186,6 +188,11 @@
         "angular:angular",
         "text-angular-setup",
         "text-angular-sanitize"
+      ]
+    },
+    "jquery-ui": {
+      "depends": [
+        "jquery:jQuery"
       ]
     }
   },

@@ -13,6 +13,7 @@
     "angular-ui-select2": "~0.0.5",
     "angularjs-nvd3-directives": "~0.0.7",
     "fracas-fonts": "gabegorelick/fracas-fonts#0.0.2",
+    "fracas-jquery-ui": "gabegorelick/fracas-jquery-ui#0.0.2",
     "fracas-theme": "gabegorelick/fracas-theme#0.0.1",
     "textAngular": "~1.2.1"
   },

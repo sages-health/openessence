@@ -10,6 +10,7 @@
 /*jshint quotmark:false, unused:vars */
 
 var $ = require('jquery');
+require('jquery-ui');
 
 if (typeof $.fn.each2 === 'undefined') {
   $.extend($.fn, {

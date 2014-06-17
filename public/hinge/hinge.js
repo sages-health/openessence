@@ -7,7 +7,6 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 require('../select2');
-require('../jquery-ui');
 
 angular.module(directives.name).directive('hinge', function (gettextCatalog) {
   return {
