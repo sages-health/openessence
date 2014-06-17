@@ -6,7 +6,7 @@
 var elasticsearch = require('elasticsearch');
 var Promise = require('bluebird');
 var _ = require('lodash');
-var conf = require('../../conf/index');
+var conf = require('../conf');
 var logger = conf.logger;
 
 // don't use shared connection
@@ -184,39 +184,17 @@ var indexRequests = [
                 }
               },
 
-              audit: {
+              paperTrail: { // array of audit events
                 properties: {
-                  // TODO delete and just have modifications[0] be creationDate
-                  // when the record was added to the system
-                  creation: {
-                    properties: {
-                      // Date record was created
-                      date: {
-                        type: 'date'
-                      },
-
-                      // User that created this record
-                      user: {
-                        type: 'string' // no need to store whole user object here
-                      }
-                    }
+                  // When this version of the document was created.
+                  // The naming comes from PaperTrail: https://github.com/airblade/paper_trail
+                  createdAt: {
+                    type: 'date'
                   },
 
-                  // Array of modifications to this record
-                  modifications: {
-                    properties: {
-                      // date of modification
-                      date: {
-                        type: 'date'
-                      },
-
-                      // user ID that did the modifying
-                      user: {
-                        type: 'string' // no need to store whole user object here
-                      }
-
-                      // could also store _source to track changes, but that's a lot of extra storage
-                    }
+                  // User that created this version of the document
+                  user: {
+                    type: 'string'
                   }
                 }
               }

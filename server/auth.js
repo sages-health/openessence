@@ -7,7 +7,7 @@ var PersonaStrategy = require('passport-persona').Strategy;
 
 var conf = require('./conf');
 var logger = conf.logger;
-var User = require('./codex/models/user');
+var User = require('./models/User');
 var errors = require('./error');
 
 passport.serializeUser(function (user, done) {
@@ -16,8 +16,7 @@ passport.serializeUser(function (user, done) {
   done(null, user);
 });
 passport.deserializeUser(function (user, done) {
-  // no need to deserialize, we store entire user in memory
-  done(null, user);
+  done(null, new User(user));
 });
 
 passport.use(new PersonaStrategy({
@@ -46,7 +45,7 @@ passport.use(new PersonaStrategy({
 
   // This means that to switch between Persona and local, your local username must be your email.
   // We may need to reevaluate that in the future.
-  new User().findByUsername(email, function (err, user) {
+  User.findByUsername(email, function (err, user) {
     if (err) {
       callback(err);
       return;

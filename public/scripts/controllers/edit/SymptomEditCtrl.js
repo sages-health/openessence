@@ -22,7 +22,7 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
     $scope.tableParams.reload();
   });
 
-  $scope.errorOnRecordSave = '';
+  $scope.errorOnRecordSave = {};
 
   // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {
@@ -101,16 +101,16 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
             $modalInstance.close();
           };
 
-          var showError = function (data) {
-            if (data.status === 409) {
+          var showError = function (response) {
+            if (response.status === 409) {
               // Get latest record data and update form
               Symptom.get({_id: $scope.record._id}, function (newData) {
                 $scope.conflictError = true;
                 $scope.record = newData;
                 $scope.symptom = newData._source;
               });
-            } else if (data.data && data.data.error && data.data.error.name === 'UniqueConstraintViolationError') {
-              $scope.errorOnRecordSave = data.data.error.name;
+            } else if (response.data.error === 'UniqueConstraintViolation') {
+              $scope.errorOnRecordSave = response.data;
             }
           };
 

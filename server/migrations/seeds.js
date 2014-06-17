@@ -6,7 +6,7 @@
 var async = require('async');
 var elasticsearch = require('elasticsearch');
 var _ = require('lodash');
-var conf = require('../../conf/index');
+var conf = require('../conf');
 var logger = conf.logger;
 
 // don't use shared connection
@@ -27,32 +27,32 @@ function bulkInsert (Model, data, callback) {
 
 async.parallel([
   function diagnoses (callback) {
-    bulkInsert(require('../models/diagnosis'), [
+    bulkInsert(require('../models/Diagnosis'), [
       {name: 'Malaria', phoneId: 'm'},
       {name: 'Cholera', phoneId: 'c'}
     ], callback);
   },
 
   function districts (callback) {
-    bulkInsert(require('../models/district'), [
+    bulkInsert(require('../models/District'), [
       {name: 'Alphaville', phoneId: 'd1'},
       {name: 'Beta quadrant', phoneId: 'd2'}
     ], callback);
   },
 
   function outpatientVisits (callback) {
-    bulkInsert(require('../models/outpatient-visit'), require('./outpatient-visits.json'), callback);
+    bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
   },
 
   function symptoms (callback) {
-    bulkInsert(require('../models/symptom'), [
+    bulkInsert(require('../models/Symptom'), [
       {name: 'Cough', phoneId: 'c'},
       {name: 'Fever', phoneId: 'f'}
     ], callback);
   },
 
   function visualizations (callback) {
-    bulkInsert(require('../models/visualization'), require('./visualizations.json'), callback);
+    bulkInsert(require('../models/Visualization'), require('./visualizations.json'), callback);
   }
 ], function (err) {
   logger.info('Done seeding data');

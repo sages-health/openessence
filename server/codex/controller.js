@@ -1,230 +1,453 @@
 'use strict';
 
-var _ = require('lodash');
-var errors = require('./errors');
+var async = require('async');
 
-function Controller () {
-  if (!(this instanceof Controller)) {
-    return new Controller();
+function Controller (Model, options) {
+  if (!(this instanceof Controller)) { // enable codex.controller(...) in addition to  new codex.controller(...)
+    return new Controller(Model, options);
   }
+
+  options = options || {};
+
+  this.Model = Model;
+
+  var defaultSearch = function (req, res, next) {
+    var preSearch = this.preSearch.map(function (f) {
+      // preSearch expects 2 args but only returns 1, so partially apply to make it work w/ waterfall
+      return function (esRequest, cb) {
+        f(req, esRequest, cb);
+      };
+    });
+
+    var controller = this;
+    async.waterfall(preSearch, function (err, esRequest) {
+      if (err) {
+        return next(err);
+      }
+
+      controller.Model.search(esRequest, function (err, results, esResponse) {
+        if (err) {
+          return next(err);
+        }
+
+        var postSearch0 = function (callback) {
+          callback(null, esResponse);
+        };
+        var postSearchers = controller.postSearch.map(function (f) {
+          return function (esResponse, cb) {
+            f(req, esResponse, cb);
+          };
+        });
+
+        async.waterfall([postSearch0].concat(postSearchers), function (err, esResponse) {
+          if (err) {
+            return next(err);
+          }
+
+          res.json(esResponse);
+        });
+      });
+    });
+  }.bind(this);
+
+  var defaultGet = function (req, res, next) {
+    var preGet = this.preGet.map(function (f) {
+      return function (esRequest, cb) {
+        f(req, esRequest, cb);
+      };
+    });
+
+    var controller = this;
+    async.waterfall(preGet, function (err, esRequest) {
+      if (err) {
+        return next(err);
+      }
+
+      controller.Model.get(esRequest, function (err, instance, esResponse) {
+        if (err) {
+          return next(err);
+        }
+
+        var postGet0 = function (callback) {
+          callback(null, esResponse);
+        };
+        var postGetters = controller.postGet.map(function (f) {
+          return function (esResponse, cb) {
+            f(req, esResponse, cb);
+          };
+        });
+
+        async.waterfall([postGet0].concat(postGetters), function (err, esResponse) {
+          if (err) {
+            return next(err);
+          }
+
+          // esResponse has been filtered by postGet
+          res.json(esResponse);
+        });
+      });
+    });
+  }.bind(this);
+
+  var defaultInsert = function (req, res, next) {
+    var preInsert = this.preInsert.map(function (f) {
+      return function (esRequest, cb) {
+        f(req, esRequest, cb);
+      };
+    });
+
+    var controller = this;
+    async.waterfall(preInsert, function (err, esRequest) {
+      if (err) {
+        return next(err);
+      }
+
+      new controller.Model(esRequest.body).insert(esRequest, function (err, esResponse) {
+        if (err) {
+          return next(err);
+        }
+        var created = esResponse.created;
+
+        var postInsert0 = function (callback) {
+          callback(null, esResponse);
+        };
+        var postInserters = controller.postInsert.map(function (f) {
+          return function (esResponse, cb) {
+            f(req, esResponse, cb);
+          };
+        });
+
+        async.waterfall([postInsert0].concat(postInserters), function (err, esResponse) {
+          if (err) {
+            return next(err);
+          }
+
+          if (created) {
+            res.status(201);
+          } else {
+            res.status(200);
+          }
+
+          // esResponse has been filtered by postInsert
+          res.json(esResponse);
+        });
+      });
+    });
+  }.bind(this);
+
+  var defaultDelete = function (req, res, next) {
+    var preDelete = this.preDelete.map(function (f) {
+      return function (esRequest, cb) {
+        f(req, esRequest, cb);
+      };
+    });
+
+    var controller = this;
+    async.waterfall(preDelete, function (err, esRequest) {
+      if (err) {
+        return next(err);
+      }
+
+      controller.Model.delete(esRequest, function (err, esResponse) {
+        if (err) {
+          return next(err);
+        }
+
+        var found = esResponse.found;
+        var postDelete0 = function (callback) {
+          callback(null, esResponse);
+        };
+        var postDeleters = controller.postDelete.map(function (f) {
+          return function (esResponse, cb) {
+            f(req, esResponse, cb);
+          };
+        });
+
+        async.waterfall([postDelete0].concat(postDeleters), function (err, esResponse) {
+          if (err) {
+            return next(err);
+          }
+
+          if (found) {
+            res.status(200);
+          } else {
+            res.status(404);
+          }
+
+          // esResponse has been filtered by postDelete
+          res.json(esResponse);
+        });
+      });
+    });
+  }.bind(this);
+
+  // for security, all endpoints require manual opt-in
+  if (options.search === true) {
+    // We don't write to prototype because not every instance of Controller has these methods. The codex middleware uses
+    // the presence or absence of these methods to decide what routes to setup.
+    this.search = defaultSearch;
+  }
+
+  if (options.get === true) {
+    this.get = defaultGet;
+  } else {
+    this.get = options.get;
+  }
+
+  // really more of a create, but since it's also used by replace, we call it insert
+  if (options.insert === true) {
+    this.insert = defaultInsert;
+  } else {
+    this.insert = options.insert;
+  }
+
+  if (options.replace === true) {
+    // replace is just insert with an ID
+    this.replace = defaultInsert;
+  } else {
+    this.replace = options.replace;
+  }
+
+  if (options.replaceAll === true) {
+    throw new Error('No default for replaceAll');
+  } else {
+    this.replaceAll = options.replaceAll;
+  }
+
+  if (options.delete === true) {
+    this.delete = defaultDelete;
+  } else {
+    this.delete = options.delete;
+  }
+
+  if (options.deleteAll === true) {
+    throw new Error('No default for deleteAll');
+  } else {
+    this.deleteAll = options.deleteAll;
+  }
+
+  var initHandler = function (name, defaultFunc) {
+    if (Array.isArray(options[name])) {
+      // callers can pass an array to override default handlers
+      this[name] = options[name];
+    } else {
+      this[name] = [defaultFunc];
+      if (options[name]) {
+        this[name].push(options[name]);
+      }
+    }
+  }.bind(this);
+
+  if (this.search) {
+    initHandler('preSearch', function (req, esRequest, callback) {
+      if (!callback) {
+        callback = arguments[1];
+        esRequest = null;
+      }
+
+      if (esRequest) {
+        // esRequest already initialized
+        return callback(null, esRequest);
+      }
+
+      esRequest = {
+        body: {}
+      };
+
+      // Support pagination
+      var from = req.param('from'); // params can be in query string or request body
+      if (from || from === 0) {
+        esRequest.from = parseInt(from, 10);
+      }
+      var size = req.param('size');
+      if (size || size === 0) {
+        esRequest.size = parseInt(size, 10);
+      }
+
+      // Support sorting
+      if (req.param('sort')) { // sort is always a string
+        // TODO test this for potential injection attacks
+        esRequest.sort = req.param('sort');
+      }
+
+      if (req.param('q') !== void 0) {
+        // have to use body instead of q because we might have aggregations
+        esRequest.body.query = {
+          'query_string': {
+            query: req.param('q')
+          }
+        };
+      } else {
+        esRequest.body.query = {
+          'match_all': {}
+        };
+      }
+
+      var body = req.body || {};
+
+      // aggregations have to be in body, plus that's the only way for them to be parsed as JSON
+      var aggs = body.aggregations || body.aggs;
+      if (aggs) {
+        // don't add an undefined property
+        esRequest.body.aggregations = aggs; // TODO whitelist acceptable aggregations
+
+        if (!size) {
+          // With aggregations, you usually don't want search results. The only reason this isn't the default in
+          // elasticsearch is probably because of backwards compatibility.
+          esRequest.size = 0;
+        }
+      }
+
+      callback(null, esRequest);
+    });
+
+    initHandler('postSearch', function (req, esResponse, callback) {
+      var response = {
+        results: esResponse.hits.hits.map(function (hit) {
+          return {
+            // don't include _index or _type, it leaks information and isn't useful to client
+            _id: hit._id,
+            _version: hit._version,
+            _score: hit._score,
+            _source: hit._source
+          };
+        }),
+        total: esResponse.hits.total
+      };
+
+      var body = req.body || {};
+      if (body.aggregations || body.aggs) {
+        response.aggregations = esResponse.aggregations;
+      }
+
+      callback(null, response);
+    });
+  }
+
+  if (this.get) {
+    initHandler('preGet', function (req, esRequest, callback) {
+      if (!callback) {
+        callback = arguments[1];
+        esRequest = null;
+      }
+
+      if (esRequest) {
+        // esRequest already initialized
+        return callback(null, esRequest);
+      }
+
+      callback(null, {id: req.params.id});
+    });
+
+    initHandler('postGet', function (req, esResponse, callback) {
+      // TODO warn if password is present in _source
+      callback(null, {
+        // don't include _index or _type
+        _id: esResponse._id,
+        _version: esResponse._version,
+        _source: esResponse._source
+        // elasticsearch also returns a boolean "found" field, but that's what HTTP status codes are for
+      });
+    });
+  }
+
+  if (this.insert || this.replace) { // these callbacks are used for both insert and replace
+    initHandler('preInsert', function (req, esRequest, callback) {
+      if (!callback) {
+        callback = arguments[1];
+        esRequest = null;
+      }
+
+      if (esRequest) {
+        // esRequest already initialized
+        return callback(null, esRequest);
+      }
+
+      esRequest = {
+        body: req.body
+      };
+
+      var id = req.params.id;
+      var version = req.query.version;
+
+      // don't set undefined properties
+      if (id || id === 0) { // it should always be a string, but just in case
+        esRequest.id = id;
+      }
+      if (version) {
+        esRequest.version = version;
+      }
+
+      callback(null, esRequest);
+    });
+
+    initHandler('postInsert', function (req, esResponse, callback) {
+      callback(null, {
+        _id: esResponse._id, // this is important so that the client knows what record they created
+        _version: esResponse._version
+      });
+    });
+  }
+
+  if (this.delete) {
+    initHandler('preDelete', function (req, esRequest, callback) {
+      if (!callback) {
+        callback = arguments[1];
+        esRequest = null;
+      }
+
+      if (esRequest) {
+        // esRequest already initialized
+        return callback(null, esRequest);
+      }
+
+      callback(null, {id: req.params.id});
+    });
+
+    initHandler('postDelete', function (req, esResponse, callback) {
+      callback(null, {
+        _id: esResponse._id,
+        _version: esResponse._version
+      });
+    });
+  }
+
+  // clients can use preInsert and postInsert and just check if an ID was specified
+//  if (this.replace) {
+//    this.preReplace = options.preReplace;
+//    this.postReplace = options.postReplace;
+//  }
+
+  // this isn't used yet because it's dangerous
+//  if (this.replaceAll) {
+//    this.preReplaceAll = options.preReplaceAll;
+//    if (!Array.isArray(this.preReplaceAll)) {
+//      this.preReplaceAll = [this.preReplaceAll];
+//    }
+//
+//    this.postReplaceAll = options.postReplaceAll;
+//    if (!Array.isArray(this.postReplaceAll)) {
+//      this.postReplaceAll = [this.postReplaceAll];
+//    }
+//  }
+
+  // this isn't used yet because it's dangerous
+//  if (this.deleteAll) {
+//    this.preDeleteAll = options.preDeleteAll;
+//    if (!Array.isArray(this.preDeleteAll)) {
+//      this.preDeleteAll = [this.preDeleteAll];
+//    }
+//
+//    this.postDeleteAll = options.postDeleteAll;
+//    if (!Array.isArray(this.postDeleteAll)) {
+//      this.postDeleteAll = [this.postDeleteAll];
+//    }
+//  }
 }
 
-Controller.prototype.prepareSearch = function (req, callback) {
-  var esRequest = {
-    body: {}
-  };
-
-  // Support pagination
-  var from = req.param('from');
-  if (from || from === 0) {
-    esRequest.from = parseInt(from, 10);
-  }
-  var size = req.param('size');
-  if (size || size === 0) {
-    esRequest.size = parseInt(size, 10);
-  }
-
-  // Support sorting
-  if (req.param('sort')) { // sort is always a string
-    // TODO test this for potential injection attacks
-    esRequest.sort = req.param('sort');
-  }
-
-  if (req.param('q')) { // req.param because parameter can be in query string or body
-    // have to use body instead of q because we might have aggregations
-    esRequest.body.query = {
-      'query_string': {
-        query: req.param('q')
-      }
-    };
-  } else {
-    esRequest.body.query = {
-      'match_all': {}
-    };
-  }
-
-  // aggregations have to be in body, plus that's the only way for them to be parsed as JSON
-  var aggregations = req.body.aggregations || req.body.aggs;
-
-  // Support aggregations TODO whitelist acceptable aggregations
-  if (aggregations) {
-    esRequest.body.aggregations = aggregations;
-  }
-
-  callback(null, esRequest);
-};
-
-Controller.prototype.search = function (req, res, next) {
-  this.prepareSearch(req, function (err, esRequest) {
-    req.model.search(esRequest, function (err, esr) {
-      if (err) {
-        next(err);
-        return;
-      }
-
-      var response = {
-        results: esr.hits.hits,
-        total: esr.hits.total
-      };
-
-      if (req.body.aggregations || req.body.aggs) {
-        response.aggregations = esr.aggregations;
-      }
-
-      res.json(response);
-    });
-  });
-};
-
-// this is different than prepare{Insert, Delete, Search} because we don't need to do a separate request for access
-// control, we only need the response from the request to check access restrictions
-Controller.prototype.allowGet = function (esResponse, req, callback) {
-  callback(null, true);
-};
-
-Controller.prototype.get = function (req, res, next) {
-  // Build a get request, relying on the defaults
-  var request = {
-    id: req.instance
-  };
-  req.model.get(request, function (err, esr) {
-    if (err) {
-      // elasticsearch.js also treats 404 as an error, which is good enough for now
-      next(err);
-      return;
-    }
-
-    this.allowGet(esr, req, function (err, allow) {
-      if (err) {
-        next(err);
-        return;
-      }
-
-      var record = {
-        _index: esr._index,
-        _type: esr._type,
-        _id: esr._id
-      };
-
-      if (!allow) {
-        res.status(404)// don't send 403, that would disclose that this record exists
-          .send(record); // still send request information, just like elasticsearch does
-        return;
-      }
-
-      record._version = esr._version;
-      record._source = esr._source;
-      res.send(record);
-    });
-  }.bind(this));
-};
-
-/**
- * Given a client request, generates an elasticsearch index request to insert data. Subclasses can override this method
- * to insert custom data into elasticsearch or to implement access control.
- * @param req client's HTTP request
- * @param callback called with error and the elasticsearch request
- */
-Controller.prototype.prepareInsert = function (req, callback) {
-  // Generate an insert request from the body object
-  // Be smart about moving properties outside of the passed object to their correct position in the request
-  var outerProps = ['_id', '_version', '_index', '_type'];
-  var tentativeEsRequest = _.transform(_.pick(req.body, outerProps), function (result, value, key) {
-    if (key.charAt(0) === '_') {
-      key = key.substring(1);
-    }
-    result[key] = value;
-  });
-  tentativeEsRequest.body = req.body._source || _.omit(req.body, outerProps);
-
-  // This method can also be used to perform updates, iff the ID is provided
-  if (req.instance) {
-    tentativeEsRequest.id = req.instance;
-  }
-
-  callback(null, tentativeEsRequest);
-};
-
-/**
- * Used for inserting and updating (since an update in elasticsearch really is just an insert over old data).
- * @param req express request
- * @param res express response
- * @param next express next
- */
-Controller.prototype.insert = function (req, res, next) {
-  // The body must be a single object to insert or update
-  if (!(req.body && _.isObject(req.body) && !Array.isArray(req.body))) {
-    next(new errors.FormatError('Invalid record format'));
-    return;
-  }
-
-  this.prepareInsert(req, function (err, esRequest) {
-    if (err) {
-      next(err);
-      return;
-    }
-
-    // Insert or update the document
-    req.model.insert(esRequest, function (err, esr) {
-      if (err) {
-        next(err);
-        return;
-      }
-
-      if (esr.created) {
-        res.status(201);
-      } else {
-        res.status(200);
-      }
-
-      res.send({
-        _index: esr._index,
-        _type: esr._type,
-        _id: esr._id, // this is important so that the client knows what record they created
-        _version: esr._version
-      });
-    });
-  });
-};
-
-Controller.prototype.prepareDelete = function (req, callback) {
-  callback(null, {
-    id: req.instance
-  });
-};
-
-Controller.prototype.delete = function (req, res, next) {
-  if (!req.instance) {
-    next(new Error('req.instance not specified'));
-    return;
-  }
-
-  this.prepareDelete(req, function (err, esRequest) {
-    if (err) {
-      next(err);
-      return;
-    }
-
-    req.model.delete(esRequest, function (err, esr) {
-      if (err) {
-        next(err);
-        return;
-      }
-
-      if (!esr.found) {
-        res.status(404);
-      } else {
-        res.status(200);
-      }
-
-      res.json({
-        _index: esr._index,
-        _type: esr._type,
-        _id: esr._id,
-        _version: esr._version
-      });
-    });
-  });
+Controller.prototype['with'] = function (plugin) {
+  // this is an initialization function, so it's OK to be synchronous
+  return plugin(this) || this;
 };
 
 module.exports = Controller;
