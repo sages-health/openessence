@@ -9,8 +9,13 @@ var User = codex.model({
   type: 'user',
 
   classMethods: {
-    findByUsername: function (username, callback) {
-      return User.search({
+    findByUsername: function (username, esRequest, callback) {
+      if (!callback) {
+        callback = arguments[1];
+        esRequest = null;
+      }
+
+      esRequest = _.assign({
         body: {
           query: {
             'constant_score': {
@@ -23,20 +28,19 @@ var User = codex.model({
             }
           }
         }
-      }, function (err, response) {
+      }, esRequest);
+
+      return User.search(esRequest, function (err, users) {
         if (err) {
           return callback(err);
         }
 
-        var results = response.hits.hits;
-
-        if (results.length > 1) {
-          // TODO use boom
-          return callback(new Error('Existing records violate unique constraint'));
-        } else if (results.length === 0) {
+        if (users.length > 1) {
+          return callback(new Error('Multiple users for username ' + username));
+        } else if (users.length === 0) {
           return callback(null, null);
         } else {
-          return callback(null, results[0]);
+          return callback(null, users[0]);
         }
       });
     },
@@ -100,7 +104,12 @@ var User = codex.model({
     },
 
     checkPassword: function (password, callback) {
-      scrypt.verify(this.password, password, function (err, result) {
+      var myPassword = this.password;
+      if (!Buffer.isBuffer(myPassword)) {
+        myPassword = new Buffer(myPassword, 'hex');
+      }
+
+      scrypt.verify(myPassword, password, function (err, result) {
         /*jshint camelcase:false */
         if (err && err.scrypt_err_code === 11) {
           // convert scrypt's "password is incorrect" error into a false return value
@@ -132,9 +141,13 @@ var User = codex.model({
   },
 
   postSearch: function (esRequest, esResponse, callback) {
-    esResponse.hits.hits.forEach(function (h) {
-      delete h._source.password;
-    });
+    if (!esRequest.keepPasswords) {
+      esResponse.hits.hits.forEach(function (h) {
+        delete h._source.password;
+      });
+    }
+    delete esRequest.keepPasswords;
+
     callback(null, esResponse);
   }
 });

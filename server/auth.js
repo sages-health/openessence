@@ -72,7 +72,7 @@ passport.use(new PersonaStrategy({
 }));
 
 passport.use(new LocalStrategy(function (username, password, callback) {
-  new User().findByUsername(username, function (err, user) {
+  User.findByUsername(username, {keepPasswords: true}, function (err, user) {
     if (err) {
       callback(err);
       return;
@@ -80,22 +80,17 @@ passport.use(new LocalStrategy(function (username, password, callback) {
 
     if (!user) {
       // Hash anyway to prevent timing attacks. FYI: this string is "admin" hashed by scrypt with our parameters
-      User.checkPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
+      new User().checkPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
         new Buffer(password, 'utf8'), function (err) {
-          // always pass false (even if they did guess our fake password right)
+          // always pass false
           callback(err, false);
         });
 
       return;
     }
 
-    if (user._source) {
-      user._source.id = user._id;
-      user = user._source;
-    }
-
     // Check password before we check if user is disabled. Again, this is to prevent timing attacks.
-    User.checkPassword(new Buffer(user.password, 'hex'), new Buffer(password, 'utf8'), function (err, match) {
+    user.checkPassword(new Buffer(password, 'utf8'), function (err, match) {
       delete user.password;
       password = null; // can't hurt
 
