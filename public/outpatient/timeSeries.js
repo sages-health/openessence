@@ -49,7 +49,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             }
 
             var dateFilters = scope.filters.filter(function (f) {
-              return f.type === 'date';
+              return f.type === 'date-range';
             });
 
             var dateFilter;
@@ -106,7 +106,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            */
           scope.zoomWithRange = function (from, to) {
             var dateFilters = scope.filters.filter(function (f) {
-              return f.type === 'date';
+              return f.type === 'date-range';
             });
 
             var dateFilter;
@@ -349,7 +349,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             var data = scope.data;
 
             var dateFilters = scope.filters.filter(function (f) {
-              return f.type === 'date';
+              return f.type === 'date-range';
             });
 
             var dateFilter = dateFilters[0];
