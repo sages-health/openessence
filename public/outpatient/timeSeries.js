@@ -59,6 +59,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               dateFilter = dateFilters[0];
             }
 
+            if (!dateFilter && factor > 1) {
+              // with no date filter, the time series is already at max zoom
+              return;
+            }
+
             // adapted from Kibana's algorithm,
             // see https://github.com/elasticsearch/kibana/blob/70ad6e27c137bf8f376e233d40c0c11385647625/src/app/panels/histogram/module.js#L510
             var timespan = dateFilter.to.getTime() - dateFilter.from.getTime();
@@ -110,14 +115,22 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             });
 
             var dateFilter;
-            if (dateFilters.length === 0) {
-              // TODO add new date filter
-            } else {
+            if (dateFilters.length > 0) {
               dateFilter = dateFilters[0];
             }
 
-            dateFilter.from = new Date(from);
-            dateFilter.to = new Date(to);
+            if (!dateFilter) {
+              dateFilter = {
+                filterId: 'date',
+                from: new Date(from),
+                to: new Date(to)
+              };
+              scope.filters.push(dateFilter);
+              scope.$emit('filterChange', dateFilter, true);
+            } else {
+              dateFilter.from = new Date(from);
+              dateFilter.to = new Date(to);
+            }
           };
 
           var extractCounts = function (agg) {
@@ -353,6 +366,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             });
 
             var dateFilter = dateFilters[0];
+            if (dateFilter) {
+              if (angular.isString(dateFilter.from)) {
+                dateFilter.from = new Date(dateFilter.from);
+              }
+
+              if (angular.isString(dateFilter.to)) {
+                dateFilter.to = new Date(dateFilter.to);
+              }
+            }
 
             // Pick correct date range. Using filter date and extremes in data
             var xmin1 = d3.min(data, function (pivot) {
@@ -361,7 +383,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               });
             });
 
-            var xmin2 = dateFilter.from === null ? 0 : dateFilter.from.getTime();
+            var xmin2 = (dateFilter && dateFilter.from) ? dateFilter.from.getTime() : 0;
             if (typeof xmin1 === 'undefined') {
               xmin1 = xmin2;
             }
@@ -372,7 +394,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               });
             });
 
-            var xmax2 = dateFilter.to === null ? 0 : dateFilter.to.getTime();
+            var xmax2 = (dateFilter && dateFilter.to) ? dateFilter.to.getTime() : 0;
             if (typeof xmax1 === 'undefined') {
               xmax1 = xmax2;
             }

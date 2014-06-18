@@ -68,21 +68,18 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
           );
 
           $rootScope.$on('filterChange', function (event, filter, add, fire) {
-
-
-              var apply = function (filter, add) {
-                if (add) {
-                  scope.addFilter(filter);
-                } else {
-                  scope.removeFilter(filter);
-                }
-              };
-              if (fire) {
-                scope.$apply(apply(filter, add));
+            var apply = function (filter, add) {
+              if (add) {
+                scope.addFilter(filter);
               } else {
-                apply(filter, add);
+                scope.removeFilter(filter);
               }
-
+            };
+            if (fire) {
+              scope.$apply(apply(filter, add));
+            } else {
+              apply(filter, add);
+            }
           });
 
           scope.$watchCollection(
