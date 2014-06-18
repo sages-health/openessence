@@ -132,10 +132,10 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            District.update(angular.extend({
+            District.update({
               _id: $scope.record._id,
-              _version: $scope.record._version
-            }, $scope.district), cleanup, showError);
+              version: $scope.record._version
+            }, $scope.district, cleanup, showError);
           } else {
             District.save($scope.district, cleanup, showError);
           }

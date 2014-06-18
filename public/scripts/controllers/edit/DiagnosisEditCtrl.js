@@ -130,10 +130,10 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            Diagnosis.update(angular.extend({
+            Diagnosis.update({
               _id: $scope.record._id,
-              _version: $scope.record._version
-            }, $scope.diagnosis), cleanup, showError);
+              version: $scope.record._version
+            }, $scope.diagnosis, cleanup, showError);
           } else {
             Diagnosis.save($scope.diagnosis, cleanup, showError);
           }

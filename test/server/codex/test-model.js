@@ -280,6 +280,7 @@ describe('model', function () {
   });
 
   describe('search()', function () {
+
     it('should search elasticsearch', function (done) {
       var Bar = codex.model({
         index: 'foo',
@@ -296,7 +297,7 @@ describe('model', function () {
       };
 
       nock(conf.elasticsearch.host)
-        .post('/foo/bar/_search?q=a')
+        .post('/foo/bar/_search?version=true&q=a')
         .reply(200, response);
 
       Bar.search({q: 'a'}, function (err, bars, esResponse) {
@@ -306,6 +307,39 @@ describe('model', function () {
 
         expect(bars).to.deep.equal([]);
         expect(esResponse).to.deep.equal(response);
+
+        done();
+      });
+    });
+
+    it('should search elasticsearch if version:false', function (done) {
+      var Bar = codex.model({
+        index: 'foo',
+        type: 'bar',
+        version: false
+      });
+      var response = {
+        took: 5,
+        'timed_out': false,
+        hits: {
+          total: 0,
+          'max_score': null,
+          hits: []
+        }
+      };
+
+      var es = nock(conf.elasticsearch.host)
+        .post('/foo/bar/_search?version=false&q=a')
+        .reply(200, response);
+
+      Bar.search({q: 'a'}, function (err, bars, esResponse) {
+        if (err) {
+          return done(err);
+        }
+
+        expect(bars).to.deep.equal([]);
+        expect(esResponse).to.deep.equal(response);
+        expect(es.isDone()).to.be.true;
 
         done();
       });
@@ -331,7 +365,7 @@ describe('model', function () {
       };
 
       nock(conf.elasticsearch.host)
-        .post('/foo/bar/_search?q=b')
+        .post('/foo/bar/_search?version=true&q=b')
         .reply(200, response);
 
       Bar.search({q: 'a'}, function (err, bars, esResponse) {
@@ -369,7 +403,7 @@ describe('model', function () {
         }
       };
       nock(conf.elasticsearch.host)
-        .post('/foo/bar/_search?q=a')
+        .post('/foo/bar/_search?version=true&q=a')
         .reply(200, response);
 
       var Bar = codex.model({

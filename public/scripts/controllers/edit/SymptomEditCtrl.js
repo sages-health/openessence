@@ -132,10 +132,10 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
           };
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            Symptom.update(angular.extend({
+            Symptom.update({
               _id: $scope.record._id,
-              _version: $scope.record._version
-            }, $scope.symptom), cleanup, showError);
+              version: $scope.record._version
+            }, $scope.symptom, cleanup, showError);
           } else {
             Symptom.save($scope.symptom, cleanup, showError);
           }

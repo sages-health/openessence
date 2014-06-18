@@ -37,7 +37,7 @@ describe('Controller', function () {
         }
       };
       nock(conf.elasticsearch.host)
-        .post('/foo/bar/_search', {
+        .post('/foo/bar/_search?version=true', {
           query: {
             fakeQuery: {}
           }

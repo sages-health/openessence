@@ -174,10 +174,10 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
           delete data.passwordConfirm;
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
-            User.update(angular.extend({
+            User.update({
               _id: $scope.record._id,
-              _version: $scope.record._version
-            }, data), cleanup, showError);
+              version: $scope.record._version
+            }, data, cleanup, showError);
           } else {
             User.save(data, cleanup, showError);
           }

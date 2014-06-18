@@ -55,7 +55,7 @@ describe('middleware', function () {
         }
       };
       nock(conf.elasticsearch.host)
-        .post('/foo/bar/_search', {
+        .post('/foo/bar/_search?version=true', {
           query: {
             'match_all': {}
           }
@@ -100,7 +100,7 @@ describe('middleware', function () {
         }
       };
       nock(conf.elasticsearch.host)
-        .post('/foo/bar/_search', {
+        .post('/foo/bar/_search?version=true', {
           query: {
             'query_string': {
               query: 'hello'
@@ -270,7 +270,7 @@ describe('middleware', function () {
         }
       };
       nock(conf.elasticsearch.host)
-        .post('/foo/bar/_search?size=0', {
+        .post('/foo/bar/_search?version=true&size=0', {
           query: {
             'match_all': {}
           },

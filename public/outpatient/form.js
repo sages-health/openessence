@@ -95,8 +95,10 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
             };
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
-              var visit = angular.extend({_id: scope.record._id, _version: scope.record._version}, scope.visit);
-              OutpatientVisit.update(visit, cleanup, showError);
+              OutpatientVisit.update({
+                _id: scope.record._id,
+                version: scope.record._version
+              }, scope.visit, cleanup, showError);
             } else {
               OutpatientVisit.save(scope.visit, cleanup, showError);
             }
