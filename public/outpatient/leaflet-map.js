@@ -1,10 +1,10 @@
 'use strict';
 
 var angular = require('angular');
-var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
+var L = require('leaflet');
 
-angular.module(directives.name).directive('leafletMap', function (gettextCatalog, outpatientAggregation, visualization, OutpatientVisit, Geometry) {
+angular.module(directives.name).directive('leafletMap', function (District) {
 
   return {
     restrict: 'E',
@@ -14,13 +14,13 @@ angular.module(directives.name).directive('leafletMap', function (gettextCatalog
       filters: '=',
       data: '='
     },
-    link: function postLink (scope, element) {
+    link: function postLink (scope) {
 
-      //var baseMapURL = 'http://otile4.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png'
-      var baseMapURL = 'http://ttiles0{s}.mqcdn.com/tiles/1.0.0/vy/map/{z}/{x}/{y}.png';
+      var baseMapURL = 'https://otile{s}-s.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
+      //var baseMapURL = 'http://ttiles0{s}.mqcdn.com/tiles/1.0.0/vy/map/{z}/{x}/{y}.png';
 
       //country styling
-      scope.countryStyle = function (feature) {
+      scope.countryStyle = function () {
         return {
           fillColor: '#eeeeee',
           weight: 1,
@@ -55,8 +55,7 @@ angular.module(directives.name).directive('leafletMap', function (gettextCatalog
         return '#FFEDA0';
       };
 
-      scope.highlightFeature = function (e) {
-        var layer = e.target;
+      scope.highlightFeature = function () {
 
         scope.layer.setStyle({
           weight: 5,
@@ -70,8 +69,7 @@ angular.module(directives.name).directive('leafletMap', function (gettextCatalog
         }
       };
 
-      scope.resetHighlight = function (e) {
-        var layer = e.target;
+      scope.resetHighlight = function () {
 
         scope.layer.setStyle({
           weight: 1,
@@ -120,9 +118,10 @@ angular.module(directives.name).directive('leafletMap', function (gettextCatalog
 
       //separating out the polygon request
       scope.getLayerPolys = function () {
-        Geometry.search({
+        District.get({
+          _id: 1
         }, function (data) {
-          var json = data.results[0]._source;
+          var json = data._source;
           //map.removeLayer(layer); //?
           var layer = L.geoJson(json, {
             style: scope.districtStyle,
@@ -142,7 +141,7 @@ angular.module(directives.name).directive('leafletMap', function (gettextCatalog
             layers: [base,layer]
           });
           L.control.scale().addTo(scope.map);
-          scope.layerControl = L.control.layers({},{"Base":base, "Data":layer}).addTo(scope.map);
+          scope.layerControl = L.control.layers({},{'Base':base, 'Data':layer}).addTo(scope.map);
           // scope.map.fitBounds(layer.getBounds());
         });
       };
