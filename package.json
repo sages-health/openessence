@@ -14,7 +14,6 @@
     "change-case": "~1.0.6",
     "compression": "~1.0.1",
     "connect-flash": "~0.1.1",
-    "connect-redis": "~2.0.0",
     "connect-restreamer": "~1.0.0",
     "connect-timeout": "~1.0.0",
     "cookie-parser": "~1.0.1",
@@ -92,9 +91,10 @@
     "vinyl-source-stream": "~0.1.1"
   },
   "optionalDependencies": {
+    "connect-redis": "~2.0.0",
+    "gifsicle": "~0.1.4",
     "jpegtran-bin": "~0.2.3",
-    "pngquant-bin": "~0.1.5",
-    "gifsicle": "~0.1.4"
+    "pngquant-bin": "~0.1.5"
   },
   "browserify": {
     "transform": [
