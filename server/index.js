@@ -141,17 +141,16 @@ app.use(auth.passport.session());
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));
 
-// proxy elasticsearch for Kibana (disabled by default)
-var esProxy = require('./es/proxy');
-app.use('/es', express()
-  .use(auth.denyAnonymousAccess)
-  .use(esProxy));
-
-app.use('/kibana', express()
-  .use(assets.kibana()))
-  .use('/es', express()
-    .use(auth.denyAnonymousAccess)
-    .use(esProxy));
+// proxy elasticsearch for Kibana (disabled for now)
+//var esProxy = require('./es/proxy');
+//app.use('/es', express()
+//  .use(auth.denyAnonymousAccess)
+//  .use(esProxy));
+//app.use('/kibana', express()
+//  .use(assets.kibana()))
+//  .use('/es', express()
+//    .use(auth.denyAnonymousAccess)
+//    .use(esProxy));
 
 app.use('/resources', express()
   .use(auth.denyAnonymousAccess)
