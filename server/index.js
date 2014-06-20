@@ -18,11 +18,6 @@ var views = require('./views');
 app.set('views', views.directory);
 app.engine('html', views.engine);
 
-// Times out requests after 30 seconds. This is more conservative than the default of 5s b/c we're not as concerned
-// about availability for other users, since we're not going to have a lot of concurrent users.
-// This middleware should be early in the middleware chain to start the timer as soon as possible.
-app.use(require('connect-timeout')(30000));
-
 // gzip responses
 app.use(require('compression')());
 
