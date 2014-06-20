@@ -5,7 +5,7 @@ var helmet = require('helmet');
 var locale = require('locale');
 var useragent = require('useragent');
 var express = require('express');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 var conf = require('./conf');
 var logger = conf.logger;
