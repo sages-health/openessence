@@ -4,17 +4,19 @@ var url = require('url');
 var helmet = require('helmet');
 var locale = require('locale');
 var useragent = require('useragent');
-var _ = require('lodash');
+var express = require('express');
 
 var conf = require('./conf');
 var logger = conf.logger;
 var assets = require('./assets');
-var supportedLocales = require('./locales').getSupportedLocalesSync();
 var auth = require('./auth');
-var routes = require('./routes');
 
 var app = require('express')();
 var https = url.parse(conf.url).protocol === 'https:';
+
+var views = require('./views');
+app.set('views', views.directory);
+app.engine('html', views.engine);
 
 // Times out requests after 30 seconds. This is more conservative than the default of 5s b/c we're not as concerned
 // about availability for other users, since we're not going to have a lot of concurrent users.
@@ -91,14 +93,12 @@ app.use(function (req, res, next) {
 
   // CSP breaks IE10 (and IE < 10 doesn't support CSP anyway). Not worth the headache.
   if (useragent.lookup(req.headers['user-agent']).family === 'IE') {
-    next();
-    return;
+    return next();
   }
 
   // Kibana uses inline scripts and doesn't have ngCsp enabled
   if (/^\/kibana(\/|$)/.test(req.path)) {
-    next();
-    return;
+    return next();
   }
 
   var self = '\'self\'';
@@ -131,79 +131,41 @@ app.use((function () {
   };
 })());
 
-app.use(locale(supportedLocales)); // adds req.locale based on best matching locale
-app.use(function (req, res, next) {
-  if (req.path === '/') {
-    res.redirect(307, '/' + req.locale);
-  } else {
-    // override user agent's locale, useful for debugging and for multilingual users
-    req.locale = req.path.split('/')[1];
-    if (req.locale === 'api') {
-      // API requests don't have a locale associated with them
-      req.locale = 'en';
-    }
-    next();
-  }
+app.use(locale(require('./locale').supportedLocales)); // adds req.locale based on best matching locale
+app.get('/', function (req, res) {
+  res.redirect(307, '/' + req.locale);
 });
 
 app.use(assets.anonymous());
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
-// variables for views, this must be before router in the middleware chain
-app.use(function (req, res, next) {
-  res.locals.user = req.user;
-  if (req.csrfToken) { // not every request has CSRF token
-    res.locals.csrfToken = req.csrfToken();
-  }
-  res.locals.lang = req.locale;
-  res.locals.persona = conf.persona.enabled;
-  res.locals.baseHref = conf.url + '/' + req.locale + '/'; // use proxy URL (if applicable), not req.url
-  res.locals.environment = conf.env;
+app.use(require('./locale').middleware);
+app.use('/session', require('./session'));
 
-  next();
-});
-
-// /en/*, /es/*, etc.
-supportedLocales.forEach(function (l) {
-  app.use('/' + l, routes.server());
-
-  // You'll never get a 404. This isn't so bad, since these routes
-  // are only for user-facing URLs (XHR requests don't use locale prefix) and server-side 404 isn't that useful, as
-  // opposed to client-side error message.
-  app.use('/' + l, routes.client());
-});
-
-// also allow XHR requests unprefixed by locale (these do NOT delegate to client routes)
-app.use(routes.server());
-
-// ...and API clients with Bearer tokens
-app.use('/api', require('./api')());
-
-// everything below this requires authentication
-app.use(auth.denyAnonymousAccess);
-
+// proxy elasticsearch for Kibana (disabled by default)
 var esProxy = require('./es/proxy');
-app.use('/es', esProxy);
-app.use('/kibana/es', esProxy);
-app.use('/kibana', assets.kibana());
+app.use('/es', express()
+  .use(auth.denyAnonymousAccess)
+  .use(esProxy));
 
-app.use('/resources', require('./resources')());
-app.use('/reports', require('./reports')());
+app.use('/kibana', express()
+  .use(assets.kibana()))
+  .use('/es', express()
+    .use(auth.denyAnonymousAccess)
+    .use(esProxy));
+
+app.use('/resources', express()
+  .use(auth.denyAnonymousAccess)
+  .use(require('./resources')()));
+
+app.use('/reports', express()
+  .use(auth.denyAnonymousAccess)
+  .use(require('./reports')()));
 
 app.use(require('./error').middleware);
 
-app.engine('html', function (path, options, callback) {
-  options = _.assign({
-    open: '[[', // htmlmin likes to escape <, and {{ is used by Angular
-    close: ']]'
-  }, options);
-  require('ejs').renderFile(path, options, callback);
-});
-app.set('views', require('./views')(conf.env));
-
-// This MUST be the last route. Since we delegate to the client for HTML5-style routes, we'll never reach this point
-// for GET requests. But we can handle every other verb.
-app.use(require('./error').notFound);
-
-module.exports = app;
+module.exports = express()
+  .use(app)
+  .use('/api', express().use(auth.bearer).use(app)) // TODO test this
+  .use(require('./error').notFound); // this must be the last route

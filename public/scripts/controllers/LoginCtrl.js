@@ -28,11 +28,11 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
       return;
     }
 
-    if (error.name === 'UnregisteredUserError') {
+    if (error === 'UnregisteredUser') {
       // TODO do something better
       /*jshint quotmark:false */
       $window.alert("Sorry, but you're not registered. Please contact your site admin to sign up.");
-    } else if (error.name === 'BadCredentialsError') {
+    } else if (error === 'BadCredentials') {
       $scope.badCredentials = true;
     }
   });

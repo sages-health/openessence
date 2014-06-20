@@ -4,6 +4,7 @@ var passport = require('passport');
 var BearerStrategy = require('passport-http-bearer').Strategy; // for API clients
 var LocalStrategy = require('passport-local').Strategy;
 var PersonaStrategy = require('passport-persona').Strategy;
+var Boom = require('boom');
 
 var conf = require('./conf');
 var logger = conf.logger;
@@ -54,13 +55,8 @@ passport.use(new PersonaStrategy({
     if (!user) {
       /*jshint quotmark:false */
       logger.info({user: user}, "%s logged in successfully with Persona, but they're not recognized by codex", email);
-      callback(new errors.UnregisteredUserError());
+      callback(Boom.create(403, 'Unregistered user', {error: 'UnregisteredUser'}));
       return;
-    }
-
-    if (user._source) {
-      user._source.id = user._id;
-      user = user._source;
     }
     delete user.password; // don't keep (hashed) password in memory any more than we have to
 
@@ -72,10 +68,9 @@ passport.use(new PersonaStrategy({
 }));
 
 passport.use(new LocalStrategy(function (username, password, callback) {
-  User.findByUsername(username, {keepPasswords: true}, function (err, user) {
+  User.findByUsername(username, function (err, user) {
     if (err) {
-      callback(err);
-      return;
+      return callback(err);
     }
 
     if (!user) {
@@ -95,8 +90,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
       password = null; // can't hurt
 
       if (err) {
-        callback(err);
-        return;
+        return callback(err);
       }
 
       if (!match) {
@@ -126,37 +120,49 @@ passport.use(new BearerStrategy({}, function (token, done) {
   done(null, user);
 }));
 
-function accessDeniedHandler (req, res) {
-  logger.info({req: req}, 'Blocked unauthorized request to ' + req.url); // bunyan FTW!
-  var action = 'access ' + req.originalUrl;
-
-  res.status(401);
-  res.set('WWW-Authenticate', 'None');
-
-  res.format({
-    html: function () {
-      res.render('401.html', {
-        action: action
-      });
-    },
-    json: function () {
-      res.send({
-        error: 'Access denied: you don\'t have permission to ' + action
-      });
-    }
-  });
-}
-
 function denyAnonymousAccess (req, res, next) {
   if (!req.user) {
-    accessDeniedHandler(req, res);
+    return next(Boom.unauthorized());
   } else {
-    next();
+    return next();
   }
+}
+
+function authenticate (strategy) {
+  return function (req, res, next) {
+    passport.authenticate(strategy, {session: strategy !== 'bearer'}, function (err, user) {
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        return next(Boom.create(403, 'Bad credentials', {error: 'BadCredentials'}));
+      }
+
+      req.login(user, function (err) {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        res.json(200, {
+          // whitelist user properties that are OK to send to client
+          username: user.username,
+          email: user.email,
+          name: user.name,
+          roles: user.roles,
+          districts: user.districts,
+          authType: user.authType
+        });
+      });
+    })(req, res, next);
+  };
 }
 
 module.exports = {
   passport: passport,
-  accessDeniedHandler: accessDeniedHandler,
-  denyAnonymousAccess: denyAnonymousAccess
+  denyAnonymousAccess: denyAnonymousAccess,
+  persona: authenticate('persona'),
+  local: authenticate('local'),
+  bearer: authenticate('bearer')
 };

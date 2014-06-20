@@ -52,6 +52,9 @@ var User = codex.model({
 
       scrypt.params(0.1, function (err, scryptParameters) {
         if (err) {
+          if (!(err instanceof Error)) { // scrypt tends to return raw objects instead of Errors
+            return callback(_.assign(new Error('scrypt.params error'), err));
+          }
           return callback(err);
         }
 
@@ -111,12 +114,21 @@ var User = codex.model({
 
       scrypt.verify(myPassword, password, function (err, result) {
         /*jshint camelcase:false */
-        if (err && err.scrypt_err_code === 11) {
-          // convert scrypt's "password is incorrect" error into a false return value
-          callback(null, false);
-        } else {
-          callback(err, result);
+        if (err) {
+          if (err instanceof Error) {
+            // scrypt tends to return raw objects instead of errors, but check just in case the fix that one day
+            return callback(err);
+          }
+
+          if (err.scrypt_err_code === 11) {
+            // convert scrypt's "password is incorrect" error into a false return value
+            return callback(null, false);
+          }
+
+          return callback(new Error(err.scrypt_err_message));
         }
+
+        callback(null, result);
       });
     }
   },
@@ -133,22 +145,6 @@ var User = codex.model({
     } else {
       callback(null, new Error('Cannot create user without password'));
     }
-  },
-
-  postGet: function (esRequest, esResponse, callback) {
-    delete esResponse._source.password;
-    callback(null, esResponse);
-  },
-
-  postSearch: function (esRequest, esResponse, callback) {
-    if (!esRequest.keepPasswords) {
-      esResponse.hits.hits.forEach(function (h) {
-        delete h._source.password;
-      });
-    }
-    delete esRequest.keepPasswords;
-
-    callback(null, esResponse);
   }
 });
 
