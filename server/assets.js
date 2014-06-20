@@ -32,7 +32,7 @@ exports.anonymous = function () {
       // can't use noParse with browserify-shim
       // noParse: bowerLibs
     }));
-    app.use('/js/app.js', browserify('../public/scripts/app.js', {
+    app.use('/js/app.js', browserify(__dirname + '/../public/scripts/app.js', {
       // Make require('partial.html') work.
       // In production, we use a custom version of this that also minifies the partials
       transform: ['partialify'],

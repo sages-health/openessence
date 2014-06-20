@@ -5,6 +5,7 @@ var helmet = require('helmet');
 var locale = require('locale');
 var useragent = require('useragent');
 var express = require('express');
+var bodyParser = require('body-parser')
 
 var conf = require('./conf');
 var logger = conf.logger;
@@ -47,7 +48,9 @@ if (conf.env === 'production') {
   app.use(require('morgan')());
 }
 
-app.use(require('body-parser')()); // parse JSON + URL encoded request bodies, must be before a lot of other middleware
+app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({extended: true})); // we only use JSON-encoded request bodies
+
 app.use(require('cookie-parser')()); // must be before session
 app.use((function () {
   var session = require('express-session');
@@ -55,7 +58,7 @@ app.use((function () {
 
   if (conf.session.store === 'redis') {
     logger.info('Using Redis session store');
-    var RedisStore = require('connect-redis')(session);
+    var RedisStore = require('connect-redis')(session); // conditionally require since it's an optional dependency
     store = new RedisStore({
       url: conf.redis.url
     });

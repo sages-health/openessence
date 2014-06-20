@@ -7,7 +7,7 @@ var logger = conf.logger;
 
 var app = express();
 
-app.use(require('body-parser')());
+app.use(require('body-parser').json());
 
 app.post('/', function (req, res) {
   // 307 means client should send another POST

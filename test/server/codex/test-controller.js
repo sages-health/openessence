@@ -18,7 +18,7 @@ describe('Controller', function () {
 
   var app = function (middleware) {
     return express()
-      .use(bodyParser())
+      .use(bodyParser.json())
       .use(middleware)
       .use(function (err, req, res, next) {
         console.error(err);

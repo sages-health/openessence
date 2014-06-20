@@ -11,7 +11,7 @@ function codexMiddleware (controller) {
   // Make sure we include the middleware we need so we can test this controller in isolation.
   // It's not a big deal that body-parser is also included in ../index.js, since it checks to see if it's already been
   // included: `if (req._body) return next();`
-  app.use(require('body-parser')());
+  app.use(require('body-parser').json());
 
   app.param('id', function (req, res, next, id) {
     if (/^[\w-]+$/.test(id)) {

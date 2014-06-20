@@ -132,7 +132,7 @@ module.exports = {
   elasticsearch: {
     host: process.env.ELASTICSEARCH_HOST || 'http://localhost:9200',
     log: ElasticSearchLogger,
-    apiVersion: '1.0'
+    apiVersion: '1.1'
   },
 
   // Database settings. Fracas doesn't use a relational database, but we still need connection info for things like
