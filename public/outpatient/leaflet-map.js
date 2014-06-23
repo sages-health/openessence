@@ -14,9 +14,11 @@ angular.module(directives.name).directive('leafletMap', function (District) {
       filters: '=',
       data: '='
     },
-    link: function postLink (scope) {
+    link: function postLink (scope, element) {
 
       var baseMapURL = 'https://otile{s}-s.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
+
+      // if they ever shut down the HTTPs version, here's the HTTP url:
       //var baseMapURL = 'http://ttiles0{s}.mqcdn.com/tiles/1.0.0/vy/map/{z}/{x}/{y}.png';
 
       //country styling
@@ -135,7 +137,7 @@ angular.module(directives.name).directive('leafletMap', function (District) {
           });
 
           scope.layer = layer;
-          scope.map = new L.map('leafletMap', {
+          scope.map = L.map(element.children()[0], {
             center: new L.LatLng(37.7289788,-84.2634425),
             zoom: 7,
             layers: [base,layer]

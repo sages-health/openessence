@@ -60,27 +60,9 @@
     </outpatient-bar-chart>
   </div>
   <!-- TODO extract inline styles -->
-  <div class="animation-switch" style="
-      width: 500px;
-      height: 400px;
-      min-height: 100%;
-      min-width: 100%;
-      position: relative;
-      display: block;" ng-switch-when="map">
-    <leaflet-map style="
-      width: 100%;
-      height: 100%;
-      min-height: 100%;
-      min-width: 100%;
-      position: relative;" filters="filters" query-string="queryString" data="aggData" options="options">
-      <div id="leafletMap" style="
-          width: 500px;
-          height: 400px;
-          min-height: 100%;
-          min-width: 100%;
-          position: relative;
-          left: 0px; top: 0px;
-          display: block;"></div>
+  <div class="animation-switch" ng-switch-when="map">
+    <leaflet-map filters="filters" query-string="queryString" data="aggData" options="options">
+      <div class="map"></div>
     </leaflet-map>
   </div>
   <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>

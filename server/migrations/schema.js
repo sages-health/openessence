@@ -42,6 +42,52 @@ var indexRequests = [
     }, callback);
   },
 
+  function district (callback) {
+    client.indices.create({
+      index: 'region', // not 'district' so that other geographic units can be tracked, hopefully we don't regret this
+      body: {
+        mappings: {
+          features: {
+            properties: { // defining fields
+              properties: { // field named properties
+                properties: {
+                  'mm_uid': {
+                    type: 'integer'
+                  },
+                  code: {
+                    type: 'string'
+                  },
+                  province: {
+                    type: 'string'
+                  },
+                  district: {
+                    type: 'string'
+                  },
+                  division: {
+                    type: 'string'
+                  },
+                  region: {
+                    type: 'string'
+                  },
+                  abbreviation: {
+                    type: 'string'
+                  }
+                }
+              },
+              geometry: {
+                properties: {
+                  coordinates: {
+                    type: 'geo_shape'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }, callback);
+  },
+
   function outpatient (callback) {
     client.indices.create({
       index: 'outpatient',
@@ -180,53 +226,6 @@ var indexRequests = [
                   // User that created this version of the document
                   user: {
                     type: 'string'
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }, callback);
-  },
-
-
-  function district (callback) {
-    client.indices.create({
-      index: 'region', // not 'district' so that other geographic units can be tracked, hopefully we don't regret this
-      body: {
-        mappings: {
-          features: {
-            properties: { // defining fields
-              properties: { // field named properties
-                properties: {
-                  mm_uid: {
-                    type: 'integer'
-                  },
-                  code: {
-                    type: 'string'
-                  },
-                  province: {
-                    type: 'string'
-                  },
-                  district: {
-                    type: 'string'
-                  },
-                  division: {
-                    type: 'string'
-                  },
-                  region: {
-                    type: 'string'
-                  },
-                  abbreviation: {
-                    type: 'string'
-                  }
-                }
-              },
-              geometry: {
-                properties: {
-                  coordinates: {
-                    type: 'geo_shape'
                   }
                 }
               }
