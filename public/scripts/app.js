@@ -13,8 +13,6 @@ require('angular-loading-bar');
 // explicitly require d3 and friends due to weird browserify issues,
 // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
 require('d3');
-require('nvd3');
-require('angular-nvd3');
 require('text-angular');
 
 var frable = require('../frable');
@@ -32,7 +30,7 @@ require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    'nvd3ChartDirectives', 'angular-loading-bar', 'textAngular', frable.name]
+                    'angular-loading-bar', 'textAngular', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));

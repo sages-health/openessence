@@ -8,5 +8,7 @@ module.exports = {
   table: require('./table'),
   timeSeries: require('./timeSeries'),
   visualization: require('./visualization'),
-  workbenchVisualization: require('./workbenchVisualization')
+  workbenchVisualization: require('./workbenchVisualization'),
+  pieChart: require('./fracasPieChart.js'),
+  barChart: require('./fracasBarChart.js')
 };
