@@ -27,6 +27,16 @@ module.exports = codex.controller(User, {
 
     callback(null, esRequest);
   },
+  postSearch: function (req, esResponse, callback) {
+    if (esResponse && esResponse.results) {
+      for (var index = 0; index < esResponse.results.length; index++) {
+        if (esResponse.results[index]._source.password) {
+          delete esResponse.results[index]._source.password;
+        }
+      }
+    }
+    callback(null, esResponse);
+  },
 
   insert: true,
   replace: true,
@@ -39,7 +49,27 @@ module.exports = codex.controller(User, {
       return callback(Boom.forbidden());
     }
 
-    // TODO changing password
+    // if editing an existing user information
+    if (esRequest.id && !esRequest.body.password) {
+      // get user record
+      User.get({id: esRequest.id}, function (err, esr) {
+        if (err) {
+          return callback(err);
+        }
+        // set password
+        esRequest.body.password = esr.password;
+        callback(null, esRequest);
+      });
+    } else { // else if creating a new user or an existing user changing his password, hash the new password
+
+      User.hashPassword(esRequest.body.password, function (err, password) {
+        if (err) {
+          return callback(err);
+        }
+        esRequest.body.password = password.toString('hex');
+        callback(null, esRequest);
+      });
+    }
   },
 
   delete: true,

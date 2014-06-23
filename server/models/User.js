@@ -7,6 +7,7 @@ var codex = require('../codex');
 var User = codex.model({
   index: 'user',
   type: 'user',
+  refresh: true,
 
   classMethods: {
     findByUsername: function (username, esRequest, callback) {
