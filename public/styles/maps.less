@@ -1,0 +1,19 @@
+@import (less) "leaflet/dist/leaflet.css";
+
+// override where to find Leaflet's layer switcher icon
+.leaflet-control-layers-toggle {
+  background-image: url(/public/images/maps/layers.png);
+}
+.leaflet-retina .leaflet-control-layers-toggle {
+  background-image: url(/public/images/maps/layers-2x.png);
+}
+
+leaflet-map .map {
+  width: 500px;
+  height: 400px;
+  min-height: 100%;
+  min-width: 100%;
+  position: relative;
+  left: 0px; top: 0px;
+  display: block;
+}

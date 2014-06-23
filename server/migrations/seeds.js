@@ -12,17 +12,29 @@ var logger = conf.logger;
 // don't use shared connection
 var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
 
-function bulkInsert (Model, data, callback) {
-  var model = new Model({client: client});
-  model.bulk({
+function bulkInsert (model, data, params, callback) {
+  if (!callback) {
+    callback = arguments[2];
+    params = null;
+  }
+  params = params || {};
+  params = _.assign({
+    index: model.index,
+    type: model.type,
     refresh: false,
     body: data.reduce(function (prev, current) { // add operation before every piece of data
       // push to save memory over concat
-      prev.push({index: {}}); //  don't include _index and _type (they're already on model anyway),
+      var operation = {index: {}}; //  don't include _index and _type (they're already on model anyway),
+      if (params.id) {
+        operation.index._id = params.id;
+      }
+      prev.push(operation);
       prev.push(current);
       return prev;
     }, [])
-  }, callback);
+  }, params);
+
+  client.bulk(params, callback);
 }
 
 async.parallel([
@@ -33,15 +45,23 @@ async.parallel([
     ], callback);
   },
 
-  function districts (callback) {
-    bulkInsert(require('../models/District'), [
-      {name: 'Alphaville', phoneId: 'd1'},
-      {name: 'Beta quadrant', phoneId: 'd2'}
-    ], callback);
-  },
-
   function outpatientVisits (callback) {
     bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
+  },
+
+  function districts (callback) {
+    var District = require('../models/District');
+    async.parallel([
+      function geometry (callback) { // TODO come up with better way to specify ID
+        bulkInsert(District, require('./cityville_import.json'), {id: 1}, callback);
+      },
+      function districts (callback) {
+        bulkInsert(District, [
+          {name: 'Alphaville', phoneId: 'd1'},
+          {name: 'Beta quadrant', phoneId: 'd2'}
+        ], callback);
+      }
+    ], callback);
   },
 
   function symptoms (callback) {

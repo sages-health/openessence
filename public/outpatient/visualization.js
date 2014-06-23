@@ -178,6 +178,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               return barData;
             } else if (scope.visualization.name === 'pie') {
               return pieData;
+            } else if (scope.visualization.name === 'map') {
+              return pieData;
             }
           }
           return [];
@@ -202,6 +204,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           } else if (scope.visualization.name === 'pie') {
             aggReload();
           } else if (scope.visualization.name === 'bar') {
+            aggReload();
+          } else if (scope.visualization.name === 'map') {
             aggReload();
           } else if (scope.visualization.name === 'crosstab') {
             // TODO do this via aggregation

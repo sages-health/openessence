@@ -18,11 +18,13 @@
 
   <div class="panel-footer">
     <div class="clearfix">
-      <div class="col-md-6">
+      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5">
         <input type="hidden" class="select2-multiple pivot-rows"
                multiple placeholder="{{pivotRowsPlaceholder | translate}}" ui-select2="select2Options"
                ng-model="pivot.rows">
       </div>
+
+      <!-- don't wrap btn-group in col since we don't ever want it to wrap -->
       <div class="btn-group pull-right">
         <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'">
           <span class="icon-table"></span>
@@ -38,6 +40,9 @@
         </button>
         <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'bar'">
           <span class="icon-chart-bar-box"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'map'">
+          <span class="icon-globe"></span>
         </button>
       </div>
     </div>

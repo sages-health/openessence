@@ -14,6 +14,7 @@ require('angular-loading-bar');
 // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
 require('d3');
 require('text-angular');
+require('leaflet');
 
 var frable = require('../frable');
 require('../select2');

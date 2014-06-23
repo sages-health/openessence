@@ -107,7 +107,7 @@ app.use(function (req, res, next) {
     'script-src': [self, 'https://login.persona.org'],
     // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
     'style-src': [self, 'fonts.googleapis.com', '\'unsafe-inline\''],
-    'img-src': [self],
+    'img-src': [self, 'https://otile1-s.mqcdn.com','https://otile2-s.mqcdn.com','https://otile3-s.mqcdn.com','https://otile4-s.mqcdn.com'],
     'font-src': [self, 'themes.googleusercontent.com'],
     'frame-src': ['https://login.persona.org'],
     'media-src': [self], // someday we might use <audio> and/or <video>

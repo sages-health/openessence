@@ -47,20 +47,39 @@ var indexRequests = [
       index: 'region', // not 'district' so that other geographic units can be tracked, hopefully we don't regret this
       body: {
         mappings: {
-          district: {
-            properties: {
-              name: {
-                type: 'string',
-                fields: {
-                  raw: {
-                    type: 'string',
-                    index: 'not_analyzed'
+          features: {
+            properties: { // defining fields
+              properties: { // field named properties
+                properties: {
+                  'mm_uid': {
+                    type: 'integer'
+                  },
+                  code: {
+                    type: 'string'
+                  },
+                  province: {
+                    type: 'string'
+                  },
+                  district: {
+                    type: 'string'
+                  },
+                  division: {
+                    type: 'string'
+                  },
+                  region: {
+                    type: 'string'
+                  },
+                  abbreviation: {
+                    type: 'string'
                   }
                 }
               },
-              phoneId: {
-                type: 'string',
-                index: 'not_analyzed'
+              geometry: {
+                properties: {
+                  coordinates: {
+                    type: 'geo_shape'
+                  }
+                }
               }
             }
           }

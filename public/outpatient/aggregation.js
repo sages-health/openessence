@@ -17,6 +17,12 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
         order: { '_term': 'asc' }
       }
     },
+    districts: {
+      terms: {
+        field: 'medicalFacility.district',
+        order: { '_term': 'asc' }
+      }
+    },
     age: {
       range: { // age is actually an age group, b/c that's almost always what you actually want
         field: 'patient.age',
