@@ -38,9 +38,11 @@
           <ul class="dropdown-menu">
             <!-- TODO define this in outpatient module -->
             <li><a ui-sref="edit.visit" translate>Outpatient visits</a></li>
+            <li role="presentation"class='divider'><a ng-show="user.isAdmin()"></a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.district" translate>Districts</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.diagnosis" translate>Diagnoses</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.symptom" translate>Symptoms</a></li>
+            <li role="presentation"class='divider'><a ng-show="user.isAdmin()"></a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.user" translate>Users</a></li>
           </ul>
         </li>
