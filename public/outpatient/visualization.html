@@ -22,7 +22,7 @@
             <a ng-click="tableFilter('symptoms', visit._source.symptoms)">{{visit._source.symptoms | join |
               truncate:30}}</a>
           </td>
-          <td data-title="strings.edit" class="btn-group btn-group-xs">
+          <td data-title="strings.edit" class="btn-group btn-group-xs data-edit-button-group">
             <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
               <span class="icon-pencil"></span>
             </button>

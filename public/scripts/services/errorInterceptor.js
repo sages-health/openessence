@@ -46,7 +46,7 @@ angular.module(services.name).factory('errorInterceptor', function ($q, $injecto
       } else if (rejection.status === 403) {
         notification.error(gettextCatalog.getString(gettext('Insufficient permissions')));
       } else if (rejection.status >= 400) {
-        notification.error(gettextCatalog.getString(gettext('That was a very bad request :(')));
+        //notification.error(gettextCatalog.getString(gettext('That was a very bad request :(')));
       }
 
       return $q.reject(rejection);

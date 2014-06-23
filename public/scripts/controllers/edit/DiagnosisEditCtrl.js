@@ -77,6 +77,8 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
       }, function (data) {
         params.total(data.total);
         $defer.resolve(data.results);
+      }, function error (response) {
+        $rootScope.$broadcast('filterError', response);
       });
     }
   });
