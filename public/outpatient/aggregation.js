@@ -19,7 +19,7 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
     },
     districts: {
       terms: {
-        field: 'medicalFacility.district',
+        field: 'medicalFacility.district.raw',
         order: { '_term': 'asc' }
       }
     },
