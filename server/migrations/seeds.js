@@ -52,8 +52,20 @@ async.parallel([
   function districts (callback) {
     var District = require('../models/District');
     async.parallel([
-      function geometry (callback) { // TODO come up with better way to specify ID
-        bulkInsert(District, require('./cityville_import.json'), {id: 1}, callback);
+      function geometry (callback) {
+        var geoJson = require('./cityville_import.json');
+        var districts = geoJson.features.reduce(function (previous, current) {
+          previous.push({
+            name: current.properties.district,
+            geometry: {
+              type: 'polygon', // elasticsearch uses lowercase
+              coordinates: current.geometry.coordinates
+            }
+          });
+          return previous;
+        }, []);
+
+        bulkInsert(District, districts, callback);
       },
       function districts (callback) {
         bulkInsert(District, [
