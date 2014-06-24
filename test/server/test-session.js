@@ -34,7 +34,7 @@ describe('session', function () {
   describe('local', function () {
     it('should return 200 on success', function (done) {
       nock(conf.elasticsearch.host)
-        .post('/user/user/_search', {
+        .post('/user/user/_search?version=true', {
           query: {
             'constant_score': {
               filter: {
@@ -89,7 +89,7 @@ describe('session', function () {
 
     it('should return 403 on bad password', function (done) {
       nock(conf.elasticsearch.host)
-        .post('/user/user/_search', {
+        .post('/user/user/_search?version=true', {
           query: {
             'constant_score': {
               filter: {

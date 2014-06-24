@@ -128,7 +128,7 @@ function model (modelOptions) {
     callback(null, _.assign({
       index: index,
       type: type,
-      version: (modelOptions.version === false ? false : true)
+      version: modelOptions.version !== false
     }, esRequest));
   });
 

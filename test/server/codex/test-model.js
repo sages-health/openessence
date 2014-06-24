@@ -280,7 +280,6 @@ describe('model', function () {
   });
 
   describe('search()', function () {
-
     it('should search elasticsearch', function (done) {
       var Bar = codex.model({
         index: 'foo',
@@ -312,7 +311,7 @@ describe('model', function () {
       });
     });
 
-    it('should search elasticsearch if version:false', function (done) {
+    it('should search respect `version: false`', function (done) {
       var Bar = codex.model({
         index: 'foo',
         type: 'bar',

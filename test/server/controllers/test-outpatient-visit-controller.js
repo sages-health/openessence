@@ -237,7 +237,7 @@ describe('OutpatientVisitController', function () {
   describe('GET /', function () {
     it('should filter results by user\'s district', function (done) {
       nock(conf.elasticsearch.host)
-        .post('/outpatient/visit/_search', {
+        .post('/outpatient/visit/_search?version=true', {
           query: {
             filtered: {
               filter: {
