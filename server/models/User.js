@@ -4,6 +4,8 @@ var _ = require('lodash');
 var scrypt = require('scrypt');
 var codex = require('../codex');
 
+var scryptParams = scrypt.params(0.1);
+
 var User = codex.model({
   index: 'user',
   type: 'user',
@@ -51,16 +53,7 @@ var User = codex.model({
         password = new Buffer(password, 'utf8');
       }
 
-      scrypt.params(0.1, function (err, scryptParameters) {
-        if (err) {
-          if (!(err instanceof Error)) { // scrypt tends to return raw objects instead of Errors
-            return callback(_.assign(new Error('scrypt.params error'), err));
-          }
-          return callback(err);
-        }
-
-        scrypt.hash(password, scryptParameters, callback);
-      });
+      scrypt.hash(password, scryptParams, callback);
     }
   },
 
@@ -107,10 +100,10 @@ var User = codex.model({
       // TODO check districts, or are districts just roles?
     },
 
-    checkPassword: function (password, callback) {
+    verifyPassword: function (password, callback) {
       var myPassword = this.password;
       if (!Buffer.isBuffer(myPassword)) {
-        myPassword = new Buffer(myPassword, 'hex');
+        myPassword = new Buffer(myPassword, 'hex'); // TODO switch to base64
       }
 
       scrypt.verify(myPassword, password, function (err, result) {
@@ -141,7 +134,7 @@ var User = codex.model({
           return callback(err);
         }
 
-        return callback(null, _.assign({}, doc, {password: password}));
+        return callback(null, _.assign({}, doc, {password: password.toString('hex')}));
       });
     } else {
       callback(null, new Error('Cannot create user without password'));

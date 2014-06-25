@@ -37,6 +37,13 @@ function model (modelOptions) {
       configurable: false,
       writable: false,
       value: {
+        // Flag consumers can use to check if an object is a Codex model instance. It's a function so that it's not
+        // accidentally serialized, which would defeat the purpose.
+        codexModel: function () {
+          // consumers really only need to check for the presence of the function, but just in case, we return true
+          return true;
+        },
+
         // this might be useful if each model instance can override index or type
         index: getSetting('index') || instanceOptions._index,
         type: getSetting('type') || instanceOptions._type,
@@ -245,9 +252,8 @@ function model (modelOptions) {
         index: model._.index, // don't use model.index! That comes from the client
         type: model._.type, // happy little fields :)
         id: model._.id,
-        refresh: model._.refresh,
-        body: _.assign({}, doc) // don't include non-enumerable props, just in case
-      }, params);
+        refresh: model._.refresh
+      }, params, {body: doc});
 
       // TODO pass new Model instance?
       return client.index(params, callback);//model._.client.index(params, callback);

@@ -9,15 +9,20 @@ var Boom = require('boom');
 var conf = require('./conf');
 var logger = conf.logger;
 var User = require('./models/User');
-var errors = require('./error');
 
 passport.serializeUser(function (user, done) {
   // store entire user object in session so we don't have to deserialize it from data store
   // this won't scale to large number of concurrent users, but it will be faster for small deployments
-  done(null, user);
+  done(null, {doc: user, '_': user._}); // _ is non-enumerable prop, so we have to explicitly serialize it
 });
 passport.deserializeUser(function (user, done) {
-  done(null, new User(user));
+  if (user._ && user._.codexModel) {
+    // coming straight from authenticating
+    return done(null, user);
+  } else {
+    // have to really deserialize
+    return done(null, new User(user.doc, user._));
+  }
 });
 
 passport.use(new PersonaStrategy({
@@ -27,11 +32,11 @@ passport.use(new PersonaStrategy({
 
   if (!conf.users) {
     // "Demo" mode: give any user who logs in via Persona full admin rights
-    callback(null, {
+    callback(null, new User({
       username: email,
       authType: 'persona',
       roles: ['admin']
-    });
+    }));
     return;
   }
 
@@ -40,7 +45,7 @@ passport.use(new PersonaStrategy({
     localUser.username = email;
     localUser.authType = 'persona';
     logger.info({user: localUser}, '%s logged in with Persona via file system whitelist', email);
-    callback(null, localUser);
+    callback(null, new User(localUser));
     return;
   }
 
@@ -75,7 +80,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
 
     if (!user) {
       // Hash anyway to prevent timing attacks. FYI: this string is "admin" hashed by scrypt with our parameters
-      new User().checkPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
+      new User().verifyPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
         new Buffer(password, 'utf8'), function (err) {
           // always pass false
           callback(err, false);
@@ -85,7 +90,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
     }
 
     // Check password before we check if user is disabled. Again, this is to prevent timing attacks.
-    user.checkPassword(new Buffer(password, 'utf8'), function (err, match) {
+    user.verifyPassword(new Buffer(password, 'utf8'), function (err, match) {
       delete user.password;
       password = null; // can't hurt
 

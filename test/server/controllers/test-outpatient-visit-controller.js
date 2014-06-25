@@ -20,7 +20,7 @@ describe('OutpatientVisitController', function () {
 
   var addUser = function (user) {
     return function (req, res, next) {
-      req.user = new User(user);
+      req.user = user;
       next();
     };
   };
@@ -55,10 +55,9 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({ // mock user
-        id: 1234,
+      app.use(addUser(new User({ // mock user
         districts: ['District 2']
-      }));
+      })));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -92,10 +91,9 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({
-        id: 1234,
+      app.use(addUser(new User({
         districts: []
-      }));
+      })));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -130,10 +128,9 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({
-        id: 1234,
+      app.use(addUser(new User({
         districts: ['District 1']
-      }));
+      })));
 
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
@@ -171,10 +168,9 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({
-        id: 1234,
+      app.use(addUser(new User({
         roles: ['district_all']
-      }));
+      })));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -211,9 +207,7 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({
-        id: 1234
-      }));
+      app.use(addUser(new User()));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -275,6 +269,7 @@ describe('OutpatientVisitController', function () {
                 _type: 'visit',
                 _id: '1',
                 _score: 1,
+                _version: 1,
                 _source: {
                   medicalFacility: {
                     district: 'District 1'
@@ -286,10 +281,7 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({
-        id: 1234,
-        districts: ['District 1']
-      }));
+      app.use(addUser(new User({districts: ['District 1']}, {id: '1234'})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -313,10 +305,7 @@ describe('OutpatientVisitController', function () {
     /*jshint quotmark:false */
     it("should return 403 if user doesn't have rights to district", function (done) {
       var app = express();
-      app.use(addUser({
-        id: 1234,
-        districts: []
-      }));
+      app.use(addUser(new User({districts: []})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -367,10 +356,7 @@ describe('OutpatientVisitController', function () {
           created: true
         });
       var app = express();
-      app.use(addUser({
-        id: 1234,
-        districts: ['District 1']
-      }));
+      app.use(addUser(new User({districts: ['District 1']})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -408,10 +394,7 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({
-        id: 1234,
-        districts: []
-      }));
+      app.use(addUser(new User({districts: []})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -453,10 +436,7 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser({
-        id: 1234,
-        districts: ['District 1']
-      }));
+      app.use(addUser(new User({districts: ['District 1']})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 

@@ -29,10 +29,8 @@ module.exports = codex.controller(User, {
   },
   postSearch: function (req, esResponse, callback) {
     if (esResponse && esResponse.results) {
-      for (var index = 0; index < esResponse.results.length; index++) {
-        if (esResponse.results[index]._source.password) {
-          delete esResponse.results[index]._source.password;
-        }
+      for (var i = 0; i < esResponse.results.length; i++) {
+        delete esResponse.results[i]._source.password;
       }
     }
     callback(null, esResponse);
@@ -41,34 +39,44 @@ module.exports = codex.controller(User, {
   insert: true,
   replace: true,
   preInsert: function (req, esRequest, callback) {
-    /*jshint unused:false */
+    var user = req.user;
+
     // TODO figure out what access control to enforce
     // maybe anyone can create users in demo mode, but only admins can create users in non demo mode
     // or maybe anyone can create users any time but they're quarantined until an admin approves them?
-    if (!req.user || !req.user.canCreateUser(esRequest.body)) {
+    if (!user || !user.canCreateUser(esRequest.body)) {
       return callback(Boom.forbidden());
     }
 
-    // if editing an existing user information
-    if (esRequest.id && !esRequest.body.password) {
-      // get user record
-      User.get({id: esRequest.id}, function (err, esr) {
-        if (err) {
-          return callback(err);
-        }
-        // set password
-        esRequest.body.password = esr.password;
-        callback(null, esRequest);
-      });
-    } else { // else if creating a new user or an existing user changing his password, hash the new password
+    if (esRequest.id) {
+      if (esRequest.id !== user.id && !user.isAdmin()) {
+        // can't modify other users
+        return callback(Boom.forbidden());
+      }
 
-      User.hashPassword(esRequest.body.password, function (err, password) {
-        if (err) {
-          return callback(err);
-        }
-        esRequest.body.password = password.toString('hex');
-        callback(null, esRequest);
-      });
+      if (!esRequest.body.password) {
+        // we don't send passwords to the client, so we need to get them when editing an existing user
+        User.get({id: esRequest.id}, function (err, esr) {
+          if (err) {
+            return callback(err);
+          }
+          // set password
+          esRequest.body.password = esr.password;
+          callback(null, esRequest);
+        });
+      } else {
+        // existing user editing their password, so the password is already hashed
+        // Note that scrypt is smart enough not to double encode digests (I guess it checks for the "scrypt" preamble
+        // and associated params), so it's OK that the model still tries to hash it.
+        return callback(null, esRequest);
+      }
+    } else {
+      // creating new user
+      if (!esRequest.body.password) {
+        return callback(Boom.badRequest('Can\'t create user with no password'));
+      }
+      // nothing to do since password will be hashed by model
+      return callback(null, esRequest);
     }
   },
 
