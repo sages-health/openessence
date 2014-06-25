@@ -3,7 +3,8 @@
 var Boom = require('boom');
 var _ = require('lodash');
 var express = require('express');
-var logger = require('./conf').logger;
+var conf = require('./conf');
+var logger = conf.logger;
 var views = require('./views');
 
 var app = express();
@@ -16,11 +17,13 @@ function errorMiddleware (err, req, res, next) {
     return next();
   }
 
-  logger.error({
-    err: err,
-    req: req,
-    user: req.user
-  });
+  if (conf.env !== 'test') { // don't spam when we're testing, our assertions are enough
+    logger.error({
+      err: err,
+      req: req,
+      user: req.user
+    });
+  }
 
   if (!(err instanceof Error)) {
     logger.error('Middleware threw a non-error object: ', err);
