@@ -79,6 +79,8 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
       }, function (data) {
         params.total(data.total);
         $defer.resolve(data.results);
+      }, function error (response) {
+        $rootScope.$broadcast('filterError', response);
       });
     }
   });

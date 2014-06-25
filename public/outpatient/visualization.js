@@ -271,6 +271,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             }, function (data) {
               params.total(data.total);
               $defer.resolve(data.results);
+            }, function error (response) {
+              $rootScope.$broadcast('filterError', response);
             });
           }
         });

@@ -100,6 +100,8 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
       }, function (data) {
         params.total(data.total);
         $defer.resolve(data.results);
+      }, function error (response) {
+        $rootScope.$broadcast('filterError', response);
       });
     }
   });
