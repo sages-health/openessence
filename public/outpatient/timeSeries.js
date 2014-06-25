@@ -5,7 +5,7 @@ var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientTimeSeries', function (gettextCatalog, outpatientAggregation,
-                                                                            visualization, OutpatientVisit) {
+                                                                            visualization, OutpatientVisit, $window) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
@@ -194,6 +194,34 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           };
 
           /**
+           * Takes in a mouse event and returns an object with x and y properties.
+           * This method ensure cross browser compatibility
+           * for mouse events, which Firefox is making surprisingly difficult
+           *
+           * http://www.jacklmoore.com/notes/mouse-position/
+           *
+           * @param event
+           */
+          var getMouseCoords = function(event) {
+            event = event || $window.event;
+
+            if (event.offsetX) {
+              return {
+                x: event.offsetX,
+                y: event.offsetY
+              };
+            }
+
+            var target = event.target || event.srcElement,
+              rect = target.getBoundingClientRect();
+
+            return {
+              x: event.clientX - rect.left + target.getBBox().x, // tailored to timeseries needs
+              y: event.clientY - rect.top
+            };
+          };
+
+          /**
            * Called on mousemove
            * Detect closest data points and draw a mouse guide, tooltip
            * and circles.
@@ -207,13 +235,16 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             var guideX = -1;
             var highlightedPairs = [];
 
+            var offsetX = getMouseCoords(event).x;
+            var offsetY = getMouseCoords(event).y;
+
             chart.selectAll('circle.highlightedDot').remove();
             // for each pivot, find the closest point and draw a circle there
             angular.forEach(scope.data, function (pivot, pivotKey) {
               var minDistance = -1;
               var minKey = -1;
               angular.forEach(pivot.values, function (pair, pairKey) {
-                var distance = Math.abs(scope.timeseries.xscale(pair[0]) - event.offsetX);
+                var distance = Math.abs(scope.timeseries.xscale(pair[0]) - offsetX);
                 if (minDistance === -1 || distance < minDistance) {
                   minDistance = distance;
                   minKey = pairKey;
@@ -268,7 +299,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
               element.find('.timeseries_tooltip')
                 .css({
-                  'top': event.offsetY - (ttHeight / 2),
+                  'top': offsetY - (ttHeight / 2),
                   'left': guideX + 40
                 });
             }
@@ -306,11 +337,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               d3.select(element[0]).selectAll('rect.highlight-rect').remove();
               scope.dragging = false;
 
-              var startX = Math.min(scope.dragStartX, event.offsetX);
-              var endX = Math.max(scope.dragStartX, event.offsetX);
+              var offsetX = getMouseCoords(event).x;
+
+              var startX = Math.min(scope.dragStartX, offsetX);
+              var endX = Math.max(scope.dragStartX, offsetX);
               if (endX - startX > 5) {
                 var revx = d3.scale.linear()
-                  .domain([scope.timeseries.xmargin, scope.timeseries.width - scope.timeseries.xmargin])
+                  .domain([scope.timeseries.xmargin, scope.timeseries.width])
                   .range([scope.timeseries.xmin, scope.timeseries.xmax]);
                 var fromDate = new Date(revx(startX));
                 var toDate = new Date(revx(endX));
@@ -327,12 +360,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            * @param event
            */
           scope.timeSeriesDrag = function (event) {
+            var offsetX = getMouseCoords(event).x;
             if (!scope.dragging) {
-              scope.dragStartX = event.offsetX;
+              scope.dragStartX = offsetX;
             }
             d3.select(element[0]).selectAll('g.highlight-display rect.highlight-rect').remove();
 
-            var width = event.offsetX - scope.dragStartX;
+            var width = offsetX - scope.dragStartX;
             var x = scope.dragStartX + (width < 0 ? width : 0);
             width = Math.abs(width);
             var transformY = scope.timeseries.yscale(scope.timeseries.ymax) + scope.timeseries.legendHeight + 5;
@@ -440,7 +474,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             var ymargin = 20;
             var xmargin = 40;
 
-            // TODO: User getComputedTextLength instead of inserting things into the DOM willy nilly
             // Get the width of the longest Y label
             element.append('<div class="str_width">' + ymax + '</div>');
             var yLabelWidth = angular.element('.str_width').width();
@@ -454,12 +487,31 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             xmargin = 5 + Math.max(yLabelWidth, xLabelHalf); // 5 extra for padding
 
+            console.log(readableDate(xmin));
             var x = d3.scale.linear()
               .domain([xmin, xmax])
-              .range([0 + xmargin, width - xmargin]);
+              .range([0 + xmargin, width]);
+
             var y = d3.scale.linear()
               .domain([0, ymax])
-              .range([0 + ymargin, height - ymargin]);
+              .range([height - ymargin, 0 + ymargin]);
+
+            var xAxis = d3.svg.axis()
+              .scale(x)
+              .orient('bottom')
+              .tickFormat(function (d) {
+                return readableDate(d);
+              })
+              .tickSize(0)
+              .ticks(5)
+              .tickPadding(6);
+
+            var yAxis = d3.svg.axis()
+              .scale(y)
+              .orient('left')
+              .tickFormat(d3.format('d'))
+              .tickSize(0)
+              .tickPadding(6);
 
             var timeseries = d3.select(element[0]).select('.custom-timeseries');
             var g = timeseries.select('g.chart');
@@ -468,90 +520,53 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             g.selectAll('path').remove();
             g.selectAll('circle.point').remove();
             g.selectAll('line').remove();
-            g.selectAll('text').remove();
 
-            // TODO: D3 does have methods for picking picking good tick values. Use those instead.
-            // Can't use default ticks because we don't want decimal numbers
-            // Logic to get between ~4 and 10 whole numbered increments that make sense to a human
-            var yrange = ymax - ymin;
-            var desiredMinNumTicks = 4;
-            var tickRange = yrange / desiredMinNumTicks;
-            var log10 = Math.floor((tickRange < Math.E ? 0 : Math.log(tickRange)) / 2.303) + 1;
-            var yLabelIncrement = Math.pow(10, log10 - 1) * (1 + Math.floor(tickRange / Math.pow(10, log10)));
-            yLabelIncrement *= Math.pow(2, Math.floor(ymax / (10 * yLabelIncrement)));
-
-            // Y labels and guidelines
-            var yLabelValue = 0;
-            while (yLabelValue < ymax && ymax >= 0) {
-              g.append('svg:text')
-                .attr('class', 'yLabel')
-                .text(yLabelValue)
-                .attr('x', xmargin - yLabelWidth - 2)
-                .attr('y', -1 * y(yLabelValue) + 5) // center labels vertically
-                .attr('text-anchor', 'left');
-              g.append('svg:line')
-                .attr('class', 'yTicks guide')
-                .attr('y1', -1 * y(yLabelValue))
-                .attr('x1', xmargin)
-                .attr('y2', -1 * y(yLabelValue))
-                .attr('x2', width - xmargin);
-              yLabelValue += yLabelIncrement;
+            var yAxisTicks;
+            if (g.selectAll('.y.axis').empty()) {
+              yAxisTicks = g.append('g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate(' + xmargin + ',' + (-1 * height) + ')')
+                .call(yAxis);
+            } else {
+              yAxisTicks = g.selectAll('.y.axis')
+                .attr('transform', 'translate(' + xmargin + ',' + (-1 * height) + ')')
+                .call(yAxis);
+              yAxisTicks.selectAll('.tick.gridline').remove();
             }
-            // Special label for max
-            g.append('svg:text')
-              .attr('class', 'yLabel')
-              .text(ymax)
-              .attr('x', xmargin - yLabelWidth - 2)
-              .attr('y', -1 * y(ymax) + 5)
-              .attr('text-anchor', 'left');
+            var yTicksLength = yAxisTicks.selectAll('.tick').size();
+            yAxisTicks.selectAll('.tick')
+              .append('line')
+              .attr('class', 'gridline')
+              .attr('x1', 0)
+              .attr('y1', 0)
+              .attr('x2', function(d, i) {
+                return d % 1 !== 0 || i === 0 || i === yTicksLength - 1 ? 0 : width - xmargin;
+              })
+              .attr('y2', 0);
 
-            // TODO: Once again, this ticks can be picked effectively  by D3. No need to do it manually
-            // Logic to pick the number of x ticks
-            var xTickPadding = 20; // in pixels
-            var numTicks = Math.floor(width / ((2 * xLabelHalf) + xTickPadding));
-            // Add starting x tick
-            g.append('svg:text')
-              .attr('class', 'xLabel')
-              .text(readableDate(xmin))
-              .attr('x', x(xmin))
-              .attr('y', 0)
-              .attr('text-anchor', 'middle');
-            // Add middle x ticks and guides
-            for (var i = 0; i < numTicks; i++) {
-              var xcoord = x(Math.floor(i * ((xmax - xmin) / numTicks)) + xmin);
-              g.append('svg:text')
-                .attr('class', 'xLabel')
-                .text(readableDate(Math.floor(i * ((xmax - xmin) / numTicks)) + xmin))
-                .attr('x', xcoord)
-                .attr('y', 0)
-                .attr('text-anchor', 'middle');
-              g.append('svg:line')
-                .attr('class', 'xTicks guide')
-                .attr('x1', xcoord)
-                .attr('y1', -ymargin)
-                .attr('x2', xcoord)
-                .attr('y2', -1 * (height - ymargin));
+            // invert range to normal for drawing paths
+            y.range([0 + ymargin, height - ymargin]);
+
+            var xAxisTicks;
+            if (g.selectAll('.x.axis').empty()) {
+              xAxisTicks = g.append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + (-1 * ymargin) + ')')
+                .attr('width', width)
+                .call(xAxis);
+            } else {
+              xAxisTicks = g.selectAll('.x.axis')
+                .attr('transform', 'translate(0,' + (-1 * ymargin) + ')')
+                .call(xAxis);
+              xAxisTicks.selectAll('.tick.gridline').remove();
             }
-            // Ending x tick
-            g.append('svg:text')
-              .attr('class', 'xLabel')
-              .text(readableDate(xmax))
-              .attr('x', x(xmax)) // 2
-              .attr('y', 0)
-              .attr('text-anchor', 'middle');
-
-            // Axis
-            g.append('svg:line')
-              .attr('x1', xmargin)
-              .attr('y1', 0 - ymargin)
-              .attr('x2', width - xmargin)
-              .attr('y2', 0 - ymargin);
-
-            g.append('svg:line')
-              .attr('x1', xmargin)
-              .attr('y1', 0 - ymargin)
-              .attr('x2', xmargin)
-              .attr('y2', -1 * y(ymax));
+            xAxisTicks.selectAll('.tick')
+              .append('line')
+              .attr('class', 'gridline')
+              .attr('x1', 0)
+              .attr('y1', 0)
+              .attr('x2', 0)
+              .attr('y2', -1 * (height - 2 * ymargin));
 
             var paletteInUse = [];
             var legend = timeseries.select('g.legend');
@@ -577,8 +592,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                 });
               // Graph
               g.append('svg:path')
-                .attr('class', 'path' + key)
-                .attr('d', line(value.values));
+                .attr('class', 'pivotPath path' + key)
+                .attr('d', line(value.values))
+                .style('stroke', color);
 
               // If only 1 data point. Draw point
               if (value.values.length === 1) {
@@ -589,10 +605,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                   .attr('cx', xcoord)
                   .attr('cy', ycoord)
                   .attr('r', 3)
-                  .style({
-                    'fill': color
-                  });
-
+                  .style('fill', color);
               }
 
               // Legend Elements
@@ -619,17 +632,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                 currLegendItemOffset = 0;
                 currLegendItemCol++;
               }
-
-              angular.element('.custom-timeseries g .path' + key).css({
-                'stroke': color,
-                'stroke-width': 2,
-                'fill': 'none'
-              });
             });
 
             var legendHeight = (currLegendItemCol + 1) * 15 + 10;
 
-            timeseries.attr('width', width)
+            timeseries.attr('width', width + xmargin)
               .attr('height', height + legendHeight);
 
             legend.attr('width', width)
@@ -638,7 +645,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             timeseries.select('g.chart')
               .attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) + ')') //5 so labels aren't cut off
-              .attr('width', width)
+              .attr('width', width + xmargin)
               .attr('height', height - legendHeight);
 
             topLayer.attr('transform', 'translate(0, ' + (y(ymax) + 5 + legendHeight) + ')') //5 so labels aren't cut off
@@ -647,7 +654,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             topLayer.select('rect.mouse-detector')
               .attr('width', width - xmargin)
-              .attr('height', height - 2 * ymargin - legendHeight)
+              .attr('height', height - 2 * ymargin)
               .attr('x', xmargin)
               .attr('y', -(height - ymargin));
 
