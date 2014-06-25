@@ -46,7 +46,9 @@ angular.module(services.name).factory('errorInterceptor', function ($q, $injecto
       } else if (rejection.status === 403) {
         notification.error(gettextCatalog.getString(gettext('Insufficient permissions')));
       } else if (rejection.status >= 400) {
-        //notification.error(gettextCatalog.getString(gettext('That was a very bad request :(')));
+        // It's not really useful to show a popup if the client did something bad. Contextual feedback,
+        // like a validation error in a form, makes more sense
+        // notification.error(gettextCatalog.getString(gettext('That was a very bad request :(')));
       }
 
       return $q.reject(rejection);

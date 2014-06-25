@@ -78,7 +78,8 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
                   function (response) {
                     params.total(response.total);
                     $defer.resolve(response.results);
-                  }, function error (response){
+                  },
+                  function error (response) {
                     $rootScope.$broadcast('filterError', response);
                   });
               }

@@ -14,7 +14,6 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
       queryString: '='
     },
     compile: function () {
-
       return {
         pre: function (scope) {
 
@@ -102,7 +101,6 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
             if (requestNum === 400) {
               scope.queryForm.queryStrings.$setValidity('syntaxError', false);
             }
-
           });
 
           scope.isInvalid = function (field) {
