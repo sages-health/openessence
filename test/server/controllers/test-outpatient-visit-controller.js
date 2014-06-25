@@ -453,4 +453,63 @@ describe('OutpatientVisitController', function () {
         });
     });
   });
+
+  describe('PUT /:id', function () {
+    it('should work if user is an admin', function (done) {
+      var requestBody = {
+        medicalFacility: {
+          district: 'District 1'
+        }
+      };
+
+      nock(conf.elasticsearch.host)
+        // TODO cache instance on request so we don't have to get it multiple times
+        .get('/outpatient/visit/1').times(2) // once to check districts, and once for paperTrail
+        .reply(200, {
+          _index: 'outpatient',
+          _type: 'visit',
+          _id: '1',
+          _version: 1,
+          found: true,
+          _source: requestBody
+        })
+        .filteringRequestBody(function (body) {
+          if (!body) {
+            return false;
+          }
+
+          body = JSON.parse(body);
+          if (!body.paperTrail) {
+            return false;
+          }
+
+          return 'body';
+        })
+        .post('/outpatient/visit/1?refresh=true', 'body')
+        .reply(201, {
+          _index: 'outpatient',
+          _type: 'visit',
+          _id: '1',
+          _version: 1,
+          created: true
+        });
+      var app = express();
+      app.use(addUser(new User({roles: ['admin']})));
+      app.use(codex.middleware(OutpatientVisitController))
+        .use(errorMiddleware);
+
+      request(app)
+        .put('/1')
+        .send(requestBody)
+        .expect(201)
+        .end(function (err) {
+          if (err) {
+            done(err);
+            return;
+          }
+
+          done();
+        });
+    });
+  });
 });

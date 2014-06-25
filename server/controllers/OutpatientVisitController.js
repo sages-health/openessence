@@ -67,7 +67,7 @@ module.exports = codex.controller(OutpatientVisit, {
     }
 
     // need to check existing document's permissions
-    OutpatientVisit.get(esRequest.id, function (err, visit) {
+    OutpatientVisit.get({id: esRequest.id}, function (err, visit) {
       if (err) {
         return callback(err);
       }
