@@ -10,14 +10,13 @@
       <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
       <conflict-message ng-show="conflictError"></conflict-message>
 
-      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.username) || errorOnRecordSave.error}">
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.username) || uniqueConstraintViolation}">
         <label for="entry-user-username" translate>Username</label>
-        <input class="form-control" id="entry-user-username" name="username" ng-model="user.username" required>
+        <input class="form-control" id="entry-user-username" name="username" ng-model="data.username" required>
         <span ng-show="isInvalid(recordForm.username)" class="help-block" translate>
           Please enter a valid user name
         </span>
-
-        <span class="help-block" ng-show="errorOnRecordSave.error == 'UniqueConstraintViolation'">
+        <span class="help-block" ng-show="uniqueConstraintViolation">
           <span translate>Sorry, this name is already in use</span>
         </span>
       </div>
@@ -25,7 +24,7 @@
       <div class="form-group" ng-if="!record._id"
            ng-class="{'has-error': isInvalid(recordForm.password) || isShort(recordForm.password) || !passwordMatch(recordForm.password, recordForm.passwordConfirm)}">
         <label for="entry-user-password" translate>Password</label>
-        <input type="password" class="form-control" id="entry-user-password" name="password" ng-model="user.password"
+        <input type="password" class="form-control" id="entry-user-password" name="password" ng-model="data.password"
                required>
         <span ng-show="isInvalid(recordForm.password)" class="help-block" translate>
           Please enter a password
@@ -39,7 +38,7 @@
            ng-class="{'has-error': !passwordMatch(recordForm.password, recordForm.passwordConfirm)}">
         <label for="entry-user-passwordConfirm" translate>Confirm Password</label>
         <input type="password" class="form-control" id="entry-user-passwordConfirm" name="passwordConfirm"
-               ng-model="user.passwordConfirm" required>
+               ng-model="data.passwordConfirm" required>
         <span ng-show="!passwordMatch(recordForm.password, recordForm.passwordConfirm)" class="help-block" translate>
           Password and Confirm Password must match
         </span>
@@ -47,7 +46,7 @@
 
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.email)}">
         <label for="entry-user-email" translate>Email</label>
-        <input type="email" class="form-control" id="entry-user-email" name="email" ng-model="user.email">
+        <input type="email" class="form-control" id="entry-user-email" name="email" ng-model="data.email">
         <span ng-show="isInvalid(recordForm.email)" class="help-block" translate>
           Please enter a valid email address
         </span>
@@ -55,17 +54,17 @@
 
       <div class="form-group">
         <label for="entry-user-name" translate>Name</label>
-        <input type="text" class="form-control" id="entry-user-name" name="name" ng-model="user.name">
+        <input type="text" class="form-control" id="entry-user-name" name="name" ng-model="data.name">
       </div>
 
       <div class="form-group">
         <label for="entry-user-disabled" translate>Disabled</label>
-        <input type="checkbox" class="checkbox" id="entry-user-disabled" name="disabled" ng-model="user.disabled">
+        <input type="checkbox" class="checkbox" id="entry-user-disabled" name="disabled" ng-model="data.disabled">
       </div>
 
       <div class="form-group">
         <label for="entry-user-roles" translate>Roles</label>
-        <select class="form-control select2-multiple" id="entry-user-roles" multiple ui-select2 ng-model="user.roles">
+        <select class="form-control select2-multiple" id="entry-user-roles" multiple ui-select2 ng-model="data.roles">
           <option ng-repeat="role in roles" value="{{role}}">{{role}}</option>
         </select>
       </div>
@@ -73,7 +72,7 @@
       <div class="form-group">
         <label for="entry-user-districts" translate>Districts</label>
         <select class="form-control select2-multiple" id="entry-user-districts" multiple ui-select2
-                ng-model="user.districts">
+                ng-model="data.districts">
           <option ng-repeat="district in districts" value="{{district}}">{{district}}</option>
         </select>
       </div>

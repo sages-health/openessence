@@ -10,17 +10,17 @@
       <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
       <conflict-message ng-show="conflictError"></conflict-message>
 
-      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || errorOnRecordSave.error}">
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || uniqueConstraintViolation}">
         <label class="col-md-4 control-label" for="entry-diagnosis-name" translate>Name</label>
 
         <div class="col-md-6">
           <div class="input-group">
-            <input class="form-control" id="entry-diagnosis-name" name="name" ng-model="diagnosis.name" required>
+            <input class="form-control" id="entry-diagnosis-name" name="name" ng-model="data.name" required>
           </div>
           <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
             Please enter a valid Diagnosis name
           </span>
-          <span class="help-block" ng-show="errorOnRecordSave.error == 'UniqueConstraintViolation'">
+          <span class="help-block" ng-show="uniqueConstraintViolation">
             <span translate>Sorry, this name is already in use</span>
           </span>
         </div>
@@ -30,7 +30,7 @@
 
         <div class="col-md-6">
           <div class="input-group">
-            <input class="form-control" id="entry-diagnosis-phoneId" name="phoneId" ng-model="diagnosis.phoneId">
+            <input class="form-control" id="entry-diagnosis-phoneId" name="phoneId" ng-model="data.phoneId">
           </div>
           <span ng-show="isInvalid(recordForm.phoneId)" class="help-block" translate>
             Please enter a valid Phone ID
