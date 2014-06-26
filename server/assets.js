@@ -39,12 +39,15 @@ exports.anonymous = function () {
       external: libs
     }));
 
-    app.use('/public/styles', less({
-      src: __dirname + '/../public/styles',
-      paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules'],
-      sourceMap: true,
-      compress: false // no point in development
-    }));
+    app.use('/public/styles', less(__dirname + '/../public/styles', {
+        compiler: {
+          sourceMap: true,
+          compress: false // no point in development
+        },
+        parser: {
+          paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules']
+        }
+      }));
 
     // TODO angular-gettext middleware instead
     app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
