@@ -484,6 +484,32 @@ describe('model', function () {
         done();
       });
     });
+
+    it('should set _. properties', function (done) {
+      var response = {
+        _index: 'foo',
+        _type: 'bar',
+        _id: '1',
+        _version: 2,
+        found: true,
+        _source: {}
+      };
+      nock(conf.elasticsearch.host)
+        .get('/foo/bar/1')
+        .reply(200, response);
+
+      var Bar = codex.model({
+        index: 'foo',
+        type: 'bar'
+      });
+
+      Bar.get({id: 1}, function (err, bar) {
+        expect(bar._.id).to.equal('1');
+        expect(bar._.version).to.equal(2);
+
+        done();
+      });
+    });
   });
 
   describe('delete()', function () {

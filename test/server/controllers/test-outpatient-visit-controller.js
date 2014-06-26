@@ -462,9 +462,8 @@ describe('OutpatientVisitController', function () {
         }
       };
 
-      nock(conf.elasticsearch.host)
-        // TODO cache instance on request so we don't have to get it multiple times
-        .get('/outpatient/visit/1').times(2) // once to check districts, and once for paperTrail
+      var es = nock(conf.elasticsearch.host)
+        .get('/outpatient/visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -507,6 +506,8 @@ describe('OutpatientVisitController', function () {
             done(err);
             return;
           }
+
+          expect(es.isDone()).to.be.true;
 
           done();
         });

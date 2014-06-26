@@ -7,16 +7,23 @@ var logger = require('../conf').logger;
 // Currently only records when updates happen
 // TODO import more features from PaperTrail, like recording old versions of documents
 
-function makePaperTrail (model, callback) {
+function makePaperTrail (model, req, callback) {
+  if (!callback) {
+    callback = arguments[1];
+    req = null;
+  }
+
   var createEntry = function () {
     return {
       createdAt: new Date()
     };
   };
 
+  var getModel = req ? req.codex.get : model._.get;
+
   if (model._.id) {
     // get list of modifications
-    model._.get({id: model._.id}, function (err, instance) {
+    getModel({id: model._.id}, function (err, instance) {
       if (err) {
         return callback(err);
       }
@@ -63,7 +70,7 @@ function caperTrailController (controller) {
       logger.warn({req: req}, 'Client tried to overwrite paper trail. Don\'t worry, we got \'em');
     }
 
-    makePaperTrail(new controller.Model(esRequest.body, esRequest), function (err, trail) {
+    makePaperTrail(new controller.Model(esRequest.body, esRequest), req, function (err, trail) {
       if (err) {
         return callback(err);
       }

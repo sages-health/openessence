@@ -66,8 +66,10 @@ module.exports = codex.controller(OutpatientVisit, {
       return callback(null, esRequest);
     }
 
-    // need to check existing document's permissions
-    OutpatientVisit.get({id: esRequest.id}, function (err, visit) {
+    // if not inserting a new document, we need to check existing document's permissions
+
+    // passing version means we can skip the index request if we're already outdated
+    req.codex.get({id: esRequest.id, version: esRequest.version}, function (err, visit) {
       if (err) {
         return callback(err);
       }
@@ -82,7 +84,7 @@ module.exports = codex.controller(OutpatientVisit, {
 
   delete: true,
   preDelete: function (req, esRequest, callback) {
-    OutpatientVisit.get({id: esRequest.id}, function (err, visit) {
+    req.codex.get({id: esRequest.id, version: esRequest.version}, function (err, visit) {
       if (err) {
         return callback(err);
       }

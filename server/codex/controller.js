@@ -11,7 +11,43 @@ function Controller (Model, options) {
 
   this.Model = Model;
 
+  var initCodexReq = function (req) {
+    if (req.codex) {
+      return;
+    }
+
+    req.codex = {
+      // Cache of model instances. This is not designed to replace a DAO-level cache. Rather, it should be used so that
+      // you don't need to call Model.get multiple times in the same request. For example, multiple preInsert callbacks
+      // might need the same corresponding preexisting model instance from elasticsearch.
+      instances: {},
+
+      // Get a model instance, fulfilling the request from our cache if possible.
+      get: function (esRequest, callback) {
+        var id = esRequest.id;
+        var instance = req.codex.instances[id];
+        var version = esRequest.version;
+        var noVersion = !version && version !== 0;
+
+        if (instance && (noVersion || version === instance._.version)) {
+          return callback(null, instance);
+        }
+
+        Model.get(esRequest, function (err, instance) {
+          if (err) {
+            return callback(err);
+          }
+
+          req.codex.instances[id] = instance;
+          callback(null, instance);
+        });
+      }
+    };
+  };
+
   var defaultSearch = function (req, res, next) {
+    initCodexReq(req);
+
     var preSearch = this.preSearch.map(function (f) {
       // preSearch expects 2 args but only returns 1, so partially apply to make it work w/ waterfall
       return function (esRequest, cb) {
@@ -51,6 +87,8 @@ function Controller (Model, options) {
   }.bind(this);
 
   var defaultGet = function (req, res, next) {
+    initCodexReq(req);
+
     var preGet = this.preGet.map(function (f) {
       return function (esRequest, cb) {
         f(req, esRequest, cb);
@@ -67,6 +105,8 @@ function Controller (Model, options) {
         if (err) {
           return next(err);
         }
+
+        req.codex.instance = instance;
 
         var postGet0 = function (callback) {
           callback(null, esResponse);
@@ -90,6 +130,8 @@ function Controller (Model, options) {
   }.bind(this);
 
   var defaultInsert = function (req, res, next) {
+    initCodexReq(req);
+
     var preInsert = this.preInsert.map(function (f) {
       return function (esRequest, cb) {
         f(req, esRequest, cb);
@@ -136,6 +178,8 @@ function Controller (Model, options) {
   }.bind(this);
 
   var defaultDelete = function (req, res, next) {
+    initCodexReq(req);
+
     var preDelete = this.preDelete.map(function (f) {
       return function (esRequest, cb) {
         f(req, esRequest, cb);
