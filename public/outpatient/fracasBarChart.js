@@ -4,9 +4,7 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientBarChart', function (gettextCatalog, outpatientAggregation,
-                                                                          visualization, OutpatientVisit, $timeout,
-                                                                          $rootScope) {
+angular.module(directives.name).directive('outpatientBarChart', function ($rootScope) {
   return {
     restrict: 'E',
     template: require('./bar-chart.html'),
@@ -21,8 +19,6 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
       return {
         pre: function (scope, element) {
           scope.options = scope.options || {};
-
-          var color = d3.scale.category20();
 
           /**
            * Return a 'g' element in the SVG for drawing the Bar
@@ -274,8 +270,9 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
                 .attr('x', '0');
             }
 
+            var yAxisTicks;
             if (svg.selectAll('.y.axis').empty()) {
-              var yAxisTicks = svg.append('g')
+              yAxisTicks = svg.append('g')
                 .attr('class', 'y axis')
                 .call(yAxis);
 
@@ -300,7 +297,7 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
                 })
                 .attr('y2', 0);
             } else {
-              var yAxisTicks = svg.selectAll('.y.axis').call(yAxis);
+              yAxisTicks = svg.selectAll('.y.axis').call(yAxis);
               yAxisTicks.selectAll('.tick.gridline').remove();
               yAxisTicks.selectAll('.tick')
                 .append('svg:line')
