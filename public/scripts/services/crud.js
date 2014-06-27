@@ -73,15 +73,11 @@ angular.module(services.name).factory('crud', function ($modal) {
       });
     },
     // Delete a record
-    delete: function (record, resource, template) {
+    'delete': function (record, resource, template) {
       return $modal.open({
         template: template,
         controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
-          $scope.record = angular.copy(record);
-          // do not show paperTrail on confirmation dialog
-          if ($scope.record._source.paperTrail) {
-            delete $scope.record._source.paperTrail;
-          }
+          $scope.record  = record;
           $scope.delete = function () {
             resource.remove({_id: record._id}, function () {
               $modalInstance.close(record);

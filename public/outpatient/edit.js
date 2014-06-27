@@ -49,11 +49,7 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
       options = angular.extend({
         template: require('../partials/delete-record.html'),
         controller: ['$scope', '$modalInstance', 'record', function ($scope, $modalInstance, record) {
-          $scope.record = angular.copy(record);
-          // do not show paperTrail on confirmation dialog
-          if($scope.record._source.paperTrail){
-            delete $scope.record._source.paperTrail;
-          }
+          $scope.record = record;
 
           $scope.delete = function () {
             OutpatientVisit.remove({_id: record._id}, function () {
