@@ -144,7 +144,7 @@ function Controller (Model, options) {
         return next(err);
       }
 
-      var model = new controller.Model(esRequest.body, {id: esRequest.id, version: esRequest.version});
+      var model = controller.Model.fromElasticsearchRequest(esRequest);
       model.insert(esRequest, function (err, esResponse) {
         if (err) {
           return next(err);

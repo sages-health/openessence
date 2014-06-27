@@ -45,12 +45,13 @@ function model (modelOptions) {
         },
 
         // this might be useful if each model instance can override index or type
-        index: getSetting('index') || instanceOptions._index,
-        type: getSetting('type') || instanceOptions._type,
+        index: getSetting('index'),
+        type: getSetting('type'),
 
         // these fields are different for every model instance
-        id: getSetting('id') || instanceOptions._id,
-        version: getSetting('version') || instanceOptions._version,
+        id: instanceOptions.id,
+        version: instanceOptions.version,
+        score: instanceOptions.score,
 
         refresh: getSetting('refresh'),
         client: getSetting('client'),
@@ -60,6 +61,36 @@ function model (modelOptions) {
         search: Model.search,
         delete: Model.delete
       }
+    });
+  };
+
+  /**
+   * Instantiate a new Model instance from an elasticsearch request.
+   * @param esRequest
+   * @returns {Model}
+   */
+  Model.fromElasticsearchRequest = function (esRequest) {
+    return new Model(esRequest.body, {
+      id: esRequest.id,
+      version: esRequest.version
+    });
+  };
+
+  /**
+   * Instantiate a new Model instance from an elasticsearch hit. A hit is a member of a search response's `hits.hits`
+   * array, or the result of a [get request](http://www.elasticsearch.org/guide/en/elasticsearch/reference/1.x/docs-get.html).
+   * @param esHit a
+   * @returns {Model}
+   */
+  Model.fromElasticsearchHit = function (esHit) {
+    return new Model(esHit._source, {
+      id: esHit._id,
+      version: esHit._version,
+      score: esHit._score,
+
+      // these can be different in multi-index searches
+      index: esHit._index,
+      type: esHit._type
     });
   };
 
@@ -121,7 +152,7 @@ function model (modelOptions) {
             return callback(err);
           }
 
-          callback(null, new Model(esResponse._source, esResponse), esResponse);
+          callback(null, Model.fromElasticsearchHit(esResponse), esResponse);
         });
       });
     });
@@ -174,7 +205,7 @@ function model (modelOptions) {
           }
 
           var results = esResponse.hits.hits.map(function (hit) {
-            return new Model(hit._source, hit);
+            return Model.fromElasticsearchHit(hit);
           });
 
           callback(null, results, esResponse);
