@@ -3,7 +3,8 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, visitsReportModal) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, visitsReportModal,
+                                                                  DashboardResource) {
   $scope.visitsReport = function () {
     visitsReportModal.open();
   };
@@ -22,4 +23,12 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
   };
 
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
+
+  // TODO have link go to default dashboard, and do this in dashboard controller
+  $scope.dashboards = [];
+  DashboardResource.get({}, function (data) {
+    for (var index = 0; index < data.results.length; index++) {
+      $scope.dashboards.push({id: data.results[index]._id, name: data.results[index]._source.name});
+    }
+  });
 });

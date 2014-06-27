@@ -1,0 +1,42 @@
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left">{{dashboard.name}}</h4>
+
+        <div class="pull-right btn-group">
+          <a class="btn btn-primary" ng-click="addWidget()"><i class="icon-plus"></i> Add Widget</a>
+          <a class="btn btn-default" ng-click="gridsterOptions.draggable.enabled = !gridsterOptions.draggable.enabled">
+            <i ng-class="gridsterOptions.draggable.enabled ? 'icon-plus' : 'icon-cancel'"></i>Arrange</a>
+          <a class="btn btn-default"
+             ng-click="gridsterOptions.resizable.enabled = !gridsterOptions.resizable.enabled"><i
+              ng-class="gridsterOptions.resizable.enabled ? 'icon-plus' : 'icon-cancel'"></i>Resize</a>
+          <a class="btn btn-primary" ng-click="export()"><i class="icon-export"></i>Export</a>
+          <a class="btn btn-warning" ng-click="clear()"><i class="icon-trash"></i> Clear</a>
+        </div>
+      </div>
+
+      <div gridster="gridsterOptions">
+        <ul>
+          <li gridster-item="widget" ng-repeat="widget in dashboard.widgets">
+            <div class="box" ng-controller="CustomWidgetCtrl">
+              <div class="box-header">
+                <h3>{{ widget.name }}</h3>
+
+                <div class="box-header-btns pull-right">
+                  <a title="Settings..." ng-click="openSettings(widget)"><i class="icon-cog"></i></a>
+                  <a title="Remove Widget" ng-click="remove(widget)"><i class="icon-cancel"></i></a>
+                </div>
+              </div>
+              <div class="box-content">
+                <dashboard-widget options="widget.content" size-x="widget.sizeX"
+                                  size-y="widget.sizeY"></dashboard-widget>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

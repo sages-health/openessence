@@ -15,7 +15,16 @@
       <ul class="nav navbar-nav">
 
         <!-- Dashboard -->
-        <li><a href="/kibana" class="icon-gauge"></a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-gauge"></span></a>
+          <ul class="dropdown-menu">
+            <!--<li><a href="/kibana" translate>Kibana</a></li>-->
+            <li data-ng-repeat="dashboard in dashboards">
+              <a ui-sref="dashboard({dashboardId:'{{dashboard.id}}'})" translate>{{dashboard.name}}</a>
+            </li>
+            <li><a ui-sref="dashboard({dashboardId:null})" translate>New...</a></li>
+          </ul>
+        </li>
 
         <!-- Workbench -->
         <li ui-sref-active="active">

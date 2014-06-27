@@ -112,11 +112,13 @@
     "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js",
     "angular-ui-select2": "./public/bower_components/angular-ui-select2/src/select2.js",
     "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js",
+    "angular-gridster": "./public/bower_components/angular-gridster/src/angular-gridster.js",
     "d3": "./public/bower_components/d3/d3.js",
     "text-angular": "./public/bower_components/textAngular/src/textAngular.js",
     "text-angular-sanitize": "./public/bower_components/textAngular/src/textAngular-sanitize.js",
     "text-angular-setup": "./public/bower_components/textAngular/src/textAngularSetup.js",
-    "jquery-ui": "./public/bower_components/fracas-jquery-ui/jquery-ui.js"
+    "jquery-ui": "./public/bower_components/fracas-jquery-ui/jquery-ui.js",
+    "jquery-resize": "./public/bower_components/javascript-detect-element-resize/jquery.resize.js"
   },
   "browser-libs": [
     "jquery",
@@ -168,6 +170,12 @@
         "angular:angular"
       ]
     },
+    "angular-gridster": {
+      "depends": [
+        "angular:angular",
+        "jquery-resize"
+      ]
+    },
     "d3": {
       "exports": "d3"
     },
@@ -179,6 +187,11 @@
       ]
     },
     "jquery-ui": {
+      "depends": [
+        "jquery:jQuery"
+      ]
+    },
+    "jquer-resize": {
       "depends": [
         "jquery:jQuery"
       ]

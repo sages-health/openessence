@@ -1,5 +1,6 @@
 module.exports = {
   aggregation: require('./aggregation'),
+  dashboard: require('./dashboard'),
   edit: require('./edit'),
   filter: require('./filter'),
   filtersGrid: require('./filtersGrid'),
