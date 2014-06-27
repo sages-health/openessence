@@ -11,5 +11,8 @@ module.exports = {
   districtEdit: require('./edit/DistrictEditCtrl') ,
   symptomEdit: require('./edit/SymptomEditCtrl')  ,
   diagnosisEdit: require('./edit/DiagnosisEditCtrl'),
+  syndromeEdit: require('./edit/SyndromeEditCtrl'),
+  dischargeEdit: require('./edit/DischargeEditCtrl'),
+  visitTypeEdit: require('./edit/VisitTypeEditCtrl'),
   userEdit: require('./edit/UserEditCtrl')
 };

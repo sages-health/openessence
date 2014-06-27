@@ -1,0 +1,55 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Visit Type</h4>
+</div>
+
+<div class="modal-body">
+  <form name="recordForm" class="form-horizontal" ng-submit="submit(recordForm)" novalidate>
+    <fieldset>
+
+      <!-- TODO red text on white background instead of alert -->
+      <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+      <conflict-message ng-show="conflictError"></conflict-message>
+
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || errorOnRecordSave.error}">
+        <label class="col-md-4 control-label" for="entry-visitType-name" translate>Name</label>
+
+        <div class="col-md-6">
+          <div class="input-group">
+            <input class="form-control" id="entry-visitType-name" name="name" ng-model="visitType.name" required>
+          </div>
+          <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
+            Please enter a valid Visit Type name
+          </span>
+          <span class="help-block" ng-show="errorOnRecordSave.error == 'UniqueConstraintViolation'">
+            <span translate>Sorry, this name is already in use</span>
+          </span>
+        </div>
+      </div>
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.phoneId)}">
+        <label class="col-md-4 control-label" for="entry-visitType-phoneId" translate>Phone ID</label>
+
+        <div class="col-md-6">
+          <div class="input-group">
+            <input class="form-control" id="entry-visitType-phoneId" name="phoneId" ng-model="visitType.phoneId">
+          </div>
+          <span ng-show="isInvalid(recordForm.phoneId)" class="help-block" translate>
+            Please enter a valid Phone ID
+          </span>
+        </div>
+      </div>
+
+    </fieldset>
+
+  </form>
+</div>
+<div class="modal-footer">
+  <!-- include i18n-friendly images -->
+  <button class="btn btn-warning" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="submit(recordForm)">
+    <span class="icon-ok"></span>
+    <span translate>Save</span>
+  </button>
+</div>
