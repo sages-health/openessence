@@ -144,7 +144,8 @@ function Controller (Model, options) {
         return next(err);
       }
 
-      new controller.Model(esRequest.body).insert(esRequest, function (err, esResponse) {
+      var model = new controller.Model(esRequest.body, {id: esRequest.id, version: esRequest.version});
+      model.insert(esRequest, function (err, esResponse) {
         if (err) {
           return next(err);
         }

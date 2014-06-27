@@ -81,4 +81,6 @@ describe('Controller', function () {
         });
     });
   });
+
+  // TODO need tests for each lifecyle callback
 });

@@ -144,13 +144,13 @@ describe('model', function () {
       var response = {
         _index: 'foo',
         _type: 'bar',
-        _id: 'r@nd0m!d',
+        _id: '1',
         _version: 1,
         created: true
       };
 
       nock(conf.elasticsearch.host)
-        .post('/foo/bar', b2)
+        .post('/foo/bar/1', b2)
         .reply(201, response);
 
       var Bar = codex.model({
@@ -158,11 +158,12 @@ describe('model', function () {
         type: 'bar',
         preInsert: function (model, callback) {
           expect(model).to.deep.equal(new Bar(a1));
+          expect(model._.id).to.equal('1');
           callback(null, new Bar(b2));
         }
       });
 
-      new Bar({a: 1}).insert(function (err, res) {
+      new Bar({a: 1}, {id: '1'}).insert(function (err, res) {
         if (err) {
           return done(err);
         }
@@ -422,6 +423,49 @@ describe('model', function () {
 
         expect(bars.length).to.equal(1);
         expect(resp).to.deep.equal(postResponse);
+
+        done();
+      });
+    });
+
+    it('should return model instances', function (done) {
+      var Bar = codex.model({
+        index: 'foo',
+        type: 'bar'
+      });
+      var response = {
+        took: 5,
+        'timed_out': false,
+        hits: {
+          total: 0,
+          'max_score': null,
+          hits: [
+            {
+              _index: 'foo',
+              _type: 'bar',
+              _id: '1',
+              _version: 1,
+              _score: 1,
+              _source: {
+                a: 1
+              }
+            }
+          ]
+        }
+      };
+
+      nock(conf.elasticsearch.host)
+        .post('/foo/bar/_search?version=true')
+        .reply(200, response);
+
+      Bar.search(function (err, bars) {
+        if (err) {
+          return done(err);
+        }
+
+        expect(bars).to.have.length(1);
+        expect(bars[0]._.id).to.equal('1');
+        expect(bars[0].a).to.equal(1);
 
         done();
       });
