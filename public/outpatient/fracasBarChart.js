@@ -25,7 +25,7 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
           var color = d3.scale.category20();
 
           /**
-           * Return a 'g' element in the SVG for drawing the Pie
+           * Return a 'g' element in the SVG for drawing the Bar
            * @param svgWidth
            * @param svgHeight
            * @returns g
@@ -86,14 +86,19 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
            * @param svgHeight
            */
           var showTooltip = function (d, context, coords) {
-            var tooltipHTML = '<div class="colorcircle" style="float: left; margin-top: 6px; background-color: ' + context._color + ';"></div>';
-            tooltipHTML += '<b>' + getName(d) + '</b></br>';
+            hideTooltip();
+            var tooltipHTML = '<div class="colorcircle"></div>';
+            tooltipHTML += '<b>' + getName(d) + '</b><br>';
             tooltipHTML += d.value;
             element.append('<div class="timeseries_tooltip">' + tooltipHTML + '</div>');
             element.find('.timeseries_tooltip')
               .css({
                 'top': coords[1],
                 'left': coords[0]
+              });
+            element.find('.timeseries_tooltip .colorcircle')
+              .css({
+                'background-color': context._color
               });
           };
 
@@ -112,14 +117,14 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
             var filter;
             if (data.col) {
               filter = {
-                type: data.col,
+                filterId: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                type: data.row,
+                filterId: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);
@@ -143,13 +148,75 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
               return;
             }
 
+            var rowNames = [];
+            for (var i = 0; i < data.length; i++) {
+              if (data[i].values) {
+                for (var j = 0; j < data[i].values.length; j++) {
+                  if (data[i].values[j].rowName) {
+                    if (rowNames.indexOf(data[i].values[j].rowName) === -1) {
+                      rowNames.push(data[i].values[j].rowName);
+                    }
+                  }
+                }
+              }
+            }
+            if (rowNames.length === 0) {
+              rowNames.push(undefined);
+            }
+
+            var legend = svg.select('g.legend');
+            if (legend.empty()) {
+              legend = svg.append('g')
+                .attr('class', 'legend');
+            }
+            legend.selectAll('circle').remove();
+            legend.selectAll('text').remove();
+            var currLegendItemOffset = 0;
+            var currLegendItemCol = 0;
+            angular.forEach(rowNames, function (value, key) {
+              if (typeof value === 'undefined') {
+                return;
+              }
+              var color = d3.scale.category20().range()[key % 20];
+
+              var text = legend.append('text')
+                .attr('x', 0)
+                .attr('y', 0)
+                .text(value)
+                .attr('text-anchor', 'left');
+
+              var textWidth = text[0][0].getBBox().width;
+
+              legend.append('circle')
+                .attr('cx', currLegendItemOffset + 13)
+                .attr('cy', 15 * currLegendItemCol + 5)
+                .attr('r', 5)
+                .style('fill', color);
+              currLegendItemOffset += 20;
+
+              text.attr('x', currLegendItemOffset);
+              text.attr('y', 15 * currLegendItemCol + 10);
+
+              currLegendItemOffset += textWidth;
+              if (currLegendItemOffset >= chartWidth - 20) {
+                currLegendItemOffset = 0;
+                currLegendItemCol++;
+              }
+            });
+            var legendHeight = (currLegendItemCol + 1) * 15 + 10;
+            legend.attr('x', 0)
+              .attr('y', 0)
+              .attr('width', svgWidth)
+              .attr('height', legendHeight);
+
+
             var x0 = d3.scale.ordinal()
               .rangeRoundBands([0, chartWidth], 1);
 
             var x1 = d3.scale.ordinal();
 
             var y = d3.scale.linear()
-              .range([chartHeight, 0]);
+              .range([chartHeight, legendHeight]);
 
             var color = d3.scale.category20();
 
@@ -170,23 +237,7 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
 
             x0.domain(data.map(function (d) {
               return d.colName || d.key;
-            })).rangeRoundBands([0, chartWidth], .1);
-
-            var rowNames = [];
-            for (var i = 0; i < data.length; i++) {
-              if (data[i].values) {
-                for (var j = 0; j < data[i].values.length; j++) {
-                  if (data[i].values[j].rowName) {
-                    if (rowNames.indexOf(data[i].values[j].rowName) === -1) {
-                      rowNames.push(data[i].values[j].rowName);
-                    }
-                  }
-                }
-              }
-            }
-            if (rowNames.length === 0) {
-              rowNames.push(undefined);
-            }
+            })).rangeRoundBands([0, chartWidth], 0.1);
 
             x1.domain(rowNames).rangeRoundBands([0, x0.rangeBand()]);
 
@@ -224,18 +275,45 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
             }
 
             if (svg.selectAll('.y.axis').empty()) {
-              svg.append('g')
+              var yAxisTicks = svg.append('g')
                 .attr('class', 'y axis')
-                .call(yAxis)
-                .append('text')
+                .call(yAxis);
+
+              yAxisTicks.append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('y', 6)
-                .attr('dy', '-5em')// .71em
+                .attr('dy', '-4em')// .71em
                 .attr('dx', '-8em')
                 .style('text-anchor', 'end')
                 .text('Outpatient Visits');
+
+              yAxisTicks.selectAll('.tick')
+                .append('svg:line')
+                .attr('class', 'gridline')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', function (d) {
+                  if (d % 1 === 0) {
+                    return chartWidth;
+                  }
+                  return 0;
+                })
+                .attr('y2', 0);
             } else {
-              svg.selectAll('.y.axis').call(yAxis);
+              var yAxisTicks = svg.selectAll('.y.axis').call(yAxis);
+              yAxisTicks.selectAll('.tick.gridline').remove();
+              yAxisTicks.selectAll('.tick')
+                .append('svg:line')
+                .attr('class', 'gridline')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', function (d) {
+                  if (d % 1 === 0) {
+                    return chartWidth;
+                  }
+                  return 0;
+                })
+                .attr('y2', 0);
             }
 
             var col = svg.selectAll('.g')
@@ -259,8 +337,14 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
               });
             rect.exit().remove();
 
-            rect.transition().attr('width', x1.rangeBand())
-              .attr('x', function (d) { return x1(d.rowName) ; })
+            rect.transition()
+              .attr('width', function () {
+                return Math.min(x1.rangeBand(), 80);
+              })
+              .attr('x', function (d) {
+                var diff = x1.rangeBand() - Math.min(x1.rangeBand(), 80);
+                return x1(d.rowName) + diff / 2;
+              })
               .attr('y', function (d) { return y(d.value); })
               .attr('height', function(d) { return chartHeight - y(d.value); })
               .style('fill', function (d) { return color(d.rowName); })
@@ -269,58 +353,34 @@ angular.module(directives.name).directive('outpatientBarChart', function (gettex
               });
 
             rect.enter().append('rect')
-              .attr('width', x1.rangeBand())
-              .attr('x', function (d) { return x1(d.rowName) ; })
+              .attr('width', function () {
+                return Math.min(x1.rangeBand(), 80);
+              })
+              .attr('x', function (d) {
+                var diff = x1.rangeBand() - Math.min(x1.rangeBand(), 80);
+                return x1(d.rowName) + diff / 2;
+              })
               .attr('y', function (d) { return y(d.value); })
               .attr('height', function(d) { return chartHeight - y(d.value); })
               .style('fill', function (d) { return color(d.rowName); })
+              .style('opacity', '.8')
               .each(function (d) {
                 this._color = color(d.rowName);
               })
               .on('mousemove', function (d) {
                 var coords = d3.mouse(this.parentElement.parentElement.parentElement); // meh this is hacky
                 showTooltip(d, this, coords);
+                d3.select(this)
+                  .style('opacity', '1');
               })
               .on('mouseout', function () {
                 hideTooltip();
+                d3.select(this)
+                  .style('opacity', 0.8);
+              })
+              .on('click', function (d) {
+                narrowFilters(d);
               });
-
-            var legend = svg.selectAll('.legend')
-              .data(rowNames, function (d) {
-                return d;
-              });
-
-            legend.exit().remove();
-
-            legend.select('rect')
-              .attr('x', chartWidth - 18)
-              .attr('width', 18)
-              .attr('height', 18)
-              .style('fill', function (d) { return rowNames.length <= 1 ? 'none' : color(d); });
-
-            legend.select('text')
-              .attr('x', chartWidth - 24)
-              .attr('y', 9)
-              .attr('dy', '.35em')
-              .style('text-anchor', 'end')
-              .text(function (d) { return rowNames.length <= 1 ? '' : d; });
-
-            legend = legend.enter().append('g')
-              .attr('class', 'legend')
-              .attr('transform', function (d, i) { return 'translate(0,' + i * 20 + ')'; });
-
-            legend.append('rect')
-              .attr('x', chartWidth - 18)
-              .attr('width', 18)
-              .attr('height', 18)
-              .style('fill', function (d) { return rowNames.length <= 1 ? 'none' : color(d); });
-
-            legend.append('text')
-              .attr('x', chartWidth - 24)
-              .attr('y', 9)
-              .attr('dy', '.35em')
-              .style('text-anchor', 'end')
-              .text(function (d) { return rowNames.length <= 1 ? '' : d; });
           };
 
           scope.$watchCollection('[aggData]', function () {

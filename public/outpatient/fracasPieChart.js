@@ -103,14 +103,19 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
            * @param svgHeight
            */
           var showTooltip = function (d, arc, svgWidth, svgHeight) {
-            var tooltipHTML = '<div class="colorcircle" style="float: left; margin-top: 6px; background-color: ' + d._color + ';"></div>';
-            tooltipHTML += '<b>' + getName(d.data) + '</b></br>';
+            hideTooltip();
+            var tooltipHTML = '<div class="colorcircle"></div>';
+            tooltipHTML += '<b>' + getName(d.data) + '</b><br>';
             tooltipHTML += d.value;
             element.append('<div class="timeseries_tooltip">' + tooltipHTML + '</div>');
             element.find('.timeseries_tooltip')
               .css({
                 'top': arc.centroid(d)[1] + svgHeight / 2,
                 'left': arc.centroid(d)[0] + svgWidth / 2
+              });
+            element.find('.timeseries_tooltip .colorcircle')
+              .css({
+                'background-color': d._color
               });
           };
 
@@ -129,14 +134,14 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
             var filter;
             if (data.col) {
               filter = {
-                type: data.col,
+                filterId: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                type: data.row,
+                filterId: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);
@@ -163,11 +168,12 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
            * @param selection
            */
           var transformText = function (selection, radius) {
-            selection.transition().attr('x', function (d) {
-              return getEdgePoint(d.startAngle, d.endAngle, radius)[0];
-            }).attr('y', function (d) {
-              return getEdgePoint(d.startAngle, d.endAngle, radius)[1];
-            });
+            selection.transition()
+              .attr('x', function (d) {
+                return getEdgePoint(d.startAngle, d.endAngle, radius)[0];
+              }).attr('y', function (d) {
+                return getEdgePoint(d.startAngle, d.endAngle, radius)[1];
+              });
           };
 
           /**
@@ -254,59 +260,63 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
             selection.style('fill', 'black');
           };
 
+          var cellWidth = 10;
+          var cellHeight = 14;
           /**
-           * Detects and corrects label collisions
-           * Calls itself until all collisions are resolved
-           * This method can slow the visualization down and more optimization may be necessary.
-           * Taken from:
-           * http://blog.safaribooksonline.com/2014/03/11/solving-d3-label-placement-constraint-relaxing/
-           * @param textLabels
+           * Returns an array of grid coord objects {row: 0, col: 0}
+           * for all of the grid cells that a label spans
+           * @param label
+           * @returns {*[]}
            */
-          var relaxLabels = function (textLabels) {
-            var spacing = 14;
-            var alpha = 1;
-            var again = false;
-            textLabels.each(function () {
-              var a = this;
-              var da = d3.select(this);
-              var y1 = da.attr('y');
-
-              if (da.text().length === 0) {
-                return;
-              }
-              textLabels.each(function () {
-                var b = this;
-                if (a === b) {
-                  return;
-                }
-                var db = d3.select(b);
-
-                if (db.text().length === 0) {
-                  return;
-                }
-
-                // If the text anchors aren't the same, they are on diff sides (no x value overlap)
-                if (da.attr('text-anchor') !== db.attr('text-anchor')) {
-                  return;
-                }
-
-                var y2 = db.attr('y');
-                var deltaY = y1 - y2;
-                if (Math.abs(deltaY) > spacing) {
-                  return;
-                }
-
-                again = true;
-                var sign = deltaY < 0 ? -1 : 1;
-                var adjust = sign * alpha;
-                da.attr('y', +y1 + adjust);
-                db.attr('y', +y2 - adjust);
+          var getGridCoordsFromLabel = function (label) {
+            var coords = [];
+            var row = Math.floor(+label.attr('y') / cellHeight);
+            var startX = +label.attr('x');
+            var labelWidth = label[0][0].getBBox().width; // requires that textLabels be retrieved using selectAll()
+            for (var i = 0; i < labelWidth; i += cellWidth) {
+              coords.push({
+                row: row,
+                col: Math.floor((startX + i) / cellWidth)
               });
-              if (again) {
-                $timeout(function () {
-                  relaxLabels(textLabels);
-                }, 20);
+            }
+            return coords;
+          };
+
+          var makeHash = function (gridCoord) {
+            return gridCoord.row + ',' + gridCoord.col;
+          };
+
+          var adjustLabelLocation = function (label) {
+            var angle = (label.endAngle - label.startAngle) / 2;
+            if (angle > (5 / 3) * Math.PI || angle < (1 / 3) * Math.PI) {
+              label.transition().attr('y', +label.attr('y') - cellHeight);
+            } else {
+              label.transition().attr('y', +label.attr('y') + cellHeight);
+            }
+          };
+
+          var addLabelToHashTable = function(label, hashTable) {
+            hashTable[getGridCoordsFromLabel(label)] = true;
+          };
+
+          var setupLabels = function (selection, hashTable, radius) {
+            selection.each(function () {
+              var label = d3.select(this);
+              transformText(label, radius);
+              assignTextAnchor(label);
+              textDy(label);
+              textDx(label);
+              assignText(label);
+              styleLabels(label);
+
+              var coords = getGridCoordsFromLabel(label);
+              var collision = coords.some(function (coord) {
+                return hashTable[makeHash(coord)];
+              });
+              if (collision) {
+                adjustLabelLocation(label);
               }
+              addLabelToHashTable(label, hashTable);
             });
           };
 
@@ -334,16 +344,22 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
 
             var svg = getSVG(svgWidth, svgHeight);
 
+            // TODO: Remove this remove statement and debug transitions
+            // It wipes the slate clean to prevent bugs with transitions that I haven't
+            // been able to debug. e.g. incomplete transitions with attrTween
+            svg.selectAll('.arc').remove();
+
             var data = svg.selectAll('.arc')
               .data(pie(scope.aggData), function (d) {
                 return getName(d.data);
-              })
+              });
+
+            data.exit().remove();
+            var g = data.enter().append('g')
+              .attr('class', 'arc')
               .each(function (d) {
                 this._current = d;
               });
-            data.exit().remove();
-            var g = data.enter().append('g')
-              .attr('class', 'arc');
 
             // data
             data.style('fill', function (d, i) {
@@ -362,7 +378,7 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
                 showTooltip(d, arc, svgWidth, svgHeight);
               });
 
-            data.select('path').transition().attr('d', arc).attrTween('d', function (a) {
+            data.select('path').transition().attrTween('d', function (a) {
               var i = d3.interpolate(this._current, a);
               this._current = i(0);
               return function (t) {
@@ -403,23 +419,9 @@ angular.module(directives.name).directive('outpatientPieChart', function (gettex
                 'stroke-rendering': 'crispEdges'
               });
 
-            var prevText = data.select('text');
-            transformText(prevText, radius);
-            assignTextAnchor(prevText);
-            textDy(prevText);
-            textDx(prevText);
-            assignText(prevText);
-
-            var text = g.append('text');
-            transformText(text, radius);
-            assignTextAnchor(text);
-            textDy(text);
-            textDx(text);
-            assignText(text);
-            styleLabels(text);
-
-            var textLabels = d3.select(element[0]).selectAll('text');
-            relaxLabels(textLabels);
+            var locationHashTable = {};
+            setupLabels(data.select('text'), locationHashTable, radius);
+            setupLabels(g.append('text'), locationHashTable, radius);
           };
 
           scope.$watchCollection('[aggData]', function () {
