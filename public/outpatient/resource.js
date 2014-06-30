@@ -92,3 +92,20 @@ angular.module(services.name).factory('User', function ($resource) {
       }
     });
 });
+
+angular.module(services.name).factory('DashboardResource', function ($resource) {
+  return $resource('/resources/dashboard/:_id',
+    {
+      _id: '@_id'
+    },
+    {
+      update: {
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      }
+    });
+});

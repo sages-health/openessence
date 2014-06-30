@@ -1,0 +1,45 @@
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h3 class="panel-title pull-left">{{dashboard.name}}</h3>
+
+        <div class="pull-right btn-group">
+          <a class="btn btn-primary" ng-click="addWidget()">
+            <span class="icon-plus" translate>Add widget</span>
+          </a>
+          <a class="btn btn-primary" ng-click="export()">
+            <span class="icon-floppy" translate>Save</span>
+          </a>
+        </div>
+      </div>
+
+      <div gridster="gridsterOptions">
+        <ul>
+          <li class="dashboard-widget" gridster-item="widget" ng-repeat="widget in dashboard.widgets">
+            <div class="panel panel-default" ng-controller="WidgetCtrl">
+              <div class="panel-heading clearfix">
+                <h4 class="panel-title pull-left">{{ widget.name }}</h4>
+
+                <div class="btn-group pull-right">
+                  <button type="button" class="btn btn-default" ng-click="openSettings(widget)">
+                    <span class="icon-cog"></span>
+                  </button>
+                  <button type="button" class="btn btn-default" ng-click="remove(widget)">
+                    <span class="icon-cancel"></span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="panel-body">
+                <dashboard-widget options="widget.content" size-x="widget.sizeX"
+                                  size-y="widget.sizeY"></dashboard-widget>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

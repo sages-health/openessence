@@ -1,0 +1,29 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Save this dashboard</h4>
+</div>
+<div class="modal-body">
+  <form role="form" novalidate name="dashboardForm">
+    <div class="form-group" ng-class="{'has-error': yellAtUser}">
+      <label for="save-dashboard-name" translate>Name</label>
+      <input type="text" class="form-control" id="save-dashboard-name" name="name" ng-model="dashboard.name" required>
+      <div class="help-block" ng-show="yellAtUser" translate>
+        Please name this dashboard
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="save-dashboard-description" translate>Description</label>
+      <input type="text" class="form-control" id="save-dashboard-description" name="description" ng-model="dashboard.description">
+    </div>
+  </form>
+
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="save(dashboardForm)">
+    <span class="icon-ok"></span>
+    <span translate>Save</span>
+  </button>
+</div>

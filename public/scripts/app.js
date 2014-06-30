@@ -8,6 +8,7 @@ require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-ui-select2');
 require('angular-gettext');
+require('angular-gridster');
 require('angular-loading-bar');
 
 // explicitly require d3 and friends due to weird browserify issues,
@@ -21,6 +22,7 @@ require('../select2');
 require('../hinge');
 require('../crosstab');
 require('../fracas-filter');
+require('../dashboard');
 require('../outpatient');
 
 var modules = require('./modules');
@@ -31,7 +33,7 @@ require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    'angular-loading-bar', 'textAngular', frable.name]
+                    'angular-loading-bar', 'gridster', 'textAngular', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -128,6 +130,12 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/workbench',
       template: require('../partials/workbench.html'),
       controller: 'WorkbenchCtrl',
+      parent: 'home'
+    })
+    .state('dashboard', {
+      url: '/dashboard/:dashboardId',
+      template: '<div class="container-fluid"><dashboard dashboard-id="dashboardId"></dashboard></div>',
+      controller: 'DashboardCtrl',
       parent: 'home'
     })
     .state('not-found', {

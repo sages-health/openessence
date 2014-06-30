@@ -3,6 +3,7 @@
 module.exports = {
   crud: require('./crud'),
   csrfToken: require('./csrfToken'),
+  Dashboard: require('./Dashboard'),
   errorInterceptor: require('./errorInterceptor'),
   FracasGrid: require('./FracasGrid'),
   notification: require('./notification'),

@@ -14,6 +14,19 @@ var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
 
 // List of requests to make to elasticsearch. Note to future maintainers: try to keep this sorted alphabetically
 var indexRequests = [
+  function dashboard (callback) {
+    client.indices.create({
+      index: 'dashboard',
+      body: {
+        mappings: {
+          dashboard: {
+            // TODO define schema
+          }
+        }
+      }
+    }, callback);
+  },
+
   function diagnosis (callback) {
     client.indices.create({
       // TODO timestamp index name and create alias

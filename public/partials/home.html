@@ -15,7 +15,13 @@
       <ul class="nav navbar-nav">
 
         <!-- Dashboard -->
-        <li><a href="/kibana" class="icon-gauge"></a></li>
+        <li class="dropdown"> <!-- TODO active -->
+          <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-gauge"></span></a>
+          <ul class="dropdown-menu">
+            <li><a ui-sref="dashboard({dashboardId: ''})" translate>New dashboard</a></li>
+            <li><a ng-click="openDashboard()" translate>Open dashboard</a></li>
+          </ul>
+        </li>
 
         <!-- Workbench -->
         <li ui-sref-active="active">
@@ -38,11 +44,11 @@
           <ul class="dropdown-menu">
             <!-- TODO define this in outpatient module -->
             <li><a ui-sref="edit.visit" translate>Outpatient visits</a></li>
-            <li role="presentation"class='divider'><a ng-show="user.isAdmin()"></a></li>
+            <li role="presentation" class='divider'><a ng-show="user.isAdmin()"></a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.district" translate>Districts</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.diagnosis" translate>Diagnoses</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.symptom" translate>Symptoms</a></li>
-            <li role="presentation"class='divider'><a ng-show="user.isAdmin()"></a></li>
+            <li role="presentation" class='divider'><a ng-show="user.isAdmin()"></a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.user" translate>Users</a></li>
           </ul>
         </li>

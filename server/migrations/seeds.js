@@ -38,15 +38,16 @@ function bulkInsert (model, data, params, callback) {
 }
 
 async.parallel([
+  function dashboards (callback) {
+    var Dashboard = require('../models/Dashboard');
+    new Dashboard(require('./dashboards.json')[0]).insert({id: 'default'}, callback);
+  },
+
   function diagnoses (callback) {
     bulkInsert(require('../models/Diagnosis'), [
       {name: 'Malaria', phoneId: 'm'},
       {name: 'Cholera', phoneId: 'c'}
     ], callback);
-  },
-
-  function outpatientVisits (callback) {
-    bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
   },
 
   function districts (callback) {
@@ -67,13 +68,17 @@ async.parallel([
 
         bulkInsert(District, districts, callback);
       },
-      function districts (callback) {
+      function (callback) {
         bulkInsert(District, [
           {name: 'Alphaville', phoneId: 'd1'},
           {name: 'Beta quadrant', phoneId: 'd2'}
         ], callback);
       }
     ], callback);
+  },
+
+  function outpatientVisits (callback) {
+    bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
   },
 
   function symptoms (callback) {

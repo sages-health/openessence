@@ -3,7 +3,8 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, visitsReportModal) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, visitsReportModal,
+                                                                  Dashboard) {
   $scope.visitsReport = function () {
     visitsReportModal.open();
   };
@@ -22,4 +23,6 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
   };
 
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
+
+  $scope.openDashboard = Dashboard.openModal;
 });
