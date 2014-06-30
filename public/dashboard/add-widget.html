@@ -1,27 +1,22 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Configuration</h4>
+  <h4 class="modal-title" translate>Add widget</h4>
 </div>
 
 <div class="modal-body">
-  <form name="widgetForm" class="form-horizontal" ng-submit="submit(widgetForm)" novalidate>
+  <form name="widgetForm" ng-submit="submit(widgetForm)" novalidate>
     <fieldset>
-
       <!-- TODO red text on white background instead of alert -->
       <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
-
-      <div class="form-group" ng-class="{'has-error': isInvalid(widgetForm.name)}">
-        <label class="control-label" for="widget-configuration-name" translate>Name</label>
-        <input class="form-control" id="widget-configuration-name" name="name" ng-model="widget.name">
-      </div>
 
       <div class="form-group">
         <label for="widget-configuration-visualization" translate>Visualization</label>
         <select class="form-control" id="widget-configuration-visualization" ng-model="widget.visualization" required>
-          <option ng-repeat="visualization in visualizations" value="{{visualization._id}}">{{visualization._source.name}}</option>
+          <option ng-repeat="visualization in visualizations" value="{{visualization._id}}">
+            {{visualization._source.name}}
+          </option>
         </select>
       </div>
     </fieldset>
-
   </form>
 </div>
 <div class="modal-footer"> <!-- TODO refactor into modalFooter directive -->
@@ -31,6 +26,6 @@
   </button>
   <button class="btn btn-primary" ng-click="submit(widgetForm)">
     <span class="icon-ok"></span>
-    <span translate>Save</span>
+    <span translate>Add</span>
   </button>
 </div>

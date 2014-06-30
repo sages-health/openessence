@@ -1,9 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../modules').controllers;
+var controllers = require('../scripts/modules').controllers;
 
-angular.module(controllers.name).controller('CustomWidgetCtrl', function ($scope, $modal) {
+angular.module(controllers.name).controller('WidgetCtrl', function ($scope, $modal) {
   $scope.remove = function (widget) {
     $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
   };
@@ -11,7 +11,7 @@ angular.module(controllers.name).controller('CustomWidgetCtrl', function ($scope
   $scope.openSettings = function (widget) {
     $modal.open({
       scope: $scope,
-      template: require('../../partials/widget-settings.html'),
+      template: require('./widget-settings.html'),
       controller: 'WidgetSettingsCtrl',
       resolve: {
         widget: function () {

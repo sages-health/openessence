@@ -1,9 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../modules').controllers;
+var controllers = require('../scripts/modules').controllers;
 
-angular.module(controllers.name).controller('WidgetSettingsCtrl', function($scope, $timeout, $rootScope, $modalInstance, widget) {
+angular.module(controllers.name).controller('WidgetSettingsCtrl', function ($scope, $timeout, $rootScope, $modalInstance, widget) {
   $scope.widget = widget;
 
   $scope.form = {

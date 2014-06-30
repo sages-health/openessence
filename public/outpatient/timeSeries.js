@@ -407,11 +407,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             scope.timeseries = scope.timeseries || {};
 
-            var dateFilters = scope.filters.filter(function (f) {
+            var filters = scope.filters || [];
+            var dateFilters = filters.filter(function (f) {
               return f.type === 'date-range';
             });
 
-            var dateFilter = dateFilters[0];
+            var dateFilter = dateFilters.length ? dateFilters[0] : null;
             if (dateFilter) {
               if (angular.isString(dateFilter.from)) {
                 dateFilter.from = new Date(dateFilter.from);

@@ -1,7 +1,7 @@
 'use strict';
 
 var angular = require('angular');
-var directives = require('../modules').directives;
+var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('dashboardWidget', function () {
   return {
@@ -14,7 +14,7 @@ angular.module(directives.name).directive('dashboardWidget', function () {
     },
     compile: function () {
       return {
-        //TODO Improve selector to get dashboard widget?
+        // TODO Improve selector to get dashboard widget?
         pre: function (scope, element) {
           scope.$watchCollection('[sizeX, sizeY]', function () {
 

@@ -22,6 +22,7 @@ require('../select2');
 require('../hinge');
 require('../crosstab');
 require('../fracas-filter');
+require('../dashboard');
 require('../outpatient');
 
 var modules = require('./modules');
@@ -133,7 +134,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('dashboard', {
       url: '/dashboard/:dashboardId',
-      template: require('../partials/dashboard.html'),
+      template: '<div class="container-fluid"><dashboard dashboard-id="dashboardId"></dashboard></div>',
       controller: 'DashboardCtrl',
       parent: 'home'
     })

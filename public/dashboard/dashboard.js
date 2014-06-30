@@ -3,25 +3,24 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientDashboard', function (gettextCatalog, $modal, visualization, Dashboard) {
+angular.module(directives.name).directive('dashboard', function (gettextCatalog, $modal, visualization, Dashboard) {
   return {
     restrict: 'E',
     template: require('./dashboard.html'),
     scope: {
       dashboardId: '=?'
     },
-    compile: function (element, attrs) {
-
+    compile: function () {
       return {
         pre: function (scope) {
           scope.gridsterOptions = {
             margins: [10, 10],
             columns: 12,
             draggable: {
-              enabled: false
+              enabled: true
             },
             resizable: {
-              enabled: false
+              enabled: true
             }
           };
           if (scope.dashboardId) {
@@ -30,16 +29,16 @@ angular.module(directives.name).directive('outpatientDashboard', function (gette
             });
           } else {
             scope.dashboard = {
-              name: 'Dashboard1',
+              name: '',
               widgets: []
             };
           }
 
           scope.addWidget = function () {
+            // TODO we don't need a modal with a single field
             $modal.open({
-              template: require('../partials/add-widget.html'),
+              template: require('./add-widget.html'),
               controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
-
                 visualization.resource.get(function (visualizations) {
                   $scope.visualizations = visualizations.results;
                 });
@@ -57,7 +56,6 @@ angular.module(directives.name).directive('outpatientDashboard', function (gette
                   }
 
                   $modalInstance.close({
-                    name: $scope.widget.name,
                     visualization: $scope.visualizations.filter(function (viz) {
                       return viz._id === $scope.widget.visualization;
                     })[0]._source
@@ -67,7 +65,7 @@ angular.module(directives.name).directive('outpatientDashboard', function (gette
             }).result.then(function (widget) {
                 // create widget with name and visualization
                 scope.dashboard.widgets.push({
-                  name: widget.name,
+                  name: widget.visualization.name,
                   sizeX: 3,
                   sizeY: 3,
                   content: widget.visualization
