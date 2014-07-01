@@ -9,7 +9,6 @@
     "angular-bootstrap": "~0.10.0",
     "angular-ui-router": "0.2.8-bowratic-tedium",
     "angular-gettext": "~0.2.4",
-    "bootstrap": "~3.1.1",
     "angular-ui-select2": "~0.0.5",
     "fracas-fonts": "gabegorelick/fracas-fonts#0.0.2",
     "fracas-jquery-ui": "gabegorelick/fracas-jquery-ui#0.0.4",
