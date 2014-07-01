@@ -88,6 +88,7 @@ gulp.task('jshint', function () {
 
 // minifies partials and converts them to a JS string that can be `require`d
 gulp.task('partials', function () {
+  /*jshint quotmark:false */
   var replace = require('gulp-replace');
   var header = require('gulp-header');
   var footer = require('gulp-footer');
@@ -103,12 +104,12 @@ gulp.task('partials', function () {
       removeOptionalTags: false // removing is probably a bad idea with partial docs
     }))
     // inspired by https://github.com/visionmedia/node-string-to-js/blob/master/index.js
-    .pipe(replace(/"/g, '\\"'))
+    .pipe(replace(/'/g, "\\'"))
     .pipe(replace(/\r\n|\r|\n/g, '\\n'))
 
     // wrap HTML in module
-    .pipe(header('module.exports = "'))
-    .pipe(footer('";'))
+    .pipe(header("module.exports='"))
+    .pipe(footer("';"))
 
     .pipe(gulp.dest('.tmp/public/')); // write to .tmp so they can be read by browserify
 });
