@@ -52,29 +52,18 @@ async.parallel([
 
   function districts (callback) {
     var District = require('../models/District');
-    async.parallel([
-      function geometry (callback) {
-        var geoJson = require('./cityville_import.json');
-        var districts = geoJson.features.reduce(function (previous, current) {
-          previous.push({
-            name: current.properties.district,
-            geometry: {
-              type: 'polygon', // elasticsearch uses lowercase
-              coordinates: current.geometry.coordinates
-            }
-          });
-          return previous;
-        }, []);
-
-        bulkInsert(District, districts, callback);
-      },
-      function (callback) {
-        bulkInsert(District, [
-          {name: 'Alphaville', phoneId: 'd1'},
-          {name: 'Beta quadrant', phoneId: 'd2'}
-        ], callback);
-      }
-    ], callback);
+    var geoJson = require('./nebraska.json');
+    var features = geoJson.features.reduce(function (previous, current) {
+      previous.push({
+        name: current.properties.CTYNAMEUP,
+        geometry: {
+          type: 'polygon', // elasticsearch uses lowercase
+          coordinates: current.geometry.coordinates
+        }
+      });
+      return previous;
+    }, []);
+    bulkInsert(District, features, callback);
   },
 
   function outpatientVisits (callback) {

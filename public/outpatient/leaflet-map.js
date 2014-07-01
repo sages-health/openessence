@@ -52,7 +52,7 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
 
       // don't wait for data to build map and fetch base layer tiles
       var map = L.map(element.children()[0], {
-        center: new L.LatLng(37.7289788, -84.2634425),
+        center: new L.LatLng(41.4289788, -96.8634425),
         zoom: 7,
         layers: [baseLayer]
       });
@@ -130,8 +130,9 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
 
       var polys = getLayerPolys();
 
-      scope.$watch('queryString', function () {
+      scope.$watch('queryString', function (queryString) {
         OutpatientVisit.search({
+          q: queryString,
           aggregations: {
             district: {
               terms: {
