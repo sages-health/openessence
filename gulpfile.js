@@ -48,8 +48,6 @@ var paths = {
   nodeModules: 'node_modules'
 };
 
-var fontExtensions = ['.eot', '.svg', '.ttf', '.woff'];
-
 // build CSS for production
 gulp.task('styles', function () {
   var less = require('gulp-less');
@@ -68,12 +66,12 @@ gulp.task('styles', function () {
 
 gulp.task('fonts', function () {
   var getFontFiles = function (path) {
-    return fontExtensions.map(function (ext) {
+    return ['.eot', '.svg', '.ttf', '.woff'].map(function (ext) {
       return path + ext;
     });
   };
 
-  return gulp.src(getFontFiles('public/fonts/**/*').concat(getFontFiles('public/bower_components/fracas-fonts/**/*')))
+  return gulp.src(getFontFiles('public/bower_components/fracas-fonts/**/*'))
     .pipe(gulp.dest('dist/public/fonts'));
 });
 

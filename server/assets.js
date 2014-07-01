@@ -52,7 +52,7 @@ exports.anonymous = function () {
     // TODO angular-gettext middleware instead
     app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
 
-    app.use('/public/fonts/lato', express.static(__dirname + '/../public/bower_components/fracas-fonts/lato'));
+    app.use('/public/fonts', express.static(__dirname + '/../public/bower_components/fracas-fonts'));
 
     app.use('/public', express.static(__dirname + '/../public'));
   } else if (env === 'test') {
@@ -71,7 +71,9 @@ exports.anonymous = function () {
     app.use('/public/styles', express.static(__dirname + '/../dist/public/styles', cacheOptions));
     app.use('/public/scripts', express.static(__dirname + '/../dist/public/scripts', cacheOptions));
 
-    // Our fonts aren't going to change. And if they do, we can just change the font names.
+    // Lato isn't going to change. And if it does, we can just change the font name.
+    // TODO icon font does change a lot, so it's useful to hash that, and hashing Lato doesn't hurt
+    // TODO figure out a non-ugly way to pass the hashes into less files
     app.use('/public/fonts/lato', express.static(__dirname + '/../dist/public/fonts/lato', cacheOptions));
 
     // don't set Cache-Control on anything else
