@@ -38,11 +38,6 @@ angular.module(controllers.name).controller('WidgetSettingsCtrl', function ($sco
     $modalInstance.dismiss();
   };
 
-  $scope.remove = function () {
-    $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
-    $modalInstance.close();
-  };
-
   $scope.submit = function () {
     angular.extend(widget, $scope.form);
 
