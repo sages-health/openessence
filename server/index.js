@@ -68,12 +68,13 @@ app.use((function () {
     store: store,
     secret: conf.session.secret,
     proxy: conf.proxy.enabled,
+    rolling: true, // each request resets the session expiration clock
     resave: true,
     saveUninitialized: true, // Guest sessions are the easiest way to have CSRF token for login
     cookie: {
       path: '/',
       httpOnly: true,
-      maxAge: null, // cookie (and thus session) destroyed when user closes browser
+      maxAge: 86400000, // session expires after 1 day idle
       secure: https
     }
   });
