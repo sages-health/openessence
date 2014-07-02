@@ -68,6 +68,8 @@ app.use((function () {
     store: store,
     secret: conf.session.secret,
     proxy: conf.proxy.enabled,
+    resave: true,
+    saveUninitialized: true, // Guest sessions are the easiest way to have CSRF token for login
     cookie: {
       path: '/',
       httpOnly: true,
