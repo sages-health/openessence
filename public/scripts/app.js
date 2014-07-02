@@ -195,7 +195,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('edit.visitType', {
       url: '/visitType',
-      template: require('../partials/edit/visitType.html'),
+      template: require('../partials/edit/visit-type.html'),
       controller: 'VisitTypeEditCtrl'
     })
     .state('edit.diagnosis', {

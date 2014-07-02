@@ -90,7 +90,7 @@ angular.module(controllers.name).controller('VisitTypeEditCtrl', function ($scop
 
   var openDialog = function (record) {
     return $modal.open({
-      template: require('../../../partials/edit/forms/visitType-form.html'),
+      template: require('../../../partials/edit/forms/visit-type-form.html'),
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.record = record || {};
         $scope.visitType = angular.copy($scope.record._source) || {};
