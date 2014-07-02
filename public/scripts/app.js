@@ -207,6 +207,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/user',
       template: require('../partials/edit/user.html'),
       controller: 'UserEditCtrl'
+    })
+    .state('edit.dashboard', {
+      url: '/dashboard',
+      template: require('../partials/edit/dashboard.html'),
+      controller: 'DashboardEditCtrl'
     });
 });
 

@@ -8,6 +8,7 @@ module.exports = {
   report: require('./ReportCtrl'),
   reportVisitsWindow: require('./reports/VisitsReportCtrl'),
   workbench: require('./WorkbenchCtrl'),
+  dashboardEdit: require('./edit/DashboardEditCtrl'),
   districtEdit: require('./edit/DistrictEditCtrl') ,
   symptomEdit: require('./edit/SymptomEditCtrl')  ,
   diagnosisEdit: require('./edit/DiagnosisEditCtrl'),

@@ -4,8 +4,7 @@ var angular = require('angular');
 var services = require('../modules').services;
 
 // TODO refactor, move to dashboard/ dir
-angular.module(services.name).factory('Dashboard', function ($resource, $modal, $state, DashboardResource) {
-
+angular.module(services.name).factory('Dashboard', function ($resource, $modal, $state, DashboardResource, crud) {
   return {
     state: function (scope) {
       return Object.keys(scope).reduce(function (prev, current) {
@@ -16,32 +15,16 @@ angular.module(services.name).factory('Dashboard', function ($resource, $modal, 
       }, {});
     },
     save: function (state) {
-      $modal.open({
-        template: require('../../dashboard/save-dashboard-modal.html'),
-        controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
-          $scope.dashboard = {};
-          $scope.save = function (form) {
-            if (form.$invalid) {
-              $scope.yellAtUser = true;
-              return;
-            }
+      var record = {_source: state};
+      var postSuccess = function (data) {
+        $state.go('dashboard', {dashboardId: data._id});
+      };
 
-            $modalInstance.close($scope.dashboard);
-          };
-
-          $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-          };
-        }]
-      }).result.then(function (result) {
-          DashboardResource.save(angular.extend({}, state, {
-            name: result.name,
-            description: result.description
-          }));
-        });
+      crud.open(record, DashboardResource, require('../../partials/edit/forms/dashboard-form.html'),
+        {postSuccess: postSuccess});
     },
     update: function (state, dashboardId) {
-      DashboardResource.update(angular.extend({_id :dashboardId}, state), function(){
+      DashboardResource.update(angular.extend({_id: dashboardId}, state), function () {
         $modal.open({
           template: require('../../dashboard/dashboard-saved-modal.html'),
           controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {

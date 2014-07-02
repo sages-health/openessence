@@ -33,10 +33,13 @@ angular.module(services.name).factory('crud', function ($modal) {
               return;
             }
 
-            var cleanup = function () {
+            var cleanup = function (data) {
               $scope.yellAtUser = false;
               $scope.success = true;
-              $modalInstance.close();
+              $modalInstance.close(data);
+              if($scope.postSuccess){
+                $scope.postSuccess(data);
+              }
             };
 
             var showError = function (data) {

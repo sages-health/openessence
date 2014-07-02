@@ -19,7 +19,13 @@
           <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-gauge"></span></a>
           <ul class="dropdown-menu">
             <li><a ui-sref="dashboard({dashboardId: ''})" translate>New dashboard</a></li>
+            <li role="presentation"class='divider' ng-show="user.isAdmin() && dashboards.length > 0"></li>
+            <li data-ng-repeat="dashboard in dashboards">
+              <a ui-sref="dashboard({dashboardId:'{{dashboard.id}}'})">{{dashboard.name}}</a>
+            </li>
+            <li role="presentation"class='divider' ng-show="user.isAdmin()"></li>
             <li><a ng-click="openDashboard()" translate>Open dashboard</a></li>
+            <li><a ui-sref="edit.dashboard" translate>Manage</a></li>
           </ul>
         </li>
 

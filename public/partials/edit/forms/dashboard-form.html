@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Dashboard</h4>
+</div>
+
+<div class="modal-body">
+  <form name="recordForm" class="form" ng-submit="submit(recordForm)" novalidate>
+    <fieldset>
+      <!-- TODO red text on white background instead of alert -->
+      <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+      <conflict-message ng-show="conflictError"></conflict-message>
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || uniqueConstraintViolation}">
+        <label for="entry-dashboard-name" translate>Name</label>
+        <input class="form-control" id="entry-dashboard-name" name="name" ng-model="data.name" required>
+        <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
+          Please enter a valid dashboard name
+        </span>
+        <span class="help-block" ng-show="uniqueConstraintViolation">
+        <span translate>Sorry, this name is already in use</span>
+        </span>
+      </div>
+      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.description)}">
+        <label for="entry-dashboard-description" translate>Description</label>
+        <input class="form-control" id="entry-dashboard-description" name="description" ng-model="data.description"
+               required>
+        <span ng-show="isInvalid(recordForm.description)" class="help-block" translate>
+          Please enter a valid description
+        </span>
+      </div>
+    </fieldset>
+
+  </form>
+</div>
+<div class="modal-footer">
+  <!-- include i18n-friendly images -->
+  <button class="btn btn-warning" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="submit(recordForm)">
+    <span class="icon-ok"></span>
+    <span translate>Save</span>
+  </button>
+</div>
