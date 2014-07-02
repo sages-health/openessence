@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Administrative"
+  },
+  {
+    "name": "Clinic Visit"
+  },
+  {
+    "name": "Consultation"
+  },
+  {
+    "name": "Directly Observed Therapy (DOT), TB Treatment"
+  },
+  {
+    "name": "Directly Observed Therapy (DOT), TB Preventive Therapy"
+  },
+  {
+    "name": "Directly Observed Therapy (DOT), HIV Anti-viral Therapy"
+  },
+  {
+    "name": "Directly Observed Therapy (DOT), Cotrimoxazole (CTX) Preventive Therapy"
+  },
+  {
+    "name": "Follow-Up Visit"
+  },
+  {
+    "name": "Sick in Quarters"
+  },
+  {
+    "name": "HIV Consultation"
+  },
+  {
+    "name": "HIV Follow-up"
+  },
+  {
+    "name": "HIV Counseling & Testing"
+  },
+  {
+    "name": "Prescription Refill"
+  },
+  {
+    "name": "Psychiatric Visit"
+  },
+  {
+    "name": "Physical Examination"
+  },
+  {
+    "name": "Prescription Refill"
+  },
+  {
+    "name": "Well-Baby"
+  },
+  {
+    "name": "Wound Check"
+  }
+]

@@ -75,6 +75,58 @@ angular.module(services.name).factory('Symptom', function ($resource) {
     });
 });
 
+angular.module(services.name).factory('Syndrome', function ($resource) {
+  return $resource('/resources/syndrome/:_id',
+    {
+      _id: '@_id',
+      version: '@version'
+    },
+    {
+      update: {
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      }
+    });
+});
+
+angular.module(services.name).factory('Discharge', function ($resource) {
+  return $resource('/resources/discharge/:_id',
+    {
+      _id: '@_id',
+      version: '@version'
+    },
+    {
+      update: {
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      }
+    });
+});
+angular.module(services.name).factory('VisitType', function ($resource) {
+  return $resource('/resources/visit-type/:_id',
+    {
+      _id: '@_id',
+      version: '@version'
+    },
+    {
+      update: {
+        method: 'PUT',
+        headers: { 'Accept': 'application/json' }
+      },
+      save: {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      }
+    });
+});
 angular.module(services.name).factory('User', function ($resource) {
   return $resource('/resources/user/:_id',
     {

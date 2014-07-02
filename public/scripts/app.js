@@ -183,6 +183,21 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/edit/symptom.html'),
       controller: 'SymptomEditCtrl'
     })
+    .state('edit.syndrome', {
+      url: '/syndrome',
+      template: require('../partials/edit/syndrome.html'),
+      controller: 'SyndromeEditCtrl'
+    })
+    .state('edit.discharge', {
+      url: '/discharge',
+      template: require('../partials/edit/discharge.html'),
+      controller: 'DischargeEditCtrl'
+    })
+    .state('edit.visitType', {
+      url: '/visitType',
+      template: require('../partials/edit/visitType.html'),
+      controller: 'VisitTypeEditCtrl'
+    })
     .state('edit.diagnosis', {
       url: '/diagnosis',
       template: require('../partials/edit/diagnosis.html'),

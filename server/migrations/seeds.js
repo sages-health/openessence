@@ -44,10 +44,7 @@ async.parallel([
   },
 
   function diagnoses (callback) {
-    bulkInsert(require('../models/Diagnosis'), [
-      {name: 'Malaria', phoneId: 'm'},
-      {name: 'Cholera', phoneId: 'c'}
-    ], callback);
+    bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
   },
 
   function districts (callback) {
@@ -71,10 +68,19 @@ async.parallel([
   },
 
   function symptoms (callback) {
-    bulkInsert(require('../models/Symptom'), [
-      {name: 'Cough', phoneId: 'c'},
-      {name: 'Fever', phoneId: 'f'}
-    ], callback);
+    bulkInsert(require('../models/Symptom'), require('./symptom.json'), callback);
+  },
+
+  function syndrome (callback) {
+    bulkInsert(require('../models/Syndrome'), require('./syndrome.json'), callback);
+  },
+
+  function dischargeType (callback) {
+    bulkInsert(require('../models/Discharge'), require('./discharge-type.json'), callback);
+  },
+
+  function visitType (callback) {
+    bulkInsert(require('../models/VisitType'), require('./visit-type.json'), callback);
   },
 
   function visualizations (callback) {

@@ -133,8 +133,28 @@ var indexRequests = [
                 }
               },
 
+              visitType: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+
+              discharge: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+
               // Array of well-known diagnoses. Usually used with symptoms.
               diagnoses: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+
+              syndromes: {
                 type: 'string',
                 fields: {
                   raw: {
@@ -248,11 +268,11 @@ var indexRequests = [
                     index: 'not_analyzed'
                   }
                 }
-              },
-              phoneId: {
-                type: 'string',
-                index: 'not_analyzed'
               }
+//              phoneId: {
+//                type: 'string',
+//                index: 'not_analyzed'
+//              }
             }
           }
         }
@@ -339,6 +359,75 @@ var indexRequests = [
       body: {
         mappings: {
           visualization: {}
+        }
+      }
+    }, callback);
+  },
+
+  function syndrome (callback) {
+    client.indices.create({
+      index: 'syndrome',
+      body: {
+        mappings: {
+          syndrome: {
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }, callback);
+  },
+
+  function visitType (callback) {
+    client.indices.create({
+      index: 'visit_type',
+      body: {
+        mappings: {
+          visit_type: {
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }, callback);
+  },
+
+  function dischargeType (callback) {
+    client.indices.create({
+      index: 'discharge_type',
+      body: {
+        mappings: {
+          discharge_type: {
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }, callback);
