@@ -10,7 +10,7 @@ module.exports = {
   persona: require('./persona'),
   Report: require('./Report'),
   sortString: require('./sortString'),
-  tableParams: require('./tableParams'),
+  tableUtil: require('./tableUtil'),
   user: require('./user'),
   version: require('./version'),
   visitsReportModal: require('./reports/visitsReportModal'),

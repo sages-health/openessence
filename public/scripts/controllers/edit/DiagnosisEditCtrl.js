@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, crud, tableParams, gettextCatalog, Diagnosis) {
+angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, Diagnosis) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -36,12 +36,13 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
   $scope.resource = Diagnosis;
   var options = {
     sorting: {'name.raw': 'asc'},
-    queryString : $scope.queryString
+    queryString: $scope.queryString
   };
 
   // ---------------- Start: Common functions
-  $scope.tableParams = tableParams.create(options, $scope.resource);
-  var reload = function (){
+  $scope.tableFilter = tableUtil.addFilter;
+  $scope.tableParams = tableUtil.tableParams(options, $scope.resource);
+  var reload = function () {
     options.queryString = $scope.queryString;
     $scope.tableParams.reload();
   };

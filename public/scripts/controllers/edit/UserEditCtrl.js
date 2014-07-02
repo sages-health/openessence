@@ -7,7 +7,7 @@ var pluckName = function (r) {
   return r._source.name;
 };
 
-angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, tableParams, crud, gettextCatalog, User, District) {
+angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, tableUtil, crud, gettextCatalog, User, District) {
   $scope.filters = [
     {filterId: 'username'}
   ];
@@ -62,7 +62,8 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
     sorting: {'username.raw': 'asc'},
     queryString: $scope.queryString
   };
-  $scope.tableParams = tableParams.create(options, User);
+  $scope.tableFilter = tableUtil.addFilter;
+  $scope.tableParams = tableUtil.tableParams(options, User);
 
   var reload = function () {
     options.queryString = $scope.queryString;

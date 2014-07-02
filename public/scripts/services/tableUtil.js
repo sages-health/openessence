@@ -3,11 +3,11 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-angular.module(services.name).factory('tableParams', function (FrableParams, sortString) {
+angular.module(services.name).factory('tableUtil', function (FrableParams, sortString, $rootScope) {
   return {
     // scope - $scope from controller
     // resouce - one of the $resource object. ie District, Diagnosis,...
-    create: function (scope, resource) {
+    tableParams: function (scope, resource) {
       return new FrableParams({
         page: 1,
         count: 10,
@@ -38,6 +38,20 @@ angular.module(services.name).factory('tableParams', function (FrableParams, sor
           });
         }
       });
+    },
+    addFilter: function (field, value) {
+      //TODO multiselect if value.length > ?
+      if (value || value === false) {
+        var a = [].concat(value);
+        a.forEach(function (v) {
+          var filter = {
+            filterId: field,
+            value: v
+          };
+          $rootScope.$emit('filterChange', filter, true, false);
+        });
+      }
     }
   };
-});
+})
+;
