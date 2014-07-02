@@ -48,6 +48,8 @@ if (conf.env === 'production') {
   app.use(require('morgan')());
 }
 
+app.use(assets.anonymous());
+
 app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({extended: true})); // we only use JSON-encoded request bodies
 
@@ -138,7 +140,6 @@ app.get('/', function (req, res) {
   res.redirect(307, '/' + req.locale);
 });
 
-app.use(assets.anonymous());
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
