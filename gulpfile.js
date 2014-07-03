@@ -433,6 +433,37 @@ gulp.task('cert', function (done) {
   });
 });
 
+gulp.task('service', function (done) {
+  var Service;
+  try {
+    Service = require('node-windows').Service;
+  } catch (e) {
+    gutil.log(gutil.colors.red('Couldn\'t load node-windows. Did you run `npm install -g node-windows` and `npm link node-windows`?'));
+    return done(e);
+  }
+
+  var svc = new Service({
+    name: 'Fracas',
+    description: 'Disease surveillance webapp',
+    script: require('path').join(__dirname,'server.js'),
+    env: [
+      {
+        name: 'NODE_ENV',
+        value: 'production'
+      }
+    ]
+  });
+  svc.on('start', function () {
+    gutil.log('Service started successfully. Happy Fracasing :)');
+    done();
+  });
+  svc.on('install',function () {
+    svc.start();
+  });
+
+  svc.install();
+});
+
 gulp.task('heroku', ['build']);
 
 gulp.task('default', ['build']);
