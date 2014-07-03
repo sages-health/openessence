@@ -19,8 +19,25 @@ angular.module(directives.name).directive('dashboardWidget', function () {
           scope.$watchCollection('[sizeX, sizeY]', function () {
 
             //TODO Adjust for margins, etc...
-            scope.height = element.parent().parent().height() - 20 - 80;
-            scope.width = element.parent().parent().width() - 20;
+            var lis = angular.element('li.dashboard-widget');
+            angular.forEach(lis, function (value, key) {
+              if (value.contains(element[0])) {
+                var parent = angular.element(value);
+                var height = parent.height();
+                var width = parent.width();
+                scope.options.height = scope.height = height - 30;//parent.height();// - 80;// - 20 - 80;
+                scope.options.width = scope.width = width - 30;//parent.width();// - 100;// - 20;
+
+                parent.find('.panel').css({
+                  width: width,
+                  height: height
+                })
+                  .find('.panel-body').css({
+                    width: width,
+                    height: height - 50
+                  });
+              }
+            });
           });
         }
       };

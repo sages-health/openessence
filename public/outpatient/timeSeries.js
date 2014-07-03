@@ -21,8 +21,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
       return {
         pre: function (scope, element) {
           scope.options = scope.options || {};
-          scope.width = scope.width || scope.options.width || 500;
-          scope.height = scope.height || scope.options.height || 400;
+//          scope.width = scope.width || scope.options.width || 500;
+//          scope.height = scope.height || scope.options.height || 400;
 
           scope.series = scope.series || scope.options.series || [];
 
@@ -681,7 +681,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           });
 
           // No need to reload data
-          scope.$watchCollection('[height, width]', function () {
+          scope.$watchCollection('[options.height, options.width]', function () {
+            console.log('size changed');
+            console.log(scope.options.height + ' ' + scope.options.width);
             scope.redraw();
           });
         }
