@@ -51,7 +51,7 @@ var createLogger = function (name) {
 };
 
 function ElasticSearchLogger () {
-  var logger = createLogger('elasticsearch');
+  var logger = createLogger('elasticsearch.js');
 
   this.error = logger.error.bind(logger);
   this.warning = logger.warn.bind(logger);
