@@ -3,7 +3,6 @@
 // A place to hold default settings. Useful so environments can reference the defaults when they override
 
 var _ = require('lodash');
-var crypto = require('crypto');
 var fs = require('fs');
 var bunyan = require('bunyan');
 var PrettyStream = require('bunyan-prettystream');
@@ -72,6 +71,7 @@ function ElasticSearchLogger () {
 
 var certPath = process.env.SSL_CERT || __dirname + '/../../cert.pem';
 var keyPath = process.env.SSL_KEY || __dirname + '/../../key.pem';
+var sessionStore = process.env.SESSION_STORE || 'memory'; // 'redis' is also accepted
 
 module.exports = {
   env: env,
@@ -83,6 +83,19 @@ module.exports = {
     keyPath: keyPath
     // more properties are defined in ./index.js
   },
+
+  // Number of Fracas worker processes. Note that the default session store saves sessions in memory, and thus
+  // will not work with more than one worker. A shared session store like Redis should therefore be used in production.
+  workers: (function () {
+    var workers = process.env.WORKERS || (sessionStore === 'memory' ? 1 : 2);
+    if (workers === 'NUM_CPUS') {
+      workers = require('os').cpus().length;
+    } else {
+      workers = parseInt(workers, 10);
+    }
+
+    return workers;
+  })(),
 
   phantom: {
     enabled: process.env.PHANTOM !== 'false',
@@ -120,8 +133,12 @@ module.exports = {
   },
 
   session: {
-    store: process.env.SESSION_STORE || 'memory', // 'redis' is also accepted
-    secret: process.env.SESSION_SECRET || crypto.randomBytes(1024).toString('hex')
+    // Session store. Accepted values are currently 'memory' and 'redis'. Memory is fine for development, but Redis
+    // should be used in production to provide persistence and the ability to scale past a single web server process.
+    store: sessionStore,
+
+    // Secret used to sign cookies
+    secret: process.env.SESSION_SECRET
   },
 
   redis: {

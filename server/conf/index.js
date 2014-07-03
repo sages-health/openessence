@@ -1,5 +1,6 @@
 'use strict';
 
+var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var _ = require('lodash');
@@ -37,5 +38,24 @@ settings.ssl = _.assign({
   key: ssl ? fs.readFileSync(settings.ssl.keyPath) : null,
   port: httpsPort
 }, settings.ssl);
+
+if (!settings.session.secret) {
+  if (settings.workers > 1) {
+    /*jshint quotmark:false */
+    // can't have each worker process using different random secrets
+    throw new Error("You must set a session secret if you're using more than one worker process");
+  }
+
+  console.warn('Using random session secret. Please set one before you run in production, as a random one will ' +
+    'not be persisted nor work with multiple worker processes');
+
+  settings.session.secret = crypto.randomBytes(1024).toString('hex');
+}
+
+if (settings.session.store === 'memory' && settings.workers > 1) {
+  // Without sticky sessions, there's no guarantee a client request will be routed to the process that has the existing
+  // session. This is why sessions should be stored in a shared store like Redis.
+  throw new Error('Cannot have more than 1 worker with an in-memory session store');
+}
 
 module.exports = settings;

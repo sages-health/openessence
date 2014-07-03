@@ -1,45 +1,55 @@
 'use strict';
 
+var cluster = require('cluster');
 var http = require('http');
 var https = require('https');
 
-var app = require('./server/index');
 var conf = require('./server/conf');
 var logger = conf.logger;
 
-var startPhantom = function () {
-  var phantom = require('./server/phantom');
-  var fork = require('child_process').fork;
-  var phantomChild = fork(__dirname + '/server/phantom');
+// require index.js up here so any initialization errors cause us to immediately exit
+var app = require('./server/index');
 
-  phantomChild.on('message', function (message) {
-    if (message.started) {
-      phantom.started = true; // TODO promise?
-      phantom.childProcess = phantomChild;
-    }
-  });
-  phantomChild.on('error', function (err) {
-    logger.error({err: err}, 'PhantomJS child process error');
-  });
-  phantomChild.on('exit', function () {
-    logger.info('PhantomJS child process exited');
-  });
-};
+if (module.parent) {
+  throw new Error('server.js must be run in its own process');
+}
 
-if (!module.parent) {
+if (cluster.isMaster) {
   logger.info('Running in %s mode', conf.env);
 
   if (conf.phantom.enabled) {
-    startPhantom();
+    // start PhantomJS cluster
+    var phantom = require('./server/phantom');
+    var fork = require('child_process').fork;
+    var phantomChild = fork(__dirname + '/server/phantom');
+
+    phantomChild.on('message', function (message) {
+      if (message.started) {
+        phantom.started = true; // TODO promise?
+        phantom.childProcess = phantomChild;
+      }
+    });
+    phantomChild.on('error', function (err) {
+      logger.error({err: err}, 'PhantomJS child process error');
+    });
+    phantomChild.on('exit', function () {
+      logger.info('PhantomJS child process exited');
+    });
   } else {
     logger.info('Skipping PhantomJS');
   }
 
-  var serverStarted = function () {
+  logger.info('Forking %d Fracas workers from parent process %d', conf.workers, process.pid);
+
+  cluster.on('online', function (worker) {
+    logger.info('Worker %d is now online', worker.process.pid);
+  });
+
+  cluster.once('listening', function () {
     // This message isn't just to be friendly. We really only support running Fracas at one URL, since it makes
     // a lot of things, e.g. redirects, a lot easier. This log statement helps nudge the admin into using the preferred
     // URL.
-    logger.info('Please use %s for all your disease surveillance needs', conf.url);
+    logger.info('Fracas started successfully. Please use %s for all your disease surveillance needs', conf.url);
 
     // if we have a parent, tell them we started
     if (process.send) {
@@ -48,27 +58,24 @@ if (!module.parent) {
         url: conf.url
       });
     }
-  };
+  });
+
+  cluster.on('exit', function (worker) {
+    logger.warn('Worker %d died. Restarting now...', worker.process.pid);
+    cluster.fork();
+  });
+
+  for (var i = 0; i < conf.workers; i++) {
+    cluster.fork();
+  }
+} else {
+  // cluster workers
 
   if (conf.ssl.enabled) {
-    logger.info('SSL enabled. Starting HTTPS and HTTP server');
-
     https.createServer({key: conf.ssl.key, cert: conf.ssl.cert}, app)
-      .listen(conf.ssl.port, function () {
-        logger.info('Fracas listening for HTTPS connections on port %d', conf.ssl.port);
-        serverStarted();
-      });
-
-    // app handles redirects
-    http.createServer(app).listen(conf.httpPort, function () {
-      logger.info('Fracas listening for HTTP connections on port %d', conf.httpPort);
-    });
-  } else {
-    logger.info('SSL disabled. Starting HTTP server only');
-
-    http.createServer(app).listen(conf.httpPort, function () {
-      logger.info('Fracas listening for HTTP connections on port %d', conf.httpPort);
-      serverStarted();
-    });
+      .listen(conf.ssl.port);
   }
+
+  // If we're running behind TLS, then our HTTP server just redirects to HTTPS
+  http.createServer(app).listen(conf.httpPort);
 }
