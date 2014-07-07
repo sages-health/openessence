@@ -21,9 +21,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
       return {
         pre: function (scope, element) {
           scope.options = scope.options || {};
-          scope.width = scope.width || scope.options.width || 500;
-          scope.height = scope.height || scope.options.height || 400;
-
           scope.series = scope.series || scope.options.series || [];
 
           scope.xAxisTickFormat = function (d) {
@@ -488,7 +485,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             xmargin = 5 + Math.max(yLabelWidth, xLabelHalf); // 5 extra for padding
 
-            console.log(readableDate(xmin));
             var x = d3.scale.linear()
               .domain([xmin, xmax])
               .range([0 + xmargin, width]);
@@ -681,7 +677,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
           });
 
           // No need to reload data
-          scope.$watchCollection('[height, width]', function () {
+          scope.$watchCollection('[options.height, options.width]', function () {
             scope.redraw();
           });
         }

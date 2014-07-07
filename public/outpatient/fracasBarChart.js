@@ -129,8 +129,8 @@ angular.module(directives.name).directive('outpatientBarChart', function ($rootS
 
           // http://bl.ocks.org/mbostock/3887051
           var redraw = function () {
-            var svgWidth = element.find('svg.bar-chart')[0].parentNode.offsetWidth,
-              svgHeight = 400;
+            var svgWidth = scope.options.width || element.find('svg.bar-chart')[0].parentNode.offsetWidth,
+              svgHeight = scope.options.height || 400;
 
             var chartWidth = svgWidth - 125,
               chartHeight = svgHeight - 100;
@@ -276,14 +276,6 @@ angular.module(directives.name).directive('outpatientBarChart', function ($rootS
                 .attr('class', 'y axis')
                 .call(yAxis);
 
-              yAxisTicks.append('text')
-                .attr('transform', 'rotate(-90)')
-                .attr('y', 6)
-                .attr('dy', '-4em')// .71em
-                .attr('dx', '-8em')
-                .style('text-anchor', 'end')
-                .text('Outpatient Visits');
-
               yAxisTicks.selectAll('.tick')
                 .append('svg:line')
                 .attr('class', 'gridline')
@@ -381,6 +373,10 @@ angular.module(directives.name).directive('outpatientBarChart', function ($rootS
           };
 
           scope.$watchCollection('[aggData]', function () {
+            redraw();
+          });
+
+          scope.$watchCollection('[options.width, options.height]', function () {
             redraw();
           });
         }

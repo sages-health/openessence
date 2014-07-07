@@ -15,7 +15,7 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
         pre: function (scope) {
           scope.gridsterOptions = {
             margins: [10, 10],
-            columns: 12,
+            columns: 50,
             draggable: {
               enabled: true
             },
@@ -66,8 +66,8 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
                 // create widget with name and visualization
                 scope.dashboard.widgets.push({
                   name: widget.visualization.name,
-                  sizeX: 3,
-                  sizeY: 3,
+                  sizeX: 10,
+                  sizeY: 10,
                   content: widget.visualization
                 });
               });

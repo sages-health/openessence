@@ -325,8 +325,8 @@ angular.module(directives.name).directive('outpatientPieChart', function ($rootS
           var reload = function () {
             // Width and height of the svg (larger than pie to leave room for labels)
             // Width is assumed from the parent element
-            var svgWidth = scope.width || scope.options.width || 500,
-              svgHeight = scope.height || scope.options.height || 400;
+            var svgWidth = scope.options.width || scope.width || 500,
+              svgHeight = scope.options.height || scope.height || 400;
 
             // Width and height of the pie chart
             var chartWidth = Math.max(svgWidth - 100, 150),
@@ -427,7 +427,7 @@ angular.module(directives.name).directive('outpatientPieChart', function ($rootS
             reload();
           });
 
-          scope.$watchCollection('[width, height]', function () {
+          scope.$watchCollection('[options.width, options.height]', function () {
             reload();
           });
         }
