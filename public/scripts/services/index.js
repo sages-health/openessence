@@ -12,6 +12,7 @@ module.exports = {
   sortString: require('./sortString'),
   tableParams: require('./tableParams'),
   user: require('./user'),
+  version: require('./version'),
   visitsReportModal: require('./reports/visitsReportModal'),
   visualization: require('./visualization')
 };
