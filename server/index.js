@@ -12,7 +12,7 @@ var logger = conf.logger;
 var assets = require('./assets');
 var auth = require('./auth');
 
-var app = require('express')();
+var app = express();
 var https = url.parse(conf.url).protocol === 'https:';
 
 var views = require('./views');
@@ -48,7 +48,7 @@ if (conf.env === 'production') {
   app.use(require('morgan')());
 }
 
-app.use(assets.anonymous());
+app.use(assets.static());
 
 app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({extended: true})); // we only use JSON-encoded request bodies
@@ -99,11 +99,6 @@ app.use(function (req, res, next) {
     return next();
   }
 
-  // Kibana uses inline scripts and doesn't have ngCsp enabled
-  if (/^\/kibana(\/|$)/.test(req.path)) {
-    return next();
-  }
-
   var self = '\'self\'';
   var none = '\'none\'';
 
@@ -121,19 +116,7 @@ app.use(function (req, res, next) {
   })(req, res, next);
 });
 
-// csrf
-app.use((function () {
-  var csrf = require('csurf')(); // don't call require() in middleware, it could be slow
-  return function (req, res, next) {
-    if (req.method === 'POST' && /^\/kibana\/es(\/|$)/.test(req.path)) {
-      // Kibana's POST requests to elasticsearch don't need CSRF tokens since they don't mutate state and we don't
-      // want to patch Kibana
-      next();
-    } else {
-      csrf(req, res, next);
-    }
-  };
-})());
+app.use(require('csurf')());
 
 app.use(locale(require('./locale').supportedLocales)); // adds req.locale based on best matching locale
 app.get('/', function (req, res) {
@@ -145,17 +128,6 @@ app.use(auth.passport.session());
 
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));
-
-// proxy elasticsearch for Kibana (disabled for now)
-//var esProxy = require('./es/proxy');
-//app.use('/es', express()
-//  .use(auth.denyAnonymousAccess)
-//  .use(esProxy));
-//app.use('/kibana', express()
-//  .use(assets.kibana()))
-//  .use('/es', express()
-//    .use(auth.denyAnonymousAccess)
-//    .use(esProxy));
 
 app.use('/resources', express()
   .use(auth.denyAnonymousAccess)

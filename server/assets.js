@@ -19,7 +19,7 @@ exports.libs = function () {
 /**
  * Returns an express app that serves static resources that do not require authentication.
  */
-exports.anonymous = function () {
+exports.static = function () {
   var app = express();
   if (env === 'development') {
     // Don't move these requires outside this conditional, they're dev dependencies only.
@@ -78,24 +78,6 @@ exports.anonymous = function () {
 
     // don't set Cache-Control on anything else
     app.use('/public', express.static(__dirname + '/../dist/public'));
-  } else {
-    throw new Error('Unknown environment ' + env);
-  }
-
-  return app;
-};
-
-/**
- * Returns an express app that serves static Kibana resources.
- */
-exports.kibana = function () {
-  var app = express();
-  if (env === 'development') {
-    app.use(express.static(__dirname + '/../kibana/src'));
-  } else if (env === 'test') {
-    app.use(express.static(__dirname + '/../kibana/dist'));
-  } else if (env === 'production') {
-    app.use(express.static(__dirname + '/../kibana/dist'));
   } else {
     throw new Error('Unknown environment ' + env);
   }
