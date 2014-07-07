@@ -51,9 +51,14 @@
     </div>
 
     <div class="modal-footer">
-      <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>Delete</a>
-      <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>Cancel</a>
-      <button type="submit" class="btn btn-primary btn-lg"><i class="glyphicon glyphicon-ok"></i>Save</button>
+      <button class="btn btn-default" ng-click="dismiss()" >
+        <span class="icon-cancel"></span>
+        <span translate>Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-primary"> <!-- TODO make a singular save button -->
+        <span class="icon-floppy"></span>
+        <span translate>Save</span>
+      </button>
     </div>
   </form>
 </div>
