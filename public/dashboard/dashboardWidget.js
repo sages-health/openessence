@@ -20,7 +20,7 @@ angular.module(directives.name).directive('dashboardWidget', function () {
 
             //TODO Adjust for margins, etc...
             var lis = angular.element('li.dashboard-widget');
-            angular.forEach(lis, function (value, key) {
+            angular.forEach(lis, function (value) {
               if (value.contains(element[0])) {
                 var parent = angular.element(value);
                 var height = parent.height();
