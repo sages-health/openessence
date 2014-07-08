@@ -77,6 +77,7 @@ function caperTrailController (controller) {
 
       // this is why it's important not to keep around extra properties (like passwords) on req.user
       trail[trail.length - 1].user = req.user;
+      // TODO don't send users down to client, the utility is limited but the security implications are real
 
       // the order of these assigns is crucial - this way we overwrite any paperTrails the client tried to send
       var body = _.assign({}, esRequest.body, {paperTrail: trail});

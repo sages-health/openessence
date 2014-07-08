@@ -242,7 +242,7 @@ var indexRequests = [
 
                   // User that created this version of the document
                   user: {
-                    type: 'string'
+                    type: 'object'
                   }
                 }
               }
@@ -326,23 +326,6 @@ var indexRequests = [
                   raw: {
                     type: 'string',
                     index: 'not_analyzed'
-                  }
-                }
-              },
-              audit: {
-                properties: {
-                  // when the record was added to the system
-                  creation: {
-                    properties: {
-                      // Date record was created
-                      date: {
-                        type: 'date'
-                      },
-                      // User that created this record
-                      user: {
-                        type: 'string' // no need to store whole user object here
-                      }
-                    }
                   }
                 }
               }
