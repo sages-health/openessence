@@ -12,14 +12,30 @@
       </td>
 
       <td data-title="strings.symptoms">
-        <a ng-click="tableFilter('symptoms', visit._source.symptoms)">{{visit._source.symptoms | join |
-          truncate:30}}</a>
+        <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
+          {{visit._source.symptoms | join | truncate:30}}
+        </a>
       </td>
       <td data-title="strings.diagnoses">
-        <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">{{visit._source.diagnoses | join |
-          truncate:30}}</a>
+        <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">
+          {{visit._source.diagnoses | join | truncate:30}}
+        </a>
       </td>
-
+      <td data-title="strings.syndromes">
+        <a ng-click="tableFilter('syndromes', visit._source.syndromes)">
+          {{visit._source.syndromes | join | truncate:30}}
+        </a>
+      </td>
+      <td data-title="strings.visitType">
+        <a ng-click="tableFilter('visitType', visit._source.visitType)">
+          {{visit._source.visitType | join | truncate:30}}
+        </a>
+      </td>
+      <td data-title="strings.discharge">
+        <a ng-click="tableFilter('visitType', visit._source.discharge)">
+          {{visit._source.discharge | join | truncate:30}}
+        </a>
+      </td>
       <td data-title="strings.sex" sortable="'patient.sex'">
         <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
       </td>
