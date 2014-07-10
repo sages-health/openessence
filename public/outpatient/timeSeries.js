@@ -5,7 +5,8 @@ var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientTimeSeries', function (gettextCatalog, outpatientAggregation,
-                                                                            visualization, OutpatientVisit, $window) {
+                                                                            visualization, OutpatientVisit, $window,
+                                                                            $timeout) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
@@ -147,7 +148,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             var dateAgg = {
               'date_histogram': {
                 field: 'reportDate',
-                interval: scope.interval
+                interval: scope.interval,
+                min_doc_count: 0
               }
             };
 
@@ -228,78 +230,93 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             if (scope.down) { // dragging
               scope.timeSeriesDrag(event);
             }
-            var chart = d3.select(element[0]).select('g.chart');
-            var guideX = -1;
-            var highlightedPairs = [];
 
-            var offsetX = getMouseCoords(event).x;
-            var offsetY = getMouseCoords(event).y;
+            // Use a timer to prevent cycling through all points a ridiculous amount of times
+            if (scope.tsHoverTimer) {
+              $timeout.cancel(scope.tsHoverTimer);
+              scope.tsHoverTimer = null;
+            }
+            scope.tsHoverTimer = $timeout(function () {
+              $timeout.cancel(scope.tsHoverTimer);
+              var chart = d3.select(element[0]).select('g.chart');
+              var guideX = -1;
+              var highlightedPairs = [];
 
-            chart.selectAll('circle.highlightedDot').remove();
-            // for each pivot, find the closest point and draw a circle there
-            angular.forEach(scope.data, function (pivot, pivotKey) {
-              var minDistance = -1;
-              var minKey = -1;
-              angular.forEach(pivot.values, function (pair, pairKey) {
-                var distance = Math.abs(scope.timeseries.xscale(pair[0]) - offsetX);
-                if (minDistance === -1 || distance < minDistance) {
-                  minDistance = distance;
-                  minKey = pairKey;
+              var offsetX = getMouseCoords(event).x;
+              var offsetY = getMouseCoords(event).y;
+
+              chart.selectAll('circle.highlightedDot').remove();
+              // for each pivot, find the closest point and draw a circle there
+              angular.forEach(scope.data, function (pivot, pivotKey) {
+                var minDistance = -1;
+                var minKey = -1;
+                angular.forEach(pivot.values, function (pair, pairKey) {
+                  var distance = Math.abs(scope.timeseries.xscale(pair[0]) - offsetX);
+                  if ((minDistance === -1 && distance < 10) || distance < minDistance) {
+                    minDistance = distance;
+                    minKey = pairKey;
+                  }
+                });
+                if (minKey !== -1) {
+                  highlightedPairs[pivotKey] = pivot.values[minKey];
+                  var x = scope.timeseries.xscale(pivot.values[minKey][0]);
+                  var y = scope.timeseries.yscale(pivot.values[minKey][1]);
+                  chart.append('svg:circle')
+                    .attr('class', 'highlightedDot')
+                    .attr('cx', x)
+                    .attr('cy', -y)
+                    .attr('r', 4)
+                    .style('fill', scope.timeseries.palette[pivotKey]);
+                  guideX = guideX === -1 ? x : minDistance < Math.abs(guideX - offsetX) ? x : guideX;
                 }
               });
-              if (minKey !== -1) {
-                highlightedPairs[pivotKey] = pivot.values[minKey];
-                var x = scope.timeseries.xscale(pivot.values[minKey][0]);
-                var y = scope.timeseries.yscale(pivot.values[minKey][1]);
-                chart.append('svg:circle')
-                  .attr('class', 'highlightedDot')
-                  .attr('cx', x)
-                  .attr('cy', -y)
-                  .attr('r', 5)
-                  .style('fill', scope.timeseries.palette[pivotKey]);
-                guideX = guideX === -1 ? x : guideX;
-              }
-            });
 
-            // draw the mouse guideline
-            chart.selectAll('.mouseguide').remove();
-            chart.append('svg:line')
-              .attr('class', 'mouseguide')
-              .attr('x1', guideX)
-              .attr('y1', -1 * scope.timeseries.ymargin)
-              .attr('x2', guideX)
-              .attr('y2', -1 * (scope.timeseries.height - (scope.timeseries.ymargin)));
+              // draw the mouse guideline
+              chart.selectAll('.mouseguide').remove();
+              chart.append('svg:line')
+                .attr('class', 'mouseguide')
+                .attr('x1', guideX)
+                .attr('y1', -1 * scope.timeseries.ymargin)
+                .attr('x2', guideX)
+                .attr('y2', -1 * (scope.timeseries.height - (scope.timeseries.ymargin)));
 
-            // Create tooltip
-            var tooltipHtml = '';
-            angular.forEach(highlightedPairs, function (pair, index) {
-              if (typeof pair[0] !== 'undefined') {
-                if (index === 0) {
-                  tooltipHtml += '<strong>' + readableDate(pair[0]) + '</strong></br>';
-                  tooltipHtml += '<table>';
+              // Create tooltip
+              var tooltipHtml = '';
+              var firstRow = true;
+              angular.forEach(highlightedPairs, function (pair, index) {
+                if (typeof pair[0] !== 'undefined') {
+                  if (firstRow) {
+                    firstRow = false;
+                    tooltipHtml += '<strong>' + readableDate(pair[0]) + '</strong></br>';
+                    tooltipHtml += '<table>';
+                  }
+                  tooltipHtml +=
+                    '<tr><td><div class="colorcircle" style="background-color: ' + scope.timeseries.palette[index] + ';"></div></td>';
+                  tooltipHtml += '<td>' + scope.data[index].key + ':</td><td> ' + pair[1] + '</td></tr>';
                 }
-                tooltipHtml +=
-                  '<tr><td><div class="colorcircle" style="background-color: ' + scope.timeseries.palette[index] + ';"></div></td>';
-                tooltipHtml += '<td>' + scope.data[index].key + ':</td><td> ' + pair[1] + '</td></tr>';
+              });
+
+//            angular.element('.timeseries_tooltip').remove();
+              if (tooltipHtml.length > 0) {
+                if (element.find('.timeseries_tooltip').length === 0) {
+                  element.find('.custom-timeseries')
+                    .parent()
+                    .append('<div class="timeseries_tooltip"></div>');
+                }
+
+                var ttHeight = element.find('.timeseries_tooltip')
+                  .html(tooltipHtml)
+                  .height();
+
+                element.find('.timeseries_tooltip')
+                  .css({
+                    'top': offsetY - (ttHeight / 2),
+                    'left': guideX + 40
+                  });
+              } else {
+                element.find('.timeseries_tooltip').remove();
               }
-            });
-
-            angular.element('.timeseries_tooltip').remove();
-            if (tooltipHtml.length > 0) {
-              element.find('.custom-timeseries')
-                .parent()
-                .append('<div class="timeseries_tooltip"></div>');
-
-              var ttHeight = element.find('.timeseries_tooltip')
-                .html(tooltipHtml)
-                .height();
-
-              element.find('.timeseries_tooltip')
-                .css({
-                  'top': offsetY - (ttHeight / 2),
-                  'left': guideX + 40
-                });
-            }
+            }, 5);
           };
 
           /**
@@ -516,7 +533,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             g.selectAll('path').remove();
             g.selectAll('circle.point').remove();
+            g.selectAll('circle.scatterDot').remove();
             g.selectAll('line').remove();
+            scope.timeSeriesLeave(); // clear any remaing tooltip
 
             var yAxisTicks;
             if (g.selectAll('.y.axis').empty()) {
@@ -572,6 +591,33 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             var currLegendItemOffset = 0;
             var currLegendItemCol = 0;
 
+            // Determine the density of the data on the graph to decide whether or not to draw dots
+            var maxDots = d3.max(data, function (value) {
+              return value.values.length;
+            });
+
+            var densityLimit = 14; // dots per 100px
+            var exceedsDensityLimit = false;
+            var densityHashTable = {};
+
+            if (maxDots < 500) {
+              angular.forEach(data, function (value, key) {
+                densityHashTable = {};
+                angular.forEach(value.values, function (d) {
+                  var hash = Math.floor((x(d[0]) - xmargin) / 100);
+                  if (typeof densityHashTable[hash] === 'undefined') {
+                    densityHashTable[hash] = 0;
+                  } else {
+                    var density = densityHashTable[hash] + 1;
+                    densityHashTable[hash] = density;
+                    exceedsDensityLimit = exceedsDensityLimit || (density > densityLimit);
+                  }
+                });
+              });
+            } else {
+              exceedsDensityLimit = true;
+            }
+
             // For each pivot, pick a color, draw a line, add it to the legend
             angular.forEach(data, function (value, key) {
               var color;
@@ -584,7 +630,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                 })
                 .y(function (d) {
                   return -1 * y(d[1]);
-                }).defined(function (d) {
+                })
+                .defined(function (d) {
                   return !isNaN(d[1]);
                 });
               // Graph
@@ -601,6 +648,18 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                   .attr('class', 'point')
                   .attr('cx', xcoord)
                   .attr('cy', ycoord)
+                  .attr('r', 3)
+                  .style('fill', color);
+              }
+
+              if (!exceedsDensityLimit) {
+                g.selectAll('.scatterDots' + key)
+                  .data(value.values)
+                  .enter()
+                  .append('svg:circle')
+                  .attr('class', 'scatterDot scatterDots' + key)
+                  .attr('cx', function (d) { return x(d[0]); })
+                  .attr('cy', function (d) { return -1 * y(d[1]); })
                   .attr('r', 3)
                   .style('fill', color);
               }
