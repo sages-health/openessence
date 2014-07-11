@@ -19,15 +19,17 @@
           <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-gauge"></span></a>
           <ul class="dropdown-menu">
             <li><a ui-sref="dashboard({dashboardId: ''})" translate>New dashboard</a></li>
-            <li role="presentation" class='divider' ng-show="user.isAdmin() && dashboards.length > 0"></li>
+            <li><a ng-click="openDashboard()" translate>Open dashboard</a></li>
+
+            <!-- TODO get rid of this and fold functionality into dashboard view  -->
+            <li><a ui-sref="edit.dashboard" translate>Manage dashboards</a></li>
+
+            <li role="presentation" class="divider" ng-show="user.isAdmin() && dashboards.length > 0"></li>
+            <!-- We don't actually show the most recent dashboards, but oh well -->
+            <li role="presentation" class="dropdown-header" translate>Recent dashboards</li>
             <li data-ng-repeat="dashboard in dashboards">
               <a ui-sref="dashboard({dashboardId:'{{dashboard.id}}'})">{{dashboard.name}}</a>
             </li>
-            <li role="presentation" class='divider' ng-show="user.isAdmin()"></li>
-            <li><a ng-click="openDashboard()" translate>Open dashboard</a></li>
-
-            <!-- Disabled until we have more use for it, delete makes more sense as an option in the dashboard -->
-            <!--<li><a ui-sref="edit.dashboard" translate>Manage</a></li>-->
           </ul>
         </li>
 

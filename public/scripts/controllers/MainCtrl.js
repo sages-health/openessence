@@ -29,9 +29,12 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
   DashboardResource.get({
     sort: 'name',
     size: 15
-  }, function (data) {
-    for (var index = 0; index < data.results.length; index++) {
-      $scope.dashboards.push({id: data.results[index]._id, name: data.results[index]._source.name});
-    }
+  }, function (response) {
+    $scope.dashboards = response.results.map(function (r) {
+      return {
+        id: r._id,
+        name: r._source.name
+      };
+    });
   });
 });
