@@ -86,7 +86,29 @@ function caperTrailController (controller) {
   });
 }
 
+function caperTrailMapping (mapping) {
+  mapping.properties = mapping.properties || {};
+
+  mapping.properties.paperTrail = mapping.properties.paperTrail || { // array of audit events
+    properties: {
+      // When this version of the document was created.
+      // The naming comes from PaperTrail: https://github.com/airblade/paper_trail
+      createdAt: {
+        type: 'date'
+      },
+
+      // User that created this version of the document
+      user: {
+        type: 'object'
+      }
+    }
+  };
+
+  return mapping;
+}
+
 module.exports = {
   model: caperTrailModel,
-  controller: caperTrailController
+  controller: caperTrailController,
+  mapping: caperTrailMapping
 };

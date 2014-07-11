@@ -8,9 +8,12 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 var conf = require('../conf');
 var logger = conf.logger;
+var addPaperTrail = require('../caper-trail').mapping;
 
 // don't use shared connection
 var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
+
+// TODO timestamp indices and create aliases
 
 // List of requests to make to elasticsearch. Note to future maintainers: try to keep this sorted alphabetically
 var indexRequests = [
@@ -19,9 +22,18 @@ var indexRequests = [
       index: 'dashboard',
       body: {
         mappings: {
-          dashboard: {
-            // TODO define schema
-          }
+          dashboard: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              description: {
+                type: 'string',
+                index: 'not_analyzed'
+              }
+            }
+          })
         }
       }
     }, callback);
@@ -29,11 +41,10 @@ var indexRequests = [
 
   function diagnosis (callback) {
     client.indices.create({
-      // TODO timestamp index name and create alias
       index: 'diagnosis', // don't use model b/c that's kind of a circular dependency (and not what Rails does)
       body: {
         mappings: {
-          diagnosis: {
+          diagnosis: addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -43,13 +54,32 @@ var indexRequests = [
                     index: 'not_analyzed'
                   }
                 }
-              },
-              phoneId: {
-                type: 'string',
-                index: 'not_analyzed'
               }
             }
-          }
+          })
+        }
+      }
+    }, callback);
+  },
+
+  function dischargeType (callback) {
+    client.indices.create({
+      index: 'discharge_type',
+      body: {
+        mappings: {
+          'discharge_type': addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          })
         }
       }
     }, callback);
@@ -60,7 +90,7 @@ var indexRequests = [
       index: 'region', // not 'district' so that other geographic units can be tracked, hopefully we don't regret this
       body: {
         mappings: {
-          district: {
+          district: addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -71,15 +101,11 @@ var indexRequests = [
                   }
                 }
               },
-              phoneId: {
-                type: 'string',
-                index: 'not_analyzed'
-              },
               geometry: {
                 type: 'geo_shape'
               }
             }
-          }
+          })
         }
       }
     }, callback);
@@ -110,7 +136,7 @@ var indexRequests = [
           }
         },
         mappings: {
-          visit: {
+          visit: addPaperTrail({
             properties: {
               reportDate: {
                 type: 'date'
@@ -230,24 +256,9 @@ var indexRequests = [
                     }
                   }
                 }
-              },
-
-              paperTrail: { // array of audit events
-                properties: {
-                  // When this version of the document was created.
-                  // The naming comes from PaperTrail: https://github.com/airblade/paper_trail
-                  createdAt: {
-                    type: 'date'
-                  },
-
-                  // User that created this version of the document
-                  user: {
-                    type: 'object'
-                  }
-                }
               }
             }
-          }
+          })
         }
       }
     }, callback);
@@ -258,7 +269,7 @@ var indexRequests = [
       index: 'symptom',
       body: {
         mappings: {
-          symptom: {
+          symptom: addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -269,12 +280,31 @@ var indexRequests = [
                   }
                 }
               }
-//              phoneId: {
-//                type: 'string',
-//                index: 'not_analyzed'
-//              }
             }
-          }
+          })
+        }
+      }
+    }, callback);
+  },
+
+  function syndrome (callback) {
+    client.indices.create({
+      index: 'syndrome',
+      body: {
+        mappings: {
+          syndrome: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          })
         }
       }
     }, callback);
@@ -285,7 +315,7 @@ var indexRequests = [
       index: 'user',
       body: {
         mappings: {
-          user: {
+          user: addPaperTrail({
             properties: {
               username: {
                 type: 'string',
@@ -330,41 +360,7 @@ var indexRequests = [
                 }
               }
             }
-          }
-        }
-      }
-    }, callback);
-  },
-
-  function visualization (callback) {
-    client.indices.create({
-      index: 'visualization',
-      body: {
-        mappings: {
-          visualization: {}
-        }
-      }
-    }, callback);
-  },
-
-  function syndrome (callback) {
-    client.indices.create({
-      index: 'syndrome',
-      body: {
-        mappings: {
-          syndrome: {
-            properties: {
-              name: {
-                type: 'string',
-                fields: {
-                  raw: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              }
-            }
-          }
+          })
         }
       }
     }, callback);
@@ -375,7 +371,7 @@ var indexRequests = [
       index: 'visit_type',
       body: {
         mappings: {
-          visit_type: {
+          'visit_type': addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -387,30 +383,18 @@ var indexRequests = [
                 }
               }
             }
-          }
+          })
         }
       }
     }, callback);
   },
 
-  function dischargeType (callback) {
+  function visualization (callback) {
     client.indices.create({
-      index: 'discharge_type',
+      index: 'visualization',
       body: {
         mappings: {
-          discharge_type: {
-            properties: {
-              name: {
-                type: 'string',
-                fields: {
-                  raw: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              }
-            }
-          }
+          visualization: addPaperTrail({})
         }
       }
     }, callback);
