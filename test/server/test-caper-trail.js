@@ -13,7 +13,7 @@ var codex = require('../../server/codex');
 var conf = require('../../server/conf');
 var User = require('../../server/models/User');
 
-describe('paper trail', function () {
+describe('caper trail', function () {
   afterEach(function () {
     nock.cleanAll();
   });

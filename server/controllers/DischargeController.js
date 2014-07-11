@@ -14,7 +14,7 @@ module.exports = codex.controller(Discharge, {
       return callback(Boom.forbidden());
     }
 
-    // enforce unique constraint on name
+    // enforce unique constraint on name TODO this should be done in model
     Discharge.search({
       body: {
         query: {
@@ -33,7 +33,7 @@ module.exports = codex.controller(Discharge, {
         return callback(err);
       }
 
-      if (results.length > 0 && results[0]._.id !== esRequest.id) {
+      if (results.length > 0 && results[0].id !== esRequest.id) {
         return callback(Boom.create(400, 'There\'s already a discharge type with the name ' + esRequest.body.name, {
           error: 'UniqueConstraintViolation',
           field: 'name',

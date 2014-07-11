@@ -29,7 +29,7 @@ function Controller (Model, options) {
         var version = esRequest.version;
         var noVersion = !version && version !== 0;
 
-        if (instance && (noVersion || version === instance._.version)) {
+        if (instance && (noVersion || version === instance.version)) {
           return callback(null, instance);
         }
 
