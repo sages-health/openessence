@@ -149,7 +149,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               'date_histogram': {
                 field: 'reportDate',
                 interval: scope.interval,
-                min_doc_count: 0
+                'min_doc_count': 0
               }
             };
 
@@ -601,7 +601,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
             var densityHashTable = {};
 
             if (maxDots < 500) {
-              angular.forEach(data, function (value, key) {
+              angular.forEach(data, function (value) {
                 densityHashTable = {};
                 angular.forEach(value.values, function (d) {
                   var hash = Math.floor((x(d[0]) - xmargin) / 100);

@@ -17,7 +17,7 @@ angular.module(directives.name).directive('dashboardWidget', function ($timeout)
         pre: function (scope, element) {
           var parent;
           var lis = angular.element('li.dashboard-widget');
-          angular.forEach(lis, function (value, key) {
+          angular.forEach(lis, function (value) {
             if (value.contains(element[0])) {
               parent = angular.element(value);
             }
@@ -39,12 +39,8 @@ angular.module(directives.name).directive('dashboardWidget', function ($timeout)
               scope.options.width = scope.width = width - 50;
 
               // adjust margins on a per chart basis
-              switch (scope.options.visualization.name) {
-                case 'line':
-                {
-                  scope.options.height = scope.height -= 30;
-                  break;
-                }
+              if (scope.options.visualization.name === 'line') {
+                scope.options.height = scope.height -= 30;
               }
 
               parent.find('.panel').css({
