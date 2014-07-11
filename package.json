@@ -44,7 +44,7 @@
     "useragent": "~2.0.8"
   },
   "devDependencies": {
-    "bower": "~1.2.8",
+    "bower": "GeoffreyPlitt/bower#1d79cb1",
     "browserify": "^4.1.11",
     "browserify-middleware": "^3.0.0",
     "browserify-shim": "^3.5.0",
