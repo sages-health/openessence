@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 var async = require('async');
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
 
 function model (modelOptions) {
   var index = modelOptions.index;
@@ -11,8 +13,8 @@ function model (modelOptions) {
 
   /**
    *
-   * @param doc document to index, potentially untrusted
-   * @param instanceOptions options affecting this singular model instance
+   * @param doc - the document to index, potentially untrusted
+   * @param instanceOptions - options affecting this singular model instance
    * @constructor
    * @private
    */
@@ -29,40 +31,30 @@ function model (modelOptions) {
       return instanceOptions[setting] || modelOptions[setting];
     };
 
-    _.assign(this, doc);
+    this.doc = doc || {};
 
-    // Add properties to instance in case any consumers need them
-    Object.defineProperty(this, '_', {
-      enumerable: false, // separate regular fields from document fields
-      configurable: false,
-      writable: false,
-      value: {
-        // Flag consumers can use to check if an object is a Codex model instance. It's a function so that it's not
-        // accidentally serialized, which would defeat the purpose.
-        codexModel: function () {
-          // consumers really only need to check for the presence of the function, but just in case, we return true
-          return true;
-        },
-
-        // this might be useful if each model instance can override index or type
-        index: getSetting('index'),
-        type: getSetting('type'),
-
-        // these fields are different for every model instance
-        id: instanceOptions.id,
-        version: instanceOptions.version,
-        score: instanceOptions.score,
-
-        refresh: getSetting('refresh'),
-        client: getSetting('client'),
-
-        // add class methods to instance for convenience
-        get: Model.get,
-        search: Model.search,
-        delete: Model.delete
+    /**
+     * Flag consumers can use to check if an object is a Codex model instance.
+     */
+    Object.defineProperty(this, 'codexModel', {
+      enumerable: false,
+      value: function () { // function so there's little chance it was deserialized
+        return true;
       }
     });
+
+    this.index = getSetting('index');
+    this.type = getSetting('type');
+    this.id = instanceOptions.id;
+    this.version = instanceOptions.version;
+    this.score = instanceOptions.score;
+    this.refresh = getSetting('refresh');
+    this.client = getSetting('client');
   };
+
+  util.inherits(Model, EventEmitter);
+
+  _.assign(Model.prototype, modelOptions.prototype);
 
   /**
    * Instantiate a new Model instance from an elasticsearch request.
@@ -124,7 +116,8 @@ function model (modelOptions) {
     }, esRequest));
   });
 
-  Model.get = modelOptions.get || function get (esRequest, callback) {
+  // We add class methods to instance for convenience
+  Model.get = Model.prototype.get = modelOptions.get || function get (esRequest, callback) {
     var preGet0 = function (callback) {
       callback(null, esRequest);
     };
@@ -170,7 +163,7 @@ function model (modelOptions) {
     }, esRequest));
   });
 
-  Model.search = modelOptions.search || function search (params, callback) {
+  Model.search = Model.prototype.search = modelOptions.search || function search (params, callback) {
     if (arguments.length < 2) {
       callback = arguments[0];
       params = null;
@@ -231,7 +224,7 @@ function model (modelOptions) {
     }, esRequest));
   });
 
-  Model.delete = function _delete (esRequest, callback) {
+  Model.delete = Model.prototype.delete = function _delete (esRequest, callback) {
     if (arguments.length < 2) {
       callback = arguments[0];
       esRequest = null;
@@ -274,20 +267,24 @@ function model (modelOptions) {
       callback(null, model);
     };
 
-    async.waterfall([preInsert0].concat(Model.preInsert), function (err, doc) {
+    async.waterfall([preInsert0].concat(Model.preInsert), function (err, model) {
       if (err) {
         return callback(err);
       }
 
-      params = _.assign({ // clients can override all params
-        index: model._.index, // don't use model.index! That comes from the client
-        type: model._.type, // happy little fields :)
-        id: model._.id,
-        refresh: model._.refresh
-      }, params, {body: doc});
+      params = _.assign({ // clients can override preInsert callbacks by passing params
+        index: model.index,
+        type: model.type,
+        id: model.id,
+        refresh: model.refresh,
+        body: model.doc
+      }, params);
 
       // TODO pass new Model instance?
-      return client.index(params, callback);//model._.client.index(params, callback);
+      return client.index(params, function (err, response) {
+        model.emit('insert', err, params, response); // useful for things like releasing write locks
+        callback(err, response);
+      });
     });
   };
 

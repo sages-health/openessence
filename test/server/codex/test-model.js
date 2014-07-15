@@ -61,13 +61,13 @@ describe('model', function () {
     Bar.sayHello();
   });
 
-  it('instanceMethods should have access to fields', function (done) {
+  it('instanceMethods should have access to doc fields', function (done) {
     var Bar = codex.model({
       index: 'foo',
       type: 'bar',
       instanceMethods: {
         sayHello: function () {
-          return this.hello;
+          return this.doc.hello;
         }
       }
     });
@@ -157,9 +157,8 @@ describe('model', function () {
         index: 'foo',
         type: 'bar',
         preInsert: function (model, callback) {
-          expect(model).to.deep.equal(new Bar(a1));
-          expect(model._.id).to.equal('1');
-          callback(null, new Bar(b2));
+          expect(model).to.deep.equal(new Bar(a1, {id: '1'}));
+          callback(null, new Bar(b2, model));
         }
       });
 
@@ -464,8 +463,8 @@ describe('model', function () {
         }
 
         expect(bars).to.have.length(1);
-        expect(bars[0]._.id).to.equal('1');
-        expect(bars[0].a).to.equal(1);
+        expect(bars[0].id).to.equal('1');
+        expect(bars[0].doc.a).to.equal(1);
 
         done();
       });
@@ -491,7 +490,7 @@ describe('model', function () {
       });
 
       Bar.get({id: 1}, function (err, bar, resp) {
-        expect(bar._.id).to.equal('1');
+        expect(bar.id).to.equal('1');
         // TODO check enumberable props
         expect(resp).to.deep.equal(response);
 
@@ -516,7 +515,7 @@ describe('model', function () {
         type: 'bar',
         instanceMethods: {
           getId: function () {
-            return this._.id;
+            return this.id;
           }
         }
       });
@@ -548,8 +547,8 @@ describe('model', function () {
       });
 
       Bar.get({id: 1}, function (err, bar) {
-        expect(bar._.id).to.equal('1');
-        expect(bar._.version).to.equal(2);
+        expect(bar.id).to.equal('1');
+        expect(bar.version).to.equal(2);
 
         done();
       });

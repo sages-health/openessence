@@ -11,7 +11,7 @@ module.exports = codex.controller(User, {
       return callback(Boom.forbidden());
     }
 
-    if (req.user.isAdmin() || req.user._.id === esRequest.id) {
+    if (req.user.isAdmin() || req.user.id === esRequest.id) {
       // admins can see anyone, regular users can only see themselves
       return callback(null, esRequest);
     } else {
@@ -84,7 +84,7 @@ module.exports = codex.controller(User, {
   preDelete: function (req, esRequest, callback) {
     if (!req.user) {
       return callback(Boom.forbidden());
-    } else if (req.user._.id === esRequest.id) {
+    } else if (req.user.id === esRequest.id) {
       // TODO provide a way for users to delete their accounts
       return callback(Boom.forbidden('Sorry, but you cannot delete your own account'));
     }

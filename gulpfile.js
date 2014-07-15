@@ -41,8 +41,8 @@ var paths = {
   partials: ['public/**/*.html', notBowerComponents],
   html: 'views/**/*.html',
   indexHtml: 'views/index.html',
-  serverTests: 'test/server/**/test-*.js',
-  clientTests: 'test/client/**/test-*.js',
+  serverTests: 'test/server/**/*.js',
+  clientTests: 'test/client/**/*.js',
   imagesDest: 'dist/public/images',
   bowerComponents: 'public/bower_components',
   nodeModules: 'node_modules'

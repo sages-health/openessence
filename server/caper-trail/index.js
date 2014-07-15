@@ -19,16 +19,16 @@ function makePaperTrail (model, req, callback) {
     };
   };
 
-  var getModel = req ? req.codex.get : model._.get;
+  var getModel = req ? req.codex.get : model.get;
 
-  if (model._.id) {
+  if (model.id || model.id === 0) { // ID should be a string, but you can never be too careful
     // get list of modifications
-    getModel({id: model._.id}, function (err, instance) {
+    getModel({id: model.id}, function (err, instance) {
       if (err) {
         return callback(err);
       }
 
-      var trail = instance.paperTrail || [];
+      var trail = instance.doc.paperTrail || [];
       trail.push(createEntry());
 
       return callback(null, trail);
@@ -40,7 +40,7 @@ function makePaperTrail (model, req, callback) {
 
 function caperTrailModel (Model) {
   Model.preInsert.push(function paperTrail (model, callback) {
-    if (model.paperTrail) {
+    if (model.doc.paperTrail) {
       // models allow consumers to override paper trails, controllers don't
       return callback(null, model);
     }
@@ -50,9 +50,11 @@ function caperTrailModel (Model) {
         return callback(err);
       }
 
+      model.doc.paperTrail = trail;
+
       // This allows consumers to override paperTrail if they need to. The controller blocks untrusted clients from
       // being able to do this maliciously
-      callback(null, _.assign({paperTrail: trail}, model));
+      callback(null, model);
     });
   });
 
@@ -76,7 +78,7 @@ function caperTrailController (controller) {
       }
 
       // this is why it's important not to keep around extra properties (like passwords) on req.user
-      trail[trail.length - 1].user = req.user;
+      trail[trail.length - 1].user = req.user.doc;
       // TODO don't send users down to client, the utility is limited but the security implications are real
 
       // the order of these assigns is crucial - this way we overwrite any paperTrails the client tried to send

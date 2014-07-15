@@ -39,9 +39,11 @@
     "passport-persona": "~0.1.7",
     "pem": "~1.4.1",
     "phantom-cluster": "~0.1.1",
+    "redis": "^0.10.3",
     "scrypt": "~3.0.1",
     "static-favicon": "~1.0.2",
-    "useragent": "~2.0.8"
+    "useragent": "~2.0.8",
+    "yarnl": "0.0.1"
   },
   "devDependencies": {
     "browserify": "^4.1.11",
@@ -50,6 +52,7 @@
     "browserify-transform-tools": "~1.2.1",
     "chai": "~1.9.0",
     "cheerio": "^0.17.0",
+    "connect-redis": "~2.0.0",
     "cookie": "^0.1.2",
     "esprima": "^1.2.2",
     "gulp": "^3.8.1",
@@ -94,7 +97,6 @@
     "vinyl-source-stream": "~0.1.1"
   },
   "optionalDependencies": {
-    "connect-redis": "~2.0.0",
     "gifsicle": "~0.1.4",
     "jpegtran-bin": "~0.2.3",
     "pngquant-bin": "~0.1.5"

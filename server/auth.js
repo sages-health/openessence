@@ -13,15 +13,15 @@ var User = require('./models/User');
 passport.serializeUser(function (user, done) {
   // store entire user object in session so we don't have to deserialize it from data store
   // this won't scale to large number of concurrent users, but it will be faster for small deployments
-  done(null, {doc: user, '_': user._}); // _ is non-enumerable prop, so we have to explicitly serialize it
+  done(null, user.doc);
 });
 passport.deserializeUser(function (user, done) {
-  if (user._ && user._.codexModel) {
+  if (typeof user.codexModel === 'function') {
     // coming straight from authenticating
     return done(null, user);
   } else {
     // have to really deserialize
-    return done(null, new User(user.doc, user._));
+    return done(null, new User(user));
   }
 });
 
@@ -63,10 +63,10 @@ passport.use(new PersonaStrategy({
       callback(Boom.create(403, 'Unregistered user', {error: 'UnregisteredUser'}));
       return;
     }
-    delete user.password; // don't keep (hashed) password in memory any more than we have to
+    delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
 
     logger.info({user: user}, '%s logged in using Persona', email);
-    user.authType = 'persona';
+    user.doc.authType = 'persona';
 
     callback(null, user);
   });
@@ -91,7 +91,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
 
     // Check password before we check if user is disabled. Again, this is to prevent timing attacks.
     user.verifyPassword(new Buffer(password, 'utf8'), function (err, match) {
-      delete user.password;
+      delete user.doc.password;
       password = null; // can't hurt
 
       if (err) {
@@ -101,12 +101,12 @@ passport.use(new LocalStrategy(function (username, password, callback) {
       if (!match) {
         // Security 101: don't tell the user if it was the username or password that was wrong
         callback(null, false, {message: 'Incorrect username/password'});
-      } else if (user.disabled === true) {
+      } else if (user.doc.disabled === true) {
         logger.info('%s tried to log in, but their account is disabled', username);
         callback(null, false, {message: 'Account disabled'});
       } else {
         logger.info({user: user}, '%s logged in using local auth', username);
-        user.authType = 'local';
+        user.doc.authType = 'local';
 
         callback(null, user);
       }
@@ -152,12 +152,12 @@ function authenticate (strategy) {
 
         res.json(200, {
           // whitelist user properties that are OK to send to client
-          username: user.username,
-          email: user.email,
-          name: user.name,
-          roles: user.roles,
-          districts: user.districts,
-          authType: user.authType
+          username: user.doc.username,
+          email: user.doc.email,
+          name: user.doc.name,
+          roles: user.doc.roles,
+          districts: user.doc.districts,
+          authType: user.doc.authType
         });
       });
     })(req, res, next);

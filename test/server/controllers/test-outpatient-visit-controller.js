@@ -403,8 +403,7 @@ describe('OutpatientVisitController', function () {
         .expect(403)
         .end(function (err) {
           if (err) {
-            done(err);
-            return;
+            return done(err);
           }
 
           done();
