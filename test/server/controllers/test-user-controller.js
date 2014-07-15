@@ -71,13 +71,36 @@ describe('UserController', function () {
           }
 
           body = JSON.parse(body);
-          if (Object.keys(body).length !== 3 || body.username !== 'foo' || body.password === 'password') {
-            return false;
+          if (body.password) {
+            if (Object.keys(body).length !== 3 || body.username !== 'foo' || body.password === 'password') {
+              return false;
+            }
+
+            actualPassword = body.password;
+            return 'username/password';
           }
 
-          actualPassword = body.password;
-
-          return 'username/password';
+          var searchRequest = {
+            query: {
+              'constant_score': {
+                filter: {
+                  term: {
+                    'username.raw': 'foo'
+                  }
+                }
+              }
+            }
+          };
+          if (JSON.stringify(body) === JSON.stringify(searchRequest)) {
+            return 'search';
+          }
+        })
+        .post('/user/user/_search?version=true', 'search') // searching for unique constraint
+        .reply(200, {
+          hits: {
+            total: 0,
+            hits: []
+          }
         })
         .post('/user/user?refresh=true', 'username/password')
         .reply(201, {created: true});

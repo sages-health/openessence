@@ -39,9 +39,11 @@
     "passport-persona": "~0.1.7",
     "pem": "~1.4.1",
     "phantom-cluster": "~0.1.1",
+    "redis": "^0.10.3",
     "scrypt": "~3.0.1",
     "static-favicon": "~1.0.2",
-    "useragent": "~2.0.8"
+    "useragent": "~2.0.8",
+    "yarnl": "0.0.1"
   },
   "devDependencies": {
     "browserify": "^4.1.11",

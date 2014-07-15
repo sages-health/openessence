@@ -1,8 +1,15 @@
 'use strict';
 
 var _ = require('lodash');
+var async = require('async');
+
 var scrypt = require('scrypt');
+var Boom = require('boom');
+
 var codex = require('../codex');
+var conf = require('../conf');
+var logger = conf.logger;
+var Lock = require('yarnl');
 
 var scryptParams = scrypt.params(0.1);
 
@@ -59,10 +66,10 @@ var User = codex.model({
 
   instanceMethods: {
     isAdmin: function () {
-      return this.roles && this.roles.indexOf('admin') !== -1;
+      return this.doc.roles && this.doc.roles.indexOf('admin') !== -1;
     },
     hasAllDistricts: function () {
-      return this.roles && this.roles.indexOf('district_all') !== -1;
+      return this.doc.roles && this.doc.roles.indexOf('district_all') !== -1;
     },
 
     hasRightsToDocument: function (doc) {
@@ -77,11 +84,11 @@ var User = codex.model({
       }
 
       var district = facility.district;
-      if (!district || !this.districts) {
+      if (!district || !this.doc.districts) {
         return true;
       }
 
-      return this.hasAllDistricts() || this.districts.indexOf(district) !== -1;
+      return this.hasAllDistricts() || this.doc.districts.indexOf(district) !== -1;
     },
 
     canCreateUser: function (doc) {
@@ -89,7 +96,7 @@ var User = codex.model({
         return true;
       }
 
-      var myRoles = this.roles || [];
+      var myRoles = this.doc.roles || [];
       if (doc.roles) {
         if (!doc.roles.every(function (r) { return myRoles.indexOf(r) !== -1; })) {
           // can't give user a role you don't have
@@ -101,7 +108,7 @@ var User = codex.model({
     },
 
     verifyPassword: function (password, callback) {
-      var myPassword = this.password;
+      var myPassword = this.doc.password;
       if (!Buffer.isBuffer(myPassword)) {
         myPassword = new Buffer(myPassword, 'hex'); // TODO switch to base64
       }
@@ -127,19 +134,93 @@ var User = codex.model({
     }
   },
 
-  preInsert: function (doc, callback) {
-    if (doc.password) {
-      User.hashPassword(doc.password, function (err, password) {
-        if (err) {
-          return callback(err);
+  preInsert: function (user, callback) {
+    async.parallel({
+      hash: function _hash (callback) {
+        if (!user.doc.password) {
+          return callback(new Error('Cannot create user without password'));
         }
 
-        return callback(null, _.assign({}, doc, {password: password.toString('hex')}));
+        User.hashPassword(user.doc.password, function (err, password) {
+          if (err) {
+            return callback(err);
+          }
+
+          return callback(null, password.toString('hex'));
+        });
+      },
+
+      unlock: function _lock (callback) {
+        // Lock while we check the unique constraint. Otherwise, another client could insert after we check the
+        // constraint but before we insert. This is equivalent to the table-wide write locks that most relational
+        // DBs use to enforce constraints.
+        user.writeLock.lock(function (err, unlock) {
+          if (err) {
+            return callback(err);
+          } else if (!unlock) {
+            return callback(new Error('Failed to acquire user write lock'));
+          }
+
+          User.search({
+            body: {
+              query: {
+                'constant_score': {
+                  filter: {
+                    term: {
+                      // use un-analyzed version of the field for case-sensitive matching
+                      'username.raw': user.doc.username
+                    }
+                  }
+                }
+              }
+            }
+          }, function (err, users) {
+            if (err) {
+              return callback(err);
+            }
+
+            if (users.length && users[0].id !== user.id) { // we don't check if users.length > 1
+              return callback(Boom.create(400, 'There\'s already a user with the username ' + user.doc.username, {
+                error: 'UniqueConstraintViolation',
+                field: 'username',
+                value: user.doc.username
+              }));
+            }
+
+            callback(null, unlock);
+          });
+        });
+      }
+    }, function (err, results) {
+      var releaseLock = function () {
+        user.writeLock.unlock(function (err) {
+          if (err) {
+            // not a big deal, since locks auto-expire, but best to log it anyway
+            logger.error({err: err}, 'Error releasing user write lock');
+          }
+        });
+      };
+
+      if (err) {
+        releaseLock();
+        return callback(err);
+      }
+
+      user.once('insert', function () {
+        // Our lock guarantees that this event is from this index request, and not a different one
+        releaseLock();
       });
-    } else {
-      callback(null, new Error('Cannot create user without password'));
-    }
+
+      user.doc.password = results.hash;
+
+      callback(null, user);
+    });
   }
+});
+
+User.prototype.writeLock = User.writeLock = new Lock('user:write', {
+  client: conf.redis.client,
+  maxAttempts: 100 // a high enough number that writes shouldn't fail, but low enough that we give up after a while
 });
 
 module.exports = User;

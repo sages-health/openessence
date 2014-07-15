@@ -13,15 +13,15 @@ var User = require('./models/User');
 passport.serializeUser(function (user, done) {
   // store entire user object in session so we don't have to deserialize it from data store
   // this won't scale to large number of concurrent users, but it will be faster for small deployments
-  done(null, {doc: user.doc, codexModel: user.codexModel});
+  done(null, user.doc);
 });
 passport.deserializeUser(function (user, done) {
-  if (user.codexModel) {
+  if (typeof user.codexModel === 'function') {
     // coming straight from authenticating
     return done(null, user);
   } else {
     // have to really deserialize
-    return done(null, new User(user.doc));
+    return done(null, new User(user));
   }
 });
 

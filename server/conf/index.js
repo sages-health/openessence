@@ -58,4 +58,23 @@ if (settings.session.store === 'memory' && settings.workers > 1) {
   throw new Error('Cannot have more than 1 worker with an in-memory session store');
 }
 
+// use shared Redis connection
+if (!settings.redis.client) {
+  var redis = require('redis');
+  var url = require('url').parse(settings.redis.url);
+
+  var redisClient;
+  Object.defineProperty(settings.redis, 'client', {
+    enumerable: true,
+    get: function () { // lazily initialize redis connection so Redis doesn't have to be online unless we're using it
+      if (!redisClient) {
+        redisClient = redis.createClient(url.port, url.hostname, {
+          'auth_pass': settings.redis.password
+        });
+      }
+      return redisClient;
+    }
+  });
+}
+
 module.exports = settings;

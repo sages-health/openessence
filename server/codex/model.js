@@ -35,9 +35,13 @@ function model (modelOptions) {
 
     /**
      * Flag consumers can use to check if an object is a Codex model instance.
-     * @type {boolean}
      */
-    this.codexModel = true;
+    Object.defineProperty(this, 'codexModel', {
+      enumerable: false,
+      value: function () { // function so there's little chance it was deserialized
+        return true;
+      }
+    });
 
     this.index = getSetting('index');
     this.type = getSetting('type');
@@ -49,6 +53,8 @@ function model (modelOptions) {
   };
 
   util.inherits(Model, EventEmitter);
+
+  _.assign(Model.prototype, modelOptions.prototype);
 
   /**
    * Instantiate a new Model instance from an elasticsearch request.
