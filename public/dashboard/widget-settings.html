@@ -1,5 +1,5 @@
 <div>
-  <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+  <form name="_form" class="form-horizontal" >
     <div class="modal-header">
       <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
       <h3>Widget Settings</h3>
@@ -14,36 +14,18 @@
       </div>
       <div class="row">
         <div class="col-lg-6 col-md-6">
-          <div class="form-group" ng-class="{error: _form.sizeX.$error && _form.submitted}">
-            <label class="control-label col-lg-6 col-md-6">Width</label>
+          <div class="form-group">
+            <label for="start-date" class="control-label col-lg-6 col-md-6" translate>Date Interval</label>
             <div class="col-lg-6 col-md-6">
-              <input name="sizeX" ng-model="form.sizeX" class="form-control" />
+              <input id="start-date" name="startDate" class="form-control" ng-model="filter.from"  datepicker-popup show-weeks="false">
             </div>
           </div>
         </div>
         <div class="col-lg-6 col-md-6">
           <div class="form-group">
-            <label class="control-label col-lg-6 col-md-6">Height</label>
+            <label for="start-date" class="control-label pull-left" translate>—</label>
             <div class="col-lg-6 col-md-6">
-              <input name="sizeY" ng-model="form.sizeY" class="form-control" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-6 col-md-6">
-          <div class="form-group" ng-class="{error: _form.sizeX.$error && _form.submitted}">
-            <label class="control-label col-lg-6 col-md-6">Column</label>
-            <div class="col-lg-6 col-md-6">
-              <input name="col" ng-model="form.col" class="form-control" />
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 col-md-6">
-          <div class="form-group">
-            <label class="control-label col-lg-6 col-md-6">Row</label>
-            <div class="col-lg-6 col-md-6">
-              <input name="row" ng-model="form.row" class="form-control" />
+              <input id="end-date" name="endDate" class="form-control pull-left" ng-model="filter.to"  datepicker-popup show-weeks="false">
             </div>
           </div>
         </div>
@@ -55,9 +37,9 @@
         <span class="icon-cancel"></span>
         <span translate>Cancel</span>
       </button>
-      <button type="submit" class="btn btn-primary"> <!-- TODO make a singular save button -->
-        <span class="icon-floppy"></span>
-        <span translate>Save</span>
+      <button class="btn btn-primary" ng-click="submit()">
+        <span class="icon-ok"></span>
+        <span translate>OK</span>
       </button>
     </div>
   </form>
