@@ -14,10 +14,14 @@ function locals (req, res, next) {
   res.locals.baseHref = conf.url + '/' + req.locale + '/'; // use proxy URL (if applicable), not req.url
   res.locals.environment = conf.env;
   res.locals.version = pjson.version;
-  res.locals.commit = process.env.COMMIT_HASH;
+  res.locals.commit = process.env.COMMIT_HASH || '';
 
-  // DEPLOY_DATE is in seconds since that's what date +"%s" returns
-  res.locals.deployDate = parseInt(process.env.DEPLOY_DATE, 10) * 1000;
+  if (process.env.DEPLOY_DATE) {
+    // DEPLOY_DATE is in seconds since that's what date +"%s" returns
+    res.locals.deployDate = parseInt(process.env.DEPLOY_DATE, 10) * 1000;
+  } else {
+    res.locals.deployDate = '';
+  }
 
   next();
 }
