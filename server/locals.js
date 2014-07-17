@@ -2,7 +2,6 @@
 
 var conf = require('./conf');
 var pjson = require('../package.json');
-var git = require('git-rev');
 
 // variables for views, this must be before the views are rendered and after any necessary request variables are set
 function locals (req, res, next) {
@@ -15,13 +14,11 @@ function locals (req, res, next) {
   res.locals.baseHref = conf.url + '/' + req.locale + '/'; // use proxy URL (if applicable), not req.url
   res.locals.environment = conf.env;
   res.locals.version = pjson.version;
+  res.locals.commit = process.env.COMMIT_HASH;
 
-  // TODO Heroku deletes the .git directory, use environment variable instead, see http://stackoverflow.com/a/22702304
-  git.short(function (sha) {
-    if (sha) {
-      res.locals.version += '-' + sha;
-    }
-    next();
-  });
+  // DEPLOY_DATE is in seconds since that's what date +"%s" returns
+  res.locals.deployDate = parseInt(process.env.DEPLOY_DATE, 10) * 1000;
+
+  next();
 }
 module.exports = locals;

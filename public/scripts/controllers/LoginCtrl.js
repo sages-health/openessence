@@ -17,7 +17,7 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
 
   $scope.credentials = {};
   $scope.persona = persona;
-  $scope.version = version;
+  $scope.version = version.description;
 
   $scope.showLocalSignInForm = function () {
     $scope.signInForm = true;
