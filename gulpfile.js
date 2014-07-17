@@ -21,14 +21,6 @@ var source = require('vinyl-source-stream');
 var transformTools = require('browserify-transform-tools');
 var jsLibs = require('./server/assets').libs();
 
-// add Kibana's grunt tasks
-// blocked on https://github.com/gratimax/gulp-grunt/issues/3
-// for now you'll have to manually build Kibana
-//require('gulp-grunt')(gulp, {
-//  base: __dirname + '/kibana',
-//  prefix: 'kibana-'
-//});
-
 // TODO use gulp-changed
 
 // TODO get livereload working with https://github.com/mollerse/gulp-embedlr
@@ -471,7 +463,5 @@ gulp.task('service', function (done) {
 
   svc.install();
 });
-
-gulp.task('heroku', ['build']);
 
 gulp.task('default', ['build']);
