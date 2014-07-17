@@ -40,16 +40,27 @@ settings.ssl = _.assign({
 }, settings.ssl);
 
 if (!settings.session.secret) {
-  if (settings.workers > 1) {
-    /*jshint quotmark:false */
-    // can't have each worker process using different random secrets
-    throw new Error("You must set a session secret if you're using more than one worker process");
-  }
+  var secret;
+  Object.defineProperty(settings.session, 'secret', {
+    enumerable: true,
+    // lazily initialize secret so we don't yell at the user unnecessarily
+    // TODO split conf up so we don't load session conf unless we're using it
+    get: function () {
+      if (!secret) {
+        console.warn('Using random session secret. Please set one before you run in production, as a random one will ' +
+          'not be persisted nor work with multiple worker processes');
 
-  console.warn('Using random session secret. Please set one before you run in production, as a random one will ' +
-    'not be persisted nor work with multiple worker processes');
+        secret = crypto.randomBytes(1024).toString('hex');
+        if (settings.workers > 1) {
+          /*jshint quotmark:false */
+          // can't have each worker process using different random secrets
+          throw new Error("You must set a session secret if you're using more than one worker process");
+        }
+      }
 
-  settings.session.secret = crypto.randomBytes(1024).toString('hex');
+      return secret;
+    }
+  });
 }
 
 if (settings.session.store === 'memory' && settings.workers > 1) {
