@@ -200,7 +200,7 @@
     }
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": "0.10.x"
   },
   "scripts": {
     "dev": "cd kibana && npm install && cd .. && npm install && bower install && gulp build",
