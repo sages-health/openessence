@@ -10,8 +10,7 @@ var pluckName = function (r) {
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientForm', function (gettextCatalog, OutpatientVisit, District,
-                                                                      Diagnosis, Symptom) {
+angular.module(directives.name).directive('outpatientForm', function (gettextCatalog, OutpatientVisit, District, Diagnosis, Symptom) {
   return {
     restrict: 'E',
     template: require('./form.html'),
@@ -83,14 +82,25 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
               scope.onSubmit(scope.visitForm);
             };
 
+            var showError = function (data) {
+              // if someone else has updated this record before you hit save
+              if (data.status === 409) {
+                // Get latest record data and update form
+                OutpatientVisit.get({_id: scope.record._id}, function (newData) {
+                  scope.conflictError = true;
+                  scope.record = newData;
+                  scope.visit = scope.record._source;
+                });
+              }
+            };
+
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
-              OutpatientVisit.update(angular.extend({_id: scope.record._id}, scope.visit), function () {
-                cleanup();
-              });
+              OutpatientVisit.update({
+                _id: scope.record._id,
+                version: scope.record._version
+              }, scope.visit, cleanup, showError);
             } else {
-              OutpatientVisit.save(scope.visit, function () {
-                cleanup();
-              });
+              OutpatientVisit.save(scope.visit, cleanup, showError);
             }
           };
 

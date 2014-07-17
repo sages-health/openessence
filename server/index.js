@@ -4,25 +4,34 @@ var url = require('url');
 var helmet = require('helmet');
 var locale = require('locale');
 var useragent = require('useragent');
-var _ = require('lodash');
+var express = require('express');
+var bodyParser = require('body-parser');
 
 var conf = require('./conf');
 var logger = conf.logger;
 var assets = require('./assets');
-var supportedLocales = require('./locales').getSupportedLocalesSync();
 var auth = require('./auth');
-var routes = require('./routes');
 
-var app = require('express')();
+var app = express();
 var https = url.parse(conf.url).protocol === 'https:';
 
-// Times out requests after 30 seconds. This is more conservative than the default of 5s b/c we're not as concerned
-// about availability for other users, since we're not going to have a lot of concurrent users.
-// This middleware should be early in the middleware chain to start the timer as soon as possible.
-app.use(require('connect-timeout')(30000));
+var views = require('./views');
+app.set('views', views.directory);
+app.engine('html', views.engine);
 
 // gzip responses
 app.use(require('compression')());
+
+// Redirect to HTTPS if we're not terminating TLS in a reverse proxy. It's important that this middleware runs early
+if (https) {
+  app.use(function (req, res, next) {
+    if (req.secure || (conf.proxy.enabled && req.get('X-Forwarded-Proto') === 'https')) {
+      next();
+    } else {
+      res.redirect(307, conf.url + req.originalUrl);
+    }
+  });
+}
 
 // favicon
 app.use((function () {
@@ -39,7 +48,11 @@ if (conf.env === 'production') {
   app.use(require('morgan')());
 }
 
-app.use(require('body-parser')()); // parse JSON + URL encoded request bodies, must be before a lot of other middleware
+app.use(assets.static());
+
+app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({extended: true})); // we only use JSON-encoded request bodies
+
 app.use(require('cookie-parser')()); // must be before session
 app.use((function () {
   var session = require('express-session');
@@ -47,7 +60,7 @@ app.use((function () {
 
   if (conf.session.store === 'redis') {
     logger.info('Using Redis session store');
-    var RedisStore = require('connect-redis')(session);
+    var RedisStore = require('connect-redis')(session); // conditionally require since it's an optional dependency
     store = new RedisStore({
       url: conf.redis.url
     });
@@ -57,10 +70,13 @@ app.use((function () {
     store: store,
     secret: conf.session.secret,
     proxy: conf.proxy.enabled,
+    rolling: true, // each request resets the session expiration clock
+    resave: true,
+    saveUninitialized: true, // Guest sessions are the easiest way to have CSRF token for login
     cookie: {
       path: '/',
       httpOnly: true,
-      maxAge: null, // cookie (and thus session) destroyed when user closes browser
+      maxAge: 86400000, // session expires after 1 day idle
       secure: https
     }
   });
@@ -80,14 +96,7 @@ app.use(function (req, res, next) {
 
   // CSP breaks IE10 (and IE < 10 doesn't support CSP anyway). Not worth the headache.
   if (useragent.lookup(req.headers['user-agent']).family === 'IE') {
-    next();
-    return;
-  }
-
-  // Kibana uses inline scripts and doesn't have ngCsp enabled
-  if (/^\/kibana(\/|$)/.test(req.path)) {
-    next();
-    return;
+    return next();
   }
 
   var self = '\'self\'';
@@ -98,7 +107,8 @@ app.use(function (req, res, next) {
     'script-src': [self, 'https://login.persona.org'],
     // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
     'style-src': [self, 'fonts.googleapis.com', '\'unsafe-inline\''],
-    'img-src': [self],
+    'img-src': [self, 'data:', 'https://otile1-s.mqcdn.com', 'https://otile2-s.mqcdn.com', 'https://otile3-s.mqcdn.com',
+                'https://otile4-s.mqcdn.com', 'https://developer.mapquest.com/content/osm/mq_logo.png'],
     'font-src': [self, 'themes.googleusercontent.com'],
     'frame-src': ['https://login.persona.org'],
     'media-src': [self], // someday we might use <audio> and/or <video>
@@ -106,93 +116,30 @@ app.use(function (req, res, next) {
   })(req, res, next);
 });
 
-// csrf
-app.use((function () {
-  var csrf = require('csurf')(); // don't call require() in middleware, it could be slow
-  return function (req, res, next) {
-    if (req.method === 'POST' && /^\/kibana\/es(\/|$)/.test(req.path)) {
-      // Kibana's POST requests to elasticsearch don't need CSRF tokens since they don't mutate state and we don't
-      // want to patch Kibana
-      next();
-    } else {
-      csrf(req, res, next);
-    }
-  };
-})());
+app.use(require('csurf')());
 
-app.use(locale(supportedLocales)); // adds req.locale based on best matching locale
-app.use(function (req, res, next) {
-  if (req.path === '/') {
-    res.redirect(307, '/' + req.locale);
-  } else {
-    // override user agent's locale, useful for debugging and for multilingual users
-    req.locale = req.path.split('/')[1];
-    if (req.locale === 'api') {
-      // API requests don't have a locale associated with them
-      req.locale = 'en';
-    }
-    next();
-  }
+app.use(locale(require('./locale').supportedLocales)); // adds req.locale based on best matching locale
+app.get('/', function (req, res) {
+  res.redirect(307, '/' + req.locale);
 });
 
-app.use(assets.anonymous());
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
-// variables for views, this must be before router in the middleware chain
-app.use(function (req, res, next) {
-  res.locals.user = req.user;
-  if (req.csrfToken) { // not every request has CSRF token
-    res.locals.csrfToken = req.csrfToken();
-  }
-  res.locals.lang = req.locale;
-  res.locals.persona = conf.persona.enabled;
-  res.locals.baseHref = conf.url + '/' + req.locale + '/'; // use proxy URL (if applicable), not req.url
-  res.locals.environment = conf.env;
+app.use(require('./locale').middleware);
+app.use('/session', require('./session'));
 
-  next();
-});
+app.use('/resources', express()
+  .use(auth.denyAnonymousAccess)
+  .use(require('./resources')()));
 
-// /en/*, /es/*, etc.
-supportedLocales.forEach(function (l) {
-  app.use('/' + l, routes.server());
-
-  // You'll never get a 404. This isn't so bad, since these routes
-  // are only for user-facing URLs (XHR requests don't use locale prefix) and server-side 404 isn't that useful, as
-  // opposed to client-side error message.
-  app.use('/' + l, routes.client());
-});
-
-// also allow XHR requests unprefixed by locale (these do NOT delegate to client routes)
-app.use(routes.server());
-
-// ...and API clients with Bearer tokens
-app.use('/api', require('./api')());
-
-// everything below this requires authentication
-app.use(auth.denyAnonymousAccess);
-
-var esProxy = require('./es/proxy');
-app.use('/es', esProxy);
-app.use('/kibana/es', esProxy);
-app.use('/kibana', assets.kibana());
-
-app.use('/resources', require('./codex')());
-app.use('/reports', require('./reports')());
+app.use('/reports', express()
+  .use(auth.denyAnonymousAccess)
+  .use(require('./reports')()));
 
 app.use(require('./error').middleware);
 
-app.engine('html', function (path, options, callback) {
-  options = _.assign({
-    open: '[[', // htmlmin likes to escape <, and {{ is used by Angular
-    close: ']]'
-  }, options);
-  require('ejs').renderFile(path, options, callback);
-});
-app.set('views', require('./views')(conf.env));
-
-// This MUST be the last route. Since we delegate to the client for HTML5-style routes, we'll never reach this point
-// for GET requests. But we can handle every other verb.
-app.use(require('./error').notFound);
-
-module.exports = app;
+module.exports = express()
+  .use(app)
+  .use('/api', express().use(auth.bearer).use(app)) // TODO test this
+  .use(require('./error').notFound); // this must be the last route

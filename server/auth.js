@@ -4,20 +4,25 @@ var passport = require('passport');
 var BearerStrategy = require('passport-http-bearer').Strategy; // for API clients
 var LocalStrategy = require('passport-local').Strategy;
 var PersonaStrategy = require('passport-persona').Strategy;
+var Boom = require('boom');
 
 var conf = require('./conf');
 var logger = conf.logger;
-var User = require('./codex/models/user');
-var errors = require('./error');
+var User = require('./models/User');
 
 passport.serializeUser(function (user, done) {
   // store entire user object in session so we don't have to deserialize it from data store
   // this won't scale to large number of concurrent users, but it will be faster for small deployments
-  done(null, user);
+  done(null, user.doc);
 });
 passport.deserializeUser(function (user, done) {
-  // no need to deserialize, we store entire user in memory
-  done(null, user);
+  if (typeof user.codexModel === 'function') {
+    // coming straight from authenticating
+    return done(null, user);
+  } else {
+    // have to really deserialize
+    return done(null, new User(user));
+  }
 });
 
 passport.use(new PersonaStrategy({
@@ -27,11 +32,11 @@ passport.use(new PersonaStrategy({
 
   if (!conf.users) {
     // "Demo" mode: give any user who logs in via Persona full admin rights
-    callback(null, {
+    callback(null, new User({
       username: email,
       authType: 'persona',
       roles: ['admin']
-    });
+    }));
     return;
   }
 
@@ -40,13 +45,13 @@ passport.use(new PersonaStrategy({
     localUser.username = email;
     localUser.authType = 'persona';
     logger.info({user: localUser}, '%s logged in with Persona via file system whitelist', email);
-    callback(null, localUser);
+    callback(null, new User(localUser));
     return;
   }
 
   // This means that to switch between Persona and local, your local username must be your email.
   // We may need to reevaluate that in the future.
-  new User().findByUsername(email, function (err, user) {
+  User.findByUsername(email, function (err, user) {
     if (err) {
       callback(err);
       return;
@@ -55,65 +60,53 @@ passport.use(new PersonaStrategy({
     if (!user) {
       /*jshint quotmark:false */
       logger.info({user: user}, "%s logged in successfully with Persona, but they're not recognized by codex", email);
-      callback(new errors.UnregisteredUserError());
+      callback(Boom.create(403, 'Unregistered user', {error: 'UnregisteredUser'}));
       return;
     }
-
-    if (user._source) {
-      user._source.id = user._id;
-      user = user._source;
-    }
-    delete user.password; // don't keep (hashed) password in memory any more than we have to
+    delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
 
     logger.info({user: user}, '%s logged in using Persona', email);
-    user.authType = 'persona';
+    user.doc.authType = 'persona';
 
     callback(null, user);
   });
 }));
 
 passport.use(new LocalStrategy(function (username, password, callback) {
-  new User().findByUsername(username, function (err, user) {
+  User.findByUsername(username, function (err, user) {
     if (err) {
-      callback(err);
-      return;
+      return callback(err);
     }
 
     if (!user) {
       // Hash anyway to prevent timing attacks. FYI: this string is "admin" hashed by scrypt with our parameters
-      User.checkPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
+      new User().verifyPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
         new Buffer(password, 'utf8'), function (err) {
-          // always pass false (even if they did guess our fake password right)
+          // always pass false
           callback(err, false);
         });
 
       return;
     }
 
-    if (user._source) {
-      user._source.id = user._id;
-      user = user._source;
-    }
-
     // Check password before we check if user is disabled. Again, this is to prevent timing attacks.
-    User.checkPassword(new Buffer(user.password, 'hex'), new Buffer(password, 'utf8'), function (err, match) {
-      delete user.password;
+    user.verifyPassword(new Buffer(password, 'utf8'), function (err, match) {
+      delete user.doc.password;
       password = null; // can't hurt
 
       if (err) {
-        callback(err);
-        return;
+        return callback(err);
       }
 
       if (!match) {
         // Security 101: don't tell the user if it was the username or password that was wrong
         callback(null, false, {message: 'Incorrect username/password'});
-      } else if (user.disabled === true) {
+      } else if (user.doc.disabled === true) {
         logger.info('%s tried to log in, but their account is disabled', username);
         callback(null, false, {message: 'Account disabled'});
       } else {
         logger.info({user: user}, '%s logged in using local auth', username);
-        user.authType = 'local';
+        user.doc.authType = 'local';
 
         callback(null, user);
       }
@@ -132,37 +125,49 @@ passport.use(new BearerStrategy({}, function (token, done) {
   done(null, user);
 }));
 
-function accessDeniedHandler (req, res) {
-  logger.info({req: req}, 'Blocked unauthorized request to ' + req.url); // bunyan FTW!
-  var action = 'access ' + req.originalUrl;
-
-  res.status(401);
-  res.set('WWW-Authenticate', 'None');
-
-  res.format({
-    html: function () {
-      res.render('401.html', {
-        action: action
-      });
-    },
-    json: function () {
-      res.send({
-        error: 'Access denied: you don\'t have permission to ' + action
-      });
-    }
-  });
-}
-
 function denyAnonymousAccess (req, res, next) {
   if (!req.user) {
-    accessDeniedHandler(req, res);
+    return next(Boom.unauthorized());
   } else {
-    next();
+    return next();
   }
+}
+
+function authenticate (strategy) {
+  return function (req, res, next) {
+    passport.authenticate(strategy, {session: strategy !== 'bearer'}, function (err, user) {
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        return next(Boom.create(403, 'Bad credentials', {error: 'BadCredentials'}));
+      }
+
+      req.login(user, function (err) {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        res.json(200, {
+          // whitelist user properties that are OK to send to client
+          username: user.doc.username,
+          email: user.doc.email,
+          name: user.doc.name,
+          roles: user.doc.roles,
+          districts: user.doc.districts,
+          authType: user.doc.authType
+        });
+      });
+    })(req, res, next);
+  };
 }
 
 module.exports = {
   passport: passport,
-  accessDeniedHandler: accessDeniedHandler,
-  denyAnonymousAccess: denyAnonymousAccess
+  denyAnonymousAccess: denyAnonymousAccess,
+  persona: authenticate('persona'),
+  local: authenticate('local'),
+  bearer: authenticate('bearer')
 };

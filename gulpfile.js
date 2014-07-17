@@ -7,11 +7,14 @@ var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var rev = require('gulp-rev');
 var mocha = require('gulp-mocha');
+var istanbul = require('gulp-istanbul');
 var gettext = require('gulp-angular-gettext');
 var buffer = require('gulp-buffer');
 var browserify = require('browserify');
 var karma = require('karma');
 var path = require('path');
+var fs = require('fs');
+var async = require('async');
 
 var _ = require('lodash');
 var source = require('vinyl-source-stream');
@@ -38,14 +41,12 @@ var paths = {
   partials: ['public/**/*.html', notBowerComponents],
   html: 'views/**/*.html',
   indexHtml: 'views/index.html',
-  serverTests: 'test/server/**/test-*.js',
-  clientTests: 'test/client/**/test-*.js',
+  serverTests: 'test/server/**/*.js',
+  clientTests: 'test/client/**/*.js',
   imagesDest: 'dist/public/images',
   bowerComponents: 'public/bower_components',
   nodeModules: 'node_modules'
 };
-
-var fontExtensions = ['.eot', '.svg', '.ttf', '.woff'];
 
 // build CSS for production
 gulp.task('styles', function () {
@@ -64,9 +65,13 @@ gulp.task('styles', function () {
 });
 
 gulp.task('fonts', function () {
-  return gulp.src(fontExtensions.map(function (ext) {
-      return 'public/fonts/**/*' + ext;
-    }))
+  var getFontFiles = function (path) {
+    return ['.eot', '.svg', '.ttf', '.woff'].map(function (ext) {
+      return path + ext;
+    });
+  };
+
+  return gulp.src(getFontFiles('public/bower_components/fracas-fonts/**/*'))
     .pipe(gulp.dest('dist/public/fonts'));
 });
 
@@ -81,6 +86,7 @@ gulp.task('jshint', function () {
 
 // minifies partials and converts them to a JS string that can be `require`d
 gulp.task('partials', function () {
+  /*jshint quotmark:false */
   var replace = require('gulp-replace');
   var header = require('gulp-header');
   var footer = require('gulp-footer');
@@ -96,12 +102,12 @@ gulp.task('partials', function () {
       removeOptionalTags: false // removing is probably a bad idea with partial docs
     }))
     // inspired by https://github.com/visionmedia/node-string-to-js/blob/master/index.js
-    .pipe(replace(/"/g, '\\"'))
+    .pipe(replace(/'/g, "\\'"))
     .pipe(replace(/\r\n|\r|\n/g, '\\n'))
 
     // wrap HTML in module
-    .pipe(header('module.exports = "'))
-    .pipe(footer('";'))
+    .pipe(header("module.exports='"))
+    .pipe(footer("';"))
 
     .pipe(gulp.dest('.tmp/public/')); // write to .tmp so they can be read by browserify
 });
@@ -259,7 +265,6 @@ gulp.task('images', ['jpgs', 'pngs', 'gifs', 'svgs'], function () {
 // with references to revved versions.
 gulp.task('inject', ['styles', 'scripts'], function () {
   var inject = require('gulp-inject');
-  var fs = require('fs');
   var glob = require('glob');
 
   var getLatestFile = function (path) {
@@ -388,12 +393,83 @@ gulp.task('client-tests', function (cb) {
   });
 });
 
-gulp.task('tests', ['server-tests']);
+gulp.task('tests', ['server-tests'], function (cb) {
+  gulp.src(['server/**/*.js'])
+    .pipe(istanbul())
+    .on('finish', function () {
+      gulp.src([paths.serverTests])
+        .pipe(mochaTransform())
+        .pipe(istanbul.writeReports({
+          reporters: ['lcov', 'html', 'text'],
+          reportOpts: {dir: './.tmp/coverage'}
+        }))
+        .on('end', cb);
+    });
+});
 
 gulp.task('migrations', function (done) {
   var importData = require('./server/codex/import');
   var strategy = require('./server/codex/import/db');
   importData(strategy, done);
+});
+
+gulp.task('cert', function (done) {
+  // TODO this requires openssl to be on your PATH, see https://github.com/andris9/pem/issues/20
+  var pem = require('pem');
+  pem.createCertificate({days: 1000, selfSigned: true}, function (err, keys) {
+    if (err) {
+      done(err);
+      return;
+    }
+
+    async.parallel([
+      function (callback) {
+        fs.writeFile(__dirname + '/key.pem', keys.serviceKey, callback);
+      },
+      function (callback) {
+        fs.writeFile(__dirname + '/cert.pem', keys.certificate, callback);
+      }
+    ], done);
+  });
+});
+
+// Install Fracas as a service so that it starts automatically on boot. If anything goes wrong on Windows,
+// you can delete the service with `sc delete fracas.exe`, which should be run as an admin.
+gulp.task('service', function (done) {
+  if (require('os').platform() !== 'win32') {
+    // TODO install launchd/upstart/systemd/SMF/SysV script on *nix platforms
+    return done(new Error('Sorry, we only support installing a Windows service right now'));
+  }
+
+  var Service;
+  try {
+    Service = require('node-windows').Service;
+  } catch (e) {
+    gutil.log(gutil.colors.red('Couldn\'t load node-windows. Did you run ' +
+      '`npm install -g node-windows && npm link node-windows`?'));
+    return done(e);
+  }
+
+  var svc = new Service({
+    name: 'Fracas',
+    description: 'Disease surveillance webapp',
+    script: path.join(__dirname, 'server.js'),
+    env: [
+      {
+        name: 'NODE_ENV',
+        value: 'production'
+      }
+    ]
+  });
+  svc.on('start', function () {
+    gutil.log('Service started successfully. Happy Fracasing :)');
+    done();
+  });
+  svc.on('install', function () {
+    svc.start();
+  });
+
+  svc.install();
 });
 
 gulp.task('heroku', ['build']);

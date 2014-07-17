@@ -8,7 +8,7 @@ var phantom = require('./phantom');
 module.exports = function () {
   var app = express();
   app.put('/:name', function (req, res) {
-    var fracasUrl = req.protocol + '://' + req.host + ':' + conf.port;
+    var fracasUrl = req.protocol + '://' + req.host + ':' + conf.httpPort;
     var reportUrl = fracasUrl + '/api' + req.body.url;
 
     req.url =  '/' + reportUrl;

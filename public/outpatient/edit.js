@@ -50,6 +50,7 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
         template: require('../partials/delete-record.html'),
         controller: ['$scope', '$modalInstance', 'record', function ($scope, $modalInstance, record) {
           $scope.record = record;
+
           $scope.delete = function () {
             OutpatientVisit.remove({_id: record._id}, function () {
               $modalInstance.close(record);
@@ -72,26 +73,79 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
 });
 
 angular.module(controllers.name).controller('OutpatientEditCtrl', function ($scope, $modal, outpatientEditModal, //
-                                                                            gettextCatalog, outpatientDeleteModal) {
+                                                                            gettextCatalog, outpatientDeleteModal,
+                                                                            Diagnosis, District, Symptom) {
   $scope.filters = [
-    {type: 'date'}
+    {
+      filterId: 'date'
+    }
   ];
   $scope.filterTypes = [
     {
-      type: 'age',
+      filterId: 'age',
+      type: 'numeric-range',
+      field: 'patient.age',
       name: gettextCatalog.getString('Age')
     },
     {
-      type: 'date',
+      filterId: 'date',
+      type: 'date-range',
+      field: 'reportDate',
       name: gettextCatalog.getString('Date')
     },
     {
+      filterId: 'diagnoses',
+      type: 'multi-select',
+      field: 'diagnoses',
+      store: {
+        resource: Diagnosis,
+        field: 'name'
+      },
+      name: gettextCatalog.getString('Diagnoses')
+    },
+    {
+      filterId: 'districts',
+      type: 'multi-select',
+      field: 'medicalFacility.district',
+      store: {
+        resource: District,
+        field: 'name'
+      },
+      name: gettextCatalog.getString('District')
+    },
+    {
+      filterId: 'pulse',
+      type: 'numeric-range',
+      field: 'patient.pulse',
+      name: gettextCatalog.getString('Pulse')
+    },
+    {
+      filterId: 'sex',
       type: 'sex',
+      field: 'patient.sex',
       name: gettextCatalog.getString('Sex')
     },
     {
-      type: 'symptoms',
+      filterId: 'symptoms',
+      type: 'multi-select',
+      field: 'symptoms',
+      store: {
+        resource: Symptom,
+        field: 'name'
+      },
       name: gettextCatalog.getString('Symptom')
+    },
+    {
+      filterId: 'temperature',
+      type: 'numeric-range',
+      field: 'patient.temperature',
+      name: gettextCatalog.getString('Temperature')
+    },
+    {
+      filterId: 'weight',
+      type: 'numeric-range',
+      field: 'patient.weight',
+      name: gettextCatalog.getString('Weight')
     }
   ];
 

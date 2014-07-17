@@ -1,75 +1,69 @@
-<hinge visualization="visualization" pivot="pivot" options="pivotOptions" on-close="close()">
-  <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
-    <div class="animation-switch" ng-switch-when="table">
-      <div class="table-responsive">
-        <!-- can't reuse the table used for editing b/c that's a lot bigger -->
-        <table class="table table-striped table-hover table-condensed" frable="tableParams">
-          <tr ng-repeat="visit in $data">
-            <td data-title="strings.date" sortable="'reportDate'">
-              <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate | date}}</a>
-            </td>
-            <td data-title="strings.sex" sortable="'patient.sex'">
-              <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
-            </td>
-            <td data-title="strings.age" sortable="'patient.age'">
-              <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
-            </td>
-            <td data-title="strings.symptoms">
-              <a ng-click="tableFilter('symptoms', visit._source.symptoms)">{{visit._source.symptoms | join |
-                truncate:30}}</a>
-            </td>
-            <td data-title="strings.edit" class="btn-group btn-group-xs">
-              <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
-                <span class="icon-pencil"></span>
-              </button>
-              <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
-                <span class="icon-trash"></span>
-              </button>
-            </td>
-          </tr>
-        </table>
-      </div>
+<div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
+  <div class="animation-switch" ng-switch-when="table">
+    <div class="table-responsive">
+      <!-- can't reuse the table used for editing b/c that's a lot bigger -->
+      <table class="table table-striped table-hover table-condensed" frable="tableParams">
+        <tr ng-repeat="visit in $data">
+          <td data-title="strings.date" sortable="'reportDate'">
+            <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate | date}}</a>
+          </td>
+          <td data-title="strings.district">
+            <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">
+              {{visit._source.medicalFacility.district}}
+            </a>
+          </td>
+          <td data-title="strings.sex" sortable="'patient.sex'">
+            <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
+          </td>
+          <td data-title="strings.age" sortable="'patient.age'">
+            <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
+          </td>
+          <td data-title="strings.symptoms">
+            <a ng-click="tableFilter('symptoms', visit._source.symptoms)">{{visit._source.symptoms | join |
+              truncate:30}}</a>
+          </td>
+          <td data-title="strings.edit" class="btn-group btn-group-xs edit-controls">
+            <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
+              <span class="icon-pencil"></span>
+            </button>
+            <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
+              <span class="icon-trash"></span>
+            </button>
+          </td>
+        </tr>
+      </table>
     </div>
-    <div class="animation-switch" ng-switch-when="crosstab">
-      <crosstab records="tabularData" options="pivot"></crosstab>
-    </div>
-    <div class="animation-switch" ng-switch-when="line">
-      <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
-                              options="options"></outpatient-time-series>
-    </div>
-    <div class="animation-switch" ng-switch-when="pie">
-      <nvd3-pie-chart
-          data="aggData"
-          x="xFunction()"
-          y="yFunction()"
-          width="500"
-          height="400"
-          showLegend="false"
-          showLabels="true"
-          interactive="true"
-          tooltips="true">
-        <svg></svg>
-      </nvd3-pie-chart>
-    </div>
-    <div class="animation-switch" ng-switch-when="bar">
-      <nvd3-multi-bar-horizontal-chart
-          data="aggData"
-          width="500"
-          height="400"
-          x="xFunction()"
-          y="yFunction()"
-          margin="{left:150}"
-          showXAxis="true"
-          showYAxis="true"
-          staggerLabels="true"
-          showValues="true"
-          showLegend="true"
-          showLabels="true"
-          interactive="true"
-          tooltips="true">
-        <svg></svg>
-      </nvd3-multi-bar-horizontal-chart>
-    </div>
-    <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
   </div>
-</hinge>
+  <div class="animation-switch" ng-switch-when="crosstab">
+    <crosstab records="crosstabData" options="pivot"></crosstab>
+  </div>
+  <div class="animation-switch" ng-switch-when="line">
+    <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
+                            options="options"></outpatient-time-series>
+  </div>
+  <div class="animation-switch" ng-switch-when="pie">
+    <outpatient-pie-chart
+        filters="filters"
+        query-string="queryString"
+        options="options"
+        pivot="pivot"
+        agg-data="aggData">
+    </outpatient-pie-chart>
+  </div>
+  <div class="animation-switch" ng-switch-when="bar">
+    <outpatient-bar-chart
+        filters="filters"
+        query-string="queryString"
+        options="options"
+        pivot="pivot"
+        agg-data="aggData">
+    </outpatient-bar-chart>
+  </div>
+  <!-- TODO extract inline styles -->
+  <div class="animation-switch" ng-switch-when="map">
+    <leaflet-map filters="filters" query-string="queryString" data="aggData" options="options">
+      <div class="map"></div>
+    </leaflet-map>
+  </div>
+  <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
+</div>

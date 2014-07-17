@@ -19,7 +19,7 @@ exports.libs = function () {
 /**
  * Returns an express app that serves static resources that do not require authentication.
  */
-exports.anonymous = function () {
+exports.static = function () {
   var app = express();
   if (env === 'development') {
     // Don't move these requires outside this conditional, they're dev dependencies only.
@@ -32,22 +32,27 @@ exports.anonymous = function () {
       // can't use noParse with browserify-shim
       // noParse: bowerLibs
     }));
-    app.use('/js/app.js', browserify('../public/scripts/app.js', {
+    app.use('/js/app.js', browserify(__dirname + '/../public/scripts/app.js', {
       // Make require('partial.html') work.
       // In production, we use a custom version of this that also minifies the partials
       transform: ['partialify'],
       external: libs
     }));
 
-    app.use('/public/styles', less({
-      src: __dirname + '/../public/styles',
-      paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules'],
-      sourceMap: true,
-      compress: false // no point in development
-    }));
+    app.use('/public/styles', less(__dirname + '/../public/styles', {
+        compiler: {
+          sourceMap: true,
+          compress: false // no point in development
+        },
+        parser: {
+          paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules']
+        }
+      }));
 
     // TODO angular-gettext middleware instead
     app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
+
+    app.use('/public/fonts', express.static(__dirname + '/../public/bower_components/fracas-fonts'));
 
     app.use('/public', express.static(__dirname + '/../public'));
   } else if (env === 'test') {
@@ -66,26 +71,13 @@ exports.anonymous = function () {
     app.use('/public/styles', express.static(__dirname + '/../dist/public/styles', cacheOptions));
     app.use('/public/scripts', express.static(__dirname + '/../dist/public/scripts', cacheOptions));
 
+    // Lato isn't going to change. And if it does, we can just change the font name.
+    // TODO icon font does change a lot, so it's useful to hash that, and hashing Lato doesn't hurt
+    // TODO figure out a non-ugly way to pass the hashes into less files
+    app.use('/public/fonts/lato', express.static(__dirname + '/../dist/public/fonts/lato', cacheOptions));
+
     // don't set Cache-Control on anything else
     app.use('/public', express.static(__dirname + '/../dist/public'));
-  } else {
-    throw new Error('Unknown environment ' + env);
-  }
-
-  return app;
-};
-
-/**
- * Returns an express app that serves static Kibana resources.
- */
-exports.kibana = function () {
-  var app = express();
-  if (env === 'development') {
-    app.use(express.static(__dirname + '/../kibana/src'));
-  } else if (env === 'test') {
-    app.use(express.static(__dirname + '/../kibana/dist'));
-  } else if (env === 'production') {
-    app.use(express.static(__dirname + '/../kibana/dist'));
   } else {
     throw new Error('Unknown environment ' + env);
   }

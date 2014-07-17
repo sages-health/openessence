@@ -14,7 +14,6 @@ angular.module(directives.name).directive('outpatientSexFilter', function (gette
     link: {
       pre: function (scope) {
         scope.strings = {
-          name: gettextCatalog.getString('Sex'),
           any: gettextCatalog.getString('Any sex')
         };
 
@@ -27,7 +26,7 @@ angular.module(directives.name).directive('outpatientSexFilter', function (gette
             sex = '(' + sex.join(' OR ') + ')';
           }
 
-          scope.filter.queryString = 'patient.sex:' + sex;
+          scope.filter.queryString = scope.filter.field + ':' + sex;
         });
       }
     }

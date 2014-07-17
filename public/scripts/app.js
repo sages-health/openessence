@@ -8,18 +8,21 @@ require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-ui-select2');
 require('angular-gettext');
+require('angular-gridster');
+require('angular-loading-bar');
 
 // explicitly require d3 and friends due to weird browserify issues,
 // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
 require('d3');
-require('nvd3');
-require('angular-nvd3');
+require('text-angular');
+require('leaflet');
 
 var frable = require('../frable');
 require('../select2');
 require('../hinge');
 require('../crosstab');
 require('../fracas-filter');
+require('../dashboard');
 require('../outpatient');
 
 var modules = require('./modules');
@@ -30,7 +33,7 @@ require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    'nvd3ChartDirectives', frable.name]
+                    'angular-loading-bar', 'gridster', 'textAngular', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -47,10 +50,17 @@ app.config(function ($httpProvider, csrfToken) {
   });
 });
 
+app.config(function (cfpLoadingBarProvider) {
+  // what's the point of having a spinner when we already have a loading bar?
+  cfpLoadingBarProvider.includeSpinner = false;
+});
+
 var previousState = {};
 var stateChanged = false; // there's probably a better way to track initial state change, but this works
-app.run(function ($rootScope, $state, user) {
+app.run(function ($rootScope, $state, $http, cfpLoadingBar, user) {
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    cfpLoadingBar.start();
+
     if (!stateChanged) {
       // We only "redirect" on initial page load. Once you're in the app, there are better ways of dealing with this
       stateChanged = true;
@@ -72,6 +82,17 @@ app.run(function ($rootScope, $state, user) {
       };
     }
   });
+
+  var incLoadingBar = function () {
+    if ($http.pendingRequests.length > 0) {
+      cfpLoadingBar.inc();
+    } else {
+      cfpLoadingBar.complete();
+    }
+  };
+
+  $rootScope.$on('$stateChangeSuccess', incLoadingBar);
+  $rootScope.$on('$stateChangeError', incLoadingBar);
 });
 
 angular.module(modules.services.name).factory('previousState', function () {
@@ -111,6 +132,12 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       controller: 'WorkbenchCtrl',
       parent: 'home'
     })
+    .state('dashboard', {
+      url: '/dashboard/:dashboardId',
+      template: '<div class="container-fluid"><dashboard dashboard-id="dashboardId"></dashboard></div>',
+      controller: 'DashboardCtrl',
+      parent: 'home'
+    })
     .state('not-found', {
       url: '/not-found',
       template: require('../partials/not-found.html'),
@@ -129,6 +156,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('report.save', {
       url: '/save'
+    })
+    .state('visits-report', {
+      url: '/visits-report',
+      template: require('../partials/reports/visits-report.html'),
+      controller: 'VisitsReportCtrl'
     })
     .state('edit', {
       url: '/edit',
@@ -151,6 +183,21 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/edit/symptom.html'),
       controller: 'SymptomEditCtrl'
     })
+    .state('edit.syndrome', {
+      url: '/syndrome',
+      template: require('../partials/edit/syndrome.html'),
+      controller: 'SyndromeEditCtrl'
+    })
+    .state('edit.discharge', {
+      url: '/discharge',
+      template: require('../partials/edit/discharge.html'),
+      controller: 'DischargeEditCtrl'
+    })
+    .state('edit.visitType', {
+      url: '/visitType',
+      template: require('../partials/edit/visit-type.html'),
+      controller: 'VisitTypeEditCtrl'
+    })
     .state('edit.diagnosis', {
       url: '/diagnosis',
       template: require('../partials/edit/diagnosis.html'),
@@ -160,6 +207,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/user',
       template: require('../partials/edit/user.html'),
       controller: 'UserEditCtrl'
+    })
+    .state('edit.dashboard', {
+      url: '/dashboard',
+      template: require('../partials/edit/dashboard.html'),
+      controller: 'DashboardEditCtrl'
     });
 });
 

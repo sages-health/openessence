@@ -1,8 +1,8 @@
 module.exports = {
-  age: require('./age'),
-  date: require('./date'),
-  name: require('./name'),
-  phoneid: require('./phoneid'),
+  checkBox: require('./check-box'),
+  dateRange: require('./date-range'),
+  multiSelect: require('./multi-select'),
+  numericRange: require('./numeric-range'),
   sex: require('./sex'),
-  symptom: require('./symptom')
+  text: require('./text')
 };

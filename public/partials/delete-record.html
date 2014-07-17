@@ -5,7 +5,7 @@
   <!-- this is a generic display of the data, e.g. it uses 'reportDate' instead of "Date" and displays JSON: e.g.
        medicalFacility is {"district": "District 1"}. We probably want a slightly friendlier, although non-universal,
        display of the record -->
-  <dl class="dl-horizontal" ng-repeat="(key, value) in record._source">
+  <dl class="dl-horizontal" ng-repeat="(key, value) in record._source" ng-if="key != 'paperTrail'">
     <dt>{{key | translate}}</dt>
     <dd>{{value | translate}}</dd>
   </dl>

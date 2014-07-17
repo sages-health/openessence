@@ -6,9 +6,14 @@ module.exports = {
   notFound: require('./NotFoundCtrl'),
   relogin: require('./ReloginCtrl'),
   report: require('./ReportCtrl'),
+  reportVisitsWindow: require('./reports/VisitsReportCtrl'),
   workbench: require('./WorkbenchCtrl'),
+  dashboardEdit: require('./edit/DashboardEditCtrl'),
   districtEdit: require('./edit/DistrictEditCtrl') ,
   symptomEdit: require('./edit/SymptomEditCtrl')  ,
   diagnosisEdit: require('./edit/DiagnosisEditCtrl'),
+  syndromeEdit: require('./edit/SyndromeEditCtrl'),
+  dischargeEdit: require('./edit/DischargeEditCtrl'),
+  visitTypeEdit: require('./edit/VisitTypeEditCtrl'),
   userEdit: require('./edit/UserEditCtrl')
 };

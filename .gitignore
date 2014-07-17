@@ -5,6 +5,9 @@ dist/
 *.log
 *.mo
 
+# node-windows service directory
+daemon/
+
 # Foreman environment variables
 .env
 
@@ -28,3 +31,10 @@ dist/
 # Backup and lock files
 *~
 \#*\#
+
+# Keys and certs
+*.key
+*.cer
+*.crt
+*.der
+*.pem

@@ -1,17 +1,21 @@
 @charset "UTF-8";
 
 @import "bootstrap"; // use our custom bootstrap build
-@import "bootswatch/flatly/variables";
-@import "bootswatch/flatly/bootswatch"; // TODO this calls out to Google Fonts, that's the price you pay for beauty
+@import "fracas-theme/flatly/variables";
+@import "fracas-theme/flatly/bootswatch";
+@import "fracas-fonts/fonts";
 @import (less) "humane-js/themes/libnotify.css";
-@import (less) "nvd3/nv.d3.css";
+@import (less) "angular-loading-bar/build/loading-bar.css";
 @import (less) "angular/angular-csp.css";
+@import (less) "fracas-jquery-ui/jquery-ui.css";
 @import "../frable/frable"; // TODO figure out a way to include addons w/o having to manually add it here
 @import "../select2/select2";
 @import "../crosstab/crosstab";
 @import "../hinge/hinge";
-@import "../outpatient/time-series";
-@import "icons";
+@import "../outpatient/fracas-charts";
+@import "animations";
+@import "maps";
+@import "dashboard";
 
 // Reset some settings. Most of these are Bootstrap's defaults
 
@@ -26,6 +30,22 @@
 
 @padding-small-vertical: 5px;
 @padding-small-horizontal: 10px;
+
+@pagination-color: @gray-dark;
+@pagination-bg: @gray-lighter;
+@pagination-border: #ddd;
+
+@pagination-hover-color: #fff;
+@pagination-hover-bg: @gray-light;
+@pagination-hover-border: #ddd;
+
+@pagination-active-color: #fff;
+@pagination-active-bg: @brand-primary;
+@pagination-active-border: @brand-primary;
+
+@pagination-disabled-color: @gray-light;
+@pagination-disabled-bg: #fff;
+@pagination-disabled-border: #ddd;
 
 .navbar-brand {
   // Fix https://github.com/thomaspark/bootswatch/commit/5226a30d7df2eb15a06b9014507da767d205de30
@@ -54,11 +74,9 @@ a[ng-click] {
 }
 
 .frable-pager {
-  .make-md-column-offset(2);
-}
-
-.braph svg {
-  padding: 1px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 table[datepicker] {
@@ -70,6 +88,11 @@ table[datepicker] {
 ul[datepicker-popup-wrap] {
   min-width: 298px; // Firefox tries to wrap it in parent div, which looks neater but compresses it too much
   padding: 9px;
+}
+
+body {
+  // compensate for sticky footers
+  padding-bottom: @navbar-height + @padding-large-vertical;
 }
 
 // see http://stackoverflow.com/a/18429555
@@ -139,8 +162,26 @@ ul[datepicker-popup-wrap] {
   }
 }
 
+.query-string-form {
+  .form-control-feedback {
+    top: 0;
+  }
+}
+
 .login-header {
-  padding-bottom: @padding-large-vertical;
+  padding-top: @padding-large-vertical;
+
+  // add more padding if there's enough space
+  @media (min-width: @screen-sm-min) {
+    padding-top: @padding-large-vertical * 3;
+  }
+
+  padding-bottom: @padding-large-vertical * 2;
+
+  .tagline {
+    .pull-right();
+    margin-top: 5px; // offset slightly below brand
+  }
 }
 
 .error-msg {
@@ -179,28 +220,25 @@ ul[datepicker-popup-wrap] {
   }
 }
 
+.edit-controls.btn-group {
+  min-width: 70px;
+}
+
 .viz-toolbar {
   padding: @padding-base-vertical @padding-base-horizontal;
 }
 
-// animations
-.alert-show-hide.ng-hide-add,
-.alert-show-hide.ng-hide-remove {
-  &:not(.ng-hide) { // prevents alerts from flashing when we open a modal, among other things
-    -webkit-transition: all linear 0.5s; // TODO lesshat
-    -moz-transition: all linear 0.5s;
-    -o-transition: all linear 0.5s;
-    transition: all linear 0.5s;
-    display: block !important;
+.ta-editor {
+  min-height: 350px;
+  height: auto;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+  margin:20px 0;
+}
+
+@media print {
+  .ta-toolbar {
+    display: none;
   }
-}
-
-.alert-show-hide.ng-hide-add.ng-hide-add-active,
-.alert-show-hide.ng-hide-remove {
-  opacity: 0;
-}
-
-.alert-show-hide.ng-hide-add,
-.alert-show-hide.ng-hide-remove.ng-hide-remove-active {
-  opacity: 1;
 }

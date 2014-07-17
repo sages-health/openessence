@@ -1,0 +1,344 @@
+[
+  {
+    "name": "Abdominal Mass"
+  },
+  {
+    "name": "Abdominal Pain"
+  },
+  {
+    "name": "Acute Flaccid Paralysis (AFP)"
+  },
+  {
+    "name": "Arrhythmia"
+  },
+  {
+    "name": "Back Pain"
+  },
+  {
+    "name": "Back Pain, Acute"
+  },
+  {
+    "name": "Back Pain, Chronic"
+  },
+  {
+    "name": "Bite, Animal Or Insect"
+  },
+  {
+    "name": "Bleeding Or Hemorrhagic Manifestation"
+  },
+  {
+    "name": "Blood In Sputum (Hemoptysis)"
+  },
+  {
+    "name": "Blood In Stool (Hemachezia)"
+  },
+  {
+    "name": "Blood In Urine (Hematuria)"
+  },
+  {
+    "name": "Blood In Vomit (Hematemesis)"
+  },
+  {
+    "name": "Blurred Vision"
+  },
+  {
+    "name": "Burn And/or Corrosions"
+  },
+  {
+    "name": "Can't Eat/Breastfeed (Loss of Necessary Motor Skills)"
+  },
+  {
+    "name": "Can�t Hear (Hearing Loss)"
+  },
+  {
+    "name": "Can�t See (Blind, Vision Loss)"
+  },
+  {
+    "name": "Can�t Urinate"
+  },
+  {
+    "name": "Can't Move (Paralysis)"
+  },
+  {
+    "name": "Chest Pain"
+  },
+  {
+    "name": "Chills"
+  },
+  {
+    "name": "Constipation"
+  },
+  {
+    "name": "Convulsions/Seizures"
+  },
+  {
+    "name": "Cough"
+  },
+  {
+    "name": "Cough, Persistent/Prolonged (Chronic)"
+  },
+  {
+    "name": "Dehydration"
+  },
+  {
+    "name": "Diarrhea"
+  },
+  {
+    "name": "Diarrhea, Profuse Watery"
+  },
+  {
+    "name": "Diarrhea, Watery"
+  },
+  {
+    "name": "Diarrhea, With Blood"
+  },
+  {
+    "name": "Difficulty Breathing (Dyspnea)"
+  },
+  {
+    "name": "Difficulty Swallowing (Dysphagia)"
+  },
+  {
+    "name": "Dizzy"
+  },
+  {
+    "name": "Double Vision (Diplopia)"
+  },
+  {
+    "name": "Dysentery"
+  },
+  {
+    "name": "Earache (Otalgia)"
+  },
+  {
+    "name": "Eye Disease, Conjunctivitis"
+  },
+  {
+    "name": "Eye Disease, Foreign Body"
+  },
+  {
+    "name": "Eye Disease  Inflamed (Red-Eye)"
+  },
+  {
+    "name": "Fatigue"
+  },
+  {
+    "name": "Fatigue, Intense"
+  },
+  {
+    "name": "Fever With Chills"
+  },
+  {
+    "name": "Fever With Headache/Fever and Headache"
+  },
+  {
+    "name": "Fever With Rash"
+  },
+  {
+    "name": "Fever With Rash, Acute"
+  },
+  {
+    "name": "Fever With Rash, Chronic"
+  },
+  {
+    "name": "Fever, Persistent/Prolonged (Fever, Chronic)"
+  },
+  {
+    "name": "Fever/Febrile Illness"
+  },
+  {
+    "name": "Gastrointestinal Illness, Acute"
+  },
+  {
+    "name": "Gastrointestinal Illness, Chronic"
+  },
+  {
+    "name": "Gastrointestinal Illness, Nausea and Vomiting (Emesis)"
+  },
+  {
+    "name": "Gastrointestinal Illness, Ulcer"
+  },
+  {
+    "name": "Gastrointestinal Illness, Upper, Not Nausea"
+  },
+  {
+    "name": "Gastrointestinal Illness, Vomiting (Emesis)"
+  },
+  {
+    "name": "Genital Warts"
+  },
+  {
+    "name": "Gynecologic Illness, dysfunctional uterine bleeding"
+  },
+  {
+    "name": "Gynecologic Illness, vaginal discharge"
+  },
+  {
+    "name": "Headache"
+  },
+  {
+    "name": "Headache, Persistent (Chronic)"
+  },
+  {
+    "name": "Heat Exhaustion"
+  },
+  {
+    "name": "Heat Stroke"
+  },
+  {
+    "name": "Hepatomegaly"
+  },
+  {
+    "name": "Hypertension"
+  },
+  {
+    "name": "Injury"
+  },
+  {
+    "name": "Jaundice/Yellowing Of Eye (Sclera) and/or Skin"
+  },
+  {
+    "name": "Joint Pain (Arthralgia)"
+  },
+  {
+    "name": "Lethargy"
+  },
+  {
+    "name": "Light-headed"
+  },
+  {
+    "name": "Loss of Appetite (Anorexia)"
+  },
+  {
+    "name": "Loss of Consciousness (LOC)"
+  },
+  {
+    "name": "Lymphadenitis"
+  },
+  {
+    "name": "Malaise"
+  },
+  {
+    "name": "Muscle and/or Joint Pain (Arthralgia and/or Myalgia)"
+  },
+  {
+    "name": "Muscle Pain (Myalgia)"
+  },
+  {
+    "name": "Nasal Discharge"
+  },
+  {
+    "name": "Night Sweats"
+  },
+  {
+    "name": "Nodule Under Skin, Firm/Fibrous"
+  },
+  {
+    "name": "Other Symptom/Sign, Yes/No"
+  },
+  {
+    "name": "Psychiatric Illness, Anxiety"
+  },
+  {
+    "name": "Psychiatric Illness, Depression"
+  },
+  {
+    "name": "Rapid breathing (Tachypnea)"
+  },
+  {
+    "name": "Rash"
+  },
+  {
+    "name": "Refusal to drink / breastfeed"
+  },
+  {
+    "name": "Runny Nose/Nasal Discharge (Rhinorrhea)"
+  },
+  {
+    "name": "Shortness Of Breath (SOB) (Dyspnea)"
+  },
+  {
+    "name": "Skin Lesion (Dermatologic Lesion)"
+  },
+  {
+    "name": "Skin Lesion, Blister(s) (Dermatologic Lesion, Bulla (Bullae))"
+  },
+  {
+    "name": "Skin Lesion, Bubo (Dermatologic Lesion, Bubo)"
+  },
+  {
+    "name": "Skin Lesion, Genital Ulcer/Lesion (Dermatologic Lesion, Genital Ulcer/Lesion)"
+  },
+  {
+    "name": "Skin Lesion, Ulcer (Dermatologic Lesion, Ulcer)"
+  },
+  {
+    "name": "Skin Lesion, Vesicle(s) Dermatologic Lesion, Vesicle(s)"
+  },
+  {
+    "name": "Skin Lesion, With Loss Of Sensation, (Dermatologic Lesion, With Analgesia)"
+  },
+  {
+    "name": "Skin Lesion, With Visible Worm (Dermatologic Lesion, With Visible Worm)"
+  },
+  {
+    "name": "Sore Throat (Pharyngitis)"
+  },
+  {
+    "name": "Splenomegaly"
+  },
+  {
+    "name": "Stiff Neck"
+  },
+  {
+    "name": "Sudden Weight Gain"
+  },
+  {
+    "name": "Sudden Weight Loss"
+  },
+  {
+    "name": "Sweats"
+  },
+  {
+    "name": "Swelling In Abdomen"
+  },
+  {
+    "name": "Swelling In Legs Or Arms"
+  },
+  {
+    "name": "Swollen Glands (Lymphadenopathy)"
+  },
+  {
+    "name": "Swollen Glands, Arm Pits (Lymphadenopathy, Axillary)"
+  },
+  {
+    "name": "Swollen Glands, Groin (Lymphadenopathy, Inguinal)"
+  },
+  {
+    "name": "Swollen Glands, Neck (Lymphadenopathy, Cervical)"
+  },
+  {
+    "name": "Swollen Glands, Other (Lymphadenopathy, Other)"
+  },
+  {
+    "name": "Temperature >38_C/>100.4_F"
+  },
+  {
+    "name": "Dental, Abscess"
+  },
+  {
+    "name": "Dental, Toothache"
+  },
+  {
+    "name": "Unable To Drink/Breastfeed"
+  },
+  {
+    "name": "Urethral Discharge"
+  },
+  {
+    "name": "Weakness"
+  },
+  {
+    "name": "Wound"
+  }
+]

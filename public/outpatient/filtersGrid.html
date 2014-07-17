@@ -1,14 +1,11 @@
 <!-- search box -->
 <div class="row">
   <div class="col-md-12">
-    <form role="form" class="form" novalidate>
-      <div class="input-group">
+    <form name="queryForm" class="query-string-form" role="form" novalidate ng-submit="submit(queryForm)">
+      <div class="form-group" ng-class="{'has-error': isInvalid(queryForm.queryStrings), 'has-feedback': isInvalid(queryForm.queryStrings)}">
         <label class="sr-only" for="query-string" translate>Query</label>
-        <input class="form-control" id="query-string" name="queryString" ng-model="queryString" type="text"
-               spellcheck="false">
-          <span class="input-group-btn">
-            <button type="button" class="btn btn-default"><span class="icon-search"></span></button>
-          </span>
+        <input type="text" class="form-control" id="query-string" name="queryStrings" spellcheck="false" ng-model="queryString">
+        <span ng-show="isInvalid(queryForm.queryStrings)" class="icon-cancel form-control-feedback"></span>
       </div>
     </form>
   </div>

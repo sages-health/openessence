@@ -3,7 +3,11 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, visitsReportModal, Dashboard, DashboardResource) {
+  $scope.visitsReport = function () {
+    visitsReportModal.open();
+  };
+
   $scope.user = user;
   $scope.logout = function () {
     user.logout();
@@ -18,4 +22,19 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
   };
 
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
+
+  $scope.openDashboard = Dashboard.openModal;
+
+  $scope.dashboards = [];
+  DashboardResource.get({
+    sort: 'name',
+    size: 15
+  }, function (response) {
+    $scope.dashboards = response.results.map(function (r) {
+      return {
+        id: r._id,
+        name: r._source.name
+      };
+    });
+  });
 });

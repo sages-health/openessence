@@ -14,19 +14,34 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
       queryString: '='
     },
     compile: function () {
-
       return {
         pre: function (scope) {
 
           scope.filters = scope.filters ? scope.filters : [];
           scope.filterGrid = new FracasGrid(4);
 
+          var applyConfig = function (filter) {
+            for (var i = 0; i < scope.filterTypes.length; i++) {
+              if (scope.filterTypes[i].filterId === filter.filterId) {
+                // Make a copy of filter config and apply new filter values
+                return angular.extend(angular.copy(scope.filterTypes[i]), filter);
+              }
+            }
+            return null;
+          };
+
           scope.addFilter = function (filter) {
-            scope.filterGrid.add(filter);
+            var filterConfig = applyConfig(filter);
+            if (filterConfig) {
+              scope.filterGrid.add(filterConfig);
+            }
           };
 
           scope.removeFilter = function (filter) {
-            scope.filterGrid.remove(filter);
+            var filterConfig = applyConfig(filter);
+            if (filterConfig) {
+              scope.filterGrid.remove(filterConfig);
+            }
           };
 
           scope.$watchCollection(
@@ -76,6 +91,21 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
               });
             }
           );
+
+          scope.$watch('queryString', function () {
+            scope.queryForm.queryStrings.$setValidity('syntaxError', true);
+          });
+
+          $rootScope.$on('filterError', function(event, response){
+            var requestNum = response.status;
+            if (requestNum === 400) {
+              scope.queryForm.queryStrings.$setValidity('syntaxError', false);
+            }
+          });
+
+          scope.isInvalid = function (field) {
+            return field.$invalid;
+          };
 
           angular.forEach(scope.filters, function (value) {
             scope.addFilter(value);

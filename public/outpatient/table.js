@@ -3,7 +3,8 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams, OutpatientVisit, sortString) {
+angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams,
+                                                                       OutpatientVisit, sortString, $rootScope) {
   return {
     restrict: 'E',
     template: require('./table.html'),
@@ -22,6 +23,9 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
             district: gettextCatalog.getString('District'),
             symptoms: gettextCatalog.getString('Symptoms'),
             diagnoses: gettextCatalog.getString('Diagnoses'),
+            syndromes: gettextCatalog.getString('Syndromes'),
+            visitType: gettextCatalog.getString('Visit type'),
+            discharge: gettextCatalog.getString('Discharge type'),
             sex: gettextCatalog.getString('Sex'),
             age: gettextCatalog.getString('Age'),
             weight: gettextCatalog.getString('Weight'),
@@ -77,6 +81,9 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
                   function (response) {
                     params.total(response.total);
                     $defer.resolve(response.results);
+                  },
+                  function error (response) {
+                    $rootScope.$broadcast('filterError', response);
                   });
               }
             }
@@ -95,6 +102,20 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
               scope.tableParams.reload();
             });
           }
+
+          scope.tableFilter = function (field, value) {
+            //TODO multiselect if value.length > ?
+            if (value || value === false) {
+              var a = [].concat(value);
+              a.forEach(function (v) {
+                var filter = {
+                  filterId: field,
+                  value: v
+                };
+                $rootScope.$emit('filterChange', filter, true, false);
+              });
+            }
+          };
         }
       };
     }

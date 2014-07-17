@@ -3,6 +3,7 @@
 
 <!-- TODO red text on white background instead of alert -->
 <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+<conflict-message ng-show="conflictError"></conflict-message>
 
 <!-- Date -->
 <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.reportDate)}">
@@ -164,24 +165,59 @@
 <div class="form-group">
   <label for="entry-visit-symptoms" translate>Symptoms</label>
 
-  <select class="form-control select2-multiple" id="entry-visit-symptoms" multiple ui-select2
+  <select class="form-control select2-multiple" id="entry-visit-symptoms" name="symptoms" multiple ui-select2
           ng-model="visit.symptoms">
     <option ng-repeat="symptom in symptoms" value="{{symptom}}">{{symptom}}</option>
   </select>
 
-  <span class="help-block" translate>Select symptom(s)</span>
+  <span ng-show="isInvalid(visitForm.symptoms)" class="help-block" translate>Select symptom(s)</span>
 </div>
 
 <div class="form-group">
   <label for="entry-visit-diagnoses" translate>Diagnoses</label>
 
-  <select  class="form-control select2-multiple" id="entry-visit-diagnoses" multiple ui-select2
-           ng-model="visit.diagnoses">
+  <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
+          ng-model="visit.diagnoses">
     <option ng-repeat="diagnosis in diagnoses" value="{{diagnosis}}">{{diagnosis}}</option>
   </select>
 
-  <span class="help-block" translate>Select diagnoses</span>
+  <span ng-show="isInvalid(visitForm.diagnoses)" class="help-block" translate>Select diagnoses</span>
 </div>
+
+<div class="form-group">
+  <label for="entry-visit-syndromes" translate>Syndromes</label>
+
+  <select class="form-control select2-multiple" id="entry-visit-syndromes" name="syndromes" multiple ui-select2
+          ng-model="visit.syndromes">
+    <option ng-repeat="syndrome in syndromes" value="{{syndrome}}">{{syndrome}}</option>
+  </select>
+
+  <span ng-show="isInvalid(visitForm.syndromes)" class="help-block" translate>Select syndromes</span>
+</div>
+
+<div class="form-group">
+  <label for="entry-visit-discharge" translate>Discharge type</label>
+
+  <select  class="form-control select2-multiple" id="entry-visit-discharge" name="discharge" multiple ui-select2
+           ng-model="visit.discharge">
+    <option ng-repeat="discharge in discharges" value="{{discharge}}">{{discharge}}</option>
+  </select>
+
+  <span ng-show="isInvalid(visitForm.discharge)" class="help-block" translate>Select a discharge type</span>
+</div>
+
+
+<div class="form-group">
+  <label for="entry-visit-visitType" translate>Visit type</label>
+
+  <select  class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
+           ng-model="visit.visitType">
+    <option ng-repeat="visitType in visitTypes" value="{{visitType}}">{{visitType}}</option>
+  </select>
+
+  <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
+</div>
+
 
 <!-- Chief complaint -->
 <div class="form-group">

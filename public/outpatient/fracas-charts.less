@@ -1,0 +1,131 @@
+/*
+* Time Series
+*/
+
+.viz-toolbar {
+  .icon-zoom-out {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+.mouseguide {
+  stroke: #969696;
+  stroke-width: 1;
+  opacity: 1;
+  fill: none;
+  shape-rendering: crispEdges;
+}
+
+g.highlight-display rect.highlight-rect {
+  fill: steelblue;
+  opacity: .5;
+}
+
+// Used to hide an element used for sizing strings
+.str_width {
+  position : absolute;
+  visibility: hidden;
+  height: auto;
+  width: auto;
+}
+
+rect.mouse-detector {
+  opacity: 0;
+}
+
+rect.mouse-detector:hover {
+  cursor: crosshair;
+}
+
+.custom-timeseries path.pivotPath {
+  stroke-width: 2;
+  fill: none;
+}
+
+.custom-timeseries g text {
+  font-family: Arial;
+  font-size: 9pt;
+}
+
+.custom-timeseries g line.guide {
+  stroke: #e5e5e5;
+  stroke-width: 1;
+  opacity: 1;
+  fill: none;
+  shape-rendering: crispEdges;
+}
+
+/*
+* Tooltip
+*/
+
+.timeseries_tooltip {
+  height: auto;
+  width: auto;
+  border: 1px solid gray;
+  opacity: 1;
+  position: absolute;
+  background-color: white;
+  z-index: 1000;
+  pointer-events: none;
+  padding: 2px;
+  border-radius: 3px;
+
+  -webkit-animation: fade-in .25s;
+  -moz-animation: fade-in .25s;
+  animation: fade-in .25s;
+}
+
+.timeseries_tooltip td {
+  padding: 1px;
+}
+
+.timeseries_tooltip div.colorcircle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  float: left;
+  margin-top: 6px;
+}
+
+/*
+* Bar Chart
+*/
+
+.domain {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.bar-chart text {
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
+g.y.axis > text {
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+.gridline {
+  stroke: #e5e5e5;
+  stroke-width: 1;
+  opacity: 1;
+  fill: none;
+  shape-rendering: crispEdges;
+}
+
+/*
+* Pie Chart
+*/
+
+g.arc > text {
+  font-family: sans-serif;
+  font-size: 12px;
+}

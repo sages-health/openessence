@@ -11,7 +11,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
     scope: {
       filters: '=',
       queryString: '=', // TODO use filters instead
-      close: '&onClose',
+      visualization: '=?',
+      pivot: '=?',
       options: '=?' // settings as single object, useful for loading persisted state
     },
     link: {
@@ -19,14 +20,21 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
       pre: function (scope) {
         scope.options = scope.options || {};
 
-        scope.visualization = scope.options.visualization || {
+        scope.visualization = scope.visualization || scope.options.visualization || {
           name: 'table'
+        };
+
+        scope.pivot = scope.pivot || scope.options.pivot || {
+          rows: [],
+          cols: []
         };
 
         scope.aggData = [
           //{ key: 'One',   value: Math.floor(Math.random()*20) } -- pie
           //{ key: 'Series', values:[{ key: 'One',   value: Math.floor(Math.random()*20) }]} -- bar
         ];
+
+        scope.crosstabData = [];
 
         scope.xFunction = function () {
           return function (d) {
@@ -39,29 +47,10 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           };
         };
 
-        scope.pivot = scope.options.pivot || {
-          rows: [],
-          cols: []
-        };
-
-        scope.pivotOptions = [
-          {
-            value: 'sex',
-            label: gettextCatalog.getString('Sex')
-          },
-          {
-            value: 'age',
-            label: gettextCatalog.getString('Age')
-          },
-          {
-            value: 'symptoms',
-            label: gettextCatalog.getString('Symptoms')
-          }
-        ];
-
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
           date: gettextCatalog.getString('Date'),
+          district: gettextCatalog.getString('District'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
@@ -189,6 +178,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               return barData;
             } else if (scope.visualization.name === 'pie') {
               return pieData;
+            } else if (scope.visualization.name === 'map') {
+              return pieData;
             }
           }
           return [];
@@ -214,6 +205,23 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             aggReload();
           } else if (scope.visualization.name === 'bar') {
             aggReload();
+          } else if (scope.visualization.name === 'map') {
+            aggReload();
+          } else if (scope.visualization.name === 'crosstab') {
+            // TODO do this via aggregation
+            OutpatientVisit.get({
+              size: 999999,
+              q: scope.queryString
+            }, function (data) {
+              scope.crosstabData = data.results.map(function (r) {
+                var source = r._source;
+                return {
+                  sex: source.patient ? source.patient.sex : null,
+                  age: source.patient ? source.patient.age : null,
+                  symptoms: source.symptoms
+                };
+              });
+            });
           }
         };
 
@@ -263,6 +271,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             }, function (data) {
               params.total(data.total);
               $defer.resolve(data.results);
+            }, function error (response) {
+              $rootScope.$broadcast('filterError', response);
             });
           }
         });
@@ -282,16 +292,16 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
 
         scope.$on('elementClick.directive', function (angularEvent, event) {
           var filter;
-          if (event.point.col && !event.point.colName.startsWith('missing')) {
+          if (event.point.col && event.point.colName.indexOf('missing') !== 0) {
             filter = {
-              type: event.point.col,
+              filterId: event.point.col,
               value: event.point.colName
             };
             $rootScope.$emit('filterChange', filter, true, true);
           }
-          if (event.point.row && !event.point.rowName.startsWith('missing')) {
+          if (event.point.row && event.point.rowName.indexOf('missing') !== 0) {
             filter = {
-              type: event.point.row,
+              filterId: event.point.row,
               value: event.point.rowName
             };
             $rootScope.$emit('filterChange', filter, true, true);
@@ -300,11 +310,11 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
 
         scope.tableFilter = function (field, value) {
           //TODO multiselect if value.length > ?
-          if (value) {
+          if (value || value === false) {
             var a = [].concat(value);
             a.forEach(function (v) {
               var filter = {
-                type: field,
+                filterId: field,
                 value: v
               };
               $rootScope.$emit('filterChange', filter, true, false);
