@@ -54,6 +54,9 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
+          syndromes: gettextCatalog.getString('Syndromes'),
+          visitType: gettextCatalog.getString('Visit type'),
+          discharge: gettextCatalog.getString('Discharge type'),
           edit: gettextCatalog.getString('Edit')
         };
 

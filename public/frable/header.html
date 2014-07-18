@@ -7,7 +7,7 @@
       ng-show="column.show(this)"
       ng-init="template = column.headerTemplateURL(this)"
       class="header {{column.class}}">
-    <div ng-if="!template" ng-show="!template" ng-bind="parse(column.title)"></div>
+    <div ng-if="!template" ng-show="!template" ng-bind="parse(column.title)" class="pull-left"></div>
     <div ng-if="template" ng-show="template">
       <div ng-include="template"></div>
     </div>
