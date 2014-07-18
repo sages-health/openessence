@@ -12,7 +12,7 @@ daemon/
 .env
 
 # I know this is controversial, but it's what the generator does by default
-/public/bower_components
+bower_components/
 
 # IntelliJ settings
 .idea/

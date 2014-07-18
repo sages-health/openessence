@@ -45,14 +45,14 @@ exports.static = function () {
           compress: false // no point in development
         },
         parser: {
-          paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules']
+          paths: [__dirname + '/../bower_components', __dirname + '/../node_modules']
         }
       }));
 
     // TODO angular-gettext middleware instead
     app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
 
-    app.use('/public/fonts', express.static(__dirname + '/../public/bower_components/fracas-fonts'));
+    app.use('/public/fonts', express.static(__dirname + '/../bower_components/fracas-fonts'));
 
     app.use('/public', express.static(__dirname + '/../public'));
   } else if (env === 'test') {
