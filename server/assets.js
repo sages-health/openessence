@@ -10,7 +10,9 @@ exports.libs = function () {
   var packageJson = require('../package.json');
   var bowerLibs = Object.keys(packageJson.browser);
 
-  // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention
+  // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention.
+  // We need to have this list up front so we know what to add to libs.js
+  // TODO dynamically generate this w/ a browserify transform
   var npmLibsForBrowser = packageJson['browser-libs'];
 
   return bowerLibs.concat(npmLibsForBrowser);
