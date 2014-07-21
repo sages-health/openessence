@@ -10,7 +10,9 @@ exports.libs = function () {
   var packageJson = require('../package.json');
   var bowerLibs = Object.keys(packageJson.browser);
 
-  // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention
+  // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention.
+  // We need to have this list up front so we know what to add to libs.js
+  // TODO dynamically generate this w/ a browserify transform
   var npmLibsForBrowser = packageJson['browser-libs'];
 
   return bowerLibs.concat(npmLibsForBrowser);
@@ -45,14 +47,14 @@ exports.static = function () {
           compress: false // no point in development
         },
         parser: {
-          paths: [__dirname + '/../public/bower_components', __dirname + '/../node_modules']
+          paths: [__dirname + '/../bower_components', __dirname + '/../node_modules']
         }
       }));
 
     // TODO angular-gettext middleware instead
     app.use('/public/translations', express.static(__dirname + '/../dist/public/translations'));
 
-    app.use('/public/fonts', express.static(__dirname + '/../public/bower_components/fracas-fonts'));
+    app.use('/public/fonts', express.static(__dirname + '/../bower_components/fracas-fonts'));
 
     app.use('/public', express.static(__dirname + '/../public'));
   } else if (env === 'test') {

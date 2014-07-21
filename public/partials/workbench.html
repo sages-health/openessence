@@ -4,15 +4,17 @@
 </div>
 
 <!-- visualizations -->
-<div class="container">
-  <div class="row" ng-repeat="row in vizGrid.rows">
+<div class="container-fluid" ng-repeat="row in vizGrid.rows">
+  <div class="row">
     <!-- track by viz.id to preserve state when we delete a grid element -->
-    <div class="col-md-6" ng-repeat="viz in row track by viz.id" ng-switch="viz.plus">
-      <button type="button" class="btn btn-primary btn-lg" ng-switch-when="true" ng-click="addVisualization()">
+    <div ng-repeat="viz in row track by viz.id" ng-switch="viz.plus">
+      <div class="col-md-1" ng-switch-when="true">
+      <button type="button" class="btn btn-primary btn-lg" ng-click="addVisualization()">
         <span class="icon-plus"></span>
       </button>
-      <workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="filters"
-                               on-close="removeVisualization(viz)" ng-switch-default>
+      </div>
+      <workbench-visualization ng-class="{'col-md-6': !$parent.$parent.$last, 'col-md-11': $parent.$parent.$last}"pivot-options="pivotOptions" query-string="queryString" filters="filters"
+                               viz-grid="vizGrid" on-close="removeVisualization(viz)" ng-switch-default>
       </workbench-visualization>
     </div>
   </div>

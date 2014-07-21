@@ -153,6 +153,10 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
           });
         });
       });
+
+      scope.$watch('options.width', function() {
+        map.invalidateSize();
+      });
     }
   };
 });

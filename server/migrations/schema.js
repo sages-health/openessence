@@ -4,7 +4,7 @@
 'use strict';
 
 var elasticsearch = require('elasticsearch');
-var Promise = require('bluebird');
+var bluebird = require('bluebird');
 var _ = require('lodash');
 var conf = require('../conf');
 var logger = conf.logger;
@@ -401,8 +401,8 @@ var indexRequests = [
   }
 ];
 
-Promise.settle(indexRequests.map(function (ir) {
-    return Promise.promisify(ir)();
+bluebird.settle(indexRequests.map(function (ir) {
+    return bluebird.promisify(ir)();
   }))
   .then(function (promiseInspections) {
     var errors = promiseInspections.filter(function (pi) {

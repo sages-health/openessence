@@ -22,7 +22,6 @@
     "elasticsearch": "^2.2.0",
     "express": "^4.4.3",
     "express-session": "^1.5.0",
-    "git-rev": "^0.2.1",
     "glob": "^4.0.2",
     "helmet": "~0.2.1",
     "http-proxy": "^1.1.4",
@@ -82,7 +81,6 @@
     "karma-browserify": "^0.2.1",
     "karma-mocha": "^0.1.4",
     "karma-phantomjs-launcher": "^0.1.4",
-    "lazypipe": "~0.2.0",
     "less": "~1.7.0",
     "less-middleware": "^1.0.3",
     "mocha": "^1.20.1",
@@ -90,6 +88,7 @@
     "nock": "~0.31.0",
     "open": "0.0.5",
     "partialify": "~3.1.0",
+    "require-dir": "^0.1.0",
     "sinon": "~1.8.1",
     "sinon-chai": "~2.5.0",
     "source-map": "~0.1.33",
@@ -107,21 +106,21 @@
     ]
   },
   "browser": {
-    "angular": "./public/bower_components/angular/angular.js",
-    "angular-animate": "./public/bower_components/angular-animate/angular-animate.js",
-    "angular-resource": "./public/bower_components/angular-resource/angular-resource.js",
-    "angular-sanitize": "./public/bower_components/angular-sanitize/angular-sanitize.js",
-    "angular-bootstrap": "./public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
-    "angular-ui-router": "./public/bower_components/angular-ui-router/release/angular-ui-router.js",
-    "angular-ui-select2": "./public/bower_components/angular-ui-select2/src/select2.js",
-    "angular-gettext": "./public/bower_components/angular-gettext/dist/angular-gettext.js",
-    "angular-gridster": "./public/bower_components/angular-gridster/src/angular-gridster.js",
-    "d3": "./public/bower_components/d3/d3.js",
-    "text-angular": "./public/bower_components/textAngular/src/textAngular.js",
-    "text-angular-sanitize": "./public/bower_components/textAngular/src/textAngular-sanitize.js",
-    "text-angular-setup": "./public/bower_components/textAngular/src/textAngularSetup.js",
-    "jquery-ui": "./public/bower_components/fracas-jquery-ui/jquery-ui.js",
-    "jquery-resize": "./public/bower_components/javascript-detect-element-resize/jquery.resize.js"
+    "angular": "./bower_components/angular/angular.js",
+    "angular-animate": "./bower_components/angular-animate/angular-animate.js",
+    "angular-resource": "./bower_components/angular-resource/angular-resource.js",
+    "angular-sanitize": "./bower_components/angular-sanitize/angular-sanitize.js",
+    "angular-bootstrap": "./bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
+    "angular-ui-router": "./bower_components/angular-ui-router/release/angular-ui-router.js",
+    "angular-ui-select2": "./bower_components/angular-ui-select2/src/select2.js",
+    "angular-gettext": "./bower_components/angular-gettext/dist/angular-gettext.js",
+    "angular-gridster": "./bower_components/angular-gridster/src/angular-gridster.js",
+    "d3": "./bower_components/d3/d3.js",
+    "text-angular": "./bower_components/textAngular/src/textAngular.js",
+    "text-angular-sanitize": "./bower_components/textAngular/src/textAngular-sanitize.js",
+    "text-angular-setup": "./bower_components/textAngular/src/textAngularSetup.js",
+    "jquery-ui": "./bower_components/fracas-jquery-ui/jquery-ui.js",
+    "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js"
   },
   "browser-libs": [
     "jquery",
@@ -201,10 +200,10 @@
     }
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": "0.10.x"
   },
   "scripts": {
-    "dev": "cd kibana && npm install && cd .. && npm install && bower install && gulp build",
+    "start": "npm install && bower install && gulp server",
     "test": "gulp test"
   }
 }
