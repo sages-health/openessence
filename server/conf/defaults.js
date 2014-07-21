@@ -77,13 +77,6 @@ module.exports = {
   env: env,
   logger: createLogger('fracas'),
 
-  /**
-   * True if fracas should shift the dates in your index to correspond to the current date. Useful for keeping canned
-   * data sets up to date.
-   * WARNING: setting this will overwrite the dates in your index.
-   */
-  dateShift: !!process.env.DATE_SHIFT,
-
   ssl: {
     enabled: fs.existsSync(certPath) && fs.existsSync(keyPath),
     certPath: certPath,
