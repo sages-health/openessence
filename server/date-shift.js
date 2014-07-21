@@ -1,9 +1,10 @@
-/*
-  Used to keep the data set centered on the current date.
-  It is useful for ensuring that demos always have nice looking  (and up to date) data sets
-  This script should be scheduled with a cron job to run every night.
- */
 'use strict';
+
+/**
+ * Used to keep the data set centered on the current date.
+ * It is useful for ensuring that demos always have nice looking (and up to date) data sets
+ * This script should be scheduled with a cron job to run every night.
+ */
 
 var elasticsearch = require('elasticsearch');
 var _ = require('lodash');
@@ -14,22 +15,20 @@ var logger = conf.logger;
 var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
 
 var index = 'outpatient';
-var dateToBecomeToday = new Date('2010', '03', '16'); // YYYY MM DD
+var dateToBecomeToday = conf.date;
 
-function shiftDates () {
+function shiftDates (callback) {
   var count = 0;
   var totalResults = 0;
   var dateDiff = Date.now() - dateToBecomeToday.getTime();
-  var abort = false;
 
   client.search({
     index: index,
     scroll: '30s',
     size: 1000
-  }, function getMoreUntilDone(err, scrollResponse) {
+  }, function getMoreUntilDone (err, scrollResponse) {
     if (err) {
-      abort = true;
-      logger.error(err);
+      return callback(err);
     }
 
     totalResults = scrollResponse.hits.total;
@@ -42,7 +41,7 @@ function shiftDates () {
       }
 
       var oldDate = new Date(hit._source.reportDate);
-      var newDate = new Date(oldDate.getTime() + dateDiff);// (24 * 60 * 60 * 1000 * daysForward));
+      var newDate = new Date(oldDate.getTime() + dateDiff);
 
       bulkBody.push({
         update: {
@@ -62,11 +61,10 @@ function shiftDates () {
       body: bulkBody
     }, function (err) {
       if (err) {
-        abort = true;
-        logger.error(err);
+        return callback(err);
       }
 
-      if (count !== totalResults && !abort) {
+      if (count !== totalResults) {
         /*jshint camelcase:false */
         client.scroll({
           scrollId: scrollResponse._scroll_id,
@@ -74,14 +72,28 @@ function shiftDates () {
           size: 1000
         }, getMoreUntilDone);
       } else {
-        client.close();
-        console.log('Updated ' + count + ' records.');
+        callback(null, count);
       }
     });
   });
 }
 if (!module.parent) {
-  shiftDates();
+  shiftDates(function (err, count) {
+    client.close();
+
+    if (err) {
+      return conf.logger.error(err);
+    }
+
+    logger.info('Date shifted %d records', count);
+  });
 }
 
-module.exports = shiftDates;
+module.exports = function (callback) {
+  callback = callback || function () {};
+
+  shiftDates(function () {
+    client.close();
+    callback.apply(arguments);
+  });
+};
