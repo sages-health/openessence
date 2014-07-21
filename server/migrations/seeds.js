@@ -43,6 +43,18 @@ async.parallel([
     new Dashboard(require('./dashboards.json')[0]).insert({id: 'default'}, callback);
   },
 
+  function dateShift (callback) {
+    client.index({
+      index: 'date-shift',
+      type: 'shift',
+      id: '1', // so it's easy to get
+      body: {
+        // this should be changed if the dates in outpatient-visits.json are ever changed
+        date: new Date('2010', '03', '16') // Apr. 16, 2010
+      }
+    }, callback);
+  },
+
   function diagnoses (callback) {
     bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
   },

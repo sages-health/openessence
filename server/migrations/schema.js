@@ -39,6 +39,26 @@ var indexRequests = [
     }, callback);
   },
 
+  /**
+   * Holds a single record containing the last time we date shifted. Necessary so date shifting doesn't compound.
+   */
+  function dateShift (callback) {
+    client.indices.create({
+      index: 'date-shift',
+      body: {
+        mappings: {
+          shift: { // no paper trail required
+            properties: {
+              date: {
+                type: 'date'
+              }
+            }
+          }
+        }
+      }
+    }, callback);
+  },
+
   function diagnosis (callback) {
     client.indices.create({
       index: 'diagnosis', // don't use model b/c that's kind of a circular dependency (and not what Rails does)

@@ -78,16 +78,11 @@ module.exports = {
   logger: createLogger('fracas'),
 
   /**
-   * Shift the data set to be relative to the specified date. For example, if date is set to
-   * `new Date('2010', '03', '16')`, and the current date (`Date.now()`) is Jan. 1, 2014, then all instances of
-   * April 16, 2010 are shifted to be Jan. 1, 2014. Other dates are shifted relatively. For example, April 15, 2010
-   * would become Dec. 31, 2013.
-   *
-   * Off by default.
-   *
+   * True if fracas should shift the dates in your index to correspond to the current date. Useful for keeping canned
+   * data sets up to date.
    * WARNING: setting this will overwrite the dates in your index.
    */
-  date: process.env.DATE || null,
+  dateShift: !!process.env.DATE_SHIFT,
 
   ssl: {
     enabled: fs.existsSync(certPath) && fs.existsSync(keyPath),

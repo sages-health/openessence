@@ -10,73 +10,107 @@ var elasticsearch = require('elasticsearch');
 var _ = require('lodash');
 var conf = require('./conf');
 var logger = conf.logger;
-
-// don't use shared connection
 var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
 
 var index = 'outpatient';
-var dateToBecomeToday = conf.date;
 
 function shiftDates (callback) {
-  var count = 0;
-  var totalResults = 0;
-  var dateDiff = Date.now() - dateToBecomeToday.getTime();
-
-  client.search({
-    index: index,
-    scroll: '30s',
-    size: 1000
-  }, function getMoreUntilDone (err, scrollResponse) {
+  client.get({
+    index: 'date-shift',
+    type: 'shift',
+    id: '1'
+  }, function (err, hit) {
     if (err) {
       return callback(err);
     }
 
-    totalResults = scrollResponse.hits.total;
+    var version = hit._version; // in case this script gets run in parallel
 
-    var bulkBody = [];
-    scrollResponse.hits.hits.forEach(function (hit) {
-      count++;
-      if (!hit._source.reportDate) {
-        return;
-      }
+    var dateToBecomeToday = hit._source.date;
+    if (!dateToBecomeToday) {
+      return callback(new Error('No date set in /date-shift/shift/1'));
+    }
 
-      var oldDate = new Date(hit._source.reportDate);
-      var newDate = new Date(oldDate.getTime() + dateDiff);
+    dateToBecomeToday = new Date(dateToBecomeToday);
 
-      bulkBody.push({
-        update: {
-          _index: hit._index,
-          _type: hit._type,
-          _id: hit._id
-        }
-      });
-      bulkBody.push({
-        doc: {
-          reportDate: newDate
-        }
-      });
-    });
+    var count = 0;
+    var totalResults = 0;
+    var now = Date.now();
 
-    client.bulk({
-      body: bulkBody
-    }, function (err) {
+    // TODO backup so if something goes wrong we can roll back
+
+    client.search({
+      index: index,
+      scroll: '30s',
+      size: 1000
+    }, function getMoreUntilDone (err, scrollResponse) {
       if (err) {
         return callback(err);
       }
 
-      if (count !== totalResults) {
-        /*jshint camelcase:false */
-        client.scroll({
-          scrollId: scrollResponse._scroll_id,
-          scroll: '30s',
-          size: 1000
-        }, getMoreUntilDone);
-      } else {
-        callback(null, count);
-      }
+      totalResults = scrollResponse.hits.total;
+
+      var bulkBody = [];
+      scrollResponse.hits.hits.forEach(function (hit) {
+        count++;
+        if (!hit._source.reportDate) {
+          return;
+        }
+
+        var oldDate = new Date(hit._source.reportDate);
+        var newDate = new Date(now - (dateToBecomeToday.getTime() - oldDate.getTime()));
+
+        bulkBody.push({
+          update: {
+            _index: hit._index,
+            _type: hit._type,
+            _id: hit._id
+          }
+        });
+        bulkBody.push({
+          doc: {
+            reportDate: newDate
+          }
+        });
+      });
+
+      client.bulk({
+        body: bulkBody
+      }, function (err) {
+        if (err) {
+          return callback(err);
+        }
+
+        if (count !== totalResults) {
+          /*jshint camelcase:false */
+          client.scroll({
+            scrollId: scrollResponse._scroll_id,
+            scroll: '30s',
+            size: 1000
+          }, getMoreUntilDone);
+        } else {
+          // we're done, make sure we store what date we shifted to so future shifts don't get messed up
+          client.index({
+            index: 'date-shift',
+            type: 'shift',
+            id: '1',
+            version: version,
+            body: {
+              date: now
+            }
+          }, function (err) {
+            if (err) {
+              return callback(err);
+            }
+
+            callback(null, count);
+          });
+        }
+      });
     });
   });
 }
+
 if (!module.parent) {
   shiftDates(function (err, count) {
     client.close();
@@ -94,6 +128,6 @@ module.exports = function (callback) {
 
   shiftDates(function () {
     client.close();
-    callback.apply(arguments);
+    callback.apply(this, arguments);
   });
 };

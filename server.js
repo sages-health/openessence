@@ -6,6 +6,7 @@ var https = require('https');
 
 var conf = require('./server/conf');
 var logger = conf.logger;
+var dateShift = require('./server/date-shift');
 
 // require index.js up here so any initialization errors cause us to immediately exit
 var app = require('./server/index');
@@ -30,6 +31,20 @@ var startServer = function (callback) {
 
 if (cluster.isMaster) {
   logger.info('Running in %s mode', conf.env);
+
+  if (conf.dateShift && conf.env === 'development') { // definitely don't want to do this in production
+    logger.info('Shifting dates');
+
+    // this is run in parallel to starting up
+    dateShift(function (err, count) {
+      if (err) {
+        // nothing we can do but log the error
+        return logger.error({err: err}, 'Error shifting dates');
+      }
+
+      logger.info('Shifted %d dates', count);
+    });
+  }
 
   if (conf.phantom.enabled) {
     // start PhantomJS cluster
