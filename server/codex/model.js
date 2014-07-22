@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var async = require('async');
+var elasticsearch = require('elasticsearch');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 
@@ -9,7 +10,7 @@ function model (modelOptions) {
   var index = modelOptions.index;
   var type = modelOptions.type;
   var refresh = modelOptions.refresh;
-  var client = modelOptions.client;
+  var client = modelOptions.client || new elasticsearch.Client();
 
   /**
    *
