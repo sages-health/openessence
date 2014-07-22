@@ -43,31 +43,6 @@
         <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
       </td>
 
-      <!-- TODO we probably don't need most of these columns -->
-      <td data-title="strings.weight" sortable="'patient.weight'">
-        <a ng-click="tableFilter('weight', visit._source.patient.weight)">{{visit._source.patient.weight}}
-          <!-- TODO this might not be the best way to abstract units -->
-          <span ng-show="visit._source.patient.weight" translate>kg</span>
-        </a>
-      </td>
-      <td data-title="strings.bloodPressure" ng-if="!condensed"><!-- TODO ng-if doesn't work -->
-        {{visit._source.patient.bloodPressure.systolic}}
-        <span ng-show="visit._source.patient.bloodPressure.systolic || visit._source.patient.bloodPressure.diastolic">
-          /
-        </span>
-        {{visit._source.patient.bloodPressure.diastolic}}
-      </td>
-      <td data-title="strings.pulse" sortable="'patient.pulse'">
-        <a ng-click="tableFilter('pulse', visit._source.patient.pulse)">{{visit._source.patient.pulse}}
-          <span ng-show="visit._source.patient.pulse" translate>BPM</span>
-        </a>
-      </td>
-      <td data-title="strings.temperature" sortable="'patient.temperature'">
-        <a ng-click="tableFilter('temperature', visit._source.patient.temperature)">{{visit._source.patient.temperature}}
-          <span ng-show="visit._source.patient.temperature" translate>°C</span>
-        </a>
-      </td>
-
       <!-- TODO check or X icon instead of true/false -->
       <td data-title="strings.returnVisit" sortable="'returnVisit'">{{visit._source.returnVisit}}</td>
 

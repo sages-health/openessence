@@ -163,10 +163,10 @@ var indexRequests = [
               },
 
               // AKA presenting problem, Reason for Encounter, Reason for Presenting, etc. Free text
-              chiefComplaint: {
+              notes: {
                 type: 'string'
               },
-
+              // 7/22/14 - changed to notes as a place for additional information to be added
               // Array of well-known symptoms that the patient presented with. Might be populated by parsing
               // chiefComplaint, or might be used instead of chiefComplaint. Used for syndromic surveillance.
               symptoms: {

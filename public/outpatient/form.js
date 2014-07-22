@@ -27,7 +27,6 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
           scope.visit = angular.copy(scope.record._source) || {};
 
           scope.agePlaceholder = gettextCatalog.getString('Patient\'s age');
-          scope.weightPlaceholder = gettextCatalog.getString('Patient\'s weight');
           scope.yellAtUser = false;
 
           // TODO use multi-get so we only have one XHR request
@@ -60,15 +59,6 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
             $event.preventDefault();
             $event.stopPropagation();
             scope.reportDateOpened = true;
-          };
-
-          scope.warnSystolic = function (bpSystolic) {
-            // 180 is "hypertensive emergency" and 90 is hypotension according to Wikipedia
-            return !!bpSystolic && (bpSystolic >= 180 || bpSystolic < 90);
-          };
-
-          scope.warnDiastolic = function (bpDiastolic) {
-            return !!bpDiastolic && (bpDiastolic >= 110 || bpDiastolic < 60);
           };
 
           scope.submit = function (visitForm) {
