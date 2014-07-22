@@ -17,6 +17,7 @@ var User = codex.model({
   index: 'user',
   type: 'user',
   refresh: true,
+  client: conf.elasticsearch.client,
 
   classMethods: {
     findByUsername: function (username, esRequest, callback) {

@@ -6,11 +6,9 @@
  * This script should be scheduled with a cron job to run every night.
  */
 
-var elasticsearch = require('elasticsearch');
-var _ = require('lodash');
 var conf = require('./conf');
 var logger = conf.logger;
-var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
+var client = conf.elasticsearch.newClient();
 
 var index = 'outpatient';
 

@@ -9,7 +9,7 @@ function model (modelOptions) {
   var index = modelOptions.index;
   var type = modelOptions.type;
   var refresh = modelOptions.refresh;
-  var client = modelOptions.client || require('./client');
+  var client = modelOptions.client;
 
   /**
    *

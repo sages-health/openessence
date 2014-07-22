@@ -4,13 +4,10 @@
 'use strict';
 
 var async = require('async');
-var elasticsearch = require('elasticsearch');
 var _ = require('lodash');
 var conf = require('../conf');
 var logger = conf.logger;
-
-// don't use shared connection
-var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
+var client = conf.elasticsearch.newClient(); // don't use shared connection
 
 function bulkInsert (model, data, params, callback) {
   if (!callback) {

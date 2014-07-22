@@ -3,15 +3,11 @@
  */
 'use strict';
 
-var elasticsearch = require('elasticsearch');
 var bluebird = require('bluebird');
-var _ = require('lodash');
 var conf = require('../conf');
 var logger = conf.logger;
 var addPaperTrail = require('../caper-trail').mapping;
-
-// don't use shared connection
-var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
+var client = conf.elasticsearch.newClient();
 
 // TODO timestamp indices and create aliases
 
