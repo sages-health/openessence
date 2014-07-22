@@ -26,7 +26,7 @@ module.exports = function () {
         url: reportUrl,
         output: path.normalize(__dirname + '/../reports/' + req.params.name + extension),
         size: size,
-        token: req.user.token // execute with user's permission
+        token: req.user.doc.token // execute with user's permission
       });
 
       res.send(202); // "Accepted"

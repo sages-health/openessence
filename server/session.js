@@ -18,7 +18,7 @@ app.post('/browserid', auth.persona);
 app.post('/local', auth.local);
 
 var logout = function (req, res) {
-  logger.info({user: req.user}, 'Logging %s out', req.user.username);
+  logger.info({user: req.user}, 'Logging %s out', req.user.doc.username);
   req.logout();
   res.send(204); // No Content
 };
