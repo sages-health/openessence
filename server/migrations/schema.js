@@ -3,15 +3,11 @@
  */
 'use strict';
 
-var elasticsearch = require('elasticsearch');
 var bluebird = require('bluebird');
-var _ = require('lodash');
 var conf = require('../conf');
 var logger = conf.logger;
 var addPaperTrail = require('../caper-trail').mapping;
-
-// don't use shared connection
-var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
+var client = conf.elasticsearch.newClient();
 
 // TODO timestamp indices and create aliases
 
@@ -34,6 +30,26 @@ var indexRequests = [
               }
             }
           })
+        }
+      }
+    }, callback);
+  },
+
+  /**
+   * Holds a single record containing the last time we date shifted. Necessary so date shifting doesn't compound.
+   */
+  function dateShift (callback) {
+    client.indices.create({
+      index: 'date-shift',
+      body: {
+        mappings: {
+          shift: { // no paper trail required
+            properties: {
+              date: {
+                type: 'date'
+              }
+            }
+          }
         }
       }
     }, callback);

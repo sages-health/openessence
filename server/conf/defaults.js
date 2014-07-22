@@ -20,6 +20,10 @@ var createLogger = function (name) {
       if (!user) {
         return null;
       }
+      if (typeof user.codexModel === 'function') {
+        user = user.doc;
+      }
+
       return {
         id: user.id,
         username: user.username,

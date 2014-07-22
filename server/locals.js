@@ -5,7 +5,8 @@ var pjson = require('../package.json');
 
 // variables for views, this must be before the views are rendered and after any necessary request variables are set
 function locals (req, res, next) {
-  res.locals.user = req.user;
+  res.locals.user = req.user ? req.user.doc : null;
+
   if (req.csrfToken) { // not every request has CSRF token
     res.locals.csrfToken = req.csrfToken();
   }

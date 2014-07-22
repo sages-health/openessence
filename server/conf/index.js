@@ -88,4 +88,20 @@ if (!settings.redis.client) {
   });
 }
 
+if (!settings.elasticsearch.client) {
+  var elasticsearch = require('elasticsearch');
+
+  // share client instance
+  Object.defineProperty(settings.elasticsearch, 'client', {
+    value: new elasticsearch.Client(_.clone(settings.elasticsearch))
+  });
+
+  // Create a new client. Useful for one-off processes that want to close their connection after they're done.
+  Object.defineProperty(settings.elasticsearch, 'newClient', {
+    value: function () {
+      return new elasticsearch.Client(_.clone(settings.elasticsearch));
+    }
+  });
+}
+
 module.exports = settings;

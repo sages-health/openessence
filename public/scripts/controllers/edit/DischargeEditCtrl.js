@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DischargeEditCtrl', function ($scope, crud, tableParams, gettextCatalog, Discharge) {
+angular.module(controllers.name).controller('DischargeEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, Discharge) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -40,7 +40,8 @@ angular.module(controllers.name).controller('DischargeEditCtrl', function ($scop
   };
 
   // ---------------- Start: Common functions
-  $scope.tableParams = tableParams.create(options, $scope.resource);
+  $scope.tableFilter = tableUtil.addFilter;
+  $scope.tableParams = tableUtil.tableParams(options, $scope.resource);
   var reload = function (){
     options.queryString = $scope.queryString;
     $scope.tableParams.reload();

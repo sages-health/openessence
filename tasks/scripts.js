@@ -7,6 +7,9 @@ var ngmin = require('gulp-ngmin'); // TODO switch to ng-annotate
 var uglify = require('gulp-uglify');
 var buffer = require('gulp-buffer');
 var rev = require('gulp-rev');
+var replace = require('gulp-replace');
+var header = require('gulp-header');
+var footer = require('gulp-footer');
 var source = require('vinyl-source-stream');
 var path = require('path');
 var transformTools = require('browserify-transform-tools');
@@ -19,9 +22,6 @@ var jsLibs = require('../server/assets').libs();
  */
 gulp.task('partials', function () {
   /*jshint quotmark:false */
-  var replace = require('gulp-replace');
-  var header = require('gulp-header');
-  var footer = require('gulp-footer');
 
   return gulp.src('public/**/*.html')
     .pipe(htmlmin({
@@ -54,7 +54,7 @@ gulp.task('libs', function () {
   });
 
   return bundle
-    .bundle()
+    .bundle() // TODO use pre-built bundles
     .pipe(source('libs.js'))
     .pipe(buffer()) // gulp-rev doesn't like streams, so convert to buffer
     .pipe(uglify({
@@ -65,7 +65,7 @@ gulp.task('libs', function () {
 });
 
 /**
- * Build 1st-party JavaScript libraries. TODO libs doesn't need to happen serially
+ * Build 1st-party JavaScript libraries.
  */
 gulp.task('scripts', ['partials'], function () {
   // transform that replaces references to `require`d partials with their minified versions in .tmp,

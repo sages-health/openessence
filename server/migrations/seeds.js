@@ -4,13 +4,10 @@
 'use strict';
 
 var async = require('async');
-var elasticsearch = require('elasticsearch');
 var _ = require('lodash');
 var conf = require('../conf');
 var logger = conf.logger;
-
-// don't use shared connection
-var client = new elasticsearch.Client(_.clone(conf.elasticsearch));
+var client = conf.elasticsearch.newClient(); // don't use shared connection
 
 function bulkInsert (model, data, params, callback) {
   if (!callback) {
@@ -41,6 +38,18 @@ async.parallel([
   function dashboards (callback) {
     var Dashboard = require('../models/Dashboard');
     new Dashboard(require('./dashboards.json')[0]).insert({id: 'default'}, callback);
+  },
+
+  function dateShift (callback) {
+    client.index({
+      index: 'date-shift',
+      type: 'shift',
+      id: '1', // so it's easy to get
+      body: {
+        // this should be changed if the dates in outpatient-visits.json are ever changed
+        date: new Date('2010', '03', '16') // Apr. 16, 2010
+      }
+    }, callback);
   },
 
   function diagnoses (callback) {
