@@ -92,8 +92,15 @@ if (!settings.elasticsearch.client) {
   var elasticsearch = require('elasticsearch');
 
   // share client instance
+  var client;
   Object.defineProperty(settings.elasticsearch, 'client', {
-    value: new elasticsearch.Client(_.clone(settings.elasticsearch))
+    get: function () {
+      if (!client) { // lazily initialize so we don't get spam about connecting to elasticsearch
+        client = new elasticsearch.Client(_.clone(settings.elasticsearch));
+      }
+
+      return client;
+    }
   });
 
   // Create a new client. Useful for one-off processes that want to close their connection after they're done.
