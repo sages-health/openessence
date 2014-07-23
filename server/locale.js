@@ -7,12 +7,13 @@ var express = require('express');
 var views = require('./views');
 var locals = require('./locals');
 
-var poFiles = fs.readdirSync(__dirname + '/../po').filter(function (f) {
-  return path.extname(f) === '.po';
-});
-var locales = poFiles.map(function (f) {
-  return path.basename(f, '.po');
-});
+var locales = fs.readdirSync(path.resolve(__dirname, '..', 'dist/public/translations'))
+  .filter(function (f) {
+    return path.extname(f) === '.json';
+  })
+  .map(function (f) {
+    return path.basename(f, '.json');
+  });
 
 var app = express();
 app.set('views', views.directory); // this isn't always inherited from the parent app
