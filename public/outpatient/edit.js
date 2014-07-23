@@ -14,6 +14,7 @@ angular.module(services.name).factory('outpatientEditModal', function ($modal) {
         template: require('./modal-edit.html'),
         controller: ['$scope', '$modalInstance', 'record', function ($scope, $modalInstance, record) {
           $scope.record = record;
+          $scope.page = 1;
 
           // the save button on the modal
           $scope.save = function () {
@@ -30,6 +31,15 @@ angular.module(services.name).factory('outpatientEditModal', function ($modal) {
           $scope.onSubmit = function () {
             $modalInstance.close();
           };
+
+          $scope.next = function () {
+            $scope.$broadcast('next-page');
+          };
+
+          $scope.previous = function () {
+            $scope.$broadcast('previous-page');
+          };
+
         }],
         resolve: {
           record: function () {
