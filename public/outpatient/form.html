@@ -77,91 +77,6 @@
   </span>
 </div>
 
-<!-- Weight -->
-<div class="form-group"
-     ng-class="{'has-error': isInvalid(visitForm.weight), 'has-warning': visit.patient.weight > 500}">
-  <label for="entry-visit-weight" translate>Weight</label>
-
-  <div class="input-group">
-    <input class="form-control" id="entry-visit-weight" name="weight" ng-model="visit.patient.weight"
-           type="number" min="0" max="1000" placeholder="{{weightPlaceholder | translate}}">
-    <span class="input-group-addon" translate>kg</span>
-  </div>
-
-  <span ng-show="isInvalid(visitForm.weight)" class="help-block" translate>
-    Please enter a valid weight in kilograms
-  </span>
-  <span ng-show="visit.patient.weight > 500 && visit.patient.weight != 999" class="help-block" translate>
-    Not to be rude, but {{visit.patient.weight}}kg is quite heavy. Are you sure?
-  </span>
-  <span ng-show="visit.patient.weight == 999" class="help-block" translate>
-    Leave this field blank if you don't know the patient's weight
-  </span>
-</div>
-
-<!-- Blood pressure -->
-<div class="form-group has-feedback">
-  <label for="entry-visit-systolic" translate>Blood pressure</label>
-
-  <div class="form-inline">
-    <label class="sr-only" for="entry-visit-systolic" translate>Systolic</label>
-
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.systolic),
-                                       'has-warning': warnSystolic(visit.patient.bloodPressure.systolic)}">
-      <input class="form-control" id="entry-visit-systolic" name="systolic" type="number" min="0"
-             max="300" ng-model="visit.patient.bloodPressure.systolic"
-             ng-required="!!visit.patient.bloodPressure.diastolic">
-      <!-- TODO get input-group-addon mm Hg to work with .form-inline -->
-    </div>
-    /
-    <div class="form-group" ng-class="{'has-warning': warnDiastolic(visit.patient.bloodPressure.diastolic)}">
-      <label class="sr-only" for="entry-visit-diastolic" translate>Systolic</label>
-
-      <input class="form-control" id="entry-visit-diastolic" name="diastolic" type="number" min="0" max="300"
-               ng-model="visit.patient.bloodPressure.diastolic"
-               ng-required="!!visit.patient.bloodPressure.systolic">
-        <!-- TODO should be invalid if only one value is entered -->
-    </div>
-
-    <span class="help-block" ng-show="warnSystolic(visit.patient.bloodPressure.systolic)
-                                      || warnDiastolic(visit.patient.bloodPressure.diastolic)" translate>
-      Are you sure?
-    </span>
-
-    <!-- TODO this could use some more work in terms of validation -->
-  </div>
-</div>
-
-<!-- Pulse -->
-<div class="form-group" ng-class="{'has-error': isInvalid(visitForm.pulse)}">
-  <label for="entry-visit-pulse" translate>Pulse</label>
-
-  <div class="input-group">
-    <input class="form-control" id="entry-visit-pulse" name="pulse" ng-model="visit.patient.pulse"
-           type="number" min="0" max="300">
-    <span class="input-group-addon" translate>bpm</span>
-  </div>
-
-  <span ng-show="isInvalid(visitForm.pulse)" class="help-block" translate>
-    Please enter a valid pulse
-  </span>
-</div>
-
-<!-- Temperature -->
-<div class="form-group" ng-class="{'has-error': isInvalid(visitForm.temperature)}">
-  <label for="entry-visit-temperature" translate>Temperature</label>
-
-  <div class="input-group">
-    <input class="form-control" id="entry-visit-temperature" name="temperature"
-           ng-model="visit.patient.temperature" type="number" min="0" max="50">
-    <span class="input-group-addon" translate>°C</span>
-  </div>
-
-  <span ng-show="isInvalid(visitForm.temperature)" class="help-block" translate>
-    Please enter a valid temperature
-  </span>
-</div>
-
 <div class="form-group">
   <label for="entry-visit-symptoms" translate>Symptoms</label>
 
@@ -219,13 +134,13 @@
 </div>
 
 
-<!-- Chief complaint -->
+<!-- Notes -->
 <div class="form-group">
-  <label for="entry-visit-chief-complaint" translate>Chief complaint</label>
+  <label for="entry-visit-notes" translate>Notes</label>
 
-  <textarea class="form-control" id="entry-visit-chief-complaint" name="chiefComplaint"
-            ng-model="visit.chiefComplaint"></textarea>
-  <span class="help-block" translate>What reason did the patient give for this visit?</span>
+  <textarea class="form-control" id="entry-visit-notes" name="Notes"
+            ng-model="visit.notes"></textarea>
+  <span class="help-block" translate>Anything else you want to add</span>
 </div>
 
 </fieldset>

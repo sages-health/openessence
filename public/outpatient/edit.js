@@ -114,12 +114,6 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
       name: gettextCatalog.getString('District')
     },
     {
-      filterId: 'pulse',
-      type: 'numeric-range',
-      field: 'patient.pulse',
-      name: gettextCatalog.getString('Pulse')
-    },
-    {
       filterId: 'sex',
       type: 'sex',
       field: 'patient.sex',
@@ -134,18 +128,6 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
         field: 'name'
       },
       name: gettextCatalog.getString('Symptom')
-    },
-    {
-      filterId: 'temperature',
-      type: 'numeric-range',
-      field: 'patient.temperature',
-      name: gettextCatalog.getString('Temperature')
-    },
-    {
-      filterId: 'weight',
-      type: 'numeric-range',
-      field: 'patient.weight',
-      name: gettextCatalog.getString('Weight')
     }
   ];
 
