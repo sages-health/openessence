@@ -4,6 +4,7 @@
 
 var _ = require('lodash');
 var fs = require('fs');
+var url = require('url');
 var bunyan = require('bunyan');
 var PrettyStream = require('bunyan-prettystream');
 
@@ -146,13 +147,37 @@ module.exports = {
   },
 
   redis: {
-    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    url: process.env.REDIS_URL || (function () {
+      var redisPort = process.env.REDIS_PORT; // Docker sets the TCP port the linked redis container exports
+      if (!redisPort) {
+        return 'redis://localhost:6379';
+      }
+
+      var parsedRedisPort = url.parse(redisPort);
+      if (parsedRedisPort.protocol === 'tcp:') {
+        parsedRedisPort.protocol = 'redis:';
+      }
+
+      return url.format(parsedRedisPort);
+    })(),
     password: null // Redis doesn't use usernames
   },
 
   // elasticsearch settings, duh
   elasticsearch: {
-    host: process.env.ELASTICSEARCH_HOST || 'http://localhost:9200',
+    host: process.env.ELASTICSEARCH_HOST || (function () {
+      var elasticsearchPort = process.env.ELASTICSEARCH_PORT; // Docker sets this
+      if (!elasticsearchPort) {
+        return 'http://localhost:9200';
+      }
+
+      var parsedElasticsearchPort = url.parse(elasticsearchPort);
+      if (parsedElasticsearchPort.protocol === 'tcp:') {
+        parsedElasticsearchPort.protocol = 'http:';
+      }
+
+      return url.format(parsedElasticsearchPort);
+    })(),
     log: ElasticSearchLogger,
     apiVersion: '1.1'
   },
