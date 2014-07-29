@@ -3,11 +3,13 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, user, visitsReportModal, Dashboard, DashboardResource) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, appName, user,
+                                                                  visitsReportModal, Dashboard, DashboardResource) {
   $scope.visitsReport = function () {
     visitsReportModal.open();
   };
 
+  $scope.appName = appName;
   $scope.user = user;
   $scope.logout = function () {
     user.logout();

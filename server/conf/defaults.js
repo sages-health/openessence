@@ -82,6 +82,8 @@ module.exports = {
   env: env,
   logger: createLogger('fracas'),
 
+  appName: process.env.APP_NAME || 'Fracas',
+
   ssl: {
     enabled: fs.existsSync(certPath) && fs.existsSync(keyPath),
     certPath: certPath,

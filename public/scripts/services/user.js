@@ -3,7 +3,7 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-angular.module(services.name).factory('user', function ($resource, $rootScope, $log, $window, persona) {
+angular.module(services.name).factory('user', function ($resource, $rootScope, $log, $window, appName, persona) {
   var PersonaSession = $resource('/session/browserid', {}, {
     save: {
       method: 'POST',
@@ -81,7 +81,7 @@ angular.module(services.name).factory('user', function ($resource, $rootScope, $
           }
 
           $window.navigator.id.request({
-            siteName: 'Fracas'
+            siteName: appName
             // TODO more options from https://developer.mozilla.org/en-US/docs/Web/API/navigator.id.request
           });
         },

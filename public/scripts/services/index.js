@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = {
+  appName: require('./appName'),
   crud: require('./crud'),
   csrfToken: require('./csrfToken'),
   Dashboard: require('./Dashboard'),
