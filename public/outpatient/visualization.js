@@ -54,6 +54,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
+          diagnoses: gettextCatalog.getString('Diagnoses'),
           syndromes: gettextCatalog.getString('Syndromes'),
           visitType: gettextCatalog.getString('Visit type'),
           discharge: gettextCatalog.getString('Discharge type'),
@@ -69,15 +70,10 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           visualization.save(visualization.state(scope));
         });
 
-        var buildAggregation = function (field) {
-          var agg = {};
-          agg[field] = outpatientAggregation.getAggregation(field, 10);
-          return agg;
-        };
-
         //assuming only two deep for now..
         var buildAggregationQuery = function (cols, rows) {
-          var query, first, second;
+          var first, second;
+          var query = {};
           if (cols[0]) {
             first = cols[0];
             if (rows[0]) {
@@ -87,12 +83,13 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             first = rows[0];
           }
           //build first aggregation
-          if (first) {
-            query = buildAggregation(first);
+          if (first && second) {
+            query[first] = outpatientAggregation.getAggregation(first, false, 10);
             //if a second exists, add to first aggregation object
-            if (second) {
-              query[first].aggs = buildAggregation(second);
-            }
+            query[first].aggs = {};
+            query[first].aggs[second] = outpatientAggregation.getAggregation(second, true, 10);
+          }else if(first){
+            query[first] = outpatientAggregation.getAggregation(first, true, 10);
           }
           return query;
         };
@@ -116,9 +113,10 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             if (col && !row) {
               aggs[col].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                var count = entry.count ? entry.count.value : entry.doc_count; //TODO triple check this
                 /*jshint camelcase:false */
-                missingCount -= entry.doc_count;
-                slice = {col: col, colName: keyStr, key: keyStr, value: entry.doc_count};
+                missingCount -= count;
+                slice = {col: col, colName: keyStr, key: keyStr, value: count};
                 pieData.push(slice);
                 barData.push({col: col, colName: keyStr, key: keyStr, values: [slice]});
               });
@@ -132,9 +130,10 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             if (!col && row) {
               aggs[row].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                var count = entry.count ? entry.count.value : entry.doc_count; //TODO triple check this
                 /*jshint camelcase:false */
-                missingCount -= entry.doc_count;
-                slice = {row: row, rowName: keyStr, key: keyStr, value: entry.doc_count};
+                missingCount -= count;
+                slice = {row: row, rowName: keyStr, key: keyStr, value: count};
                 pieData.push(slice);
               });
               //add missing fields count from total hits - aggs total doc count
@@ -149,15 +148,17 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
               aggs[col].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                var count = entry.count ? entry.count.value : entry.doc_count; //TODO triple check this
                 /*jshint camelcase:false */
-                missingTotalCount -= entry.doc_count;
-                var missingCount = entry.doc_count;
+                missingTotalCount -= count;
+                var missingCount = count;
                 var data = [];
                 entry[row].buckets.map(function (sub) {
                   var subStr = outpatientAggregation.bucketToKey(sub);
-                  missingCount -= sub.doc_count;
+                  var scount = sub.count ? sub.count.value : sub.doc_count; //TODO triple check this
+                  missingCount -= scount;
                   slice = {col: col, colName: entry.key, row: row, rowName: sub.key,
-                    key: (keyStr + '_' + subStr), value: sub.doc_count};
+                    key: (keyStr + '_' + subStr), value: scount};
                   data.push(slice);
                   pieData.push(slice);
                 });
@@ -221,7 +222,9 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
                 return {
                   sex: source.patient ? source.patient.sex : null,
                   age: source.patient ? source.patient.age : null,
-                  symptoms: source.symptoms
+                  symptoms: source.symptoms,
+                  diagnoses: source.diagnoses,
+                  districts: source.districts
                 };
               });
             });
@@ -310,6 +313,16 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             $rootScope.$emit('filterChange', filter, true, true);
           }
         });
+
+        scope.printAggregate = function(field, includeCount){
+          var print = [];
+          if(field){
+            field.map(function(val){
+              print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
+            });
+          }
+          return print.join(',');
+        };
 
         scope.tableFilter = function (field, value) {
           //TODO multiselect if value.length > ?

@@ -13,8 +13,28 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
     },
     symptoms: {
       terms: {
-        field: 'symptoms.raw',
+        field: 'symptoms.name.raw',
         order: { '_term': 'asc' }
+      },
+      aggs: {
+        count: { //calling this doc_count may be cheating a little..
+          sum: {
+            field: 'symptoms.count'
+          }
+        }
+      }
+    },
+    diagnoses: {
+      terms: {
+        field: 'diagnoses.name.raw',
+        order: { '_term': 'asc' }
+      },
+      aggs: {
+        count: {
+          sum: {
+            field: 'diagnoses.count'
+          }
+        }
       }
     },
     districts: {
@@ -40,10 +60,13 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
   };
 
   return {
-    getAggregation: function (name, limit) {
+    getAggregation: function (name, includeSum, limit) {
       var copy = angular.copy(aggregations[name]);
       if (limit && copy.terms) {
         copy.terms.size = limit;
+      }
+      if(!includeSum){
+        delete copy['aggs'];
       }
       return copy;
     },

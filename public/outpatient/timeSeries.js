@@ -155,10 +155,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
 
             if (scope.series.length > 0) {
               scope.series.forEach(function (s) {
-                aggs[s] = outpatientAggregation.getAggregation(s);
+                aggs[s] = outpatientAggregation.getAggregation(s, false);
                 aggs[s].aggs = {
                   date: dateAgg
                 };
+                var aggCount = outpatientAggregation.getAggregation(s, true).aggs;
+                if(aggCount) {
+                  aggs[s].aggs.date.aggs = aggCount;
+                }
               });
             } else {
               aggs.date = dateAgg;
