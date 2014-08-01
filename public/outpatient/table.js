@@ -34,6 +34,19 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
             edit: gettextCatalog.getString('Edit')
           };
 
+          scope.pluckNames = function (vals) {
+            var res = '';
+            if (vals !== undefined && vals !== null) {
+              for (var i = 0; i < vals.length; i++) {
+                res = res + ', ' +vals[i].name;
+              }
+            }
+            if(res.length > 2){
+              res = res.substring(2);
+            }
+            return res;
+          };
+
           scope.editVisit = function (visit) {
             scope.$emit('outpatientEdit', visit);
           };
@@ -106,7 +119,7 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
               a.forEach(function (v) {
                 var filter = {
                   filterId: field,
-                  value: v
+                  value: ((typeof v) === 'object' ? v.name : v)
                 };
                 $rootScope.$emit('filterChange', filter, true, false);
               });

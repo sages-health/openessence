@@ -22,9 +22,20 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
     compile: function () {
       return {
         pre: function (scope) {
+          scope.buildVisit = function (data) {
+            // we copy b/c don't want to update the workbench before we hit save!
+            var visit = angular.copy(data) || {};
+            visit.symptomsNames = visit.symptoms ? visit.symptoms.map(function (r) {
+              return r.name;
+            }) : [];
+            visit.diagnosesNames = visit.diagnoses ? visit.diagnoses.map(function (r) {
+              return r.name;
+            }) : [];
+            return visit;
+          };
           scope.record = scope.record || {};
-          // we copy b/c don't want to update the workbench before we hit save!
-          scope.visit = angular.copy(scope.record._source) || {};
+          scope.visit = scope.buildVisit(scope.record._source);
+
 
           scope.agePlaceholder = gettextCatalog.getString('Patient\'s age');
           scope.yellAtUser = false;
@@ -36,12 +47,29 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
           };
           District.get(searchParams, function (response) {
             scope.districts = response.results.map(pluckName);
+            if(scope.visit.district && scope.districts.indexOf(scope.visit.district) === -1){
+              scope.districts.push(scope.visit.district);
+            }
           });
           Symptom.get(searchParams, function (response) {
             scope.symptoms = response.results.map(pluckName);
+            if (scope.visit.symptoms) {
+              for(var i = 0; i < scope.visit.symptoms.length; i++){
+                if(scope.symptoms.indexOf(scope.visit.symptoms[i].name) === -1){
+                  scope.symptoms.push(scope.visit.symptoms[i].name);
+                }
+              }
+            }
           });
           Diagnosis.get(searchParams, function (response) {
             scope.diagnoses = response.results.map(pluckName);
+            if (scope.visit.diagnoses) {
+              for (var i = 0; i < scope.visit.diagnoses.length; i++) {
+                if (scope.diagnoses.indexOf(scope.visit.diagnoses[i].name) === -1) {
+                  scope.diagnoses.push(scope.visit.diagnoses[i].name);
+                }
+              }
+            }
           });
 
           scope.isInvalid = function (field) {
@@ -79,10 +107,19 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
                 OutpatientVisit.get({_id: scope.record._id}, function (newData) {
                   scope.conflictError = true;
                   scope.record = newData;
-                  scope.visit = scope.record._source;
+                  scope.visit = scope.buildVisit(scope.record._source);
                 });
               }
             };
+
+            scope.visit.symptoms = scope.visit.symptomsNames ? scope.visit.symptomsNames.map(function (r) {
+              return {name: r, count: 1};
+            }) : [];
+            scope.visit.diagnoses = scope.visit.diagnosesNames ? scope.visit.diagnosesNames.map(function (r) {
+              return {name: r, count: 1};
+            }) : [];
+            delete scope.visit.diagnosesNames;
+            delete scope.visit.symptomsNames;
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
               OutpatientVisit.update({

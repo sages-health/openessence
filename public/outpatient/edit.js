@@ -96,7 +96,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
     {
       filterId: 'diagnoses',
       type: 'multi-select',
-      field: 'diagnoses',
+      field: 'diagnoses.name',
       store: {
         resource: Diagnosis,
         field: 'name'
@@ -122,7 +122,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
     {
       filterId: 'symptoms',
       type: 'multi-select',
-      field: 'symptoms',
+      field: 'symptoms.name',
       store: {
         resource: Symptom,
         field: 'name'

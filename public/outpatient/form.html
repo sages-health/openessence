@@ -81,7 +81,7 @@
   <label for="entry-visit-symptoms" translate>Symptoms</label>
 
   <select class="form-control select2-multiple" id="entry-visit-symptoms" name="symptoms" multiple ui-select2
-          ng-model="visit.symptoms">
+          ng-model="visit.symptomsNames">
     <option ng-repeat="symptom in symptoms" value="{{symptom}}">{{symptom}}</option>
   </select>
 
@@ -92,7 +92,7 @@
   <label for="entry-visit-diagnoses" translate>Diagnoses</label>
 
   <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
-          ng-model="visit.diagnoses">
+          ng-model="visit.diagnosesNames">
     <option ng-repeat="diagnosis in diagnoses" value="{{diagnosis}}">{{diagnosis}}</option>
   </select>
 
