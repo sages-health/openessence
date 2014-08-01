@@ -331,11 +331,24 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             a.forEach(function (v) {
               var filter = {
                 filterId: field,
-                value: v
+                value: ((typeof v) === 'object' ? v.name : v)
               };
               $rootScope.$emit('filterChange', filter, true, false);
             });
           }
+        };
+
+        scope.pluckNames = function (vals) {
+          var res = '';
+          if (vals !== undefined && vals !== null) {
+            for (var i = 0; i < vals.length; i++) {
+              res = res + ', ' +vals[i].name;
+            }
+          }
+          if(res.length > 2){
+            res = res.substring(2);
+          }
+          return res;
         };
       }
     }

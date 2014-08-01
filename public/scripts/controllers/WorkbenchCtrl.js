@@ -41,7 +41,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     {
       filterId: 'symptoms',
       type: 'multi-select',
-      field: 'symptoms',
+      field: 'symptoms.name',
       store: {
         resource: Symptom,
         field: 'name'
