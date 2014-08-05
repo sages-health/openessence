@@ -16,7 +16,7 @@
         </add-visualization-button>
       </div>
       <workbench-visualization ng-class="{'col-md-6': !$parent.$parent.$last, 'col-md-11': $parent.$parent.$last}"
-                               visualization="viz.visualization"
+                               visualization="viz.visualization" pivot="viz.pivot"
                                pivot-options="pivotOptions" query-string="queryString" filters="filters"
                                viz-grid="vizGrid" on-close="removeVisualization(viz)" ng-switch-default>
       </workbench-visualization>

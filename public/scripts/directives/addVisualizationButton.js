@@ -81,9 +81,14 @@ angular.module(directives.name).directive('addVisualizationButton', function ($c
             button.blur();
           };
 
-          scope.selectVisualization = function (name) {
+          scope.changeView = function (view) {
+            scope.menuView = view;
+          };
+
+          scope.selectVisualization = function (name, options) {
             scope.menuOpen = false;
-            scope.$emit('visualizationSelect', name);
+            scope.menuView = null;
+            scope.$emit('visualizationSelect', name, options);
           };
         }
       };

@@ -25,7 +25,7 @@ angular.module(directives.name).directive('hinge', function (gettextCatalog) {
           name: 'table'
         };
 
-        scope.pivot = scope.options.pivot || {
+        scope.pivot = scope.pivot || scope.options.pivot || {
           rows: [],
           cols: []
         };

@@ -3,7 +3,8 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, gettextCatalog, FracasGrid, District, Symptom) {
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $timeout, gettextCatalog, FracasGrid,
+                                                                       District, Symptom) {
   $scope.filters = [
     {
       filterId: 'date'
@@ -96,15 +97,21 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     }
   });
 
-  $scope.addVisualization = function (name) {
-    $scope.vizGrid.add({type: 'outpatient-visit', visualization: {name: name}});
+  $scope.addVisualization = function (name, options) {
+    options = options || {};
+
+    $scope.vizGrid.add({
+      type: 'outpatient-visit',
+      visualization: {name: name},
+      pivot: options.pivot
+    });
   };
 
   $scope.removeVisualization = function (visualization) {
     $scope.vizGrid.remove(visualization);
   };
 
-  $scope.$on('visualizationSelect', function (event, name) {
-    $scope.addVisualization(name);
+  $scope.$on('visualizationSelect', function (event, name, options) {
+    $scope.addVisualization(name, options);
   });
 });
