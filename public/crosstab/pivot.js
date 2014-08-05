@@ -541,6 +541,8 @@ PivotData = (function () {
     this.flattenKey = __bind(this.flattenKey, this);
     this.getRowKeys = __bind(this.getRowKeys, this);
     this.getColKeys = __bind(this.getColKeys, this);
+    this.getKeyFromRecord = __bind(this.getKeyFromRecord, this);
+    this.getCellKey = __bind(this.getCellKey, this);
     this.sortKeys = __bind(this.sortKeys, this);
     this.arrSort = __bind(this.arrSort, this);
     this.natSort = __bind(this.natSort, this);
@@ -582,32 +584,43 @@ PivotData = (function () {
     return this.rowKeys;
   };
 
+  PivotData.prototype.getKeyFromRecord = function(nameKey, record){
+    var key, j;
+    key = record;
+    if(record && (typeof record !== 'string')){
+      key = [];
+      for(j = 0; j < record.length; ++j){
+        key.push( record[j][nameKey] || record[j]);
+      }
+      key = key.join(',');
+    }
+    return key;
+  };
+
+  /*
+   Extracted to function call to all for records to contain arrays of objects.
+   Currently coded to search for array[index].name
+   */
+  PivotData.prototype.getCellKey = function (attrs, record, nameKey) {
+    var _i, _len, _ref, _results, x, key;
+    _ref = attrs;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      x = _ref[_i];
+      key = this.getKeyFromRecord(nameKey, record[x]);
+      _results.push(key);
+    }
+    return _results;
+  };
+
   PivotData.prototype.flattenKey = function (x) {
     return x.join(String.fromCharCode(0));
   };
 
   PivotData.prototype.processRecord = function (record) {
-    var colKey, flatColKey, flatRowKey, rowKey, x;
-    colKey = (function () {
-      var _i, _len, _ref, _results;
-      _ref = this.colAttrs;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        x = _ref[_i];
-        _results.push(record[x]);
-      }
-      return _results;
-    }).call(this);
-    rowKey = (function () {
-      var _i, _len, _ref, _results;
-      _ref = this.rowAttrs;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        x = _ref[_i];
-        _results.push(record[x]);
-      }
-      return _results;
-    }).call(this);
+    var colKey, flatColKey, flatRowKey, rowKey;
+    colKey = this.getCellKey(this.colAttrs, record, 'name');
+    rowKey = this.getCellKey(this.rowAttrs, record, 'name');
     flatRowKey = this.flattenKey(rowKey);
     flatColKey = this.flattenKey(colKey);
     this.allTotal.push(record);
