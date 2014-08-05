@@ -84,12 +84,12 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           }
           //build first aggregation
           if (first && second) {
-            query[first] = outpatientAggregation.getAggregation(first, false, 10);
+            query[first] = outpatientAggregation.getAggregation(first, 10);
             //if a second exists, add to first aggregation object
             query[first].aggs = {};
-            query[first].aggs[second] = outpatientAggregation.getAggregation(second, true, 10);
-          }else if(first){
-            query[first] = outpatientAggregation.getAggregation(first, true, 10);
+            query[first].aggs[second] = outpatientAggregation.getAggregation(second, 10);
+          } else if (first) {
+            query[first] = outpatientAggregation.getAggregation(first, 10);
           }
           return query;
         };
@@ -113,7 +113,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             if (col && !row) {
               aggs[col].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
-                var count = entry.count ? entry.count.value : entry.doc_count; //TODO triple check this
+                var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
                 missingCount -= count;
                 slice = {col: col, colName: keyStr, key: keyStr, value: count};
@@ -130,7 +130,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             if (!col && row) {
               aggs[row].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
-                var count = entry.count ? entry.count.value : entry.doc_count; //TODO triple check this
+                var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
                 missingCount -= count;
                 slice = {row: row, rowName: keyStr, key: keyStr, value: count};
@@ -148,14 +148,14 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
               aggs[col].buckets.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
-                var count = entry.count ? entry.count.value : entry.doc_count; //TODO triple check this
+                var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
                 missingTotalCount -= count;
                 var missingCount = count;
                 var data = [];
                 entry[row].buckets.map(function (sub) {
                   var subStr = outpatientAggregation.bucketToKey(sub);
-                  var scount = sub.count ? sub.count.value : sub.doc_count; //TODO triple check this
+                  var scount = sub.count ? sub.count.value : sub.doc_count;
                   missingCount -= scount;
                   slice = {col: col, colName: entry.key, row: row, rowName: sub.key,
                     key: (keyStr + '_' + subStr), value: scount};
@@ -314,10 +314,10 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           }
         });
 
-        scope.printAggregate = function(field, includeCount){
+        scope.printAggregate = function (field, includeCount) {
           var print = [];
-          if(field){
-            field.map(function(val){
+          if (field) {
+            field.map(function (val) {
               print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
             });
           }
@@ -336,19 +336,6 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               $rootScope.$emit('filterChange', filter, true, false);
             });
           }
-        };
-
-        scope.pluckNames = function (vals) {
-          var res = '';
-          if (vals !== undefined && vals !== null) {
-            for (var i = 0; i < vals.length; i++) {
-              res = res + ', ' +vals[i].name;
-            }
-          }
-          if(res.length > 2){
-            res = res.substring(2);
-          }
-          return res;
         };
       }
     }

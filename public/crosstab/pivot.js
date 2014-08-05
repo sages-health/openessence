@@ -584,7 +584,7 @@ PivotData = (function () {
     return this.rowKeys;
   };
 
-  PivotData.prototype.getKeyFromRecord = function(nameKey, record){
+  PivotData.prototype.getKeyFromRecord = function (nameKey, record) {
     var key, j;
     key = record;
     if(record && (typeof record !== 'string')){

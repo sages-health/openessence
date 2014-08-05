@@ -60,13 +60,10 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
   };
 
   return {
-    getAggregation: function (name, includeSum, limit) {
+    getAggregation: function (name, limit) {
       var copy = angular.copy(aggregations[name]);
       if (limit && copy.terms) {
         copy.terms.size = limit;
-      }
-      if(!includeSum){
-        delete copy['aggs'];
       }
       return copy;
     },

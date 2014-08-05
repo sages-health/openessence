@@ -3,8 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams,
-                                                                       OutpatientVisit, sortString, $rootScope) {
+angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams, OutpatientVisit, sortString, $rootScope) {
   return {
     restrict: 'E',
     template: require('./table.html'),
@@ -34,17 +33,14 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
             edit: gettextCatalog.getString('Edit')
           };
 
-          scope.pluckNames = function (vals) {
-            var res = '';
-            if (vals !== undefined && vals !== null) {
-              for (var i = 0; i < vals.length; i++) {
-                res = res + ', ' +vals[i].name;
-              }
+          scope.printAggregate = function (field, includeCount) {
+            var print = [];
+            if (field) {
+              field.map(function (val) {
+                print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
+              });
             }
-            if(res.length > 2){
-              res = res.substring(2);
-            }
-            return res;
+            return print.join(',');
           };
 
           scope.editVisit = function (visit) {

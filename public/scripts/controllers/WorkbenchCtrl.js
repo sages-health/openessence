@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, gettextCatalog, FracasGrid, District, Symptom) {
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, gettextCatalog, FracasGrid, District, Symptom, Diagnosis) {
   $scope.filters = [
     {
       filterId: 'date'
@@ -21,6 +21,16 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
       type: 'date-range',
       field: 'reportDate',
       name: gettextCatalog.getString('Date')
+    },
+    {
+      filterId: 'diagnoses',
+      type: 'multi-select',
+      field: 'diagnoses.name',
+      store: {
+        resource: Diagnosis,
+        field: 'name'
+      },
+      name: gettextCatalog.getString('Diagnoses')
     },
     {
       filterId: 'districts',
@@ -58,6 +68,10 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     {
       value: 'districts',
       label: gettextCatalog.getString('District')
+    },
+    {
+      value: 'diagnoses',
+      label: gettextCatalog.getString('Diagnoses')
     },
     {
       value: 'sex',
