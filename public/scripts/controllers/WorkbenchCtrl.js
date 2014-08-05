@@ -69,15 +69,42 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, g
     }
   ];
 
+
+  $scope.vizMenuOpen = true;
   $scope.vizGrid = new FracasGrid(2);
 
-  $scope.addVisualization = function () {
-    $scope.vizGrid.add({type: 'outpatient-visit'});
+  $scope.$watchCollection('[vizGrid.lastRow().length, vizGrid.rows.length]', function (a) {
+    var lastRowLength = a[0];
+    var numRows = a[1];
+
+    if (lastRowLength === 1) {
+      // plus is the only member
+      $scope.showButtonText = true; // plenty of space for text
+      $scope.centerPlus = true;
+      if (numRows === 1) {
+        $scope.vizMenuOpen = true;
+
+        // This is a little inconsistent, but this way you don't have to scroll down after opening menu
+        $scope.menuPosition = 'bottom';
+      } else {
+        $scope.vizMenuOpen = false;
+        $scope.menuPosition = 'top';
+      }
+    } else {
+      $scope.showButtonText = false; // conserve space, user's already clicked it anyway
+      $scope.menuPosition = 'bottom-left'; // button is at far right, so move menu over
+    }
+  });
+
+  $scope.addVisualization = function (name) {
+    $scope.vizGrid.add({type: 'outpatient-visit', visualization: {name: name}});
   };
 
   $scope.removeVisualization = function (visualization) {
     $scope.vizGrid.remove(visualization);
   };
 
-  $scope.addVisualization();
+  $scope.$on('visualizationSelect', function (event, name) {
+    $scope.addVisualization(name);
+  });
 });

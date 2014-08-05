@@ -8,6 +8,7 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
   return {
     restrict: 'E',
     template: require('./filtersGrid.html'),
+    transclude: true,
     scope: {
       filters: '=',
       filterTypes: '=',

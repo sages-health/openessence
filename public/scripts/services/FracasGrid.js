@@ -95,5 +95,9 @@ angular.module(services.name).factory('FracasGrid', function () {
     return vector;
   };
 
+  FracasGrid.prototype.lastRow = function () {
+    return this.rows[this.rows.length - 1];
+  };
+
   return FracasGrid;
 });

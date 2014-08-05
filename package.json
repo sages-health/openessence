@@ -116,6 +116,7 @@
     "angular-gettext": "./bower_components/angular-gettext/dist/angular-gettext.js",
     "angular-gridster": "./bower_components/angular-gridster/src/angular-gridster.js",
     "d3": "./bower_components/d3/d3.js",
+    "ng-debounce": "./bower_components/ng-debounce/angular-debounce.js",
     "text-angular": "./bower_components/textAngular/src/textAngular.js",
     "text-angular-sanitize": "./bower_components/textAngular/src/textAngular-sanitize.js",
     "text-angular-setup": "./bower_components/textAngular/src/textAngularSetup.js",
@@ -180,6 +181,11 @@
     },
     "d3": {
       "exports": "d3"
+    },
+    "ng-debounce": {
+      "depends": [
+        "angular:angular"
+      ]
     },
     "text-angular": {
       "depends": [
