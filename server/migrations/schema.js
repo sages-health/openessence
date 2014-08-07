@@ -169,15 +169,26 @@ var indexRequests = [
               notes: {
                 type: 'string'
               },
-              // 7/22/14 - changed to notes as a place for additional information to be added
+
               // Array of well-known symptoms that the patient presented with. Might be populated by parsing
-              // chiefComplaint, or might be used instead of chiefComplaint. Used for syndromic surveillance.
+              // notes, or might be used instead of notes. Used for syndromic surveillance.
               symptoms: {
-                type: 'string',
-                fields: {
-                  raw: {
+                properties: {
+                  // name of the symptom, e.g. Back Pain
+                  name: {
                     type: 'string',
-                    index: 'not_analyzed'
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
+                  },
+
+                  // How many cases presented with this symptom. Used for aggregate reporting. For individual reporting,
+                  // this will be 1.
+                  count: {
+                    type: 'integer'
                   }
                 }
               },
@@ -194,28 +205,47 @@ var indexRequests = [
 
               // Array of well-known diagnoses. Usually used with symptoms.
               diagnoses: {
-                type: 'string',
-                fields: {
-                  raw: {
+                properties: {
+                  // name of the diagnosis, e.g. Anemia
+                  name: {
                     type: 'string',
-                    index: 'not_analyzed'
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
+                  },
+
+                  // How many cases presented with this diagnosis. Used for aggregate reporting. For individual
+                  // reporting, this will be 1.
+                  count: {
+                    type: 'integer'
                   }
                 }
               },
 
+              // Syndromes are high-level groupings useful for surveillance, for example, "Dental." They are often
+              // related to symptoms.
               syndromes: {
-                type: 'string',
-                fields: {
-                  raw: {
+                properties: {
+                  // name of the syndrome, e.g. Eye Disease
+                  name: {
                     type: 'string',
-                    index: 'not_analyzed'
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
+                  },
+
+                  // How many cases presented with this syndrome. Used for aggregate reporting. For individual
+                  // reporting, this will be 1.
+                  count: {
+                    type: 'integer'
                   }
                 }
-              },
-
-              // Array of diseases that warrant reporting. Typically used instead of symptoms.
-              notifiableDiseases: {
-                type: 'string'
               },
 
               patient: {

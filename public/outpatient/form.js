@@ -3,10 +3,6 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-var pluckName = function (r) {
-  return r._source.name;
-};
-
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
@@ -23,8 +19,18 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
       return {
         pre: function (scope) {
           scope.record = scope.record || {};
-          // we copy b/c don't want to update the workbench before we hit save!
           scope.visit = angular.copy(scope.record._source) || {};
+
+          if (scope.visit.symptoms) {
+            scope.visit.symptoms = scope.visit.symptoms.map(function (r){
+              return r.name;
+            });
+          }
+          if (scope.visit.diagnoses) {
+            scope.visit.diagnoses = scope.visit.diagnoses.map(function (r){
+              return r.name;
+            });
+          }
 
           scope.agePlaceholder = gettextCatalog.getString('Patient\'s age');
           scope.yellAtUser = false;
@@ -35,14 +41,45 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
             sort: 'name',
             q: 'enabled:true'
           };
-          District.get(searchParams, function (response) {
-            scope.districts = response.results.map(pluckName);
+
+          // Construct a set of resources, indexed by their name
+          var makeIndex = function (results) {
+            return results.reduce(function (prev, current) {
+              prev[current._source.name] = current;
+              return prev;
+            }, {});
+          };
+
+          District.get({size: 9999, sort: 'name'}, function (response) {
+            var districtIndex = makeIndex(response.results);
+
+            // add any districts that are on this record, but not in the ref table, so they show up when you edit the
+            // record
+            if (scope.visit.district) {
+              districtIndex[scope.visit.district] = districtIndex[scope.visit.district] || true;
+            }
+
+            scope.districts = Object.keys(districtIndex);
           });
           Symptom.get(searchParams, function (response) {
-            scope.symptoms = response.results.map(pluckName);
+            var symptomIndex = makeIndex(response.results);
+            if (scope.visit.symptoms) {
+              scope.visit.symptoms.forEach(function (symptom) {
+                symptomIndex[symptom] = symptomIndex[symptom] || true;
+              });
+            }
+
+            scope.symptoms = Object.keys(symptomIndex);
           });
           Diagnosis.get(searchParams, function (response) {
-            scope.diagnoses = response.results.map(pluckName);
+            var diagnosisIndex = makeIndex(response.results);
+            if (scope.visit.diagnoses) {
+              scope.visit.diagnoses.forEach(function (diagnosis) {
+                diagnosisIndex[diagnosis] = diagnosisIndex[diagnosis] || true;
+              });
+            }
+
+            scope.diagnoses = Object.keys(diagnosisIndex);
           });
 
           scope.isInvalid = function (field) {
@@ -80,10 +117,18 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
                 OutpatientVisit.get({_id: scope.record._id}, function (newData) {
                   scope.conflictError = true;
                   scope.record = newData;
-                  scope.visit = scope.record._source;
+                  scope.visit = scope.buildVisit(scope.record._source);
                 });
               }
             };
+
+            scope.visit.symptoms = scope.visit.symptoms ? scope.visit.symptoms.map(function (r) {
+              return {name: r, count: 1};
+            }) : [];
+
+            scope.visit.diagnoses = scope.visit.diagnoses ? scope.visit.diagnoses.map(function (r) {
+              return {name: r, count: 1};
+            }) : [];
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
               OutpatientVisit.update({

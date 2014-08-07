@@ -4,9 +4,7 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', function (gettextCatalog, outpatientAggregation,
-                                                                            visualization, OutpatientVisit, $window,
-                                                                            $timeout) {
+angular.module(directives.name).directive('outpatientTimeSeries', function (gettextCatalog, outpatientAggregation, visualization, OutpatientVisit, $window, $timeout) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
@@ -159,6 +157,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                 aggs[s].aggs = {
                   date: dateAgg
                 };
+                var aggCount = outpatientAggregation.getAggregation(s).aggs;
+                if (aggCount) {
+                  aggs[s].aggs.date.aggs = aggCount;
+                }
               });
             } else {
               aggs.date = dateAgg;
@@ -201,7 +203,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
            *
            * @param event
            */
-          var getMouseCoords = function(event) {
+          var getMouseCoords = function (event) {
             event = event || $window.event;
 
             if (event.offsetX) {
@@ -555,7 +557,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               .attr('class', 'gridline')
               .attr('x1', 0)
               .attr('y1', 0)
-              .attr('x2', function(d, i) {
+              .attr('x2', function (d, i) {
                 return d % 1 !== 0 || i === 0 || i === yTicksLength - 1 ? 0 : width - xmargin;
               })
               .attr('y2', 0);
@@ -658,8 +660,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
                   .enter()
                   .append('svg:circle')
                   .attr('class', 'scatterDot scatterDots' + key)
-                  .attr('cx', function (d) { return x(d[0]); })
-                  .attr('cy', function (d) { return -1 * y(d[1]); })
+                  .attr('cx', function (d) {
+                    return x(d[0]);
+                  })
+                  .attr('cy', function (d) {
+                    return -1 * y(d[1]);
+                  })
                   .attr('r', 3)
                   .style('fill', color);
               }
