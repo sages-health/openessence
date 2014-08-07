@@ -113,6 +113,7 @@
     "angular-bootstrap": "./bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
     "angular-ui-router": "./bower_components/angular-ui-router/release/angular-ui-router.js",
     "angular-ui-select2": "./bower_components/angular-ui-select2/src/select2.js",
+    "angular-ui-sortable": "./bower_components/angular-ui-sortable/sortable.js",
     "angular-gettext": "./bower_components/angular-gettext/dist/angular-gettext.js",
     "angular-gridster": "./bower_components/angular-gridster/src/angular-gridster.js",
     "d3": "./bower_components/d3/d3.js",
@@ -162,6 +163,13 @@
       ]
     },
     "angular-ui-select2": {
+      "depends": [
+        "angular:angular",
+        "jquery:jQuery",
+        "jquery-ui"
+      ]
+    },
+    "angular-ui-sortable": {
       "depends": [
         "angular:angular",
         "jquery:jQuery",

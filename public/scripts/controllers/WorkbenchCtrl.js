@@ -70,28 +70,26 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $
     }
   ];
 
-
   $scope.vizMenuOpen = true;
-  $scope.vizGrid = new FracasGrid(2);
+  $scope.vizGrid = [];
 
-  $scope.$watchCollection('[vizGrid.lastRow().length, vizGrid.rows.length]', function (a) {
-    var lastRowLength = a[0];
-    var numRows = a[1];
-
-    if (lastRowLength === 1) {
-      // plus is the only member
+  $scope.$watch('vizGrid.length', function (numVizes) {
+    if (numVizes % 2 === 0) { // plus is on its own row
       $scope.showButtonText = true; // plenty of space for text
       $scope.centerPlus = true;
-      if (numRows === 1) {
-        $scope.vizMenuOpen = true;
 
-        // This is a little inconsistent, but this way you don't have to scroll down after opening menu
+      if (numVizes === 0) {
+        $timeout(function () {
+          $scope.vizMenuOpen = true;
+        });
         $scope.menuPosition = 'bottom';
       } else {
         $scope.vizMenuOpen = false;
+        // This is a little inconsistent, but this way you don't have to scroll down after opening menu
         $scope.menuPosition = 'top';
       }
     } else {
+      $scope.vizMenuOpen = false;
       $scope.showButtonText = false; // conserve space, user's already clicked it anyway
       $scope.menuPosition = 'bottom-left'; // button is at far right, so move menu over
     }
@@ -100,7 +98,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $
   $scope.addVisualization = function (name, options) {
     options = options || {};
 
-    $scope.vizGrid.add({
+    $scope.vizGrid.push({
       type: 'outpatient-visit',
       visualization: {name: name},
       pivot: options.pivot
@@ -108,9 +106,15 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $
   };
 
   $scope.removeVisualization = function (visualization) {
-    $scope.vizGrid.remove(visualization);
+    var index = $scope.vizGrid.indexOf(visualization);
+    $scope.vizGrid.splice(index, 1);
   };
 
+  $scope.sortableOptions = {
+    cursor: 'move',
+    opacity: 0.9,
+    handle: '.header'
+  };
   $scope.$on('visualizationSelect', function (event, name, options) {
     $scope.addVisualization(name, options);
   });

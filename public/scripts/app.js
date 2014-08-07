@@ -7,6 +7,7 @@ require('angular-sanitize');
 require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-ui-select2');
+require('angular-ui-sortable');
 require('angular-gettext');
 require('angular-gridster');
 require('angular-loading-bar');
@@ -34,8 +35,8 @@ require('./directives');
 require('./filters');
 var i18n = require('./i18n');
 
-var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    'angular-loading-bar', 'debounce', 'gridster', 'textAngular', frable.name]
+var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
+                    'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -50,6 +51,10 @@ app.config(function ($httpProvider, csrfToken) {
     }
     $httpProvider.defaults.headers[method]['X-CSRF-TOKEN'] = csrfToken;
   });
+});
+
+app.run(function ($templateCache) {
+  $templateCache.put('workbench.html', '<workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="filters" on-close="removeVisualization(viz)" viz-grid="vizGrid" visualization="viz.visualization" pivot="viz.pivot" ></workbench-visualization>');
 });
 
 app.config(function (cfpLoadingBarProvider) {
