@@ -23,9 +23,33 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
               enabled: true
             }
           };
+
+          var getDaysDifference = function (start, end){
+            var date1 = new Date(start);
+            var date2 = new Date(end);
+            var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            return diffDays;
+          };
+
+          //set dashboard data and make the date window rolling
           if (scope.dashboardId) {
             Dashboard.get(scope.dashboardId, function (data) {
               scope.dashboard = data._source;
+              var anonymous = function (f) {
+                return f.type === 'date-range';
+              };
+              for (var i =0; i < scope.dashboard.widgets.length; i++) {
+                scope.dateFilters = scope.dashboard.widgets[i].content.filters.filter(anonymous);
+                scope.interval = getDaysDifference(scope.dateFilters[0].from, scope.dateFilters[0].to);
+                var now = new Date();
+                now.setDate(now.getDate() - scope.interval);
+                var start = now;
+                var end = new Date();
+                scope.dashboard.widgets[i].content.filters.from = start;
+                scope.dashboard.widgets[i].content.filters.to = end;
+                console.log(scope.dashboard);
+              }
             });
           } else {
             scope.dashboard = {
@@ -33,6 +57,8 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
               widgets: []
             };
           }
+
+//          console.log(scope.dateFilters);
 
           scope.addWidget = function () {
             // TODO we don't need a modal with a single field
@@ -54,7 +80,6 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
                     $scope.yellAtUser = true;
                     return;
                   }
-
                   $modalInstance.close({
                     visualization: $scope.visualizations.filter(function (viz) {
                       return viz._id === $scope.widget.visualization;
@@ -72,7 +97,6 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
                 });
               });
           };
-
           scope.clear = function () {
             scope.dashboard.widgets = [];
           };

@@ -6,7 +6,7 @@ var directives = require('../scripts/modules').directives;
 angular.module(directives.name).directive('dashboardWidget', function ($timeout) {
   return {
     restrict: 'E',
-    template: '<outpatient-visualization options="options" height="height" width="width"></outpatient-visualization>',
+    template: '<outpatient-visualization options="options" height="height" width="width" filters="options.filters" query-string="options.queryString"></outpatient-visualization>',
     scope: {
       options: '=',
       sizeX: '=',
