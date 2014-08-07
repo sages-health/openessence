@@ -512,6 +512,10 @@
     "enabled": true
   },
   {
+    "name": "Lycanthropy",
+    "enabled": true
+  },
+  {
     "name": "Lymphoma",
     "enabled": true
   },
