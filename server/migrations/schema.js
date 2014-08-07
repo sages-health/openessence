@@ -70,6 +70,13 @@ var indexRequests = [
                     index: 'not_analyzed'
                   }
                 }
+              },
+
+              /**
+               * True if this diagnosis is being collected.
+               */
+              enabled: {
+                type: 'boolean'
               }
             }
           })
@@ -295,6 +302,13 @@ var indexRequests = [
                     index: 'not_analyzed'
                   }
                 }
+              },
+
+              /**
+               * True if this symptom is being collected.
+               */
+              enabled: {
+                type: 'boolean'
               }
             }
           })
@@ -318,6 +332,13 @@ var indexRequests = [
                     index: 'not_analyzed'
                   }
                 }
+              },
+
+              /**
+               * True if this syndrome is being collected.
+               */
+              enabled: {
+                type: 'boolean'
               }
             }
           })

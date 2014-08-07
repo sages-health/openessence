@@ -1,344 +1,458 @@
 [
   {
-    "name": "Abdominal Mass"
+    "name": "Abdominal Mass",
+    "enabled": true
   },
   {
-    "name": "Abdominal Pain"
+    "name": "Abdominal Pain",
+    "enabled": true
   },
   {
-    "name": "Acute Flaccid Paralysis (AFP)"
+    "name": "Acute Flaccid Paralysis (AFP)",
+    "enabled": true
   },
   {
-    "name": "Arrhythmia"
+    "name": "Arrhythmia",
+    "enabled": true
   },
   {
-    "name": "Back Pain"
+    "name": "Back Pain",
+    "enabled": true
   },
   {
-    "name": "Back Pain, Acute"
+    "name": "Back Pain, Acute",
+    "enabled": true
   },
   {
-    "name": "Back Pain, Chronic"
+    "name": "Back Pain, Chronic",
+    "enabled": true
   },
   {
-    "name": "Bite, Animal Or Insect"
+    "name": "Bite, Animal Or Insect",
+    "enabled": true
   },
   {
-    "name": "Bleeding Or Hemorrhagic Manifestation"
+    "name": "Bleeding Or Hemorrhagic Manifestation",
+    "enabled": true
   },
   {
-    "name": "Blood In Sputum (Hemoptysis)"
+    "name": "Blood In Sputum (Hemoptysis)",
+    "enabled": true
   },
   {
-    "name": "Blood In Stool (Hemachezia)"
+    "name": "Blood In Stool (Hemachezia)",
+    "enabled": true
   },
   {
-    "name": "Blood In Urine (Hematuria)"
+    "name": "Blood In Urine (Hematuria)",
+    "enabled": true
   },
   {
-    "name": "Blood In Vomit (Hematemesis)"
+    "name": "Blood In Vomit (Hematemesis)",
+    "enabled": true
   },
   {
-    "name": "Blurred Vision"
+    "name": "Blurred Vision",
+    "enabled": true
   },
   {
-    "name": "Burn And/or Corrosions"
+    "name": "Burn And/or Corrosions",
+    "enabled": true
   },
   {
-    "name": "Can't Eat/Breastfeed (Loss of Necessary Motor Skills)"
+    "name": "Can't Eat/Breastfeed (Loss of Necessary Motor Skills)",
+    "enabled": true
   },
   {
-    "name": "Can't Hear (Hearing Loss)"
+    "name": "Can't Hear (Hearing Loss)",
+    "enabled": true
   },
   {
-    "name": "Can't See (Blind, Vision Loss)"
+    "name": "Can't See (Blind, Vision Loss)",
+    "enabled": true
   },
   {
-    "name": "Can't Urinate"
+    "name": "Can't Urinate",
+    "enabled": true
   },
   {
-    "name": "Can't Move (Paralysis)"
+    "name": "Can't Move (Paralysis)",
+    "enabled": true
   },
   {
-    "name": "Chest Pain"
+    "name": "Chest Pain",
+    "enabled": true
   },
   {
-    "name": "Chills"
+    "name": "Chills",
+    "enabled": true
   },
   {
-    "name": "Constipation"
+    "name": "Constipation",
+    "enabled": true
   },
   {
-    "name": "Convulsions/Seizures"
+    "name": "Convulsions/Seizures",
+    "enabled": true
   },
   {
-    "name": "Cough"
+    "name": "Cough",
+    "enabled": true
   },
   {
-    "name": "Cough, Persistent/Prolonged (Chronic)"
+    "name": "Cough, Persistent/Prolonged (Chronic)",
+    "enabled": true
   },
   {
-    "name": "Dehydration"
+    "name": "Dehydration",
+    "enabled": true
   },
   {
-    "name": "Diarrhea"
+    "name": "Diarrhea",
+    "enabled": true
   },
   {
-    "name": "Diarrhea, Profuse Watery"
+    "name": "Diarrhea, Profuse Watery",
+    "enabled": true
   },
   {
-    "name": "Diarrhea, Watery"
+    "name": "Diarrhea, Watery",
+    "enabled": true
   },
   {
-    "name": "Diarrhea, With Blood"
+    "name": "Diarrhea, With Blood",
+    "enabled": true
   },
   {
-    "name": "Difficulty Breathing (Dyspnea)"
+    "name": "Difficulty Breathing (Dyspnea)",
+    "enabled": true
   },
   {
-    "name": "Difficulty Swallowing (Dysphagia)"
+    "name": "Difficulty Swallowing (Dysphagia)",
+    "enabled": true
   },
   {
-    "name": "Dizzy"
+    "name": "Dizzy",
+    "enabled": true
   },
   {
-    "name": "Double Vision (Diplopia)"
+    "name": "Double Vision (Diplopia)",
+    "enabled": true
   },
   {
-    "name": "Dysentery"
+    "name": "Dysentery",
+    "enabled": true
   },
   {
-    "name": "Earache (Otalgia)"
+    "name": "Earache (Otalgia)",
+    "enabled": true
   },
   {
-    "name": "Eye Disease, Conjunctivitis"
+    "name": "Eye Disease, Conjunctivitis",
+    "enabled": true
   },
   {
-    "name": "Eye Disease, Foreign Body"
+    "name": "Eye Disease, Foreign Body",
+    "enabled": true
   },
   {
-    "name": "Eye Disease  Inflamed (Red-Eye)"
+    "name": "Eye Disease  Inflamed (Red-Eye)",
+    "enabled": true
   },
   {
-    "name": "Fatigue"
+    "name": "Fatigue",
+    "enabled": true
   },
   {
-    "name": "Fatigue, Intense"
+    "name": "Fatigue, Intense",
+    "enabled": true
   },
   {
-    "name": "Fever With Chills"
+    "name": "Fever With Chills",
+    "enabled": true
   },
   {
-    "name": "Fever With Headache/Fever and Headache"
+    "name": "Fever With Headache/Fever and Headache",
+    "enabled": true
   },
   {
-    "name": "Fever With Rash"
+    "name": "Fever With Rash",
+    "enabled": true
   },
   {
-    "name": "Fever With Rash, Acute"
+    "name": "Fever With Rash, Acute",
+    "enabled": true
   },
   {
-    "name": "Fever With Rash, Chronic"
+    "name": "Fever With Rash, Chronic",
+    "enabled": true
   },
   {
-    "name": "Fever, Persistent/Prolonged (Fever, Chronic)"
+    "name": "Fever, Persistent/Prolonged (Fever, Chronic)",
+    "enabled": true
   },
   {
-    "name": "Fever/Febrile Illness"
+    "name": "Fever/Febrile Illness",
+    "enabled": true
   },
   {
-    "name": "Gastrointestinal Illness, Acute"
+    "name": "Gastrointestinal Illness, Acute",
+    "enabled": true
   },
   {
-    "name": "Gastrointestinal Illness, Chronic"
+    "name": "Gastrointestinal Illness, Chronic",
+    "enabled": true
   },
   {
-    "name": "Gastrointestinal Illness, Nausea and Vomiting (Emesis)"
+    "name": "Gastrointestinal Illness, Nausea and Vomiting (Emesis)",
+    "enabled": true
   },
   {
-    "name": "Gastrointestinal Illness, Ulcer"
+    "name": "Gastrointestinal Illness, Ulcer",
+    "enabled": true
   },
   {
-    "name": "Gastrointestinal Illness, Upper, Not Nausea"
+    "name": "Gastrointestinal Illness, Upper, Not Nausea",
+    "enabled": true
   },
   {
-    "name": "Gastrointestinal Illness, Vomiting (Emesis)"
+    "name": "Gastrointestinal Illness, Vomiting (Emesis)",
+    "enabled": true
   },
   {
-    "name": "Genital Warts"
+    "name": "Genital Warts",
+    "enabled": true
   },
   {
-    "name": "Gynecologic Illness, dysfunctional uterine bleeding"
+    "name": "Gynecologic Illness, dysfunctional uterine bleeding",
+    "enabled": true
   },
   {
-    "name": "Gynecologic Illness, vaginal discharge"
+    "name": "Gynecologic Illness, vaginal discharge",
+    "enabled": true
   },
   {
-    "name": "Headache"
+    "name": "Headache",
+    "enabled": true
   },
   {
-    "name": "Headache, Persistent (Chronic)"
+    "name": "Headache, Persistent (Chronic)",
+    "enabled": true
   },
   {
-    "name": "Heat Exhaustion"
+    "name": "Heat Exhaustion",
+    "enabled": true
   },
   {
-    "name": "Heat Stroke"
+    "name": "Heat Stroke",
+    "enabled": true
   },
   {
-    "name": "Hepatomegaly"
+    "name": "Hepatomegaly",
+    "enabled": true
   },
   {
-    "name": "Hypertension"
+    "name": "Hypertension",
+    "enabled": true
   },
   {
-    "name": "Injury"
+    "name": "Injury",
+    "enabled": true
   },
   {
-    "name": "Jaundice/Yellowing Of Eye (Sclera) and/or Skin"
+    "name": "Jaundice/Yellowing Of Eye (Sclera) and/or Skin",
+    "enabled": true
   },
   {
-    "name": "Joint Pain (Arthralgia)"
+    "name": "Joint Pain (Arthralgia)",
+    "enabled": true
   },
   {
-    "name": "Lethargy"
+    "name": "Lethargy",
+    "enabled": true
   },
   {
-    "name": "Light-headed"
+    "name": "Light-headed",
+    "enabled": true
   },
   {
-    "name": "Loss of Appetite (Anorexia)"
+    "name": "Loss of Appetite (Anorexia)",
+    "enabled": true
   },
   {
-    "name": "Loss of Consciousness (LOC)"
+    "name": "Loss of Consciousness (LOC)",
+    "enabled": true
   },
   {
-    "name": "Lymphadenitis"
+    "name": "Lymphadenitis",
+    "enabled": true
   },
   {
-    "name": "Malaise"
+    "name": "Malaise",
+    "enabled": true
   },
   {
-    "name": "Muscle and/or Joint Pain (Arthralgia and/or Myalgia)"
+    "name": "Muscle and/or Joint Pain (Arthralgia and/or Myalgia)",
+    "enabled": true
   },
   {
-    "name": "Muscle Pain (Myalgia)"
+    "name": "Muscle Pain (Myalgia)",
+    "enabled": true
   },
   {
-    "name": "Nasal Discharge"
+    "name": "Nasal Discharge",
+    "enabled": true
   },
   {
-    "name": "Night Sweats"
+    "name": "Night Sweats",
+    "enabled": true
   },
   {
-    "name": "Nodule Under Skin, Firm/Fibrous"
+    "name": "Nodule Under Skin, Firm/Fibrous",
+    "enabled": true
   },
   {
-    "name": "Other Symptom/Sign, Yes/No"
+    "name": "Other Symptom/Sign, Yes/No",
+    "enabled": true
   },
   {
-    "name": "Psychiatric Illness, Anxiety"
+    "name": "Psychiatric Illness, Anxiety",
+    "enabled": true
   },
   {
-    "name": "Psychiatric Illness, Depression"
+    "name": "Psychiatric Illness, Depression",
+    "enabled": true
   },
   {
-    "name": "Rapid breathing (Tachypnea)"
+    "name": "Rapid breathing (Tachypnea)",
+    "enabled": true
   },
   {
-    "name": "Rash"
+    "name": "Rash",
+    "enabled": true
   },
   {
-    "name": "Refusal to drink / breastfeed"
+    "name": "Refusal to drink / breastfeed",
+    "enabled": true
   },
   {
-    "name": "Runny Nose/Nasal Discharge (Rhinorrhea)"
+    "name": "Runny Nose/Nasal Discharge (Rhinorrhea)",
+    "enabled": true
   },
   {
-    "name": "Shortness Of Breath (SOB) (Dyspnea)"
+    "name": "Shortness Of Breath (SOB) (Dyspnea)",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion (Dermatologic Lesion)"
+    "name": "Skin Lesion (Dermatologic Lesion)",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion, Blister(s) (Dermatologic Lesion, Bulla (Bullae))"
+    "name": "Skin Lesion, Blister(s) (Dermatologic Lesion, Bulla (Bullae))",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion, Bubo (Dermatologic Lesion, Bubo)"
+    "name": "Skin Lesion, Bubo (Dermatologic Lesion, Bubo)",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion, Genital Ulcer/Lesion (Dermatologic Lesion, Genital Ulcer/Lesion)"
+    "name": "Skin Lesion, Genital Ulcer/Lesion (Dermatologic Lesion, Genital Ulcer/Lesion)",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion, Ulcer (Dermatologic Lesion, Ulcer)"
+    "name": "Skin Lesion, Ulcer (Dermatologic Lesion, Ulcer)",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion, Vesicle(s) Dermatologic Lesion, Vesicle(s)"
+    "name": "Skin Lesion, Vesicle(s) Dermatologic Lesion, Vesicle(s)",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion, With Loss Of Sensation, (Dermatologic Lesion, With Analgesia)"
+    "name": "Skin Lesion, With Loss Of Sensation, (Dermatologic Lesion, With Analgesia)",
+    "enabled": true
   },
   {
-    "name": "Skin Lesion, With Visible Worm (Dermatologic Lesion, With Visible Worm)"
+    "name": "Skin Lesion, With Visible Worm (Dermatologic Lesion, With Visible Worm)",
+    "enabled": true
   },
   {
-    "name": "Sore Throat (Pharyngitis)"
+    "name": "Sore Throat (Pharyngitis)",
+    "enabled": true
   },
   {
-    "name": "Splenomegaly"
+    "name": "Splenomegaly",
+    "enabled": true
   },
   {
-    "name": "Stiff Neck"
+    "name": "Stiff Neck",
+    "enabled": true
   },
   {
-    "name": "Sudden Weight Gain"
+    "name": "Sudden Weight Gain",
+    "enabled": true
   },
   {
-    "name": "Sudden Weight Loss"
+    "name": "Sudden Weight Loss",
+    "enabled": true
   },
   {
-    "name": "Sweats"
+    "name": "Sweats",
+    "enabled": true
   },
   {
-    "name": "Swelling In Abdomen"
+    "name": "Swelling In Abdomen",
+    "enabled": true
   },
   {
-    "name": "Swelling In Legs Or Arms"
+    "name": "Swelling In Legs Or Arms",
+    "enabled": true
   },
   {
-    "name": "Swollen Glands (Lymphadenopathy)"
+    "name": "Swollen Glands (Lymphadenopathy)",
+    "enabled": true
   },
   {
-    "name": "Swollen Glands, Arm Pits (Lymphadenopathy, Axillary)"
+    "name": "Swollen Glands, Arm Pits (Lymphadenopathy, Axillary)",
+    "enabled": true
   },
   {
-    "name": "Swollen Glands, Groin (Lymphadenopathy, Inguinal)"
+    "name": "Swollen Glands, Groin (Lymphadenopathy, Inguinal)",
+    "enabled": true
   },
   {
-    "name": "Swollen Glands, Neck (Lymphadenopathy, Cervical)"
+    "name": "Swollen Glands, Neck (Lymphadenopathy, Cervical)",
+    "enabled": true
   },
   {
-    "name": "Swollen Glands, Other (Lymphadenopathy, Other)"
+    "name": "Swollen Glands, Other (Lymphadenopathy, Other)",
+    "enabled": true
   },
   {
-    "name": "Temperature >38_C/>100.4_F"
+    "name": "Temperature >38_C/>100.4_F",
+    "enabled": true
   },
   {
-    "name": "Dental, Abscess"
+    "name": "Dental, Abscess",
+    "enabled": true
   },
   {
-    "name": "Dental, Toothache"
+    "name": "Dental, Toothache",
+    "enabled": true
   },
   {
-    "name": "Unable To Drink/Breastfeed"
+    "name": "Unable To Drink/Breastfeed",
+    "enabled": true
   },
   {
-    "name": "Urethral Discharge"
+    "name": "Urethral Discharge",
+    "enabled": true
   },
   {
-    "name": "Weakness"
+    "name": "Weakness",
+    "enabled": true
   },
   {
-    "name": "Wound"
+    "name": "Wound",
+    "enabled": true
   }
 ]
