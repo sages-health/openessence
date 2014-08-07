@@ -3,8 +3,8 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $timeout, gettextCatalog, FracasGrid,
-                                                                       Diagnosis, District, Symptom) {
+angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $location, $timeout, gettextCatalog,
+                                                                       FracasGrid, Diagnosis, District, Symptom) {
   $scope.filters = [
     {
       filterId: 'date'
@@ -118,6 +118,32 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $
       pivot: options.pivot
     });
   };
+
+  var visualizationName = $location.search().visualization;
+  if (visualizationName) {
+    var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
+    var options = {
+      pivot: viz.pivot
+    };
+
+    $scope.filters = viz.filters.map(function (filter) {
+      if (filter.value) {
+        return {
+          filterId: filter.filterId,
+          value: filter.value
+        };
+      } else {
+        return {
+          filterId: filter.filterId,
+          to: filter.to,
+          from: filter.from
+        };
+      }
+    });
+
+    $scope.addVisualization(viz.visualization.name, options);
+    $scope.vizMenuOpen = false;
+  }
 
   $scope.removeVisualization = function (visualization) {
     var index = $scope.vizGrid.indexOf(visualization);

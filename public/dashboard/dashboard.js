@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('dashboard', function (gettextCatalog, $modal, visualization, Dashboard) {
+angular.module(directives.name).directive('dashboard', function (gettextCatalog, $modal, visualization, Dashboard, $location) {
   return {
     restrict: 'E',
     template: require('./dashboard.html'),
@@ -107,6 +107,13 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
             } else {
               Dashboard.save(Dashboard.state(scope.dashboard));
             }
+          };
+
+          scope.clickthrough = function (widget) {
+            var savedWidget = {};
+            savedWidget[widget.name] = widget.content;
+            sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
+            $location.path('/workbench').search('visualization', widget.name);
           };
         }
       };
