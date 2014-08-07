@@ -3,7 +3,9 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, Diagnosis) {
+angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, $modal, crud, tableUtil,
+                                                                           gettextCatalog, sortString, FrableParams,
+                                                                           Diagnosis) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -13,49 +15,83 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
-    },
-    {
-      filterId: 'phoneId',
-      type: 'text',
-      field: 'phoneId',
-      name: gettextCatalog.getString('Phone ID')
     }
   ];
 
-  // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {
     diagnosis: gettextCatalog.getString('Diagnosis'),
     newDiagnosis: gettextCatalog.getString('New diagnosis'),
-    edit: gettextCatalog.getString('Edit'),
-    phoneId: gettextCatalog.getString('Phone ID'),
-    name: gettextCatalog.getString('Name')
+    enabled: gettextCatalog.getString('Enabled?'),
+    name: gettextCatalog.getString('Name'),
+    delete: gettextCatalog.getString('Delete')
   };
 
-  $scope.editTemplate = require('../../../partials/edit/forms/diagnosis-form.html');
-  $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = Diagnosis;
-  var options = {
-    sorting: {'name.raw': 'asc'},
-    queryString: $scope.queryString
+  $scope.diagnoses = {};
+  $scope.toggleEnabled = function (diagnosisName) {
+    var diagnosis = $scope.diagnoses[diagnosisName];
+    Diagnosis.update({_id: diagnosis._id, version: diagnosis._version}, diagnosis._source, function (response) {
+      // update version so user can edit again
+      diagnosis._version = response._version;
+    });
+    // TODO handle errors
   };
 
-  // ---------------- Start: Common functions
-  $scope.tableFilter = tableUtil.addFilter;
-  $scope.tableParams = tableUtil.tableParams(options, $scope.resource);
+  $scope.tableParams = new FrableParams({
+    page: 1,
+    count: 10,
+    sorting: {'name.raw': 'asc'}
+  }, {
+    total: 0,
+    counts: [], // hide page count control
+    $scope: {
+      $data: {}
+    },
+    getData: function ($defer, params) {
+      if (!angular.isDefined($scope.queryString)) {
+        $defer.resolve([]);
+        return;
+      }
+
+      Diagnosis.get({
+        q: $scope.queryString,
+        from: (params.page() - 1) * params.count(),
+        size: params.count(),
+        sort: sortString.toElasticsearchString(params.orderBy()[0])
+      }, function (response) {
+        params.total(response.total);
+
+        response.results.forEach(function (r) {
+          $scope.diagnoses[r._source.name] = r;
+        });
+
+        $defer.resolve(response.results);
+      });
+    }
+  });
+
   var reload = function () {
-    options.queryString = $scope.queryString;
     $scope.tableParams.reload();
   };
 
-  $scope.$watchCollection('queryString', reload);
+  $scope.$watch('queryString', reload);
   $scope.createRecord = function () {
-    crud.open(null, $scope.resource, $scope.editTemplate).result.then(reload);
+    crud.open(null, Diagnosis, require('../../../partials/edit/forms/diagnosis-form.html')).result.then(reload);
   };
-  $scope.editRecord = function (record) {
-    crud.open(record, $scope.resource, $scope.editTemplate).result.then(reload);
-  };
+
   $scope.deleteRecord = function (record) {
-    crud.delete(record, $scope.resource, $scope.deleteTemplate).result.then(reload);
+    $modal.open({
+      template: require('../../../partials/delete-diagnosis-modal.html'),
+      controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+        $scope.diagnosis  = record._source.name;
+        $scope['delete'] = function () {
+          Diagnosis.remove({_id: record._id}, function () {
+            $modalInstance.close(record);
+          });
+        };
+        $scope.cancel = function () {
+          $modalInstance.dismiss('cancel');
+        };
+      }]
+    }).result.then(reload);
   };
-  // ---------------- End: Common functions
 });

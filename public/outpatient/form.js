@@ -31,8 +31,9 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
 
           // TODO use multi-get so we only have one XHR request
           var searchParams = {
-            size: 100, // TODO search on demand if response indicates there are more records
-            sort: 'name'
+            size: 9999, // TODO search on demand if response indicates there are more records
+            sort: 'name',
+            q: 'enabled:true'
           };
           District.get(searchParams, function (response) {
             scope.districts = response.results.map(pluckName);

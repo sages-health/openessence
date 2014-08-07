@@ -13,12 +13,5 @@ angular.module(directives.name).directive('editView', function () {
       buttonText: '=',
       createRecord: '&onCreate'
     }
-//    compile: function () {
-//      return {
-//        pre: function (scope) {
-//
-//        }
-//      };
-//    }
   };
 });

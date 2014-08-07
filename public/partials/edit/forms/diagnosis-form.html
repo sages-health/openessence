@@ -1,48 +1,36 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Diagnosis</h4>
+  <h4 class="modal-title" translate>New diagnosis</h4>
 </div>
 
 <div class="modal-body">
-  <form name="recordForm" class="form-horizontal" ng-submit="submit(recordForm)" novalidate>
-    <fieldset>
+  <form role="form" name="recordForm" class="form-horizontal" ng-submit="submit(recordForm)" novalidate>
+    <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+    <conflict-message ng-show="conflictError"></conflict-message>
 
-      <!-- TODO red text on white background instead of alert -->
-      <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
-      <conflict-message ng-show="conflictError"></conflict-message>
+    <!-- diagnosis name -->
+    <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || uniqueConstraintViolation}">
+      <label for="entry-diagnosis-name" translate>Name</label>
 
-      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || uniqueConstraintViolation}">
-        <label class="col-md-4 control-label" for="entry-diagnosis-name" translate>Name</label>
+      <!-- TODO rename data to record -->
+      <input class="form-control" id="entry-diagnosis-name" name="name" ng-model="data.name" required>
 
-        <div class="col-md-6">
-          <div class="input-group">
-            <input class="form-control" id="entry-diagnosis-name" name="name" ng-model="data.name" required>
-          </div>
-          <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
-            Please enter a valid Diagnosis name
-          </span>
-          <span class="help-block" ng-show="uniqueConstraintViolation">
-            <span translate>Sorry, this name is already in use</span>
-          </span>
-        </div>
-      </div>
-      <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.phoneId)}">
-        <label class="col-md-4 control-label" for="entry-diagnosis-phoneId" translate>Phone ID</label>
+      <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
+        Please enter a valid Diagnosis name
+      </span>
+      <span class="help-block" ng-show="uniqueConstraintViolation">
+        <span translate>Sorry, this name is already in use</span>
+      </span>
+    </div>
 
-        <div class="col-md-6">
-          <div class="input-group">
-            <input class="form-control" id="entry-diagnosis-phoneId" name="phoneId" ng-model="data.phoneId">
-          </div>
-          <span ng-show="isInvalid(recordForm.phoneId)" class="help-block" translate>
-            Please enter a valid Phone ID
-          </span>
-        </div>
-      </div>
-
-    </fieldset>
-
+    <!-- enabled TODO this UI isn't very good -->
+    <div class="form-group">
+      <label for="entry-diagnosis-enabled" translate>Enabled?</label>
+      <br>
+      <input type="checkbox" id="entry-diagnosis-enabled" ng-model="data.enabled">
+    </div>
   </form>
 </div>
-<div class="modal-footer"> <!-- TODO refactor into modalFooter directive -->
+<div class="modal-footer">
   <button class="btn btn-warning" ng-click="cancel()">
     <span class="icon-cancel"></span>
     <span translate>Cancel</span>

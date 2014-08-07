@@ -48,10 +48,7 @@
 
       <td data-title="strings.patientId" sortable="'patient.patientId'">{{visit._source.patient.patientId}}</td>
 
-      <!-- TODO this column has no business being here -->
-      <td data-title="strings.oeId" sortable="'oeId'">{{visit._source.oeId}}</td>
-
-      <!-- Edit controls, they're floated right to offset them from the rest of the table -->
+      <!-- Edit controls -->
       <td data-title="strings.edit">
         <div class="btn-group btn-group-xs edit-controls">
           <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
