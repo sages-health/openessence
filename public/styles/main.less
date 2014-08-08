@@ -22,8 +22,6 @@
 @import "tiles";
 @import "viz-menu";
 
-
-
 .navbar-brand {
   // Fix https://github.com/thomaspark/bootswatch/commit/5226a30d7df2eb15a06b9014507da767d205de30
   padding-top: 13px; // there's probably some magic formula that makes this work, but oh well
@@ -54,6 +52,10 @@ a[ng-click] {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
+}
+
+.pager a, .pager a:hover {
+  color: @gray-dark;
 }
 
 table[datepicker] {

@@ -12,12 +12,14 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
     template: require('./form.html'),
     transclude: true,
     scope: {
+      page: '=',
       onSubmit: '&',
       record: '=?' // to populate fields
     },
     compile: function () {
       return {
         pre: function (scope) {
+          scope.page = scope.page || 1;
           scope.record = scope.record || {};
           scope.visit = angular.copy(scope.record._source) || {};
 
@@ -83,6 +85,10 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
           });
 
           scope.isInvalid = function (field) {
+            if (!field) {
+              // this happens when you switch pages
+              return;
+            }
             if (scope.yellAtUser) {
               // if the user has already tried to submit, show them all the fields they're required to submit
               return field.$invalid;
@@ -117,7 +123,8 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
                 OutpatientVisit.get({_id: scope.record._id}, function (newData) {
                   scope.conflictError = true;
                   scope.record = newData;
-                  scope.visit = scope.buildVisit(scope.record._source);
+                  scope.visit = scope.record._source;
+                  scope.page = 1;
                 });
               }
             };
@@ -139,6 +146,20 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
               OutpatientVisit.save(scope.visit, cleanup, showError);
             }
           };
+
+          scope.$on('next-page', function () {
+            scope.yellAtUser = !!scope.visitForm.$invalid;
+            if (!scope.yellAtUser) {
+              scope.page++;
+            }
+          });
+
+          scope.$on('previous-page', function () {
+            scope.yellAtUser = !!scope.visitForm.$invalid;
+            if (!scope.yellAtUser) {
+              scope.page--;
+            }
+          });
 
           scope.$on('outpatientSave', function () {
             scope.submit(scope.visitForm);
