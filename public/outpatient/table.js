@@ -33,16 +33,6 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
             edit: gettextCatalog.getString('Edit')
           };
 
-          scope.printAggregate = function (field, includeCount) {
-            var print = [];
-            if (field) {
-              field.map(function (val) {
-                print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
-              });
-            }
-            return print.join(',');
-          };
-
           scope.editVisit = function (visit) {
             scope.$emit('outpatientEdit', visit);
           };

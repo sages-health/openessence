@@ -12,11 +12,13 @@
       </td>
       <td data-title="strings.symptoms">
         <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
-          {{printAggregate(visit._source.symptoms, true) | truncate:30}}</a>
+          {{visit._source.symptoms | pluck:'name' | join | truncate:30}}
+        </a>
       </td>
       <td data-title="strings.diagnoses">
         <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">
-          {{printAggregate(visit._source.diagnoses, true) | truncate:30}}</a>
+          {{visit._source.diagnoses | pluck:'name' | join | truncate:30}}
+        </a>
       </td>
       <td data-title="strings.syndromes">
         <a ng-click="tableFilter('syndromes', visit._source.syndromes)">
