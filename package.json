@@ -81,6 +81,7 @@
     "karma-mocha": "^0.1.4",
     "karma-phantomjs-launcher": "^0.1.4",
     "less": "~1.7.0",
+    "lesshat": "^3.0.2",
     "less-middleware": "^1.0.3",
     "mocha": "^1.20.1",
     "mock-fs": "~2.2.0",

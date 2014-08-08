@@ -14,7 +14,7 @@ gulp.task('styles', function () {
     .pipe(less({
       paths: ['bower_components', 'node_modules']
     }))
-    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
+    .pipe(autoprefixer('last 2 versions', 'safari 5', 'ie 9', 'ie 10', 'opera 12.1', 'ios 6', 'android 4'))
     .pipe(minifycss())
     .pipe(rev())
     .pipe(gulp.dest('dist/public/styles'));

@@ -13,6 +13,8 @@
 @import "../crosstab/crosstab";
 @import "../hinge/hinge";
 @import "../outpatient/fracas-charts";
+@import "variables";
+@import "mixins";
 @import "animations";
 @import "maps";
 @import "dashboard";
@@ -20,35 +22,7 @@
 @import "tiles";
 @import "viz-menu";
 
-// Reset some settings. Most of these are Bootstrap's defaults
 
-@navbar-border-radius: 0px; // border radius makes sense when nav has top margin, but not when it doesn't
-@navbar-height: 50px;
-
-@padding-base-vertical: 6px;
-@padding-base-horizontal: 12px;
-
-@padding-large-vertical: 10px;
-@padding-large-horizontal: 16px;
-
-@padding-small-vertical: 5px;
-@padding-small-horizontal: 10px;
-
-@pagination-color: @gray-dark;
-@pagination-bg: @gray-lighter;
-@pagination-border: #ddd;
-
-@pagination-hover-color: #fff;
-@pagination-hover-bg: @gray-light;
-@pagination-hover-border: #ddd;
-
-@pagination-active-color: #fff;
-@pagination-active-bg: @brand-primary;
-@pagination-active-border: @brand-primary;
-
-@pagination-disabled-color: @gray-light;
-@pagination-disabled-bg: #fff;
-@pagination-disabled-border: #ddd;
 
 .navbar-brand {
   // Fix https://github.com/thomaspark/bootswatch/commit/5226a30d7df2eb15a06b9014507da767d205de30
