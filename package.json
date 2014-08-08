@@ -124,12 +124,20 @@
     "jquery-ui": "./bower_components/fracas-jquery-ui/jquery-ui.js",
     "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js"
   },
-  "browser-libs": [
-    "jquery",
-    "humane-js",
-    "angular-loading-bar",
-    "leaflet"
-  ],
+  "browser-libs": {
+    "jquery": {
+      "parse": false
+    },
+    "humane-js": {
+      "parse": false
+    },
+    "angular-loading-bar": {
+      "parse": false
+    },
+    "leaflet": {
+      "parse": false
+    }
+  },
   "browserify-shim": {
     "angular": {
       "exports": "angular",

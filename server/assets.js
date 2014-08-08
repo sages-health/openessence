@@ -2,20 +2,37 @@
 
 var express = require('express');
 var env = require('./conf').env;
+var packageJson = require('../package.json');
+
+// Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention.
+// We need to have this list up front so we know what to add to libs.js
+// TODO dynamically generate this w/ a browserify transform
+var npmLibsForBrowser = packageJson['browser-libs'];
 
 /**
  * Returns a list of JavaScript packages that should be bundled together in libs.js.
  */
 exports.libs = function () {
-  var packageJson = require('../package.json');
   var bowerLibs = Object.keys(packageJson.browser);
+  return bowerLibs.concat(Object.keys(npmLibsForBrowser));
+};
 
-  // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention.
-  // We need to have this list up front so we know what to add to libs.js
-  // TODO dynamically generate this w/ a browserify transform
-  var npmLibsForBrowser = packageJson['browser-libs'];
-
-  return bowerLibs.concat(npmLibsForBrowser);
+/**
+ * Libs that don't have to be parsed by browserify, typically because they do not use require() or node-style globals.
+ * Not parsing such libs can shave a few seconds off the build.
+ * Note that shimmed libs MUST be parsed by browserify, since browserify-shim inserts require() calls into them.
+ * @returns Array of absolute filenames
+ */
+exports.noParseLibs = function () {
+  return Object.keys(npmLibsForBrowser)
+    .filter(function (lib) {
+      // set `"parse": true` in package.json if the lib should be parsed, e.g. because it loads dependencies via
+      // require()
+      return !npmLibsForBrowser[lib].parse;
+    })
+    .map(function (lib) {
+      return require.resolve(lib);
+    });
 };
 
 /**
@@ -31,8 +48,7 @@ exports.static = function () {
 
     var libs = exports.libs();
     app.use('/public/scripts/libs.js', browserify(libs, {
-      // can't use noParse with browserify-shim
-      // noParse: bowerLibs
+      noParse: exports.noParseLibs()
     }));
     app.use('/js/app.js', browserify(__dirname + '/../public/scripts/app.js', {
       // Make require('partial.html') work.

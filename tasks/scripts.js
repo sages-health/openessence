@@ -13,7 +13,9 @@ var footer = require('gulp-footer');
 var source = require('vinyl-source-stream');
 var path = require('path');
 var transformTools = require('browserify-transform-tools');
-var jsLibs = require('../server/assets').libs();
+var assets = require('../server/assets');
+var jsLibs = assets.libs();
+var noParseLibs = assets.noParseLibs();
 
 
 /**
@@ -48,7 +50,10 @@ gulp.task('partials', function () {
  * Build 3rd-party JavaScript libraries.
  */
 gulp.task('libs', function () {
-  var bundle = browserify();
+  var bundle = browserify({
+    noParse: noParseLibs
+  });
+
   jsLibs.forEach(function (lib) {
     bundle.require(lib);
   });
