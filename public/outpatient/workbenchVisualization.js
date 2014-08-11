@@ -3,11 +3,11 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('workbenchVisualization', function () {
+angular.module(directives.name).directive('workbenchVisualization', function ($timeout) {
   return {
     template: '<hinge visualization="visualization" pivot="pivot" options="pivotOptions" on-close="close()">' +
       '<outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString" filters="filters" options="options"></outpatient-visualization></hinge>',
-    restrict: 'E',
+    restrict: 'AE',
     scope: {
       visualization: '=?',
       pivot: '=?',
@@ -31,10 +31,33 @@ angular.module(directives.name).directive('workbenchVisualization', function () 
           scope.options = {
             width: element.width()
           };
-          scope.$watch('vizGrid.indexOfPlus()', function () {
-            scope.options = scope.options || {};
-            scope.options.width = element.width();
-            scope.options.height = 500;
+
+          scope.options.height = 500;
+
+          scope.$watch('vizGrid.length', function () {
+            console.log(element.parent().parent());
+            $timeout(function () {
+              scope.options = scope.options || {};
+              scope.options.width = element.parent().width();
+            });
+          });
+        },
+
+        post: function (scope, element) {
+          element.parent().resizable({
+            helper: 'ui-resizable-helper',
+            handles: 's',
+            stop: function (event, ui) {
+              scope.$apply(function () {
+                element.parent().css('width', '');
+                scope.options.height = ui.size.height - 125;
+                scope.options.width = ui.size.width;
+
+                if (scope.visualization.name === 'line') {
+                  scope.options.height -= 80;
+                }
+              });
+            }
           });
         }
       };

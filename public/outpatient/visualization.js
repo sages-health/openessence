@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisit, outpatientEditModal, outpatientDeleteModal, outpatientAggregation, visualization, $rootScope) {
+angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisit, outpatientEditModal, outpatientDeleteModal, outpatientAggregation, visualization, $rootScope, $timeout) {
 
   return {
     restrict: 'E',
@@ -17,7 +17,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
-      pre: function (scope) {
+      pre: function (scope, element) {
         scope.options = scope.options || {};
 
         scope.visualization = scope.visualization || scope.options.visualization || {
@@ -294,6 +294,34 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
         });
         scope.$watch('visualization.name', function () {
           reload();
+        });
+
+        scope.$watchCollection('[options.height, options.width, visualization.name]', function () {
+          if (scope.visualization.name !== 'table') {
+            return;
+          }
+          // TODO: Maybe this should be moved? All the other vizs handle resizing in their respective files
+          // Table doesn't have its own viz file
+
+          // Use a timer to prevent a gazillion table queries
+          if (scope.tableTimeout) {
+            $timeout.cancel(scope.tableTimeout);
+            scope.tableTimeout = null;
+          }
+          scope.tableTimeout = $timeout(function () {
+            // TODO: Could this be done w/out redoing the query? Just roll the results differently on the client or cache
+            var rowHeight = 34;
+            var rows = element.find('tbody tr');
+            angular.forEach(rows, function (row) {
+              var currRowHeight = angular.element(row).height();
+              rowHeight = currRowHeight > rowHeight ? currRowHeight : rowHeight;
+            });
+
+            var numRows = Math.floor((scope.options.height - 75) / rowHeight);
+            if (!isNaN(numRows)) {
+              scope.tableParams.parameters({count: numRows});
+            }
+          }, 25);
         });
 
         scope.$on('elementClick.directive', function (angularEvent, event) {

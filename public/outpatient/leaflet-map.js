@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
-angular.module(directives.name).directive('leafletMap', function ($q, District, OutpatientVisit) {
+angular.module(directives.name).directive('leafletMap', function ($q, District, OutpatientVisit, $timeout) {
 
   return {
     restrict: 'E',
@@ -154,8 +154,21 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
         });
       });
 
-      scope.$watch('options.width', function() {
+      scope.$watch('options.width', function () {
         map.invalidateSize();
+      });
+
+      scope.$watch('options.height', function () {
+        if (scope.timeId) {
+          $timeout.cancel(scope.timeId);
+          scope.timeId = null;
+        }
+        scope.timeId = $timeout(function () {
+          element.find('.map').css({
+            height: scope.options.height + 6
+          });
+          map.invalidateSize();
+        }, 200);
       });
     }
   };
