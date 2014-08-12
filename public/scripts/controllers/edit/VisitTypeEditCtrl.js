@@ -3,7 +3,8 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('VisitTypeEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, VisitType) {
+angular.module(controllers.name).controller('VisitTypeEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,
+                                                                           VisitTypeResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -33,7 +34,7 @@ angular.module(controllers.name).controller('VisitTypeEditCtrl', function ($scop
 
   $scope.editTemplate = require('../../../partials/edit/forms/visit-type-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = VisitType;
+  $scope.resource = VisitTypeResource;
   var options = {
     sorting: {'name.raw': 'asc'},
     queryString : $scope.queryString

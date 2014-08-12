@@ -7,7 +7,8 @@ var pluckName = function (r) {
   return r._source.name;
 };
 
-angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, tableUtil, crud, gettextCatalog, User, District) {
+angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, tableUtil, crud, gettextCatalog,
+                                                                      UserResource, DistrictResource) {
   $scope.filters = [
     {filterId: 'username'}
   ];
@@ -57,13 +58,13 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
   $scope.changePasswordTemplate = require('../../../partials/edit/forms/change-password-form.html');
   $scope.editTemplate = require('../../../partials/edit/forms/user-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = User;
+  $scope.resource = UserResource;
   var options = {
     sorting: {'username.raw': 'asc'},
     queryString: $scope.queryString
   };
   $scope.tableFilter = tableUtil.addFilter;
-  $scope.tableParams = tableUtil.tableParams(options, User);
+  $scope.tableParams = tableUtil.tableParams(options, UserResource);
 
   var reload = function () {
     options.queryString = $scope.queryString;
@@ -90,7 +91,7 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
     size: 100, // TODO search on demand if response indicates there are more records
     sort: 'name'
   };
-  District.get(searchParams, function (response) {
+  DistrictResource.get(searchParams, function (response) {
     editOptions.districts = response.results.map(pluckName);
   });
 

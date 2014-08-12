@@ -3,7 +3,8 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, District) {
+angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,
+                                                                          DistrictResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -32,7 +33,7 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
   };
   $scope.editTemplate = require('../../../partials/edit/forms/district-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = District;
+  $scope.resource = DistrictResource;
   var options = {
     sorting: {'name.raw': 'asc'},
     queryString: $scope.queryString

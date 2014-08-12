@@ -3,7 +3,8 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DischargeEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, Discharge) {
+angular.module(controllers.name).controller('DischargeEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,
+                                                                           DischargeResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -33,7 +34,7 @@ angular.module(controllers.name).controller('DischargeEditCtrl', function ($scop
 
   $scope.editTemplate = require('../../../partials/edit/forms/discharge-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = Discharge;
+  $scope.resource = DischargeResource;
   var options = {
     sorting: {'name.raw': 'asc'},
     queryString : $scope.queryString

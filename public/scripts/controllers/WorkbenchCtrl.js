@@ -4,7 +4,8 @@ var angular = require('angular');
 var controllers = require('../modules').controllers;
 
 angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $location, $timeout, gettextCatalog,
-                                                                       FracasGrid, Diagnosis, District, Symptom) {
+                                                                       DiagnosisResource, DistrictResource,
+                                                                       SymptomResource) {
   $scope.filters = [
     {
       filterId: 'date'
@@ -28,7 +29,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $
       type: 'multi-select',
       field: 'diagnoses.name',
       store: {
-        resource: Diagnosis,
+        resource: DiagnosisResource,
         field: 'name'
       },
       name: gettextCatalog.getString('Diagnoses')
@@ -38,7 +39,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $
       type: 'multi-select',
       field: 'medicalFacility.district',
       store: {
-        resource: District,
+        resource: DistrictResource,
         field: 'name'
       },
       name: gettextCatalog.getString('District')
@@ -54,7 +55,7 @@ angular.module(controllers.name).controller('WorkbenchCtrl', function ($scope, $
       type: 'multi-select',
       field: 'symptoms.name',
       store: {
-        resource: Symptom,
+        resource: SymptomResource,
         field: 'name'
       },
       name: gettextCatalog.getString('Symptom')

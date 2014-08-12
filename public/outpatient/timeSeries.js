@@ -4,7 +4,9 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', function (gettextCatalog, outpatientAggregation, visualization, OutpatientVisit, $window, $timeout) {
+angular.module(directives.name).directive('outpatientTimeSeries', function ($timeout, $window, gettextCatalog,
+                                                                            outpatientAggregation, visualization,
+                                                                            OutpatientVisitResource) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
@@ -166,7 +168,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function (gett
               aggs.date = dateAgg;
             }
 
-            OutpatientVisit.search({
+            OutpatientVisitResource.search({
               q: scope.queryString,
               size: 0, // we only want aggregations
               aggs: aggs

@@ -4,7 +4,8 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
-angular.module(directives.name).directive('leafletMap', function ($q, District, OutpatientVisit, $timeout) {
+angular.module(directives.name).directive('leafletMap', function ($q, DistrictResource, OutpatientVisitResource,
+                                                                  $timeout) {
 
   return {
     restrict: 'E',
@@ -63,7 +64,7 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
         var deferred = $q.defer();
 
         // could also use $http's promise, but I can never figure out ngResource's API
-        District.get({
+        DistrictResource.get({
           size: 9999
         }, function (response) {
           var layers = {}; // map of District name -> layer
@@ -131,7 +132,7 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
       var polys = getLayerPolys();
 
       scope.$watch('queryString', function (queryString) {
-        OutpatientVisit.search({
+        OutpatientVisitResource.search({
           q: queryString,
           aggregations: {
             district: {

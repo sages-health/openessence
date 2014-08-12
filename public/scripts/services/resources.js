@@ -1,24 +1,15 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../scripts/modules').services;
+var services = require('../modules').services;
 
-// TODO rename resources to resource + 'Resource'
 [
-  'Diagnosis',
-  'Discharge',
-  {resource: 'OutpatientVisit', url: 'outpatient-visit'}, // a change-case module would be so great here
-  'Symptom',
-  'Syndrome',
-  {resource: 'VisitType', url: 'visit-type'}
+  'Dashboard',
+  'District',
+  'User',
+  'Workbench'
 ].forEach(function (resourceName) {
-    var resourceUrl;
-    if (!angular.isString(resourceName)) {
-      resourceUrl = '/resources/' + resourceName.url;
-      resourceName = resourceName.resource;
-    } else {
-      resourceUrl = '/resources/' + resourceName.toLowerCase();
-    }
+    var resourceUrl = '/resources/' + resourceName.toLowerCase();
     return angular.module(services.name).factory(resourceName + 'Resource', function ($resource) {
       return $resource(resourceUrl + '/:_id',
         {

@@ -4,7 +4,8 @@ var angular = require('angular');
 var controllers = require('../modules').controllers;
 
 angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, appName, user,
-                                                                  visitsReportModal, Dashboard, DashboardResource) {
+                                                                  visitsReportModal, Dashboard, DashboardResource,
+                                                                  WorkbenchResource) {
   $scope.visitsReport = function () {
     visitsReportModal.open();
   };
@@ -39,4 +40,7 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
       };
     });
   });
+
+  $scope.workbenches = [];
+
 });

@@ -3,7 +3,9 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', function (gettextCatalog, orderByFilter, FrableParams, OutpatientVisit, sortString, $rootScope) {
+angular.module(directives.name).directive('outpatientTable', function ($rootScope, gettextCatalog, orderByFilter,
+                                                                       FrableParams, OutpatientVisitResource,
+                                                                       sortString) {
   return {
     restrict: 'E',
     template: require('./table.html'),
@@ -66,7 +68,7 @@ angular.module(directives.name).directive('outpatientTable', function (gettextCa
                   return;
                 }
 
-                OutpatientVisit.get(
+                OutpatientVisitResource.get(
                   {
                     q: scope.queryString,
                     from: (params.page() - 1) * params.count(),

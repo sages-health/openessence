@@ -5,7 +5,7 @@ var controllers = require('../../modules').controllers;
 
 angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, $modal, crud, tableUtil,
                                                                            gettextCatalog, sortString, FrableParams,
-                                                                           Diagnosis) {
+                                                                           DiagnosisResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -29,7 +29,7 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
   $scope.diagnoses = {};
   $scope.toggleEnabled = function (diagnosisName) {
     var diagnosis = $scope.diagnoses[diagnosisName];
-    Diagnosis.update({_id: diagnosis._id, version: diagnosis._version}, diagnosis._source, function (response) {
+    DiagnosisResource.update({_id: diagnosis._id, version: diagnosis._version}, diagnosis._source, function (response) {
       // update version so user can edit again
       diagnosis._version = response._version;
     });
@@ -52,7 +52,7 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
         return;
       }
 
-      Diagnosis.get({
+      DiagnosisResource.get({
         q: $scope.queryString,
         from: (params.page() - 1) * params.count(),
         size: params.count(),
@@ -75,7 +75,7 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
 
   $scope.$watch('queryString', reload);
   $scope.createRecord = function () {
-    crud.open(null, Diagnosis, require('../../../partials/edit/forms/diagnosis-form.html')).result.then(reload);
+    crud.open(null, DiagnosisResource, require('../../../partials/edit/forms/diagnosis-form.html')).result.then(reload);
   };
 
   $scope.deleteRecord = function (record) {
@@ -84,7 +84,7 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.diagnosis  = record._source.name;
         $scope['delete'] = function () {
-          Diagnosis.remove({_id: record._id}, function () {
+          DiagnosisResource.remove({_id: record._id}, function () {
             $modalInstance.close(record);
           });
         };

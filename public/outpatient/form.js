@@ -6,7 +6,9 @@ var directives = require('../scripts/modules').directives;
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientForm', function (gettextCatalog, OutpatientVisit, District, Diagnosis, Symptom) {
+angular.module(directives.name).directive('outpatientForm', function (gettextCatalog, OutpatientVisitResource,
+                                                                      DistrictResource, DiagnosisResource,
+                                                                      SymptomResource) {
   return {
     restrict: 'E',
     template: require('./form.html'),
@@ -52,7 +54,7 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
             }, {});
           };
 
-          District.get({size: 9999, sort: 'name'}, function (response) {
+          DistrictResource.get({size: 9999, sort: 'name'}, function (response) {
             var districtIndex = makeIndex(response.results);
 
             // add any districts that are on this record, but not in the ref table, so they show up when you edit the
@@ -63,7 +65,7 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
 
             scope.districts = Object.keys(districtIndex);
           });
-          Symptom.get(searchParams, function (response) {
+          SymptomResource.get(searchParams, function (response) {
             var symptomIndex = makeIndex(response.results);
             if (scope.visit.symptoms) {
               scope.visit.symptoms.forEach(function (symptom) {
@@ -73,7 +75,7 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
 
             scope.symptoms = Object.keys(symptomIndex);
           });
-          Diagnosis.get(searchParams, function (response) {
+          DiagnosisResource.get(searchParams, function (response) {
             var diagnosisIndex = makeIndex(response.results);
             if (scope.visit.diagnoses) {
               scope.visit.diagnoses.forEach(function (diagnosis) {
@@ -120,7 +122,7 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
               // if someone else has updated this record before you hit save
               if (data.status === 409) {
                 // Get latest record data and update form
-                OutpatientVisit.get({_id: scope.record._id}, function (newData) {
+                OutpatientVisitResource.get({_id: scope.record._id}, function (newData) {
                   scope.conflictError = true;
                   scope.record = newData;
                   scope.visit = scope.record._source;
@@ -138,12 +140,12 @@ angular.module(directives.name).directive('outpatientForm', function (gettextCat
             }) : [];
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
-              OutpatientVisit.update({
+              OutpatientVisitResource.update({
                 _id: scope.record._id,
                 version: scope.record._version
               }, scope.visit, cleanup, showError);
             } else {
-              OutpatientVisit.save(scope.visit, cleanup, showError);
+              OutpatientVisitResource.save(scope.visit, cleanup, showError);
             }
           };
 

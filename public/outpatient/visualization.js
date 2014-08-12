@@ -3,7 +3,13 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisit, outpatientEditModal, outpatientDeleteModal, outpatientAggregation, visualization, $rootScope, $timeout) {
+angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, $rootScope, $timeout,
+                                                                               orderByFilter, gettextCatalog,
+                                                                               sortString, FrableParams,
+                                                                               OutpatientVisitResource,
+                                                                               outpatientEditModal,
+                                                                               outpatientDeleteModal,
+                                                                               outpatientAggregation, visualization) {
 
   return {
     restrict: 'E',
@@ -193,7 +199,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           var cols = angular.copy(scope.pivot.cols);
           var rows = angular.copy(scope.pivot.rows);
           //query the new data for aggregations
-          OutpatientVisit.search({
+          OutpatientVisitResource.search({
             size: 0,
             q: scope.queryString,
             aggregations: buildAggregationQuery(cols, rows)
@@ -213,7 +219,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             aggReload();
           } else if (scope.visualization.name === 'crosstab') {
             // TODO do this via aggregation
-            OutpatientVisit.get({
+            OutpatientVisitResource.get({
               size: 999999,
               q: scope.queryString
             }, function (data) {
@@ -269,7 +275,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               return;
             }
 
-            OutpatientVisit.get({
+            OutpatientVisitResource.get({
               q: scope.queryString,
               from: (params.page() - 1) * params.count(),
               size: params.count(),

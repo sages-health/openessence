@@ -53,7 +53,7 @@ angular.module(services.name).factory('outpatientEditModal', function ($modal) {
   };
 });
 
-angular.module(services.name).factory('outpatientDeleteModal', function ($modal, OutpatientVisit) {
+angular.module(services.name).factory('outpatientDeleteModal', function ($modal, OutpatientVisitResource) {
   return {
     open: function (options) {
       options = angular.extend({
@@ -62,7 +62,7 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
           $scope.record = record;
 
           $scope.delete = function () {
-            OutpatientVisit.remove({_id: record._id}, function () {
+            OutpatientVisitResource.remove({_id: record._id}, function () {
               $modalInstance.close(record);
             });
           };
@@ -82,9 +82,10 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
   };
 });
 
-angular.module(controllers.name).controller('OutpatientEditCtrl', function ($scope, $modal, outpatientEditModal, //
+angular.module(controllers.name).controller('OutpatientEditCtrl', function ($scope, $modal, outpatientEditModal,
                                                                             gettextCatalog, outpatientDeleteModal,
-                                                                            Diagnosis, District, Symptom) {
+                                                                            DiagnosisResource, DistrictResource,
+                                                                            SymptomResource) {
   $scope.filters = [
     {
       filterId: 'date'
@@ -108,7 +109,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
       type: 'multi-select',
       field: 'diagnoses.name',
       store: {
-        resource: Diagnosis,
+        resource: DiagnosisResource,
         field: 'name'
       },
       name: gettextCatalog.getString('Diagnoses')
@@ -118,7 +119,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
       type: 'multi-select',
       field: 'medicalFacility.district',
       store: {
-        resource: District,
+        resource: DistrictResource,
         field: 'name'
       },
       name: gettextCatalog.getString('District')
@@ -134,7 +135,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
       type: 'multi-select',
       field: 'symptoms.name',
       store: {
-        resource: Symptom,
+        resource: SymptomResource,
         field: 'name'
       },
       name: gettextCatalog.getString('Symptom')

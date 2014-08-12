@@ -3,7 +3,8 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, Symptom) {
+angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,
+                                                                         SymptomResource) {
 
   $scope.filters = [
     {filterId: 'name'}
@@ -33,7 +34,7 @@ angular.module(controllers.name).controller('SymptomEditCtrl', function ($scope,
   };
   $scope.editTemplate = require('../../../partials/edit/forms/symptom-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = Symptom;
+  $scope.resource = SymptomResource;
   var options = {
     sorting: {'name.raw': 'asc'},
     queryString: $scope.queryString
