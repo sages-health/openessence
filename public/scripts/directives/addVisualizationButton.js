@@ -67,6 +67,12 @@ angular.module(directives.name).directive('addVisualizationButton', function ($c
           };
 
           scope.$watchCollection('[menuOpen, menuPosition]', placeMenu);
+          scope.$watchCollection(function () {
+            // Move popover whenever button moves. Note that this will only work if moving the button causes a digest
+            // to occur. This is usually the case when the button moves because of user interaction, e.g. clicking the
+            // "Add Filter" button, but may not always hold.
+            return $position.position(button);
+          }, placeMenu);
 
           var onWindowResize = debounce(placeMenu, 10);
           var windowEl = angular.element($window);
