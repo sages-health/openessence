@@ -1,19 +1,20 @@
 'use strict';
 
-module.exports = {
-  login: require('./LoginCtrl'),
-  main: require('./MainCtrl'),
-  notFound: require('./NotFoundCtrl'),
-  relogin: require('./ReloginCtrl'),
-  report: require('./ReportCtrl'),
-  reportVisitsWindow: require('./reports/VisitsReportCtrl'),
-  workbench: require('./WorkbenchCtrl'),
-  dashboardEdit: require('./edit/DashboardEditCtrl'),
-  districtEdit: require('./edit/DistrictEditCtrl') ,
-  symptomEdit: require('./edit/SymptomEditCtrl')  ,
-  diagnosisEdit: require('./edit/DiagnosisEditCtrl'),
-  syndromeEdit: require('./edit/SyndromeEditCtrl'),
-  dischargeEdit: require('./edit/DischargeEditCtrl'),
-  visitTypeEdit: require('./edit/VisitTypeEditCtrl'),
-  userEdit: require('./edit/UserEditCtrl')
-};
+require('./edit/DashboardEditCtrl');
+require('./edit/DiagnosisEditCtrl');
+require('./edit/DischargeEditCtrl');
+require('./edit/DistrictEditCtrl') ;
+require('./edit/SymptomEditCtrl')  ;
+require('./edit/SyndromeEditCtrl');
+require('./edit/UserEditCtrl');
+require('./edit/VisitTypeEditCtrl');
+require('./edit/WorkbenchEditCtrl');
+
+require('./reports/VisitsReportCtrl');
+
+require('./LoginCtrl');
+require('./MainCtrl');
+require('./NotFoundCtrl');
+require('./ReloginCtrl');
+require('./ReportCtrl');
+require('./WorkbenchCtrl');
