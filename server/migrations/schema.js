@@ -461,8 +461,22 @@ var indexRequests = [
       index: 'visualization',
       body: {
         mappings: {
-          // TODO mimic workbench schema
-          visualization: addPaperTrail({})
+          visualization: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              state: {
+                type: 'object'
+              }
+            }
+          })
         }
       }
     }, callback);

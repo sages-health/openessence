@@ -28,8 +28,7 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
             var date1 = new Date(start);
             var date2 = new Date(end);
             var timeDiff = Math.abs(date2.getTime() - date1.getTime());
-            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            return diffDays;
+            return Math.ceil(timeDiff / (1000 * 3600 * 24));
           };
 
           //set dashboard data and make the date window rolling
@@ -48,7 +47,6 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
                 var end = new Date();
                 scope.dashboard.widgets[i].content.filters.from = start;
                 scope.dashboard.widgets[i].content.filters.to = end;
-                console.log(scope.dashboard);
               }
             });
           } else {
@@ -58,13 +56,12 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
             };
           }
 
-//          console.log(scope.dateFilters);
-
           scope.addWidget = function () {
             // TODO we don't need a modal with a single field
             $modal.open({
               template: require('./add-widget.html'),
               controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+                // TODO this will only bring back 10 visualizations, we need paging
                 visualization.resource.get(function (visualizations) {
                   $scope.visualizations = visualizations.results;
                 });
@@ -93,7 +90,7 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
                   name: widget.visualization.name,
                   sizeX: 10,
                   sizeY: 10,
-                  content: widget.visualization
+                  content: widget.visualization.state
                 });
               });
           };

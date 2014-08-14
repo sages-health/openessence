@@ -41,9 +41,10 @@ angular.module(services.name).factory('visualization', function ($resource, $mod
       })
         .result
         .then(function (name) {
-          new Visualization(angular.extend({}, state, {
-            name: name
-          }))
+          new Visualization({
+            name: name,
+            state: state
+          })
             .$save();
         });
     }
