@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope, gettextCatalog, FracasGrid, $window, visualization, user, dateFilter) {
+angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope, gettextCatalog, $window, visualization, user, dateFilter) {
   $scope.someText = '';
   $scope.user = user.getUser();
   $scope.today = (new Date()).toString();

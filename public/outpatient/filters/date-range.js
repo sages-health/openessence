@@ -19,13 +19,6 @@ angular.module(directives.name).directive('outpatientDateRangeFilter', function 
           end: gettextCatalog.getString('End')
         };
 
-        // TODO get rid of row and col from filter (but might be useful to see if filter has been added to panel yet)
-        if (scope.filter.row === 0 && scope.filter.col === 0 && !scope.filter.from && !scope.filter.to) {
-          var now = new Date();
-          now.setDate(now.getDate() - 90); // 90 days back
-          scope.filter.from = now; // match elasticsearch terminology
-          scope.filter.to = new Date();
-        }
         if (scope.filter.value) {
           scope.filter.from = scope.filter.value;
           scope.filter.to = scope.filter.value;

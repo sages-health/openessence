@@ -461,7 +461,34 @@ var indexRequests = [
       index: 'visualization',
       body: {
         mappings: {
+          // TODO mimic workbench schema
           visualization: addPaperTrail({})
+        }
+      }
+    }, callback);
+  },
+
+  function workbench (callback) {
+    client.indices.create({
+      index: 'workbench',
+      body: {
+        mappings: {
+          workbench: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              state: {
+                type: 'object'
+              }
+            }
+          })
         }
       }
     }, callback);

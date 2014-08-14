@@ -3,7 +3,6 @@
 var angular = require('angular');
 var services = require('../scripts/modules').services;
 
-// TODO rename resources to resource + 'Resource'
 [
   'Diagnosis',
   'Discharge',

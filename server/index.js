@@ -129,6 +129,7 @@ app.use(auth.passport.session());
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));
 
+// TODO rename /api and include version in URL
 app.use('/resources', express()
   .use(auth.denyAnonymousAccess)
   .use(require('./resources')()));

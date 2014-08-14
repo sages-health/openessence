@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Save this workbench</h4>
+</div>
+<div class="modal-body">
+  <form role="form" novalidate name="workbenchForm">
+    <div class="form-group" ng-class="{'has-error': yellAtUser}">
+      <label for="save-workbench-name" translate>Name</label>
+      <input type="text" class="form-control" id="save-workbench-name" name="name" ng-model="workbench.name" required>
+
+      <div class="help-block" ng-show="yellAtUser" translate>
+        Please name this workbench
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="save(workbenchForm)">
+    <span class="icon-ok"></span>
+    <span translate>Save</span>
+  </button>
+</div>

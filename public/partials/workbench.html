@@ -1,14 +1,22 @@
 <div class="container-fluid">
   <outpatient-filters-grid filters="filters" filter-types="filterTypes" query-string="queryString">
+    <!-- TODO this button is in a weird place -->
+    <div class="col-md-1 pull-right">
+      <button class="btn btn-success" tooltip="{{strings.saveTooltip}}" ng-click="saveWorkbench()">
+        <span class="icon-floppy"></span>
+        <span translate>Save</span>
+      </button>
+    </div>
   </outpatient-filters-grid>
 </div>
 
 <!-- visualizations-->
 <div class="container-fluid">
   <div class="row">
-    <div ui-sortable="sortableOptions" ng-model="vizGrid">
-      <div ng-class="{'col-md-6': !$last || !$even, 'col-md-11': $last && $even}" ng-repeat="viz in vizGrid" ng-include
-           src="'workbench.html'"></div>
+    <div ui-sortable="sortableOptions" ng-model="visualizations">
+      <!-- TODO set min-height (maybe max of height of each viz?) on this so add button is placed correctly -->
+      <div class="workbench-sortable" ng-class="{'col-md-6': !$last || !$even, 'col-md-11': $last && $even}"
+           ng-repeat="viz in visualizations" ng-include src="'workbench.html'"></div>
       <add-visualization-button button-classes="{'center-block': centerPlus}"
                                 menu-position="menuPosition" menu-open="vizMenuOpen">
         <span class="icon-plus"></span>

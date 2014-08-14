@@ -53,10 +53,6 @@ app.config(function ($httpProvider, csrfToken) {
   });
 });
 
-app.run(function ($templateCache) {
-  $templateCache.put('workbench.html', '<workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="filters" on-close="removeVisualization(viz)" viz-grid="vizGrid" visualization="viz.visualization" pivot="viz.pivot" ></workbench-visualization>');
-});
-
 app.config(function (cfpLoadingBarProvider) {
   // what's the point of having a spinner when we already have a loading bar?
   cfpLoadingBarProvider.includeSpinner = false;
@@ -134,7 +130,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       controller: 'LoginCtrl'
     })
     .state('workbench', {
-      url: '/workbench',
+      url: '/workbench/:workbenchId',
       template: require('../partials/workbench.html'),
       controller: 'WorkbenchCtrl',
       parent: 'home'

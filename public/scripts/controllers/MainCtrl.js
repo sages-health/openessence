@@ -29,18 +29,34 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
   $scope.openDashboard = Dashboard.openModal;
 
   $scope.dashboards = [];
-  DashboardResource.get({
-    sort: 'name',
-    size: 15
-  }, function (response) {
-    $scope.dashboards = response.results.map(function (r) {
-      return {
-        id: r._id,
-        name: r._source.name
-      };
+  $scope.loadDashboards = function () {
+    DashboardResource.get({
+      sort: 'name',
+      size: 5
+    }, function (response) {
+      $scope.dashboards = response.results.map(function (r) {
+        return {
+          id: r._id,
+          name: r._source.name
+        };
+      });
     });
-  });
+  };
 
   $scope.workbenches = [];
+  $scope.loadWorkbenches = function () {
+    WorkbenchResource.get({
+      sort: 'name',
+      size: 5
+    }, function (response) {
+      $scope.workbenches = response.results;
+
+      // save set of workbenches indexed by their IDs
+      $window.sessionStorage.setItem('workbenches', JSON.stringify($scope.workbenches.reduce(function (prev, current) {
+        prev[current._id] = current;
+        return prev;
+      }, {})));
+    });
+  };
 
 });

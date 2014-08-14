@@ -16,7 +16,12 @@
 
         <!-- Dashboard -->
         <li class="dropdown"> <!-- TODO active -->
-          <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-gauge"></span></a>
+          <!-- Delay loading items until we need them. This prevents Ajax spam every time you load the page, and means
+               that the list of items will always be up to date. This should really fire on mousenter so that the query
+               runs even earlier, but that doesn't work on mobile. -->
+          <a class="dropdown-toggle" data-toggle="dropdown" ng-click="loadDashboards()">
+            <span class="icon-gauge"></span>
+          </a>
           <ul class="dropdown-menu">
             <li><a ui-sref="dashboard({dashboardId: ''})" translate>New dashboard</a></li>
             <li><a ng-click="openDashboard()" translate>Open dashboard</a></li>
@@ -24,21 +29,36 @@
             <!-- TODO get rid of this and fold functionality into dashboard view  -->
             <li><a ui-sref="edit.dashboard" translate>Manage dashboards</a></li>
 
-            <li role="presentation" class="divider" ng-show="user.isAdmin() && dashboards.length > 0"></li>
+            <li role="presentation" class="divider" ng-show="dashboards.length > 0"></li>
             <!-- We don't actually show the most recent dashboards, but oh well -->
             <li role="presentation" class="dropdown-header" translate>Recent dashboards</li>
-            <li data-ng-repeat="dashboard in dashboards">
+            <!-- TODO show spinner while we're loading the dashboards -->
+            <li ng-repeat="dashboard in dashboards | limitTo:5">
               <a ui-sref="dashboard({dashboardId:'{{dashboard.id}}'})">{{dashboard.name}}</a>
             </li>
           </ul>
         </li>
 
         <!-- Workbench -->
-        <li ui-sref-active="active">
-          <a class="icon-chart-bar" ui-sref="workbench"></a>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" ng-click="loadWorkbenches()">
+            <span class="icon-chart-bar"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a ui-sref="workbench" translate>New workbench</a></li>
+            <li><a translate>Open workbench</a></li>
+            <li><a translate>Manage workbenches</a></li>
+
+            <li role="presentation" class="divider" ng-show="workbenches.length > 0"></li>
+            <!-- We don't actually show the most recent workbenches, but oh well -->
+            <li role="presentation" class="dropdown-header" translate>Recent workbenches</li>
+            <li ng-repeat="workbench in workbenches | limitTo:5">
+              <a ui-sref="workbench({workbenchId:'{{workbench._id}}'})">{{workbench._source.name}}</a>
+            </li>
+          </ul>
         </li>
 
-        <!-- Open -->
+        <!-- Open TODO make this reports -->
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-folder-open"></span></a>
           <ul class="dropdown-menu">
@@ -52,6 +72,7 @@
         <li class="dropdown" ng-show="user.isDataEnterer() || user.isAdmin()">
           <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-pencil"></span></a>
           <ul class="dropdown-menu">
+            <li role="presentation" class="dropdown-header" translate>Edit</li>
             <!-- TODO define this in outpatient module -->
             <li><a ui-sref="edit.visit" translate>Outpatient visits</a></li>
             <li role="presentation" class="divider" ng-show="user.isAdmin()"></li>

@@ -3,7 +3,7 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-angular.module(services.name).factory('visualization', function ($resource, $modal) {
+angular.module(services.name).factory('visualization', function ($resource, $modal, scopeToJson) {
   var Visualization = $resource('/resources/visualization/:_id',
     {
       _id: '@_id'
@@ -15,15 +15,10 @@ angular.module(services.name).factory('visualization', function ($resource, $mod
     });
 
   return {
+    // TODO move this to services/resources
     resource: Visualization,
-    state: function (scope) {
-      return Object.keys(scope).reduce(function (prev, current) {
-        if (!/^\$/.test(current) && current !== 'this' && !angular.isFunction(scope[current])) {
-          prev[current] = scope[current];
-        }
-        return prev;
-      }, {});
-    },
+
+    state: scopeToJson, // useful abstraction in case we need to introduce custom logic into saving visualizations
 
     save: function (state) {
       $modal.open({

@@ -144,6 +144,7 @@ function Controller (Model, options) {
         return next(err);
       }
 
+      // TODO refresh if &refresh=true, requires queuing writes to prevent DOSing
       var model = controller.Model.fromElasticsearchRequest(esRequest);
       model.insert(esRequest, function (err, esResponse) {
         if (err) {
