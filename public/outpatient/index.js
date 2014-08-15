@@ -7,7 +7,7 @@ module.exports = {
   leafletMap: require('./leaflet-map'),
   resource: require('./resource'),
   table: require('./table'),
-  timeSeries: require('./timeSeries'),
+  timeSeries: require('./fracasTimeSeries'),
   visualization: require('./visualization'),
   workbenchVisualization: require('./workbenchVisualization'),
   pieChart: require('./fracasPieChart.js'),

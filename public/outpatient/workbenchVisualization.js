@@ -38,6 +38,10 @@ angular.module(directives.name).directive('workbenchVisualization', function ($t
             $timeout(function () {
               scope.options = scope.options || {};
               scope.options.width = element.parent().width();
+
+              if (scope.visualization.name === 'line') {
+                scope.width = scope.options.width -= 50;
+              }
             });
           });
         },
@@ -54,6 +58,7 @@ angular.module(directives.name).directive('workbenchVisualization', function ($t
 
                 if (scope.visualization.name === 'line') {
                   scope.options.height -= 80;
+                  scope.width = scope.options.width -= 50;
                 }
               });
             }
