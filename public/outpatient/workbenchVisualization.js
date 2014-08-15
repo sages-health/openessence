@@ -35,7 +35,6 @@ angular.module(directives.name).directive('workbenchVisualization', function ($t
           scope.options.height = 500;
 
           scope.$watch('vizGrid.length', function () {
-            console.log(element.parent().parent());
             $timeout(function () {
               scope.options = scope.options || {};
               scope.options.width = element.parent().width();

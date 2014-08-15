@@ -20,41 +20,35 @@ angular.module(controllers.name).controller('WidgetSettingsCtrl', function ($sco
     return diffDays;
   };
 
-  //the date window is made rolling in dashboard.js
-  //creating a date filter if there is not one already, if there is use that one
-  if (dateFilters.length === 0) {
-    var now = new Date();
-    now.setDate(now.getDate() - 90); // 90 days back
-    $scope.filter.from = now;
-    $scope.filter.to = new Date();
-    var start = dateFilter($scope.filter.from, dateFormat)  || '*';
-    var end = dateFilter($scope.filter.to, dateFormat)  || '*';
-    $scope.filter.from = start;
-    $scope.filter.to = end;
-    $scope.interval = getDaysDifference($scope.filter.from, $scope.filter.to);
-  } else {
-    $scope.filter.from = dateFilters[0].from;
-    $scope.filter.to = dateFilters[0].to;
-    $scope.interval = getDaysDifference($scope.filter.from, $scope.filter.to);
-  }
-
   $scope.form = {
     name: widget.name,
     visualization: widget.visualization
   };
 
-  var toQueryString = function (start, end) {
+  var getQueryString = function (queryString, start, end) {
+    var index = queryString.indexOf('reportDate');
+    var returnQuery;
     start = dateFilter(start, dateFormat)  || '*';
     end = dateFilter(end, dateFormat)  || '*';
-    $scope.filter.from = start;
-    $scope.filter.to = end;
-    $scope.dateString = 'reportDate: [' + start + ' TO ' + end + ']';
-    return $scope.dateString;
+    if (index === -1) {
+      if (queryString.length > 0) {
+        returnQuery = queryString + ' AND reportDate: [' + start + ' TO ' + end + ']';
+      } else {
+        returnQuery = queryString + 'reportDate: [' + start + ' TO ' + end + ']';
+      }
+    } else {
+      var regexp = /\w+\:\s\[\d+\-\d+\-\d+\s\w+\s\d+\-\d+\-\d+\]/;
+      returnQuery = queryString.replace(regexp, 'reportDate: [' + start + ' TO ' + end + ']');
+    }
+    return returnQuery;
   };
 
+  //the date window is made rolling in dashboard.js
   //setting the end date to today and adjusting the start date
+  //look in dashboard.js for description of how date interval in the dashboard works
+  var interval = getDaysDifference(dateFilters[0].from, dateFilters[0].to);
   var now2 = new Date();
-  now2.setDate(now2.getDate() - $scope.interval);
+  now2.setDate(now2.getDate() - interval);
   $scope.filter.from = now2;
   $scope.filter.to = new Date();
 
@@ -64,21 +58,14 @@ angular.module(controllers.name).controller('WidgetSettingsCtrl', function ($sco
 
   //where we assign the new dates to the filters and the queryString
   $scope.submit = function () {
-    $scope.queryString = toQueryString($scope.filter.from, $scope.filter.to);
+    $scope.queryString = getQueryString(widget.content.queryString, $scope.filter.from, $scope.filter.to);
     widget.content.queryString = $scope.queryString;
+    var i = widget.content.filters.indexOf(dateFilters[0]);
 
-    if (dateFilters.length > 0) {
-      var i = widget.content.filters.indexOf(dateFilters[0]);
-      widget.content.filters[i].from = $scope.filter.from;
-      widget.content.filters[i].to = $scope.filter.to;
-    } else {
-      widget.content.filters.push({
-        from: $scope.filter.from,
-        to:$scope.filter.to,
-        queryString: $scope.queryString,
-        type: 'date-range'
-      });
-    }
+    widget.content.filters[i].from = $scope.filter.from;
+    widget.content.filters[i].to = $scope.filter.to;
+    widget.content.filters[i].queryString = $scope.queryString;
+
     angular.extend(widget, $scope.form);
 
     $modalInstance.close(widget);

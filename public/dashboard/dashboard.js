@@ -3,7 +3,8 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('dashboard', function (gettextCatalog, $modal, visualization, Dashboard, $location) {
+angular.module(directives.name).directive('dashboard', function (gettextCatalog, $modal, visualization, Dashboard,
+                                                                 $location, dateFilter) {
   return {
     restrict: 'E',
     template: require('./dashboard.html'),
@@ -24,6 +25,14 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
             }
           };
 
+          /**
+           * The dashboard date window is a rolling window that calculates the difference in the start
+           * and the end dates that a user sets and creates a date interval starting from today going "x" number of days
+           * back. This is done automatically every time a saved dashboard is open, and when a new widget is added. When
+           * the date interval is changed the widget reflects the current interval change but then reverts to the rolling
+           * configuration of "x" number of days back from today depending on the the new date range that was selected.
+           */
+
           var getDaysDifference = function (start, end){
             var date1 = new Date(start);
             var date2 = new Date(end);
@@ -32,23 +41,47 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
             return diffDays;
           };
 
+          var getQueryString = function (queryString, start, end) {
+            var index = queryString.indexOf('reportDate');
+            var returnQuery;
+            var dateFormat = 'yyyy-MM-dd';
+            start = dateFilter(start, dateFormat)  || '*';
+            end = dateFilter(end, dateFormat)  || '*';
+            if (index === -1) {
+              if (queryString.length > 0) {
+                returnQuery = queryString + ' AND reportDate: [' + start + ' TO ' + end + ']';
+              } else {
+                returnQuery = queryString + 'reportDate: [' + start + ' TO ' + end + ']';
+              }
+            } else {
+              var regexp = /\w+\:\s\[\d+\-\d+\-\d+\s\w+\s\d+\-\d+\-\d+\]/;
+              returnQuery = queryString.replace(regexp, 'reportDate: [' + start + ' TO ' + end + ']');
+            }
+            return returnQuery;
+          };
+
+          var checkFilters = function (f) {
+            return f.type === 'date-range';
+          };
+
           //set dashboard data and make the date window rolling
           if (scope.dashboardId) {
             Dashboard.get(scope.dashboardId, function (data) {
               scope.dashboard = data._source;
-              var anonymous = function (f) {
-                return f.type === 'date-range';
-              };
+
               for (var i =0; i < scope.dashboard.widgets.length; i++) {
-                scope.dateFilters = scope.dashboard.widgets[i].content.filters.filter(anonymous);
-                scope.interval = getDaysDifference(scope.dateFilters[0].from, scope.dateFilters[0].to);
-                var now = new Date();
-                now.setDate(now.getDate() - scope.interval);
-                var start = now;
+                var dateFilters = scope.dashboard.widgets[i].content.filters.filter(checkFilters);
+                var interval = getDaysDifference(dateFilters[0].from, dateFilters[0].to);
+                var x = scope.dashboard.widgets[i].content.filters.indexOf(dateFilters[0]);
+                var today = new Date();
+                today.setDate(today.getDate() - interval);
+                var start = today;
                 var end = new Date();
-                scope.dashboard.widgets[i].content.filters.from = start;
-                scope.dashboard.widgets[i].content.filters.to = end;
-                console.log(scope.dashboard);
+                scope.dashboard.widgets[i].content.filters[x].from = start;
+                scope.dashboard.widgets[i].content.filters[x].to = end;
+                var queryString = getQueryString(scope.dashboard.widgets[i].content.queryString, start, end);
+                scope.dashboard.widgets[i].content.filters[x].queryString = queryString;
+                scope.dashboard.widgets[i].content.queryString = queryString;
               }
             });
           } else {
@@ -57,8 +90,6 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
               widgets: []
             };
           }
-
-//          console.log(scope.dateFilters);
 
           scope.addWidget = function () {
             // TODO we don't need a modal with a single field
@@ -89,6 +120,33 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
               }]
             }).result.then(function (widget) {
                 // create widget with name and visualization
+                //creating a date filter if there is not one already, if there is use that one
+                var dateFilters = widget.visualization.filters.filter(checkFilters);
+                var from = new Date();
+                from.setDate(from.getDate() - 90);
+                var to = new Date();
+                var queryString = getQueryString(widget.visualization.queryString, from, to);
+                if(scope.dateFilters.length === 0) {
+                  widget.visualization.filters.push({
+                    field: 'reportDate',
+                    filterId: 'date',
+                    from: from,
+                    name: 'Date',
+                    queryString: queryString,
+                    to: to,
+                    type: 'date-range'
+                  });
+                  widget.visualization.queryString = queryString;
+                } else {
+                  var x = widget.visualization.filters.indexOf(dateFilters[0]);
+                  var interval = getDaysDifference(widget.visualization.filters[x].from, widget.visualization.filters[x].to);
+                  from = new Date();
+                  from.setDate(from.getDate() - interval);
+                  widget.visualization.filters[x].from = from;
+                  widget.visualization.filters[x].to = to;
+                  widget.visualization.filters[x].queryString = getQueryString(widget.visualization.queryString, from, to);
+                  widget.visualization.queryString = getQueryString(widget.visualization.queryString, from, to);
+                }
                 scope.dashboard.widgets.push({
                   name: widget.visualization.name,
                   sizeX: 10,
