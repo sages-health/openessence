@@ -137,7 +137,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
           };
 
           var extractCounts = function (agg) {
-            return agg.buckets.map(function (b) {
+            var bucket = agg.buckets || agg._name.buckets;
+            return bucket.map(function (b) {
               /*jshint camelcase:false */
               return [b.key, b.doc_count];
             });

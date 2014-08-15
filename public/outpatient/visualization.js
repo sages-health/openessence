@@ -113,7 +113,6 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
         var parseAggQuery = function (aggregation, cols, rows) {
           /*jshint camelcase:false */
           var aggs = aggregation.aggregations;
-
           var col = cols[0];
           var colLabel = scope.strings[col] || col;
 
@@ -123,11 +122,12 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           var pieData = []; //{ col: col, key: col, value: count }
           var barData = []; //{ col: col, key: keyStr, values: [{col: col, key: keyStr, value: count}]}...
           var missingCount = aggregation.total;
-          var slice;
+          var slice, bucket;
           if (aggs) {
             //if there is only one aggregation selected parse as normal
             if (col && !row) {
-              aggs[col].buckets.map(function (entry) {
+              bucket = aggs[col].buckets || aggs[col]._name.buckets;
+              bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
                 var count = entry.count ? entry.count.value : entry.doc_count;
                 missingCount -= count;
@@ -143,7 +143,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               }
             }
             if (!col && row) {
-              aggs[row].buckets.map(function (entry) {
+              bucket = aggs[row].buckets || aggs[row]._name.buckets;
+              bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
                 var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
@@ -159,16 +160,18 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               barData.push({row: row, key: rowLabel, values: pieData});
             }
             //if there are two aggregations parse and return as agg1-agg2..
-            if (col && row) {
+            if (col && row && aggs[col] && (aggs[col].buckets || aggs[col]._name)) {
               var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
-              aggs[col].buckets.map(function (entry) {
+              bucket = aggs[col].buckets || aggs[col]._name.buckets;
+              bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
                 var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
                 missingTotalCount -= count;
                 var missingCount = count;
                 var data = [];
-                entry[row].buckets.map(function (sub) {
+                var subBucket = entry[row].buckets || entry[row]._name.buckets;
+                subBucket.map(function (sub) {
                   var subStr = outpatientAggregation.bucketToKey(sub);
                   var scount = sub.count ? sub.count.value : sub.doc_count;
                   missingCount -= scount;

@@ -177,6 +177,8 @@ var indexRequests = [
               // Array of well-known symptoms that the patient presented with. Might be populated by parsing
               // notes, or might be used instead of notes. Used for syndromic surveillance.
               symptoms: {
+                type: 'nested',
+                include_in_root: true, //allows for query on flattened array
                 properties: {
                   // name of the symptom, e.g. Back Pain
                   name: {
@@ -209,6 +211,7 @@ var indexRequests = [
 
               // Array of well-known diagnoses. Usually used with symptoms.
               diagnoses: {
+                type: 'nested',
                 properties: {
                   // name of the diagnosis, e.g. Anemia
                   name: {
@@ -232,6 +235,7 @@ var indexRequests = [
               // Syndromes are high-level groupings useful for surveillance, for example, "Dental." They are often
               // related to symptoms.
               syndromes: {
+                type: 'nested',
                 properties: {
                   // name of the syndrome, e.g. Eye Disease
                   name: {
