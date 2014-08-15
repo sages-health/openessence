@@ -5,7 +5,7 @@ var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
 angular.module(directives.name).directive('leafletMap', function ($q, DistrictResource, OutpatientVisitResource,
-                                                                  $timeout) {
+                                                                  $timeout, $rootScope) {
 
   return {
     restrict: 'E',
@@ -77,10 +77,18 @@ angular.module(directives.name).directive('leafletMap', function ($q, DistrictRe
                 return L.latLng(lonlat[1], lonlat[0]);
               });
               var layer = L.polygon(coordinates, getOverlayStyle());
+              layer.oeName = current._source.name;
 
               // inspired by http://leafletjs.com/examples/choropleth.html
               layer.on('click', function (e) {
+                // TODO this leaves the map with a lot of 0 count districts that should be unshaded
                 map.fitBounds(e.target.getBounds());
+                var filter = {
+                  filterId: 'districts',
+                  value: layer.oeName
+                };
+                $rootScope.$emit('filterChange', filter, true, true);
+
               });
               layer.on('mouseover', function (e) {
                 var layer = e.target;
@@ -144,6 +152,11 @@ angular.module(directives.name).directive('leafletMap', function ($q, DistrictRe
           }
         }, function (response) {
           polys.then(function (districts) {
+            // reset styles
+            angular.forEach(districts, function(district) {
+              district.setStyle(getOverlayStyle(0));
+            });
+            // re-apply styles for query results
             response.aggregations.district.buckets.forEach(function (bucket) {
               /*jshint camelcase:false */
               var district = districts[bucket.key];
