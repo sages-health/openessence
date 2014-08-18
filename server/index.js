@@ -35,7 +35,7 @@ if (https) {
 
 // favicon
 app.use((function () {
-  var favicon = require('static-favicon');
+  var favicon = require('serve-favicon');
   if (conf.env === 'development') {
     return favicon('public/images/favicon.ico');
   } else {
