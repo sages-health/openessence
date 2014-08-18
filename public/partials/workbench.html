@@ -1,11 +1,17 @@
 <div class="container-fluid">
   <outpatient-filters-grid filters="filters" filter-types="filterTypes" query-string="queryString">
-    <!-- TODO this button is in a weird place -->
-    <div class="col-md-1 pull-right">
-      <button class="btn btn-success" tooltip="{{strings.saveTooltip}}" ng-click="saveWorkbench()">
-        <span class="icon-floppy"></span>
-        <span translate>Save</span>
-      </button>
+    <!-- TODO these buttons are in a weird place -->
+    <div class="col-md-3 pull-right">
+      <div class="well text-center">
+        <button class="btn btn-primary" ng-click="addVisualization()">
+          <span class="icon-plus"></span>
+          <span translate>Add widget</span>
+        </button>
+        <button class="btn btn-default" ng-click="saveWorkbench()">
+          <span class="icon-floppy"></span>
+          <span translate>Save</span>
+        </button>
+      </div>
     </div>
   </outpatient-filters-grid>
 </div>
@@ -13,15 +19,19 @@
 <!-- visualizations-->
 <div class="container-fluid">
   <div class="row">
-    <div ui-sortable="sortableOptions" ng-model="visualizations">
-      <!-- TODO set min-height (maybe max of height of each viz?) on this so add button is placed correctly -->
-      <div class="workbench-sortable" ng-class="{'col-md-6': !$last || !$even, 'col-md-11': $last && $even}"
-           ng-repeat="viz in visualizations" ng-include src="'workbench.html'"></div>
-      <add-visualization-button button-classes="{'center-block': centerPlus}"
-                                menu-position="menuPosition" menu-open="vizMenuOpen">
-        <span class="icon-plus"></span>
-        <span ng-show="showButtonText" translate>Visualization</span>
-      </add-visualization-button>
+    <div gridster="gridsterOptions">
+      <ul>
+        <li class="workbench-visualization" gridster-item="viz" ng-repeat="viz in visualizations">
+          <div class="panel-body workbench-panel">
+            <workbench-visualization pivot-options="pivotOptions" query-string="queryString"
+                                     filters="workbench.filters" options="options"
+                                     visualization="viz.visualization"
+                                     pivot="viz.pivot"
+                                     on-close="removeVisualization(viz)" on-settings="">
+            </workbench-visualization>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

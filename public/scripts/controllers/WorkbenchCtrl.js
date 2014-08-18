@@ -14,10 +14,6 @@ angular.module(controllers.name)
                                          scopeToJson, DiagnosisResource, DistrictResource, SymptomResource,
                                          WorkbenchResource) {
 
-    $scope.strings = {
-      saveTooltip: gettextCatalog.getString('Save this workbench')
-    };
-
     $scope.filterTypes = [
       {
         filterId: 'age',
@@ -121,9 +117,17 @@ angular.module(controllers.name)
       options = options || {};
 
       $scope.visualizations.push({
+        sizeX: 6,
+        sizeY: 4,
         type: 'outpatient-visit',
-        visualization: {name: name},
-        pivot: options.pivot
+        visualization: {
+          name: name || 'table'
+        },
+        pivotOptions: $scope.pivotOptions,
+        pivot: options.pivot || {
+          rows: [],
+          cols: []
+        }
       });
     };
 
@@ -160,7 +164,7 @@ angular.module(controllers.name)
 
     $scope.saveWorkbench = function () {
       $modal.open({
-        template: require('../../partials/save-workbench-modal.html'),
+        template: require('../../workbench/save-workbench-modal.html'),
         controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
           $scope.workbench = {};
           $scope.save = function (form) {
@@ -218,5 +222,8 @@ angular.module(controllers.name)
           to: new Date()
         }
       ];
+
+      // TODO don't do this
+      $scope.addVisualization();
     }
   });

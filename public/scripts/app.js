@@ -26,6 +26,7 @@ require('../hinge');
 require('../crosstab');
 require('../fracas-filter');
 require('../dashboard');
+require('../workbench');
 require('../outpatient');
 
 var modules = require('./modules');
