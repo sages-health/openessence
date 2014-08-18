@@ -29,7 +29,7 @@ module.exports = function () {
         token: req.user.doc.token // execute with user's permission
       });
 
-      res.send(202); // "Accepted"
+      res.status(202).send(); // "Accepted"
     };
 
     // content negotiation

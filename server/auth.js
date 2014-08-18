@@ -150,15 +150,16 @@ function authenticate (strategy) {
           return;
         }
 
-        res.json(200, {
-          // whitelist user properties that are OK to send to client
-          username: user.doc.username,
-          email: user.doc.email,
-          name: user.doc.name,
-          roles: user.doc.roles,
-          districts: user.doc.districts,
-          authType: user.doc.authType
-        });
+        res.status(200)
+          .json({
+            // whitelist user properties that are OK to send to client
+            username: user.doc.username,
+            email: user.doc.email,
+            name: user.doc.name,
+            roles: user.doc.roles,
+            districts: user.doc.districts,
+            authType: user.doc.authType
+          });
       });
     })(req, res, next);
   };

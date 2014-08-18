@@ -20,7 +20,7 @@ app.post('/local', auth.local);
 var logout = function (req, res) {
   logger.info({user: req.user}, 'Logging %s out', req.user.doc.username);
   req.logout();
-  res.send(204); // No Content
+  res.status(204).send(); // No Content
 };
 
 app.delete('/', auth.denyAnonymousAccess, logout); // VERB middleware is the one place where multiple callbacks are OK
