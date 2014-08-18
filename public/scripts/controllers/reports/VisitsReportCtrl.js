@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope, gettextCatalog, $window, visualization, user, dateFilter) {
+angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope, $window, visualization, user, dateFilter) {
   $scope.someText = '';
   $scope.user = user.getUser();
   $scope.today = (new Date()).toString();
@@ -49,14 +49,14 @@ angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope
 
   //TODO: hardcoded saved query names: weeklyseries, sexbarchart, and symptomspie
   visualization.resource.get({q: 'name:"weeklyseries"'}, function (data) {
-    $scope.viz = fixVisualization(data.results[0]._source);
+    $scope.viz = fixVisualization(data.results[0]._source.state);
   });
 
   visualization.resource.get({q: 'name:"sexbarchart"'}, function (data) {
-    $scope.viz1 = fixVisualization(data.results[0]._source);
+    $scope.viz1 = fixVisualization(data.results[0]._source.state);
   });
 
   visualization.resource.get({q: 'name:"symptomspie"'}, function (data) {
-    $scope.viz2 = fixVisualization(data.results[0]._source);
+    $scope.viz2 = fixVisualization(data.results[0]._source.state);
   });
 });

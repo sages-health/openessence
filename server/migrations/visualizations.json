@@ -37,5 +37,99 @@
         "cols": []
       }
     }
+  },
+  {
+    "name": "sexbarchart",
+    "state": {
+      "filters": [
+        {
+          "filterId": "date",
+          "type": "date-range",
+          "field": "reportDate",
+          "name": "Date",
+          "from": "2014-05-20T14:42:39.067Z",
+          "to": "2014-08-18T14:42:39.067Z",
+          "queryString": "reportDate: [2014-05-20 TO 2014-08-18]"
+        }
+      ],
+      "queryString": "reportDate: [2014-05-20 TO 2014-08-18]",
+      "visualization": {
+        "name": "bar"
+      },
+      "pivot": {
+        "rows": [],
+        "cols": [
+          "sex"
+        ]
+      },
+      "options": {
+        "width": 1367,
+        "height": 500
+      },
+      "aggData": [],
+      "crosstabData": [],
+      "strings": {
+        "date": "Date",
+        "district": "District",
+        "sex": "Sex",
+        "age": "Age",
+        "symptoms": "Symptoms",
+        "diagnoses": "Diagnoses",
+        "syndromes": "Syndromes",
+        "visitType": "Visit type",
+        "discharge": "Discharge type",
+        "edit": "Edit"
+      },
+      "tableParams": {
+        "data": []
+      }
+    }
+  },
+  {
+    "name": "symptomspie",
+    "state": {
+      "filters": [
+        {
+          "filterId": "date",
+          "type": "date-range",
+          "field": "reportDate",
+          "name": "Date",
+          "from": "2014-05-20T14:42:39.067Z",
+          "to": "2014-08-18T14:42:39.067Z",
+          "queryString": "reportDate: [2014-05-20 TO 2014-08-18]"
+        }
+      ],
+      "queryString": "reportDate: [2014-05-20 TO 2014-08-18]",
+      "visualization": {
+        "name": "pie"
+      },
+      "pivot": {
+        "rows": [],
+        "cols": [
+          "symptoms"
+        ]
+      },
+      "options": {
+        "width": 1367,
+        "height": 500
+      },
+      "aggData": [],
+      "crosstabData": [],
+      "strings": {
+        "date": "Date",
+        "district": "District",
+        "sex": "Sex",
+        "age": "Age",
+        "symptoms": "Symptoms",
+        "diagnoses": "Diagnoses",
+        "syndromes": "Syndromes",
+        "visitType": "Visit type",
+        "discharge": "Discharge type",
+        "edit": "Edit"
+      },
+      "tableParams": {
+        "data": []
+      }
+    }
   }
 ]
