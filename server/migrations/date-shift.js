@@ -6,7 +6,7 @@
  * This script should be scheduled with a cron job to run every night.
  */
 
-var conf = require('./conf');
+var conf = require('./../conf/index');
 var logger = conf.logger;
 var client = conf.elasticsearch.newClient();
 
