@@ -162,7 +162,7 @@ module.exports = {
 
       return url.format(parsedRedisPort);
     })(),
-    password: null // Redis doesn't use usernames
+    password: process.env.REDIS_PASSWORD // Redis doesn't use usernames, just tokens
   },
 
   // elasticsearch settings, duh

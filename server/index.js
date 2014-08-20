@@ -62,7 +62,7 @@ app.use((function () {
     logger.info('Using Redis session store');
     var RedisStore = require('connect-redis')(session); // conditionally require since it's an optional dependency
     store = new RedisStore({
-      url: conf.redis.url
+      client: conf.redis.client
     });
   }
 
