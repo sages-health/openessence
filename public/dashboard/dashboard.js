@@ -171,7 +171,7 @@ angular.module(directives.name).directive('dashboard', function (gettextCatalog,
             var savedWidget = {};
             savedWidget[widget.name] = widget.content;
             sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
-            $location.path('/workbench').search('visualization', widget.name);
+            $location.path('/workbench/').search('visualization', widget.name);
           };
         }
       };
