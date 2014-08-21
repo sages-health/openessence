@@ -153,20 +153,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
                 'min_doc_count': 0
               }
             };
+            aggs.date = dateAgg;
 
             if (scope.series.length > 0) {
+              aggs.date.aggs = {};
               scope.series.forEach(function (s) {
-                aggs[s] = outpatientAggregation.getAggregation(s);
-                aggs[s].aggs = {
-                  date: dateAgg
-                };
-                var aggCount = outpatientAggregation.getAggregation(s).aggs;
-                if (aggCount) {
-                  aggs[s].aggs.date.aggs = aggCount;
-                }
+                aggs.date.aggs[s] = outpatientAggregation.getAggregation(s);
               });
-            } else {
-              aggs.date = dateAgg;
             }
 
             OutpatientVisitResource.search({
@@ -174,24 +167,39 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
               size: 0, // we only want aggregations
               aggs: aggs
             }, function (data) {
+              //expected scope.data = [ {aggKey, [ [dateMillis, count],.. ]},.. ]
               if (data.aggregations.date) {
-                scope.data = [
-                  {
-                    key: gettextCatalog.getString('Outpatient visits'),
-                    values: extractCounts(data.aggregations.date)
-                  }
-                ];
-              } else {
                 scope.data = [];
-                Object.keys(data.aggregations).forEach(function (agg) {
-                  // agg === 'sex', e.g.
-                  data.aggregations[agg].buckets.map(function (b) {
-                    scope.data.push({
-                      key: outpatientAggregation.bucketToKey(b),
-                      values: extractCounts(b.date)
+                var dataStore = {};
+
+                if (scope.series && scope.series.length > 0) {
+                  data.aggregations.date.buckets.map(function (d) {
+
+                    scope.series.forEach(function (s) {
+                      var buk = d[s].buckets || d[s]._name.buckets;
+                      buk.map(function (entry) {
+                        var count = entry.count ? entry.count.value : entry.doc_count;
+                        if (!dataStore[entry.key]) {
+                          dataStore[entry.key] = [];
+                        }
+                        dataStore[entry.key].push([d.key, count]);
+                      });
                     });
                   });
-                });
+                  Object.keys(dataStore).forEach(function (k) {
+                    scope.data.push({
+                      key: k,
+                      values: dataStore[k]
+                    })
+                  });
+                } else {
+                  scope.data = [
+                    {
+                      key: gettextCatalog.getString('Outpatient visits'),
+                      values: extractCounts(data.aggregations.date)
+                    }
+                  ];
+                }
               }
               scope.redraw(); // after new data is received, redraw timeseries
             });

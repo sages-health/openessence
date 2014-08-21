@@ -212,6 +212,7 @@ var indexRequests = [
               // Array of well-known diagnoses. Usually used with symptoms.
               diagnoses: {
                 type: 'nested',
+                include_in_root: true, //allows for query on flattened array
                 properties: {
                   // name of the diagnosis, e.g. Anemia
                   name: {
