@@ -1,0 +1,29 @@
+<!-- File -->
+<div class="col-md-12 form-group">
+  <label translate>CSV file</label>
+
+  <input id="csv-file" name="csvFile" type="file" ng-model="fileParams.file" ng-file-select="onFileSelect($files)"
+         accept=".csv" required>
+  <span class="help-block" ng-show="badFile" translate>Please select a CSV file</span>
+</div>
+
+<div class="col-md-4 form-group">
+  <label translate>Separator</label>
+  <input class="form-control csv-field" id="separator" name="separator" type="text" ng-model="fileParams.separator">
+</div>
+
+<div class="col-md-4 form-group">
+  <label translate>Delimiter</label>
+  <input class="form-control csv-field" id="delimiter" name="delimiter" type="text" ng-model="fileParams.delimiter">
+</div>
+
+<div class="col-md-4 form-group">
+  <label translate>Contains Header Row?</label>
+  <input class="checkbox csv-field" id="headerRow" name="headerRow" type="checkbox" ng-model="fileParams.headerRow">
+</div>
+
+<div class="col-md-12 form-group" ng-show="fileParams.showPreview && tableData.length > 0">
+  <label translate>Data</label>
+
+  <div class="preview-grid" ng-grid="gridOptions"></div>
+</div>

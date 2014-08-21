@@ -123,7 +123,11 @@
     "text-angular-sanitize": "./bower_components/textAngular/src/textAngular-sanitize.js",
     "text-angular-setup": "./bower_components/textAngular/src/textAngularSetup.js",
     "jquery-ui": "./bower_components/fracas-jquery-ui/jquery-ui.js",
-    "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js"
+    "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js",
+    "moment": "./bower_components/moment/moment.js",
+    "ng-file-upload": "./bower_components/ng-file-upload/angular-file-upload.js",
+    "ng-grid": "./bower_components/ng-grid/ng-grid-2.0.12.min.js",
+    "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js"
   },
   "browser-libs": {
     "jquery": {

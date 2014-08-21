@@ -19,6 +19,8 @@ require('d3');
 require('ng-debounce');
 require('text-angular');
 require('leaflet');
+require('ng-file-upload');
+require('ng-grid');
 
 var frable = require('../frable');
 require('../select2');
@@ -28,6 +30,7 @@ require('../fracas-filter');
 require('../dashboard');
 require('../workbench');
 require('../outpatient');
+require('../aggregate');
 
 var modules = require('./modules');
 require('./controllers');
@@ -37,7 +40,8 @@ require('./filters');
 var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
-                    'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', frable.name]
+                    'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+                    'ngGrid', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -176,6 +180,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/visit',
       template: require('../outpatient/edit.html'),
       controller: 'OutpatientEditCtrl'
+    })
+    .state('edit.aggregate', { // TODO define this in outpatient module
+      url: '/aggregate-data',
+      template: require('../partials/edit/aggregate-data.html'),
+      controller: 'AggregateDataEditCtrl'
     })
     .state('edit.district', {
       url: '/district',

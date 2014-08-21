@@ -22,6 +22,7 @@
 @import "tiles";
 @import "viz-menu";
 @import "workbench";
+@import (less) "ng-grid/ng-grid.css";
 
 .navbar-brand {
   // Fix https://github.com/thomaspark/bootswatch/commit/5226a30d7df2eb15a06b9014507da767d205de30
@@ -257,4 +258,19 @@ workbench-visualization .frable-pagination {
   .ta-toolbar {
     display: none;
   }
+}
+
+.preview-grid {
+  border: 1px solid rgb(212,212,212);
+  width: 550px;
+  height: 150px;
+}
+
+.symptoms-edit-grid {
+  border: 1px solid rgb(212,212,212);
+  height: 170px;
+}
+
+.csv-field {
+  width: 95%;
 }
