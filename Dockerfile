@@ -2,6 +2,8 @@
 # Dockerfile for Fracas
 ###############################################################################
 
+# We could probably get the resulting image smaller if we cut out some of the cruft from the node image, but that's a
+# lot of work
 FROM node
 
 MAINTAINER Gabe Gorelick, "https://github.com/gabegorelick"
