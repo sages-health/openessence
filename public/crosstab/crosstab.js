@@ -21,29 +21,37 @@ angular.module(directives.name).directive('crosstab', function ($parse) {
         scope.options = optionsExp(scope);
 
         var pivot = function (records, options) {
-          angular.element(element).pivot(records, options);
-        };
-
-        scope.$watch(recordsExp, function (newValue) {
-          pivot(newValue, scope.options);
-        }); // records array is always replaced by reference
-
-        scope.$watchCollection('[' + attrs.options + '.rows, ' + attrs.options + '.cols]', function (newValue) {
           var countKey = 'count';
-          var options = angular.extend(
+          var opts = angular.extend(
             {
               // heatmaps are nice in theory but make it harder to read and the bar chart is kind of pointless
               renderer: $.pivotUtilities.renderers.Table,
-              aggregator: function () {
+              aggregator: function (data, rowKey, colKey) {
+
                 return {
+                  colk: colKey,
+                  rowk: rowKey,
+                  countStore: {},
                   count: 0,
                   push: function (record) {
-                    //if there is a count column use it for the summation
-                    if (record[countKey]) {
-                      if (!isNaN(parseFloat(record[countKey]))) {
-                        this.count += record[countKey].count;
+                    var col = scope.options.cols[0];
+                    var row = scope.options.rows[0];
+
+                    if (record[col]) {
+                      if (typeof record[col] !== 'string') {
+                        if (record[col][0] && record[col][0][countKey]) {
+                          this.count += record[col][0][countKey];
+                          return;
+                        }
                       }
-                    } else {
+                      this.count++;
+                    } else if (record[row]) {
+                      if (typeof record[row] !== 'string') {
+                        if (record[row][0] && record[row][0][countKey]) {
+                          this.count += record[row][0][countKey];
+                          return;
+                        }
+                      }
                       this.count++;
                     }
                   },
@@ -58,11 +66,22 @@ angular.module(directives.name).directive('crosstab', function ($parse) {
               }
             },
             scope.options,
+            options
+          );
+          angular.element(element).pivot(records, opts);
+        };
+
+        scope.$watch(recordsExp, function (newValue) {
+          pivot(newValue, scope.options);
+        }); // records array is always replaced by reference
+
+        scope.$watchCollection('[' + attrs.options + '.rows, ' + attrs.options + '.cols]', function (newValue) {
+          var options = angular.extend(
+            scope.options,
             {
               rows: newValue[0] || [],
               cols: newValue[1] || []
             });
-
           pivot(scope.records, options);
         });
       };
