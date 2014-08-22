@@ -15,16 +15,16 @@
         <div class="table-responsive">
           <table class="table table-striped table-hover" frable="tableParams">
             <tr ng-repeat="record in $data">
-              <td data-title="strings.username" sortable="'username.raw'">
+              <td data-title="strings.username" data-sortable="'username.raw'">
                 <a ng-click="tableFilter('username', record._source.username)">{{record._source.username}}</a>
               </td>
-              <td data-title="strings.email" sortable="'email'">
+              <td data-title="strings.email" data-sortable="'email'">
                 <a ng-click="tableFilter('email', record._source.email)">{{record._source.email}}</a>
               </td>
-              <td data-title="strings.name" sortable="'name'">
+              <td data-title="strings.name" data-sortable="'name'">
                 <a ng-click="tableFilter('name', record._source.name)">{{record._source.name}}</a>
               </td>
-              <td data-title="strings.disabled" sortable="'disabled'">
+              <td data-title="strings.disabled" data-sortable="'disabled'">
                 <a ng-click="tableFilter('disabled', record._source.disabled)">{{record._source.disabled}}</a>
               </td>
               <td data-title="strings.roles">{{record._source.roles | join | truncate:30}}</td>

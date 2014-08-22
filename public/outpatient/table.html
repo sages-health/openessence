@@ -2,10 +2,10 @@
   <table class="table table-striped table-hover table-condensed" frable="tableParams">
     <tr ng-repeat="visit in $data">
 
-      <td data-title="strings.date" sortable="'reportDate'">
+      <td data-title="strings.date" data-sortable="'reportDate'">
         <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate | date}}</a>
       </td>
-      <td data-title="strings.district" sortable="'medicalFacility.district.raw'">
+      <td data-title="strings.district" data-sortable="'medicalFacility.district.raw'">
         <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">
           {{visit._source.medicalFacility.district}}
         </a>
@@ -35,17 +35,17 @@
           {{visit._source.discharge | join | truncate:30}}
         </a>
       </td>
-      <td data-title="strings.sex" sortable="'patient.sex'">
+      <td data-title="strings.sex" data-sortable="'patient.sex'">
         <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
       </td>
-      <td data-title="strings.age" sortable="'patient.age'">
+      <td data-title="strings.age" data-sortable="'patient.age'">
         <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
       </td>
 
       <!-- TODO check or X icon instead of true/false -->
-      <td data-title="strings.returnVisit" sortable="'returnVisit'">{{visit._source.returnVisit}}</td>
+      <td data-title="strings.returnVisit" data-sortable="'returnVisit'">{{visit._source.returnVisit}}</td>
 
-      <td data-title="strings.patientId" sortable="'patient.patientId'">{{visit._source.patient.patientId}}</td>
+      <td data-title="strings.patientId" data-sortable="'patient.patientId'">{{visit._source.patient.patientId}}</td>
 
       <!-- Edit controls -->
       <td data-title="strings.edit">
