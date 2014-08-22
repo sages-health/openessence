@@ -72,6 +72,30 @@ function shiftDates (callback) {
         });
       });
 
+      var finish = function () {
+        // make sure we store what date we shifted to so future shifts don't get messed up
+        client.index({
+          index: 'date-shift',
+          type: 'shift',
+          id: '1',
+          version: version,
+          body: {
+            date: now
+          }
+        }, function (err) {
+          if (err) {
+            return callback(err);
+          }
+
+          callback(null, count);
+        });
+      };
+
+      if (bulkBody.length === 0) {
+        // elasticsearch throws a cryptic exception if we try to bulk insert no records
+        return finish();
+      }
+
       client.bulk({
         body: bulkBody
       }, function (err) {
@@ -87,22 +111,8 @@ function shiftDates (callback) {
             size: 1000
           }, getMoreUntilDone);
         } else {
-          // we're done, make sure we store what date we shifted to so future shifts don't get messed up
-          client.index({
-            index: 'date-shift',
-            type: 'shift',
-            id: '1',
-            version: version,
-            body: {
-              date: now
-            }
-          }, function (err) {
-            if (err) {
-              return callback(err);
-            }
-
-            callback(null, count);
-          });
+          // we're done
+          finish();
         }
       });
     });

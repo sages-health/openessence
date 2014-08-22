@@ -102,8 +102,16 @@ async.parallel([
     logger.error({err: err}, 'Error seeding data');
   }
 
-  client.close();
+  client.indices.refresh({
+    index: '_all' // TODO limit to only codex-managed indices
+  }, function (err) {
+    client.close();
 
-  // FIXME this shouldn't be necessary
-  process.exit(0);
+    if (err) {
+      logger.error({err: err}, 'Error refreshing indices');
+    }
+
+    // FIXME this shouldn't be necessary
+    process.exit(0);
+  });
 });
