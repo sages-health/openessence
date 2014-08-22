@@ -117,7 +117,7 @@ angular.module(controllers.name)
       options = options || {};
 
       $scope.visualizations.push({
-        sizeX: 6,
+        sizeX: 3,
         sizeY: 4,
         type: 'outpatient-visit',
         visualization: {
