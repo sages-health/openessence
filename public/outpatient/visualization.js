@@ -8,7 +8,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
                                                                                sortString, FrableParams,
                                                                                OutpatientVisitResource,
                                                                                outpatientEditModal,
-                                                                               outpatientDeleteModal,
+                                                                               outpatientDeleteModal, scopeToJson,
                                                                                outpatientAggregation, visualization) {
 
   return {
@@ -73,7 +73,16 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             return;
           }
 
-          visualization.save(visualization.state(scope));
+          // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
+          var state = scopeToJson(scope);
+          ['data', 'crosstabData'].forEach(function (k) {
+            delete state[k];
+          });
+          if (state.tableParams) {
+            delete state.tableParams.data;
+          }
+
+          visualization.save(state);
         });
 
         //assuming only two deep for now..

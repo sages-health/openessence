@@ -3,12 +3,10 @@
 var angular = require('angular');
 var services = require('../modules').services;
 
-angular.module(services.name).factory('visualization', function ($resource, $modal, scopeToJson, VisualizationResource) {
+angular.module(services.name).factory('visualization', function ($resource, $modal, VisualizationResource) {
   return {
     // TODO make clients use this directly
     resource: VisualizationResource,
-
-    state: scopeToJson, // useful abstraction in case we need to introduce custom logic into saving visualizations
 
     save: function (state) {
       $modal.open({

@@ -6,7 +6,7 @@ var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientTimeSeries', function ($timeout, $window, gettextCatalog,
                                                                             outpatientAggregation, visualization,
-                                                                            OutpatientVisitResource) {
+                                                                            OutpatientVisitResource, scopeToJson) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
@@ -31,7 +31,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
           scope.interval = scope.options.interval || 'day'; // TODO auto-select based on date range
 
           scope.$on('export', function () {
-            visualization.save(angular.extend({}, visualization.state(scope), {
+            visualization.save(angular.extend({}, scopeToJson(scope), {
               visualization: {
                 name: 'line'
               },
