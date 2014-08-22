@@ -27,6 +27,10 @@ var indexRequests = [
               description: {
                 type: 'string',
                 index: 'not_analyzed'
+              },
+              widgets: {
+                type: 'object',
+                index: 'no'
               }
             }
           })
@@ -473,7 +477,8 @@ var indexRequests = [
                 }
               },
               state: {
-                type: 'object'
+                type: 'object',
+                index: 'no'
               }
             }
           })
@@ -499,7 +504,8 @@ var indexRequests = [
                 }
               },
               state: {
-                type: 'object'
+                type: 'object',
+                index: 'no'
               }
             }
           })
