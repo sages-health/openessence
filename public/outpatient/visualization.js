@@ -67,6 +67,16 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           edit: gettextCatalog.getString('Edit')
         };
 
+        scope.printAggregate = function (field, includeCount) {
+          var print = [];
+          if (field) {
+            field.map(function (val) {
+              print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
+            });
+          }
+          return print.join(',');
+        };
+
         scope.$on('export', function () {
           if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it

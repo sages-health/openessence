@@ -144,6 +144,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
             });
           };
 
+          var plotSeries = function (seriesName, seriesType) {
+            if (scope.filters) {
+              var filters = scope.filters.filter(function (filter) {
+                return filter.filterId === seriesType && filter.value.length > 0 &&
+                  filter.value.indexOf(seriesName) === -1;
+              });
+              return filters.length === 0;
+            }
+            return true;
+          };
+
           var reload = function () {
             var aggs = {};
             var dateAgg = {
@@ -178,11 +189,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
                     scope.series.forEach(function (s) {
                       var buk = d[s].buckets || d[s]._name.buckets;
                       buk.map(function (entry) {
-                        var count = entry.count ? entry.count.value : entry.doc_count;
-                        if (!dataStore[entry.key]) {
-                          dataStore[entry.key] = [];
+                        // if we have filter on this field/series = s
+                        // only plot series meeting filter criteria
+                        if (plotSeries(entry.key, s)) {
+                          var count = entry.count ? entry.count.value : entry.doc_count;
+                          if (!dataStore[entry.key]) {
+                            dataStore[entry.key] = [];
+                          }
+                          dataStore[entry.key].push([d.key, count]);
                         }
-                        dataStore[entry.key].push([d.key, count]);
                       });
                     });
                   });
@@ -190,7 +205,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
                     scope.data.push({
                       key: k,
                       values: dataStore[k]
-                    })
+                    });
                   });
                 } else {
                   scope.data = [

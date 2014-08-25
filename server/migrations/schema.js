@@ -237,6 +237,7 @@ var indexRequests = [
               // related to symptoms.
               syndromes: {
                 type: 'nested',
+                include_in_root: true, //allows for query on flattened array
                 properties: {
                   // name of the syndrome, e.g. Eye Disease
                   name: {

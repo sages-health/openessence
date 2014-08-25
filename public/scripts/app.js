@@ -170,6 +170,16 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/reports/visits-report.html'),
       controller: 'VisitsReportCtrl'
     })
+    .state('weekly-report', {
+      url: '/weekly-report',
+      template: require('../partials/reports/weekly-report.html'),
+      controller: 'WeeklyReportCtrl'
+    })
+    .state('timeseries-report', {
+      url: '/timeseries-report',
+      template: require('../partials/reports/timeseries-report.html'),
+      controller: 'TimeseriesReportCtrl'
+    })
     .state('edit', {
       url: '/edit',
       parent: 'home',

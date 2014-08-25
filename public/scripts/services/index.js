@@ -7,6 +7,7 @@ require('./Dashboard');
 require('./errorInterceptor');
 require('./notification');
 require('./persona');
+require('./reports/aggregateReportModal');
 require('./Report');
 require('./resources');
 require('./scopeToJson');
