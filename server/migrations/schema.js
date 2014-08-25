@@ -311,6 +311,16 @@ var indexRequests = [
                         index: 'not_analyzed'
                       }
                     }
+                  },
+                  sites: {
+                    properties: {
+                      total: {
+                        type: 'integer'
+                      },
+                      reporting: {
+                        type: 'integer'
+                      }
+                    }
                   }
                 }
               }

@@ -1,5 +1,6 @@
 'use strict';
 
+require('./edit/AggregateDataEditCtrl');
 require('./edit/DashboardEditCtrl');
 require('./edit/DiagnosisEditCtrl');
 require('./edit/DischargeEditCtrl');

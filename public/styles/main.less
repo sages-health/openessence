@@ -8,6 +8,7 @@
 @import (less) "angular-loading-bar/build/loading-bar.css";
 @import (less) "angular/angular-csp.css";
 @import (less) "fracas-jquery-ui/jquery-ui.css";
+@import (less) "ng-grid/ng-grid.css";
 @import "../frable/frable"; // TODO figure out a way to include addons w/o having to manually add it here
 @import "../select2/select2";
 @import "../crosstab/crosstab";
@@ -258,4 +259,19 @@ workbench-visualization .frable-pagination {
   .ta-toolbar {
     display: none;
   }
+}
+
+.preview-grid {
+  border: 1px solid rgb(212,212,212);
+  width: 550px;
+  height: 150px;
+}
+
+.symptoms-edit-grid {
+  border: 1px solid rgb(212,212,212);
+  height: 170px;
+}
+
+.csv-field {
+  width: 95%;
 }
