@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Acute Fever and Rash",
+    "enabled": true
+  },
+  {
+    "name": "Diarrhoea",
+    "enabled": true
+  },
+  {
+    "name": "Influenza-like Illness",
+    "enabled": true
+  },
+  {
+    "name": "Prolonged Fever",
+    "enabled": true
+  }
+]
