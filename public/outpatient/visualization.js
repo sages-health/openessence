@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, $rootScope, $timeout,
+angular.module(directives.name).directive('outpatientVisualization', function ($modal, $rootScope, $timeout,
                                                                                orderByFilter, gettextCatalog,
                                                                                sortString, FrableParams,
                                                                                OutpatientVisitResource,

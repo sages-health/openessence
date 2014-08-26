@@ -9,7 +9,6 @@ module.exports = {
   table: require('./table'),
   timeSeries: require('./fracasTimeSeries'),
   visualization: require('./visualization'),
-  workbenchVisualization: require('./workbenchVisualization'),
   pieChart: require('./fracasPieChart.js'),
   barChart: require('./fracasBarChart.js')
 };
