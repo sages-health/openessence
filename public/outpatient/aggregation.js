@@ -4,6 +4,7 @@ var angular = require('angular');
 var services = require('../scripts/modules').services;
 
 angular.module(services.name).factory('outpatientAggregation', function (gettextCatalog) {
+  //backend will wrap with "aggs : {"
   var aggregations = {
     sex: {
       terms: {
@@ -12,14 +13,21 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
       }
     },
     symptoms: {
-      terms: {
-        field: 'symptoms.name.raw',
-        order: { '_term': 'asc' }
+      nested: {
+        path: 'symptoms'
       },
       aggs: {
-        count: { //calling this doc_count may be cheating a little..
-          sum: {
-            field: 'symptoms.count'
+        _name: { //double check that using an underscore is kosher
+          terms: {
+            field: 'symptoms.name.raw',
+            order: { '_term': 'asc' }
+          },
+          aggs: {
+            count: { //calling this doc_count may be cheating a little..
+              sum: {
+                field: 'symptoms.count'
+              }
+            }
           }
         }
       }
@@ -86,6 +94,19 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
       } else {
         throw new Error('Cannot make key for bucket ' + bucket);
       }
-    }
+    }//,
+    //TODO this, but on backend maybe?
+    /**
+     * Given an aggregation first and optional aggregation second, transform the response
+     * into a flattened object of the form
+     * { first.name1: {second.name1: count, second.missing: count },
+     *   first.name1_missing: count,...
+     * @param response
+     * @param first
+     * @param second
+     */
+   // flattenAggregationResults: function (response, first, second){
+
+   // }
   };
 });

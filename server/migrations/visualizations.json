@@ -131,5 +131,80 @@
         "data": []
       }
     }
+  },
+  {
+    "name": "DistrictWeeklyData",
+    "state": {
+      "options": {
+        "height": 826,
+        "width": 1470
+      },
+      "queryString": "reportDate: [2011-05-23 TO 2011-08-21] AND symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\") AND medicalFacility.district:\"Country A\"",
+      "filters": [
+        {
+          "filterId": "date",
+          "type": "date-range",
+          "field": "reportDate",
+          "name": "Date",
+          "from": "2011-05-24T00:00:00.000Z",
+          "to": "2011-08-22T00:00:00.000Z",
+          "queryString": "reportDate: [2011-05-23 TO 2011-08-21]"
+        },
+        {
+          "filterId": "symptoms",
+          "type": "multi-select",
+          "field": "symptoms.name",
+          "store": {
+            "field": "name"
+          },
+          "name": "Symptom",
+          "value": [
+            "Diarrhoea",
+            "Prolonged Fever",
+            "Influenza-like Illness"
+          ],
+          "queryString": "symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\")"
+        },
+        {
+          "filterId": "districts",
+          "type": "multi-select",
+          "field": "medicalFacility.district",
+          "store": {
+            "field": "name"
+          },
+          "name": "District",
+          "value": [
+            "Country A"
+          ],
+          "queryString": "medicalFacility.district:\"Country A\""
+        }
+      ],
+      "series": [
+        "symptoms"
+      ],
+      "hideToolbar": false,
+      "interval": "week",
+      "down": false,
+      "timeseries": {
+        "xmin": 1306108800000,
+        "xmax": 1313366400000,
+        "ymin": 0,
+        "ymax": 8,
+        "legendHeight": 15,
+        "height": 994,
+        "width": 1504,
+        "ymargin": 20,
+        "xmargin": 40
+      },
+      "tsHoverTimer": {},
+      "visualization": {
+        "name": "line"
+      },
+      "pivot": {
+        "cols": [
+          "symptoms"
+        ]
+      }
+    }
   }
 ]

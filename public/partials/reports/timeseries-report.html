@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3>{{report.name}}</h3>
+
+      <div>Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}</div>
+    </div>
+
+    <div class="panel-body">
+      <div class="container-fluid" ng-repeat="row in rows">
+        <div class="row">
+          <div ng-repeat="viz in row">
+            <div class="col-md-4">
+              <div class="panel panel-default report-panel">
+                <div class="panel-heading">{{viz.name}}</div>
+                <outpatient-visualization options="viz.state" query-string="viz.state.queryString"
+                                          filters="viz.state.filters">
+                </outpatient-visualization>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" translate>
+          Note: Number of reported cases are not comparable between countries. The purpose of the charts is to show
+          trends over time within each country/area.
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <div class="clearfix">
+        <div class="pull-left">{{userString}}</div>
+        <div class="pull-right">{{todayString}}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,7 +21,7 @@
                     </td>
                     <td data-title="strings.symptoms">
                         <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
-                            {{visit._source.symptoms | pluck:'name' | join | truncate:30}}
+                            {{printAggregate(visit._source.symptoms, true)}}
                         </a>
                     </td>
                     <td data-title="strings.diagnoses">

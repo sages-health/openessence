@@ -3,14 +3,23 @@
 var angular = require('angular');
 var controllers = require('../modules').controllers;
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, appName, user,
-                                                                  visitsReportModal, Dashboard, DashboardResource,
-                                                                  WorkbenchResource) {
+angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, appName, user, //
+                                                                  visitsReportModal, aggregateReportModal, //
+                                                                  Dashboard, DashboardResource, WorkbenchResource) {
   $scope.visitsReport = function () {
     visitsReportModal.open();
   };
 
+  $scope.weeklyReport = function () {
+    aggregateReportModal.openWeeklyReport();
+  };
+
+  $scope.timeseriesReport = function () {
+    aggregateReportModal.openTimeseriesReport();
+  };
+
   $scope.appName = appName;
+
   $scope.user = user;
   $scope.logout = function () {
     user.logout();

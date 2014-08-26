@@ -1,0 +1,200 @@
+[
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 10
+      }
+    ],
+    "medicalFacility": {
+      "district": "Adams"
+    },
+    "patient": {
+      "sex": "female",
+      "age": 54
+    },
+    "diagnoses": [
+      {
+        "name": "Malaria",
+        "count": 11
+      }
+    ],
+    "reportDate": "2014-08-12T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 12
+      },
+      {
+        "name": "Rash",
+        "count": 13
+      }
+    ],
+    "medicalFacility": {
+      "district": "Thayer"
+    },
+    "patient": {
+      "sex": "male",
+      "age": 8
+    },
+    "diagnoses": [
+      {
+        "name": "Ear Infection",
+        "count": 14
+      }
+    ],
+    "reportDate": "2014-05-03T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 15
+      }
+    ],
+    "medicalFacility": {
+      "district": "Cass"
+    },
+    "patient": {
+      "sex": "male",
+      "age": 1
+    },
+    "diagnoses": null,
+    "reportDate": "2014-03-17T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 16
+      },
+      {
+        "name": "Rash",
+        "count": 17
+      }
+    ],
+    "medicalFacility": {
+      "district": "Merrick"
+    },
+    "patient": {
+      "sex": "female",
+      "age": 0
+    },
+    "diagnoses": [
+      {
+        "name": "Malaria",
+        "count": 18
+      }
+    ],
+    "reportDate": "2014-03-16T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 19
+      }
+    ],
+    "medicalFacility": {
+      "district": "Cass"
+    },
+    "patient": {
+      "sex": "male",
+      "age": 17
+    },
+    "diagnoses": null,
+    "reportDate": "2014-03-16T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 10
+      }
+    ],
+    "medicalFacility": {
+      "district": "Lancaster"
+    },
+    "patient": {
+      "sex": "female",
+      "age": 0
+    },
+    "diagnoses": null,
+    "reportDate": "2014-03-15T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 11
+      }
+    ],
+    "medicalFacility": {
+      "district": "Cass"
+    },
+    "patient": {
+      "sex": "female",
+      "age": 7
+    },
+    "diagnoses": null,
+    "reportDate": "2014-03-15T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 12
+      }
+    ],
+    "medicalFacility": {
+      "district": "Cass"
+    },
+    "patient": {
+      "sex": "female",
+      "age": 3
+    },
+    "diagnoses": null,
+    "reportDate": "2014-03-15T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 13
+      }
+    ],
+    "medicalFacility": {
+      "district": "Lancaster"
+    },
+    "patient": {
+      "sex": null,
+      "age": 1
+    },
+    "diagnoses": null,
+    "reportDate": "2014-03-14T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 14
+      }
+    ],
+    "medicalFacility": {
+      "district": "Lancaster"
+    },
+    "patient": {
+      "sex": "male",
+      "age": 2
+    },
+    "diagnoses": [
+      {
+        "name": "Ear Infection",
+        "count": 15
+      }
+    ],
+    "reportDate": "2014-03-14T00:00:00.000Z"
+  }
+]
