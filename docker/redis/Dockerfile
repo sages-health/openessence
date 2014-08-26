@@ -1,6 +1,7 @@
 ###############################################################################
 # Dockerfile for Redis. Based on docker-library/redis, but uses debian-testing
-# (jessie) instead of stable (wheezy)
+# (jessie) instead of stable (wheezy), since that's what we use for everything
+# else and we want to share container layers as much as possible.
 ###############################################################################
 
 FROM debian:jessie
