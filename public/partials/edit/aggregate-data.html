@@ -23,7 +23,7 @@
         <div class="table-responsive">
           <table class="table table-striped table-hover" frable="tableParams">
             <tr ng-repeat="record in $data">
-              <td data-title="strings.reportDate" sortable="'reportDate'">
+              <td data-title="strings.reportDate" data-sortable="'reportDate'">
                 <a ng-click="tableFilter('date', record._source.reportDate)">{{record._source.reportDate | date}}</a>
               </td>
               <td data-title="strings.week">
@@ -32,13 +32,13 @@
               <td data-title="strings.year">
                 <a>{{getYear(record._source.reportDate)}}</a>
               </td>
-              <td data-title="strings.district" sortable="'medicalFacility.district'">
+              <td data-title="strings.district" data-sortable="'medicalFacility.district'">
                 <a ng-click="tableFilter('districts', record._source.medicalFacility.district)">{{record._source.medicalFacility.district}}</a>
               </td>
-              <td data-title="strings.sitesTotal" sortable="'medicalFacility.sites.total'">
+              <td data-title="strings.sitesTotal" data-sortable="'medicalFacility.sites.total'">
                 <a>{{record._source.medicalFacility.sites.total}}</a>
               </td>
-              <td data-title="strings.sitesReporting" sortable="'medicalFacility.sites.reporting'">
+              <td data-title="strings.sitesReporting" data-sortable="'medicalFacility.sites.reporting'">
                 <a>{{record._source.medicalFacility.sites.reporting}}</a>
               </td>
               <td data-title="strings.symptoms">
