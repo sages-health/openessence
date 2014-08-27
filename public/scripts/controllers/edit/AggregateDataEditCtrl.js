@@ -115,14 +115,11 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
   var addDefaultSymptoms = function (symptoms, allSymptoms) {
     symptoms = symptoms ? symptoms : [];
     allSymptoms.forEach(function (el) {
-      var found = symptoms.find(function (a) {
-        if (a.name === el) {
-          return true;
-        }
-        return false;
+      var found = symptoms.filter(function (a) {
+        return (a.name === el);
       });
 
-      if (found === undefined) {
+      if (found.length === 0) {
         symptoms.push({name: el});
       }
     });

@@ -20,13 +20,10 @@ angular.module(controllers.name).controller('WeeklyReportCtrl', function ($scope
   var endDate = moment($scope.report.endDate).format(dateFormat);
   var dateString = 'reportDate: [' + startDate + ' TO ' + endDate + ']';
   $scope.getSymptomCount = function (symptomsAll, symptom) {
-    var result = symptomsAll.find(function (val) {
-      if (val.name === symptom) {
-        return true;
-      }
-      return false;
+    var result = symptomsAll.filter(function (val) {
+      return (val.name === symptom);
     });
-    return result ? result.count : '';
+    return result.length > 0 ? result[0].count : '';
   };
 
   OutpatientVisitResource.get({
