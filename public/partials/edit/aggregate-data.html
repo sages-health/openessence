@@ -42,7 +42,9 @@
                 <a>{{record._source.medicalFacility.sites.reporting}}</a>
               </td>
               <td data-title="strings.symptoms">
-                <a>{{printAggregate(record._source.symptoms, true) | truncate:100}}</a>
+                <a ng-click="tableFilter('symptoms', record._source.symptoms)">
+                  {{printAggregate(record._source.symptoms,true) | truncate:100}}
+                </a>
               </td>
               <td data-title="strings.edit">
                 <div class="btn-group btn-group-xs pull-right edit-controls">

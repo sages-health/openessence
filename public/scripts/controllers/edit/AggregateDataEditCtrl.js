@@ -5,7 +5,8 @@ var controllers = require('../../modules').controllers;
 var moment = require('moment');
 angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,//
                                                                                OutpatientVisitResource, DistrictResource, //
-                                                                               outpatientUploadModal, outpatientImportModal) {
+                                                                               SymptomResource, outpatientUploadModal, //
+                                                                               outpatientImportModal) {
   $scope.getWeek = function (date) {
     return moment(date).format('W');
   };
@@ -50,6 +51,16 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
         field: 'name'
       },
       name: gettextCatalog.getString('District')
+    },
+    {
+      filterId: 'symptoms',
+      type: 'multi-select',
+      field: 'symptoms.name',
+      store: {
+        resource: SymptomResource,
+        field: 'name'
+      },
+      name: gettextCatalog.getString('Symptoms')
     }
   ];
 

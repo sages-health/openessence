@@ -46,7 +46,7 @@ angular.module(services.name).factory('tableUtil', function (FrableParams, sortS
         a.forEach(function (v) {
           var filter = {
             filterId: field,
-            value: v
+            value: ((typeof v) === 'object' ? v.name : v)
           };
           $rootScope.$emit('filterChange', filter, true, false);
         });
