@@ -80,10 +80,6 @@ async.parallel([
     bulkInsert(require('../models/Symptom'), require('./symptom_for_aggregates.json'), callback);
   },
 
-  function districtsForAggregates (callback) {
-    bulkInsert(require('../models/District'), require('./district_for_aggregates.json'), callback);
-  },
-
   function syndrome (callback) {
     bulkInsert(require('../models/Syndrome'), require('./syndrome.json'), callback);
   },
