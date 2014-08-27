@@ -269,7 +269,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
                   age: source.patient ? source.patient.age : null,
-                  districts: source.districts
+                  districts: source.medicalFacility.district
                 };
 
                 if (source.symptoms) {
@@ -316,15 +316,12 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             });
         };
 
-
         scope.getWeek = function (date) {
           return moment(date).format('W');
         };
         scope.getYear = function (date) {
           return moment(date).format('GGGG');
         };
-
-
 
         scope.tableParams = new FrableParams({
           page: 1,
