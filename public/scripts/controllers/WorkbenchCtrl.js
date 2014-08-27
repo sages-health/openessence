@@ -16,26 +16,10 @@ angular.module(controllers.name)
 
     $scope.filterTypes = [
       {
-        filterId: 'age',
-        type: 'numeric-range',
-        field: 'patient.age',
-        name: gettextCatalog.getString('Age')
-      },
-      {
         filterId: 'date',
         type: 'date-range',
         field: 'reportDate',
         name: gettextCatalog.getString('Date')
-      },
-      {
-        filterId: 'diagnoses',
-        type: 'multi-select',
-        field: 'diagnoses.name',
-        store: {
-          resource: DiagnosisResource,
-          field: 'name'
-        },
-        name: gettextCatalog.getString('Diagnoses')
       },
       {
         filterId: 'districts',
@@ -46,12 +30,6 @@ angular.module(controllers.name)
           field: 'name'
         },
         name: gettextCatalog.getString('District')
-      },
-      {
-        filterId: 'sex',
-        type: 'sex',
-        field: 'patient.sex',
-        name: gettextCatalog.getString('Sex')
       },
       {
         filterId: 'symptoms',
@@ -67,20 +45,8 @@ angular.module(controllers.name)
 
     $scope.pivotOptions = [
       {
-        value: 'age',
-        label: gettextCatalog.getString('Age')
-      },
-      {
         value: 'districts',
         label: gettextCatalog.getString('District')
-      },
-      {
-        value: 'diagnoses',
-        label: gettextCatalog.getString('Diagnoses')
-      },
-      {
-        value: 'sex',
-        label: gettextCatalog.getString('Sex')
       },
       {
         value: 'symptoms',

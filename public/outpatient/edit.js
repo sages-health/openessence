@@ -92,27 +92,12 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
     }
   ];
   $scope.filterTypes = [
-    {
-      filterId: 'age',
-      type: 'numeric-range',
-      field: 'patient.age',
-      name: gettextCatalog.getString('Age')
-    },
+
     {
       filterId: 'date',
       type: 'date-range',
       field: 'reportDate',
       name: gettextCatalog.getString('Date')
-    },
-    {
-      filterId: 'diagnoses',
-      type: 'multi-select',
-      field: 'diagnoses.name',
-      store: {
-        resource: DiagnosisResource,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('Diagnoses')
     },
     {
       filterId: 'districts',
@@ -123,12 +108,6 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
         field: 'name'
       },
       name: gettextCatalog.getString('District')
-    },
-    {
-      filterId: 'sex',
-      type: 'sex',
-      field: 'patient.sex',
-      name: gettextCatalog.getString('Sex')
     },
     {
       filterId: 'symptoms',
