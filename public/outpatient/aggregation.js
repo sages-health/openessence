@@ -94,19 +94,6 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
       } else {
         throw new Error('Cannot make key for bucket ' + bucket);
       }
-    }//,
-    //TODO this, but on backend maybe?
-    /**
-     * Given an aggregation first and optional aggregation second, transform the response
-     * into a flattened object of the form
-     * { first.name1: {second.name1: count, second.missing: count },
-     *   first.name1_missing: count,...
-     * @param response
-     * @param first
-     * @param second
-     */
-   // flattenAggregationResults: function (response, first, second){
-
-   // }
+    }
   };
 });

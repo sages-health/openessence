@@ -245,16 +245,40 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               size: 999999,
               q: scope.queryString
             }, function (data) {
-              scope.crosstabData = data.results.map(function (r) {
+              var flatRecs = [];
+              data.results.forEach(function (r) {
+
                 var source = r._source;
-                return {
+                //currently we explode symptoms and diagnosis to make crosstab counts for them happy
+                var rec = {
                   sex: source.patient ? source.patient.sex : null,
                   age: source.patient ? source.patient.age : null,
-                  symptoms: source.symptoms,
-                  diagnoses: source.diagnoses,
                   districts: source.districts
                 };
+
+                if (source.symptoms) {
+                  source.symptoms.forEach(function (v) {
+                    var r = angular.copy(rec);
+                    r.symptoms = [
+                      {name: v.name || v, count: v.count || 1}
+                    ];
+                    flatRecs.push(r);
+                  });
+                }
+                if (source.diagnoses) {
+                  source.diagnoses.forEach(function (v) {
+                    var r = angular.copy(rec);
+                    r.diagnoses = [
+                      {name: v.name || v, count: v.count || 1}
+                    ];
+                    flatRecs.push(r);
+                  });
+                }
+                if (!(source.symptoms) && !(source.diagnoses)) {
+                  flatRecs.push(rec);
+                }
               });
+              scope.crosstabData = flatRecs;
             });
           }
         };

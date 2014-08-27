@@ -140,7 +140,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', function ($tim
             var bucket = agg.buckets || agg._name.buckets;
             return bucket.map(function (b) {
               /*jshint camelcase:false */
-              return [b.key, b.doc_count];
+              var count = b.count ? b.count.value : b.doc_count;
+              return [b.key, count];
             });
           };
 
