@@ -3,38 +3,34 @@
         <div class="table-responsive">
             <!-- can't reuse the table used for editing b/c that's a lot bigger -->
             <table class="table table-striped table-hover table-condensed" frable="tableParams">
-                <tr ng-repeat="visit in $data">
-                    <td data-title="strings.date" data-sortable="'reportDate'">
-                        <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate |
-                            date}}</a>
+                <tr ng-repeat="record in $data">
+                    <td data-title="strings.reportDate" data-sortable="'reportDate'">
+                        <a ng-click="tableFilter('date', record._source.reportDate)">{{record._source.reportDate | date}}</a>
                     </td>
-                    <td data-title="strings.district">
-                        <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">
-                            {{visit._source.medicalFacility.district}}
-                        </a>
+                    <td data-title="strings.week">
+                        <a>{{getWeek(record._source.reportDate)}}</a>
                     </td>
-                    <td data-title="strings.sex" data-sortable="'patient.sex'">
-                        <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
+                    <td data-title="strings.year">
+                        <a>{{getYear(record._source.reportDate)}}</a>
                     </td>
-                    <td data-title="strings.age" data-sortable="'patient.age'">
-                        <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
+                    <td data-title="strings.district" data-sortable="'medicalFacility.district'">
+                        <a ng-click="tableFilter('districts', record._source.medicalFacility.district)">{{record._source.medicalFacility.district}}</a>
+                    </td>
+                    <td data-title="strings.sitesTotal" data-sortable="'medicalFacility.sites.total'">
+                        <a>{{record._source.medicalFacility.sites.total}}</a>
+                    </td>
+                    <td data-title="strings.sitesReporting" data-sortable="'medicalFacility.sites.reporting'">
+                        <a>{{record._source.medicalFacility.sites.reporting}}</a>
                     </td>
                     <td data-title="strings.symptoms">
-                        <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
-                            {{printAggregate(visit._source.symptoms, true)}}
-                        </a>
-                    </td>
-                    <td data-title="strings.diagnoses">
-                        <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">
-                            {{visit._source.diagnoses | pluck:'name' | join | truncate:30}}
-                        </a>
+                        <a>{{printAggregate(record._source.symptoms, true) | truncate:100}}</a>
                     </td>
                     <td data-title="strings.edit">
                         <div class="btn-group btn-group-xs edit-controls">
-                            <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
+                            <button type="button" class="btn btn-default" ng-click="editRecord(record)">
                                 <span class="icon-pencil"></span>
                             </button>
-                            <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
+                            <button type="button" class="btn btn-danger" ng-click="deleteRecord(record)">
                                 <span class="icon-trash"></span>
                             </button>
                         </div>
