@@ -46,6 +46,7 @@
   "devDependencies": {
     "bootstrap": "^3.2.0",
     "browserify": "^4.1.11",
+    "browserify-istanbul": "^0.1.2",
     "browserify-middleware": "^3.0.0",
     "browserify-shim": "^3.5.0",
     "browserify-transform-tools": "~1.2.1",
@@ -79,6 +80,7 @@
     "karma": "^0.12.16",
     "karma-browserify": "^0.2.1",
     "karma-chrome-launcher": "^0.1.4",
+    "karma-coverage": "^0.2.6",
     "karma-mocha": "^0.1.4",
     "karma-mocha-reporter": "^0.3.1",
     "karma-phantomjs-launcher": "^0.1.4",

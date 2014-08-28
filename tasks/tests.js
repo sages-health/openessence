@@ -8,6 +8,7 @@ var karma = require('karma');
 var glob = require('glob');
 var browserify = require('browserify');
 var partialify = require('partialify');
+var browserifyIstanbul = require('browserify-istanbul');
 var source = require('vinyl-source-stream');
 var path = require('path');
 
@@ -47,20 +48,31 @@ gulp.task('client-tests', function (callback) {
 
       browserify(testFiles)
         .transform(partialify)
+        .transform(browserifyIstanbul({
+          ignore: ['**/node_modules/**', '**/bower_components/**', '**/test/**']
+        }))
         .bundle({debug: true})
         .pipe(source('tests.js'))
         .pipe(gulp.dest('.tmp/'))
         .on('finish', function () {
           karma.server.start(
             {
-              basePath: '',
+              basePath: path.resolve(__dirname, '..'),
               frameworks: ['mocha', 'browserify'],
-              files: [path.resolve(__dirname, '..', '.tmp/tests.js')],
+              files: [
+                '.tmp/tests.js',
+                {pattern: 'public/**/*.js', included: false}
+              ],
               exclude: [],
               preprocessors: {
-                '*.js': ['sourcemap']
+                '**/*.js': ['sourcemap'],
+                'public/**/*.js': ['coverage']
               },
-              reporters: ['mocha'],
+              reporters: ['mocha', 'coverage'],
+              coverageReporter: {
+                type: 'html',
+                dir: path.resolve(__dirname, '..', '.tmp/karma-coverage')
+              },
               port: 9876,
               colors: true,
               logLevel: 'INFO',
