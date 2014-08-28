@@ -37,7 +37,6 @@ require('./controllers');
 require('./services');
 require('./directives');
 require('./filters');
-var i18n = require('./i18n');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
                     'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
@@ -252,18 +251,17 @@ app.config(function ($httpProvider) {
   $httpProvider.interceptors.push('errorInterceptor');
 });
 
-app.run(function ($rootScope, gettextCatalog) {
-  i18n.strings().then(function (strings) {
-    $rootScope.$apply(function () { // TODO this is really slow, think of a better way to load strings
+app.run(function ($rootScope, $http, gettextCatalog, lang) {
+  $http.get('/public/translations/' + lang + '.json')
+    .success(function (strings) {
       Object.keys(strings).forEach(function (lang) {
         // angular-gettext's JSON format allows for multiple locales in a single bundle
         // we don't use that now, but we may in the future
         gettextCatalog.setStrings(lang, strings[lang]);
       });
-      gettextCatalog.currentLanguage = document.documentElement.lang;
+      gettextCatalog.currentLanguage = lang;
       gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
     });
-  });
 });
 
 module.exports = app;

@@ -22,3 +22,8 @@ require('./NotFoundCtrl');
 require('./ReloginCtrl');
 require('./ReportCtrl');
 require('./WorkbenchCtrl');
+
+var angular = require('angular');
+var controllers = require('../modules').controllers;
+
+angular.module(controllers.name).controller('MainCtrl', require('./MainCtrl'));

@@ -1,6 +1,7 @@
 'use strict';
 
 require('./appName');
+require('./constants');
 require('./crud');
 require('./csrfToken');
 require('./Dashboard');

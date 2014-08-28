@@ -78,8 +78,11 @@
     "jshint-stylish": "~0.1.5",
     "karma": "^0.12.16",
     "karma-browserify": "^0.2.1",
+    "karma-chrome-launcher": "^0.1.4",
     "karma-mocha": "^0.1.4",
+    "karma-mocha-reporter": "^0.3.1",
     "karma-phantomjs-launcher": "^0.1.4",
+    "karma-sourcemap-loader": "^0.2.0",
     "less": "~1.7.0",
     "less-middleware": "^1.0.3",
     "lesshat": "^3.0.2",
@@ -110,6 +113,7 @@
   "browser": {
     "angular": "./bower_components/angular/angular.js",
     "angular-animate": "./bower_components/angular-animate/angular-animate.js",
+    "angular-mocks": "./bower_components/angular-mocks/angular-mocks.js",
     "angular-resource": "./bower_components/angular-resource/angular-resource.js",
     "angular-sanitize": "./bower_components/angular-sanitize/angular-sanitize.js",
     "angular-bootstrap": "./bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
@@ -152,6 +156,11 @@
       ]
     },
     "angular-animate": {
+      "depends": [
+        "angular:angular"
+      ]
+    },
+    "angular-mocks": {
       "depends": [
         "angular:angular"
       ]
