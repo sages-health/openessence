@@ -5,7 +5,7 @@ var moment = require('moment');
 
 // @ngInject
 module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVisitResource, DistrictResource,
-                           outpatientUploadModal, outpatientImportModal) {
+                           SymptomResource, outpatientUploadModal, outpatientImportModal) {
 
   $scope.getWeek = function (date) {
     return moment(date).format('W');
@@ -51,6 +51,16 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
         field: 'name'
       },
       name: gettextCatalog.getString('District')
+    },
+    {
+      filterId: 'symptoms',
+      type: 'multi-select',
+      field: 'symptoms.name',
+      store: {
+        resource: SymptomResource,
+        field: 'name'
+      },
+      name: gettextCatalog.getString('Symptoms')
     }
   ];
 
@@ -116,11 +126,11 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
   var addDefaultSymptoms = function (symptoms, allSymptoms) {
     symptoms = symptoms ? symptoms : [];
     allSymptoms.forEach(function (el) {
-      var found = symptoms.find(function (a) {
+      var found = symptoms.filter(function (a) {
         return a.name === el;
       });
 
-      if (found === undefined) {
+      if (found.length === 0) {
         symptoms.push({name: el});
       }
     });
