@@ -1,10 +1,10 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../modules').services;
 
 // TODO refactor, move to dashboard/ dir
-angular.module(services.name).factory('Dashboard', function ($resource, $modal, $state, DashboardResource, crud) {
+// @ngInject
+module.exports = function ($resource, $modal, $state, DashboardResource, crud) {
   return {
     state: function (scope) {
       return Object.keys(scope).reduce(function (prev, current) {
@@ -27,11 +27,11 @@ angular.module(services.name).factory('Dashboard', function ($resource, $modal, 
       DashboardResource.update(angular.extend({_id: dashboardId}, state), function () {
         $modal.open({
           template: require('../../dashboard/dashboard-saved-modal.html'),
-          controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+          controller: /*ngInject*/ function ($scope, $modalInstance) {
             $scope.ok = function () {
               $modalInstance.dismiss('cancel');
             };
-          }]
+          }
         });
       });
     },
@@ -42,7 +42,7 @@ angular.module(services.name).factory('Dashboard', function ($resource, $modal, 
     openModal: function () {
       $modal.open({
         template: require('../../dashboard/open-dashboard-modal.html'),
-        controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+        controller: /*ngInject*/ function ($scope, $modalInstance) {
           $scope.dashboard = {};
           $scope.dashboards = [];
           DashboardResource.get(function (response) {
@@ -66,10 +66,10 @@ angular.module(services.name).factory('Dashboard', function ($resource, $modal, 
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }]
+        }
       }).result.then(function (dashboard) {
           return $state.go('dashboard', {dashboardId: dashboard._id});
         });
     }
   };
-});
+};

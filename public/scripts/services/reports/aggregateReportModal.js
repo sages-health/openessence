@@ -1,15 +1,14 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../../modules').services;
 
-angular.module(services.name).factory('aggregateReportModal', function ($modal) {
+// @ngInject
+module.exports = function ($modal) {
   return {
     openWeeklyReport: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-weekly-report-dialog.html'),
-        controller: ['$scope', '$modalInstance', '$window', '$location', 'gettextCatalog', function ($scope, $modalInstance, $window,
-                                                                                   $location, gettextCatalog) {
+        controller: /*ngInject*/ function ($scope, $modalInstance, $window, $location, gettextCatalog) {
           $scope.report = {};
           $scope.report.name = gettextCatalog.getString('Reported Cases by Country - Weekly Report');
           $scope.isInvalid = function (field) {
@@ -45,7 +44,7 @@ angular.module(services.name).factory('aggregateReportModal', function ($modal) 
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }]
+        }
       }, options);
 
       return $modal.open(options);
@@ -53,8 +52,7 @@ angular.module(services.name).factory('aggregateReportModal', function ($modal) 
     openTimeseriesReport: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-timeseries-report-dialog.html'),
-        controller: ['$scope', '$modalInstance', '$window', '$location', 'gettextCatalog', function ($scope, $modalInstance, $window,
-                                                                                                     $location, gettextCatalog) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, $location, gettextCatalog) {
           $scope.report = {};
           $scope.report.name = gettextCatalog.getString('Reported Cases by Country - Time Series');
           $scope.isInvalid = function (field) {
@@ -90,10 +88,10 @@ angular.module(services.name).factory('aggregateReportModal', function ($modal) 
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }]
+        }
       }, options);
 
       return $modal.open(options);
     }
   };
-});
+};

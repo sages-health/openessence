@@ -8,7 +8,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 require('../select2');
 
-angular.module(directives.name).directive('hinge', function (gettextCatalog) {
+angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gettextCatalog) {
   return {
     restrict: 'E',
     transclude: true,

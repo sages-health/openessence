@@ -1,10 +1,9 @@
 'use strict';
 
-var angular = require('angular');
-var services = require('../modules').services;
 var humane = require('humane-js');
 
-angular.module(services.name).factory('notification', function () {
+// @ngInject
+module.exports = function () {
   var error = humane.create({
     addnCls: 'humane-error'
   });
@@ -20,4 +19,4 @@ angular.module(services.name).factory('notification', function () {
       info.log(message);
     }
   };
-});
+};

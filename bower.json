@@ -24,7 +24,6 @@
     "jquery-csv": "https://github.com/mirlord/jquery-csv/archive/78724d620cc5e4d151142a7954535d27758396e8.zip"
   },
   "devDependencies": {
-    "angular-mocks": "~1.2.13",
-    "angular-scenario": "~1.2.13"
+    "angular-mocks": "~1.2.13"
   }
 }

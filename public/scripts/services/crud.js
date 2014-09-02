@@ -1,15 +1,15 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../modules').services;
 
-angular.module(services.name).factory('crud', function ($modal) {
+// @ngInject
+module.exports = function ($modal) {
   return {
     // Create or edit a record. If record is null, a new record will be created
     open: function (record, resource, template, options) {
       return $modal.open({
         template: template,
-        controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+        controller: /*ngInject*/ function ($scope, $modalInstance) {
           $scope.uniqueConstraintViolation = false;
           $scope.record = record || {};
           $scope.data = angular.copy($scope.record._source) || {};
@@ -72,14 +72,14 @@ angular.module(services.name).factory('crud', function ($modal) {
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }]
+        }
       });
     },
     // Delete a record
     'delete': function (record, resource, template) {
       return $modal.open({
         template: template,
-        controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+        controller: /*ngInject*/ function ($scope, $modalInstance) {
           $scope.record  = record;
           $scope.delete = function () {
             resource.remove({_id: record._id}, function () {
@@ -89,8 +89,8 @@ angular.module(services.name).factory('crud', function ($modal) {
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }]
+        }
       });
     }
   };
-});
+};

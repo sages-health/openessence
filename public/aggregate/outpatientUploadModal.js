@@ -6,7 +6,7 @@ var services = require('../scripts/modules').services;
 /**
  * Wraps outpatient upload page in a modal window.
  */
-angular.module(services.name).factory('outpatientUploadModal', function ($modal) {
+angular.module(services.name).factory('outpatientUploadModal', /*@ngInject*/ function ($modal) {
   return {
     open: function (options) {
       options = angular.extend({

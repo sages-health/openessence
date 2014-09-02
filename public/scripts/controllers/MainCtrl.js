@@ -1,11 +1,9 @@
 'use strict';
 
-var angular = require('angular');
-var controllers = require('../modules').controllers;
+// @ngInject
+module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Dashboard,
+                           DashboardResource, WorkbenchResource) {
 
-angular.module(controllers.name).controller('MainCtrl', function ($scope, $window, $state, appName, user, //
-                                                                  visitsReportModal, aggregateReportModal, //
-                                                                  Dashboard, DashboardResource, WorkbenchResource) {
   $scope.visitsReport = function () {
     visitsReportModal.open();
   };
@@ -22,8 +20,6 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
 
   $scope.user = user;
   $scope.logout = function () {
-    user.logout();
-
     // wait for acknowledgement of logout from server before reloading
     $scope.$on('logout', function () { // TODO move to user service
       // TODO implement logout view with a nice message like "Sorry to see you go"
@@ -31,6 +27,8 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
       // for page load for added security so stale data doesn't remain
       $window.location.href = '/';
     });
+
+    user.logout();
   };
 
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
@@ -67,5 +65,4 @@ angular.module(controllers.name).controller('MainCtrl', function ($scope, $windo
       }, {})));
     });
   };
-
-});
+};

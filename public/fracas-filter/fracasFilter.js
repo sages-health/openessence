@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('fracasFilter', function () {
+angular.module(directives.name).directive('fracasFilter', /*@ngInject*/ function () {
   return {
     restrict: 'E',
     template: require('./fracas-filter.html'),

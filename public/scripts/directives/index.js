@@ -1,7 +1,6 @@
 'use strict';
 
-module.exports = {
-  addVisualizationButton: require('./addVisualizationButton'),
-  editView: require('./editView'),
-  conflictMessage: require('./conflictMessage')
-};
+require('../modules').directives
+  .directive('editVisualizationButton', require('./addVisualizationButton'))
+  .directive('editView', require('./editView'))
+  .directive('conflictMessage', require('./conflictMessage'));

@@ -1,14 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 
-var pluckName = function (r) {
-  return r._source.name;
-};
-
-angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, tableUtil, crud, gettextCatalog,
-                                                                      UserResource, DistrictResource) {
+// @ngInject
+module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, DistrictResource) {
   $scope.filters = [
     {filterId: 'username'}
   ];
@@ -92,7 +87,9 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
     sort: 'name'
   };
   DistrictResource.get(searchParams, function (response) {
-    editOptions.districts = response.results.map(pluckName);
+    editOptions.districts = response.results.map(function (r) {
+      return r._source.name;
+    });
   });
 
   $scope.$watchCollection('queryString', reload);
@@ -112,4 +109,4 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
   $scope.deleteRecord = function (record) {
     crud.delete(record, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
-});
+};

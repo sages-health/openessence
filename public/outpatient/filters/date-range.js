@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientDateRangeFilter', function (gettextCatalog, dateFilter) {
+angular.module(directives.name).directive('outpatientDateRangeFilter', function /*@ngInject*/ (gettextCatalog, dateFilter) {
   return {
     restrict: 'E',
     template: require('./date-range.html'),

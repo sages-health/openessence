@@ -1,12 +1,16 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../modules').services;
 
-angular.module(services.name).factory('tableUtil', function (FrableParams, sortString, $rootScope) {
+// @ngInject
+module.exports = function (FrableParams, sortString, $rootScope) {
   return {
-    // scope - $scope from controller
-    // resouce - one of the $resource object. ie District, Diagnosis,...
+    /**
+     *
+     * @param scope $scope from controller
+     * @param resource one of the $resource objects, e.g. District, Diagnosis, etc.
+     * @returns {FrableParams}
+     */
     tableParams: function (scope, resource) {
       return new FrableParams({
         page: 1,
@@ -53,5 +57,4 @@ angular.module(services.name).factory('tableUtil', function (FrableParams, sortS
       }
     }
   };
-})
-;
+};

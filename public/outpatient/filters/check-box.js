@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientCheckBoxFilter', function () {
+angular.module(directives.name).directive('outpatientCheckBoxFilter', /*@ngInject*/ function () {
   return {
     restrict: 'E',
     template: require('./check-box.html'),

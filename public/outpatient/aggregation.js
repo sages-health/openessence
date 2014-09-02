@@ -3,7 +3,7 @@
 var angular = require('angular');
 var services = require('../scripts/modules').services;
 
-angular.module(services.name).factory('outpatientAggregation', function (gettextCatalog) {
+angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function (gettextCatalog) {
   //backend will wrap with "aggs : {"
   var aggregations = {
     sex: {
