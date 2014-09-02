@@ -66,15 +66,26 @@ if (settings.session.store === 'memory' && settings.workers > 1) {
 // use shared Redis connection
 if (!settings.redis.client) {
   var redis = require('redis');
-  var url = require('url').parse(settings.redis.url);
+  var redisUrl = require('url').parse(settings.redis.url);
+  var redisPass;
+
+  if (redisUrl.auth) {
+    var auth = redisUrl.auth.split(':');
+    if (auth.length === 2) {
+      redisPass = auth[1];
+      // Redis only uses passwords, so the username can be ignored
+    } else {
+      // ignore the username and move on
+    }
+  }
 
   var redisClient;
   Object.defineProperty(settings.redis, 'client', {
     enumerable: true,
     get: function () { // lazily initialize redis connection so Redis doesn't have to be online unless we're using it
       if (!redisClient) {
-        redisClient = redis.createClient(url.port, url.hostname, {
-          'auth_pass': settings.redis.password
+        redisClient = redis.createClient(redisUrl.port, redisUrl.hostname, {
+          'auth_pass': redisPass
         });
       }
       return redisClient;
