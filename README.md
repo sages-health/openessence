@@ -13,8 +13,8 @@ The name __Fracas__ is inspired by
  15<sup>th</sup>-century Italian physician important in the
  [history of epidemiology](http://en.wikipedia.org/wiki/Epidemiology#History).
 
-If you really need __Fracas__ to be an acronym, it can stand for __FR__ont-end for
- the __A__nalysis and __C__ontrol of Outbre<strong>A</strong>k<strong>S</strong>.
+If you really need __Fracas__ to be an acronym, it can stand for <strong>FR</strong>ont-end for
+ the <strong>A</strong>nalysis and <strong>C</strong>ontrol of Outbre<strong>A</strong>k<strong>S</strong>.
 
 ## Requirements
 
