@@ -253,7 +253,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
                   age: source.patient ? source.patient.age : null,
-                  districts: source.districts
+                  districts: source.medicalFacility.districts
                 };
 
                 if (source.symptoms) {
