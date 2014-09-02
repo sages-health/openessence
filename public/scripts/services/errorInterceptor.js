@@ -1,11 +1,9 @@
 'use strict';
 
-var angular = require('angular');
-var services = require('../modules').services;
-
 // inspired by https://github.com/witoldsz/angular-http-auth
 
-angular.module(services.name).factory('errorInterceptor', function ($q, $injector, $rootScope, gettext, notification) {
+// @ngInject
+module.exports = function ($q, $injector, $rootScope, gettext, notification) {
   // get around circular dependency, see
   // http://stackoverflow.com/questions/20647483/angularjs-injecting-service-into-a-http-interceptor-circular-dependency
   var $http;
@@ -54,4 +52,4 @@ angular.module(services.name).factory('errorInterceptor', function ($q, $injecto
       return $q.reject(rejection);
     }
   };
-});
+};

@@ -11,6 +11,7 @@ var partialify = require('partialify');
 var browserifyIstanbul = require('browserify-istanbul');
 var source = require('vinyl-source-stream');
 var path = require('path');
+var noParseLibs = require('../server/assets').noParseLibs();
 
 var paths = {
   serverTests: 'test/server/**/*.js',
@@ -46,7 +47,9 @@ gulp.task('client-tests', function (callback) {
     var run = function (callback) {
       callback = callback || function () {};
 
-      browserify(testFiles)
+      browserify(testFiles, {
+        noparse: noParseLibs
+      })
         .transform(partialify)
         .transform(browserifyIstanbul({
           ignore: ['**/node_modules/**', '**/bower_components/**', '**/test/**']
@@ -112,7 +115,7 @@ gulp.task('client-tests', function (callback) {
   });
 });
 
-gulp.task('tests', ['server-tests'], function (cb) {
+gulp.task('tests', ['server-tests', 'client-tests'], function (cb) {
   gulp.src(['server/**/*.js'])
     .pipe(istanbul())
     .on('finish', function () {

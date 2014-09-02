@@ -1,11 +1,9 @@
 'use strict';
 
-var angular = require('angular');
 var moment = require('moment');
-var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('WeeklyReportCtrl', function ($scope, $window, gettextCatalog, user, //
-                                                                          visualization, OutpatientVisitResource) {
+// @ngInject
+module.exports = function ($scope, $window, gettextCatalog, user, visualization, OutpatientVisitResource) {
 
   $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
   $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
@@ -21,10 +19,7 @@ angular.module(controllers.name).controller('WeeklyReportCtrl', function ($scope
   var dateString = 'reportDate: [' + startDate + ' TO ' + endDate + ']';
   $scope.getSymptomCount = function (symptomsAll, symptom) {
     var result = symptomsAll.find(function (val) {
-      if (val.name === symptom) {
-        return true;
-      }
-      return false;
+      return val.name === symptom;
     });
     return result ? result.count : '';
   };
@@ -38,4 +33,4 @@ angular.module(controllers.name).controller('WeeklyReportCtrl', function ($scope
       $scope.$data = response.results;
     }
   );
-});
+};

@@ -1,6 +1,6 @@
 'use strict';
 
-require('./join');
-require('./object2Array');
-require('./pluck');
-require('./truncate');
+require('../modules').filters
+  .filter('join', require('./join'))
+  .filter('pluck', require('./pluck'))
+  .filter('truncate', require('./truncate'));

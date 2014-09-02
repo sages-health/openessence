@@ -1,10 +1,7 @@
 'use strict';
 
-var angular = require('angular');
-var controllers = require('../../modules').controllers;
-
-angular.module(controllers.name).controller('SyndromeEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,
-                                                                          SyndromeResource) {
+// @ngInject
+module.exports = function ($scope, crud, tableUtil, gettextCatalog, SyndromeResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -59,4 +56,4 @@ angular.module(controllers.name).controller('SyndromeEditCtrl', function ($scope
     crud.delete(record, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
   // ---------------- End: Common functions
-});
+};

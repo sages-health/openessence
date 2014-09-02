@@ -1,5 +1,6 @@
 'use strict';
 
+// @ngInject
 module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Dashboard,
                            DashboardResource, WorkbenchResource) {
 

@@ -9,7 +9,7 @@ require('jquery-csv');
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('csvFileSelector', function ($rootScope) {
+angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ function ($rootScope) {
   return {
     restrict: 'E',
     template: require('./csv-file-selector.html'),

@@ -1,9 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../modules').services;
 
-angular.module(services.name).factory('user', function ($resource, $rootScope, $log, $window, appName, persona) {
+// @ngInject
+module.exports = function ($resource, $rootScope, $log, $window, appName, persona) {
   var PersonaSession = $resource('/session/browserid', {}, {
     save: {
       method: 'POST',
@@ -127,4 +127,4 @@ angular.module(services.name).factory('user', function ($resource, $rootScope, $
       return user && user.roles && user.roles.indexOf('admin') !== -1;
     }
   };
-});
+};

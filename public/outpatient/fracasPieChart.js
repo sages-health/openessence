@@ -4,7 +4,7 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientPieChart', function ($rootScope) {
+angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope) {
   return {
     restrict: 'E',
     template: require('./pie-chart.html'),

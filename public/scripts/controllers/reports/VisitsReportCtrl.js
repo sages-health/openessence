@@ -1,9 +1,7 @@
 'use strict';
 
-var angular = require('angular');
-var controllers = require('../../modules').controllers;
-
-angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope, $window, visualization, user, dateFilter) {
+// @ngInject
+module.exports = function ($scope, $window, visualization, user, dateFilter) {
   $scope.someText = '';
   $scope.user = user.getUser();
   $scope.today = (new Date()).toString();
@@ -59,4 +57,4 @@ angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope
   visualization.resource.get({q: 'name:"symptomspie"'}, function (data) {
     $scope.viz2 = fixVisualization(data.results[0]._source.state);
   });
-});
+};

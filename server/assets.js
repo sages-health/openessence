@@ -53,7 +53,7 @@ exports.static = function () {
     app.use('/js/app.js', browserify(__dirname + '/../public/scripts/app.js', {
       // Make require('partial.html') work.
       // In production, we use a custom version of this that also minifies the partials
-      transform: ['partialify'],
+      transform: ['browserify-ngannotate', 'partialify'],
       external: libs
     }));
 

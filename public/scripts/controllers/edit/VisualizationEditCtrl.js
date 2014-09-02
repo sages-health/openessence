@@ -1,10 +1,11 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('VisualizationEditCtrl', function ($scope, $modal, orderByFilter, gettextCatalog,
-                                                                               FrableParams, VisualizationResource, sortString) {
+// @ngInject
+module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, FrableParams, VisualizationResource,
+                           sortString) {
+
   $scope.checkboxes = {items: []};
 
   $scope.printMe = function(){
@@ -165,4 +166,4 @@ angular.module(controllers.name).controller('VisualizationEditCtrl', function ($
         reload();
       });
   };
-});
+};

@@ -1,8 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../modules').services;
 
-angular.module(services.name).constant('lang', document.documentElement.lang);
-
-// TODO move rest of constants here
+require('../modules').services
+  .constant('lang', document.documentElement.lang)
+  .constant('appName', angular.element('meta[name="_app-name"]').attr('content'))
+  .constant('csrfToken', angular.element('meta[name="_csrf"]').attr('content'))
+  .constant('persona', angular.element('meta[name="_persona"]').attr('content') === 'true');

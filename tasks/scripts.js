@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 var browserify = require('browserify');
 var htmlmin = require('gulp-htmlmin');
-var ngmin = require('gulp-ngmin'); // TODO switch to ng-annotate
+var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var buffer = require('gulp-buffer');
 var rev = require('gulp-rev');
@@ -106,7 +106,10 @@ gulp.task('scripts', ['partials'], function () {
     .bundle()
     .pipe(source('app.js')) // convert stream of text to stream of Vinyl objects for gulp
     .pipe(buffer()) // ngmin, et al. don't like streams, so convert to buffer
-    .pipe(ngmin())
+    .pipe(ngAnnotate({
+      add: true,
+      singleQuotes: true
+    }))
     .pipe(uglify({
       preserveComments: 'some' // preserve license headers
     }))

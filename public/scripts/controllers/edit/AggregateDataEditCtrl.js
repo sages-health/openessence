@@ -1,11 +1,12 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 var moment = require('moment');
-angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,//
-                                                                               OutpatientVisitResource, DistrictResource, //
-                                                                               outpatientUploadModal, outpatientImportModal) {
+
+// @ngInject
+module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVisitResource, DistrictResource,
+                           outpatientUploadModal, outpatientImportModal) {
+
   $scope.getWeek = function (date) {
     return moment(date).format('W');
   };
@@ -116,10 +117,7 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
     symptoms = symptoms ? symptoms : [];
     allSymptoms.forEach(function (el) {
       var found = symptoms.find(function (a) {
-        if (a.name === el) {
-          return true;
-        }
-        return false;
+        return a.name === el;
       });
 
       if (found === undefined) {
@@ -190,7 +188,5 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
       scopeOptions.districts = response.results.map(pluckName);
       outpatientImportModal.open(record, $scope.resource, $scope.editTemplate, scopeOptions).result.then(reload);
     });
-
   };
-
-});
+};

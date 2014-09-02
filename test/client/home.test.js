@@ -12,15 +12,9 @@ var MainCtrl = require('../../public/scripts/controllers/MainCtrl');
 describe('MainCtrl', function () {
   var scope;
   var $controller;
-  var $window;
 
   beforeEach(function () {
-    $window = {
-      location: {href: ''},
-      encodeURIComponent: window.encodeURIComponent
-    };
     angular.mock.module(app.name, function ($provide) {
-      $provide.value('$window', $window);
       $provide.constant('lang', 'en');
     });
 
@@ -39,7 +33,12 @@ describe('MainCtrl', function () {
       }
     };
 
-    $controller(MainCtrl, {$scope: scope, user: mockUser});
+    var $window = {
+      location: {href: ''},
+      encodeURIComponent: window.encodeURIComponent
+    };
+
+    $controller(MainCtrl, {$scope: scope, user: mockUser, $window: $window});
     expect(scope.logout).to.exist;
 
     scope.logout();

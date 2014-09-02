@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientMultiSelectFilter', function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngInject*/ function (gettextCatalog) {
   return {
     restrict: 'E',
     template: require('./multi-select.html'),

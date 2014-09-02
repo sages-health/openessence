@@ -1,9 +1,7 @@
 'use strict';
 
-var angular = require('angular');
-var services = require('../modules').services;
-
-angular.module(services.name).factory('visualization', function ($resource, $modal, VisualizationResource) {
+// @ngInject
+module.exports = function ($resource, $modal, VisualizationResource) {
   return {
     // TODO make clients use this directly
     resource: VisualizationResource,
@@ -37,4 +35,4 @@ angular.module(services.name).factory('visualization', function ($resource, $mod
         });
     }
   };
-});
+};

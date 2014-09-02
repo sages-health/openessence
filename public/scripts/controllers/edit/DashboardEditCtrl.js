@@ -1,9 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DashboardEditCtrl', function ($scope, $modal, tableUtil, crud, gettextCatalog, DashboardResource) {
+// @ngInject
+module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, DashboardResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -66,4 +66,4 @@ angular.module(controllers.name).controller('DashboardEditCtrl', function ($scop
     delete deleteRecord._source.widgets;
     crud.delete(deleteRecord, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
-});
+};
