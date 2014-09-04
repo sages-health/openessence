@@ -4,8 +4,7 @@ require('../modules').controllers
   // edit controllers
   .controller('AggregateDataEditCtrl', require('./edit/AggregateDataEditCtrl'))
   .controller('DashboardEditCtrl', require('./edit/DashboardEditCtrl'))
-  .controller('DischargeEditCtrl', require('./edit/AggregateDataEditCtrl'))
-  .controller('AggregateDataEditCtrl', require('./edit/DischargeEditCtrl'))
+  .controller('DischargeEditCtrl', require('./edit/DischargeEditCtrl'))
   .controller('DistrictEditCtrl', require('./edit/DistrictEditCtrl'))
   .controller('SymptomEditCtrl', require('./edit/SymptomEditCtrl'))
   .controller('SyndromeEditCtrl', require('./edit/SyndromeEditCtrl'))
