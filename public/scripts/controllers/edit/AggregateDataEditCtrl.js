@@ -142,6 +142,9 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
     data.symptoms = data.symptoms.filter(function (el) {
       return el.count !== '' && !isNaN(el.count);
     });
+    data.symptoms.forEach(function (e) {
+      e.count = parseInt(e.count, 0);
+    });
     return data;
   };
 
