@@ -11,6 +11,17 @@ function Controller (Model, options) {
 
   this.Model = Model;
 
+  /**
+   * Codex middleware uses Controllers to instantiate express middleware. Use this callback for more fine-grained
+   * control over the created middleware, for example, adding custom end points.
+   * @param app - express app
+   * @return middleware to use, if a falsey value is returned, then the passed in middleware is used so that consumers
+   * may modify the middleware in place
+   */
+  this.middleware = options.middleware || function (app) {
+    return app;
+  };
+
   var initCodexReq = function (req) {
     if (req.codex) {
       return;
