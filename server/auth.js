@@ -32,43 +32,41 @@ passport.use(new PersonaStrategy({
 
   if (!conf.users) {
     // "Demo" mode: give any user who logs in via Persona full admin rights
-    callback(null, new User({
+    return callback(null, new User({
       username: email,
+      email: email,
       authType: 'persona',
       roles: ['admin']
     }));
-    return;
   }
 
   var localUser = conf.users[email];
   if (localUser) {
     localUser.username = email;
+    localUser.email = email;
     localUser.authType = 'persona';
     logger.info({user: localUser}, '%s logged in with Persona via file system whitelist', email);
-    callback(null, new User(localUser));
-    return;
+    return callback(null, new User(localUser));
   }
 
   // This means that to switch between Persona and local, your local username must be your email.
   // We may need to reevaluate that in the future.
   User.findByUsername(email, function (err, user) {
     if (err) {
-      callback(err);
-      return;
+      return callback(err);
     }
 
     if (!user) {
       /*jshint quotmark:false */
       logger.info({user: user}, "%s logged in successfully with Persona, but they're not recognized by codex", email);
-      callback(Boom.create(403, 'Unregistered user', {error: 'UnregisteredUser'}));
-      return;
+      return callback(Boom.create(403, 'Unregistered user', {error: 'UnregisteredUser'}));
     }
     delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
 
     logger.info({user: user}, '%s logged in using Persona', email);
     user.doc.authType = 'persona';
 
-    callback(null, user);
+    return callback(null, user);
   });
 }));
 
@@ -146,8 +144,19 @@ function authenticate (strategy) {
 
       req.login(user, function (err) {
         if (err) {
-          next(err);
-          return;
+          return next(err);
+        }
+
+        if (strategy === 'persona') {
+          // Add user to database. We do this in parallel to not block the client's request.
+          user.insert(function (err) {
+            if (err) {
+              // err will be a UniqueConstraintViolation if we already saved this user
+              if (!err.data || err.data.error !== 'UniqueConstraintViolation' || err.data.field !== 'username') {
+                return logger.error({err: err}, 'Error saving Persona user');
+              }
+            }
+          });
         }
 
         res.status(200)
