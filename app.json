@@ -2,7 +2,7 @@
   "name": "Fracas",
   "description": "A front-end for disease surveillance",
   "addons": [
-    "foundelasticsearch:chihuahua-standard",
+    "bonsai:starter",
     "rediscloud:25"
   ],
   "env": {

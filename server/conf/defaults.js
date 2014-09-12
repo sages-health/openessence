@@ -180,31 +180,27 @@ module.exports = {
 
   // elasticsearch settings, duh
   elasticsearch: {
-    host: process.env.ELASTICSEARCH_URL || (function () {
-      if (process.env.FOUNDELASTICSEARCH_URL) {
-        // We use the Found.no Heroku addon since they tend to be the only ones that provide unlimited indices. Most
-        // other providers limit the number of indices you can create, which doesn't work great if you're using
-        // elasticsearch as a data store.
-        return process.env.FOUNDELASTICSEARCH_URL;
-      }
+    // Found.no is nice since they give you unlimited indices. But they're (currently) $40/month. Bonsai has fewer
+    // features and limits the number of indices, but they do have a free tier.
+    host: process.env.ELASTICSEARCH_URL || process.env.FOUNDELASTICSEARCH_URL || process.env.BONSAI_URL ||
+      (function () {
+        if (process.env.ELASTICSEARCH_PORT) {
+          // If we're running in a Docker container that's linked against a container with alias `elasticsearch`, then
+          // Docker will set ELASTICSEARCH_PORT to be the tcp port of the linked container
 
-      if (process.env.ELASTICSEARCH_PORT) {
-        // If we're running in a Docker container that's linked against a container with alias `elasticsearch`, then
-        // Docker will set ELASTICSEARCH_PORT to be the tcp port of the linked container
+          var parsedElasticsearchPort = url.parse(process.env.ELASTICSEARCH_PORT);
+          if (parsedElasticsearchPort.protocol === 'tcp:') {
+            // Docker sets the protocol of the port to be tcp since it operates below the application layer. You can
+            // also tell Docker to use UDP instead, but Elasticsearch speaks TCP (via HTTP), so why would we ever do that?
+            parsedElasticsearchPort.protocol = 'http:';
+          }
 
-        var parsedElasticsearchPort = url.parse(process.env.ELASTICSEARCH_PORT);
-        if (parsedElasticsearchPort.protocol === 'tcp:') {
-          // Docker sets the protocol of the port to be tcp since it operates below the application layer. You can
-          // also tell Docker to use UDP instead, but Elasticsearch speaks TCP (via HTTP), so why would we ever do that?
-          parsedElasticsearchPort.protocol = 'http:';
+          return url.format(parsedElasticsearchPort);
         }
 
-        return url.format(parsedElasticsearchPort);
-      }
-
-      // Fallback to Elasticsearch's default
-      return 'http://localhost:9200';
-    })(),
+        // Fallback to Elasticsearch's default
+        return 'http://localhost:9200';
+      })(),
     log: ElasticSearchLogger,
     apiVersion: '1.1'
   },
