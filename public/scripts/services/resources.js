@@ -11,9 +11,9 @@ module.exports = [
 
     // @ngInject
     resources[resourceName] = function ($resource) {
-      return $resource(resourceUrl + '/:_id',
+      return $resource(resourceUrl + '/:id',
         {
-          _id: '@_id', // TODO come up with a convention wrt _
+          id: '@id',
           version: '@version'
         },
         {

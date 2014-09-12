@@ -62,7 +62,7 @@ angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ fun
           $scope.record = record;
 
           $scope.delete = function () {
-            OutpatientVisitResource.remove({_id: record._id}, function () {
+            OutpatientVisitResource.remove({id: record._id}, function () {
               $modalInstance.close(record);
             });
           };

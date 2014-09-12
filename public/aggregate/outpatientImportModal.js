@@ -73,7 +73,7 @@ angular.module(services.name).factory('outpatientImportModal', /*@ngInject*/ fun
             var showError = function (data) {
               if (data.status === 409) {
                 // Get latest record data and update form
-                resource.get({_id: $scope.record._id}, function (newData) {
+                resource.get({id: $scope.record._id}, function (newData) {
                   $scope.conflictError = true;
                   $scope.record = newData;
                   $scope.data = newData._source;
@@ -89,7 +89,7 @@ angular.module(services.name).factory('outpatientImportModal', /*@ngInject*/ fun
             }
             if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
               resource.update({
-                _id: $scope.record._id,
+                id: $scope.record._id,
                 version: $scope.record._version
               }, data, cleanup, showError);
             } else {
