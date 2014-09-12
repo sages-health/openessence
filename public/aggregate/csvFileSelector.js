@@ -66,8 +66,8 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
               var tableData = [];
 
               $.csv.toArrays(csv, scope.fileParams).forEach(function (row, ix) {
-                // ensure we have 11 columns (Initial version of aggregate data csv file has 11 columns)
-                if ((!scope.fileParams.headerRow || ix !== 0) && row.length >= 11) {
+                // ensure we have 11 columns (Initial version of aggregate data csv file has 12 columns)
+                if ((!scope.fileParams.headerRow || ix !== 0) && row.length >= 12) {
                   tableData.push({
                     rowId: ix,
                     year: row[0],
@@ -84,7 +84,8 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
                     acuteFever: !isNaN(row[7]) ? row[7] : undefined,
                     diarrhoea: !isNaN(row[8]) ? row[8] : undefined,
                     influenza: !isNaN(row[9]) ? row[9] : undefined,
-                    prolongedFever: !isNaN(row[10]) ? row[10] : undefined
+                    prolongedFever: !isNaN(row[10]) ? row[10] : undefined,
+                    dengue: !isNaN(row[11]) ? row[11] : undefined
                   });
                 }
               });
@@ -114,7 +115,8 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
               {field: 'acuteFever', displayName: 'Acute Fever and Rashes', width: 80},
               {field: 'diarrhoea', displayName: 'Diarrhoea', width: 80},
               {field: 'influenza', displayName: 'Influenza-like Illness', width: 80},
-              {field: 'prolongedFever', displayName: 'Prolonged Fever', width: 80}
+              {field: 'prolongedFever', displayName: 'Prolonged Fever', width: 80},
+              {field: 'dengue', displayName: 'Dengue-like Illness', width: 80}
             ]
           };
 
