@@ -8,6 +8,10 @@
     "enabled": true
   },
   {
+    "name": "Dengue-like Illness",
+    "enabled": true
+  },
+  {
     "name": "Influenza-like Illness",
     "enabled": true
   },
