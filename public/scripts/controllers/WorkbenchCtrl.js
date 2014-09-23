@@ -14,7 +14,7 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
       {
         filterId: 'date',
         type: 'date-range',
-        field: 'reportDate',
+        field: 'visitDate',
         name: gettextCatalog.getString('Date')
       },
       {

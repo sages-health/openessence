@@ -16,7 +16,7 @@ module.exports = function ($scope, $window, gettextCatalog, user, visualization,
   var dateFormat = 'YYYY-MM-DD';
   var startDate = moment($scope.report.startDate).format(dateFormat);
   var endDate = moment($scope.report.endDate).format(dateFormat);
-  var dateString = 'reportDate: [' + startDate + ' TO ' + endDate + ']';
+  var dateString = 'visitDate: [' + startDate + ' TO ' + endDate + ']';
   $scope.getSymptomCount = function (symptomsAll, symptom) {
     var result = symptomsAll.filter(function (val) {
       return val.name === symptom;

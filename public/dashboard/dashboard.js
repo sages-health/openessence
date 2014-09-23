@@ -41,20 +41,20 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
           };
 
           var getQueryString = function (queryString, start, end) {
-            var index = queryString.indexOf('reportDate');
+            var index = queryString.indexOf('visitDate');
             var returnQuery;
             var dateFormat = 'yyyy-MM-dd';
             start = dateFilter(start, dateFormat)  || '*';
             end = dateFilter(end, dateFormat)  || '*';
             if (index === -1) {
               if (queryString.length > 0) {
-                returnQuery = queryString + ' AND reportDate: [' + start + ' TO ' + end + ']';
+                returnQuery = queryString + ' AND visitDate: [' + start + ' TO ' + end + ']';
               } else {
-                returnQuery = queryString + 'reportDate: [' + start + ' TO ' + end + ']';
+                returnQuery = queryString + 'visitDate: [' + start + ' TO ' + end + ']';
               }
             } else {
               var regexp = /\w+\:\s\[\d+\-\d+\-\d+\s\w+\s\d+\-\d+\-\d+\]/;
-              returnQuery = queryString.replace(regexp, 'reportDate: [' + start + ' TO ' + end + ']');
+              returnQuery = queryString.replace(regexp, 'visitDate: [' + start + ' TO ' + end + ']');
             }
             return returnQuery;
           };
@@ -128,7 +128,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
                 var queryString = getQueryString(widget.visualization.state.queryString, from, to);
                 if (dateFilters.length === 0) {
                   widget.visualization.state.filters.push({
-                    field: 'reportDate',
+                    field: 'visitDate',
                     filterId: 'date',
                     from: from,
                     name: 'Date',

@@ -19,7 +19,7 @@
         "count": 11
       }
     ],
-    "reportDate": "2014-08-12T00:00:00.000Z"
+    "visitDate": "2014-08-12T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -45,7 +45,7 @@
         "count": 14
       }
     ],
-    "reportDate": "2014-05-03T00:00:00.000Z"
+    "visitDate": "2014-05-03T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -62,7 +62,7 @@
       "age": 1
     },
     "diagnoses": null,
-    "reportDate": "2014-03-17T00:00:00.000Z"
+    "visitDate": "2014-03-17T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -88,7 +88,7 @@
         "count": 18
       }
     ],
-    "reportDate": "2014-03-16T00:00:00.000Z"
+    "visitDate": "2014-03-16T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -105,7 +105,7 @@
       "age": 17
     },
     "diagnoses": null,
-    "reportDate": "2014-03-16T00:00:00.000Z"
+    "visitDate": "2014-03-16T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -122,7 +122,7 @@
       "age": 0
     },
     "diagnoses": null,
-    "reportDate": "2014-03-15T00:00:00.000Z"
+    "visitDate": "2014-03-15T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -139,7 +139,7 @@
       "age": 7
     },
     "diagnoses": null,
-    "reportDate": "2014-03-15T00:00:00.000Z"
+    "visitDate": "2014-03-15T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -156,7 +156,7 @@
       "age": 3
     },
     "diagnoses": null,
-    "reportDate": "2014-03-15T00:00:00.000Z"
+    "visitDate": "2014-03-15T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -173,7 +173,7 @@
       "age": 1
     },
     "diagnoses": null,
-    "reportDate": "2014-03-14T00:00:00.000Z"
+    "visitDate": "2014-03-14T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -195,6 +195,6 @@
         "count": 15
       }
     ],
-    "reportDate": "2014-03-14T00:00:00.000Z"
+    "visitDate": "2014-03-14T00:00:00.000Z"
   }
 ]

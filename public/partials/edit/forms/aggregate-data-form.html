@@ -17,16 +17,16 @@
         <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
         <conflict-message ng-show="conflictError"></conflict-message>
 
-        <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.reportDate)}">
+        <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.visitDate)}">
           <label for="entry-aggregate-date" translate>Date</label>
 
           <div class="input-group">
             <!-- TODO in angular-ui/bootstrap master they removed weeks -->
-            <input id="entry-aggregate-date" name="reportDate" type="text" class="form-control" required
-                   ng-model="data.reportDate" datepicker-popup show-weeks="true" is-open="reportDateOpened">
+            <input id="entry-aggregate-date" name="visitDate" type="text" class="form-control" required
+                   ng-model="data.visitDate" datepicker-popup show-weeks="true" is-open="visitDateOpened">
 
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button" ng-click="openReportDate($event)">
+            <button class="btn btn-default" type="button" ng-click="openVisitDate($event)">
               <span class="icon-calendar"></span>
             </button>
           </span>

@@ -55,7 +55,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
-          date: gettextCatalog.getString('Date'),
+          visitDate: gettextCatalog.getString('Visit'),
           district: gettextCatalog.getString('District'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
@@ -304,7 +304,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           page: 1,
           count: 10,
           sorting: {
-            reportDate: 'desc'
+            visitDate: 'desc'
           }
         }, {
           total: 0,

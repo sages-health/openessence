@@ -31,7 +31,6 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             age: gettextCatalog.getString('Age'),
             returnVisit: gettextCatalog.getString('Return visit?'),
             patientId: gettextCatalog.getString('Patient ID'),
-            oeId: gettextCatalog.getString('OE ID'),
             edit: gettextCatalog.getString('Edit')
           };
 
@@ -47,7 +46,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             page: 1, // page is 1-based
             count: 10,
             sorting: {
-              reportDate: 'desc'
+              visitDate: 'desc'
             }
           }, {
             total: scope.records ? scope.records.length : 0,

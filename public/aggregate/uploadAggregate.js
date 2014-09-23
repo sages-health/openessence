@@ -46,7 +46,7 @@ angular.module(directives.name).directive('aggregateUpload', /*@ngInject*/ funct
             };
 
             scope.data.tableData.forEach(function (data) {
-              if (data.reportDate) {
+              if (data.visitDate) {
                 var record = aggregateUtil.csvToAggregate(data);
                 //TODO: bulk insert
                 OutpatientVisitResource.save(record, cleanup);

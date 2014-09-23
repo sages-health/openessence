@@ -101,8 +101,8 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     {
       filterId: 'date',
       type: 'date-range',
-      field: 'reportDate',
-      name: gettextCatalog.getString('Date')
+      field: 'visitDate',
+      name: gettextCatalog.getString('Visit date')
     },
     {
       filterId: 'diagnoses',

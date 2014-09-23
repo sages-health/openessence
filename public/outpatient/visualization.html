@@ -4,8 +4,8 @@
             <!-- can't reuse the table used for editing b/c that's a lot bigger -->
             <table class="table table-striped table-hover table-condensed" frable="tableParams">
                 <tr ng-repeat="visit in $data">
-                    <td data-title="strings.date" data-sortable="'reportDate'">
-                        <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate |
+                    <td data-title="strings.visitDate" data-sortable="'visitDate'">
+                        <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate |
                             date}}</a>
                     </td>
                     <td data-title="strings.district">

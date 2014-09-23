@@ -49,11 +49,11 @@ function shiftDates (callback) {
       var bulkBody = [];
       scrollResponse.hits.hits.forEach(function (hit) {
         count++;
-        if (!hit._source.reportDate) {
+        if (!hit._source.visitDate) {
           return;
         }
 
-        var oldDate = new Date(hit._source.reportDate);
+        var oldDate = new Date(hit._source.visitDate);
         var newDate = new Date(now - (dateToBecomeToday.getTime() - oldDate.getTime()));
 
         bulkBody.push({
@@ -65,7 +65,7 @@ function shiftDates (callback) {
         });
         bulkBody.push({
           doc: {
-            reportDate: newDate
+            visitDate: newDate
           }
         });
       });

@@ -49,8 +49,12 @@ var indexRequests = [
         mappings: {
           'outpatient_visit': addPaperTrail({
             properties: {
-              // TODO rename to visitDate
-              reportDate: {
+              // date of first presentation to healthcare system
+              visitDate: {
+                type: 'date'
+              },
+
+              symptomOnsetDate: {
                 type: 'date'
               },
 

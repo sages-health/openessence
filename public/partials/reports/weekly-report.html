@@ -22,7 +22,7 @@
         <tbody>
         <tr ng-repeat="rec in $data">
           <td>{{rec._source.medicalFacility.district}}</td>
-          <td>{{rec._source.reportDate | date}}</td>
+          <td>{{rec._source.visitDate | date}}</td>
           <td>{{rec._source.medicalFacility.sites.reporting}}</td>
           <td>{{getSymptomCount(rec._source.symptoms, 'Acute Fever and Rash')}}</td>
           <td>{{getSymptomCount(rec._source.symptoms, 'Diarrhoea')}}</td>

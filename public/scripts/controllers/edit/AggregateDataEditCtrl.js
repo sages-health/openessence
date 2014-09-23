@@ -39,8 +39,8 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
     {
       filterId: 'date',
       type: 'date-range',
-      field: 'reportDate',
-      name: gettextCatalog.getString('Date')
+      field: 'visitDate',
+      name: gettextCatalog.getString('Visit date')
     },
     {
       filterId: 'districts',
@@ -71,7 +71,7 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
     import: gettextCatalog.getString('Import'),
     upload: gettextCatalog.getString('Upload'),
     edit: gettextCatalog.getString('Edit'),
-    reportDate: gettextCatalog.getString('Date'),
+    visitDate: gettextCatalog.getString('Date'),
     week: gettextCatalog.getString('Week'),
     year: gettextCatalog.getString('Year'),
     district: gettextCatalog.getString('District'),
@@ -90,7 +90,7 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
   $scope.resource = OutpatientVisitResource;
 
   var options = {
-    sorting: {'reportDate': 'asc'},
+    sorting: {'visitDate': 'asc'},
     queryString: $scope.queryString
   };
 

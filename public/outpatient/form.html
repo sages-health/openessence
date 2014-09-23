@@ -6,23 +6,21 @@
   <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
   <conflict-message ng-show="conflictError"></conflict-message>
 
-  <!-- Date -->
-  <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.reportDate)}">
-    <label for="entry-visit-date" translate>Date</label>
+  <!-- Visit date -->
+  <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
+    <label for="entry-visit-date" translate>Visit date</label>
 
     <div class="input-group">
       <!-- TODO in angular-ui/bootstrap master they removed weeks -->
-      <input id="entry-visit-date" name="reportDate" type="text" class="form-control" required
-             ng-model="visit.reportDate" datepicker-popup show-weeks="false" is-open="reportDateOpened">
+      <input id="entry-visit-date" name="visitDate" type="text" class="form-control" required
+             ng-model="visit.visitDate" datepicker-popup show-weeks="false" is-open="visitDateOpened">
 
       <span class="input-group-btn">
-        <button class="btn btn-default" type="button" ng-click="openReportDate($event)">
+        <button class="btn btn-default" type="button" ng-click="openVisitDate($event)">
          <span class="icon-calendar"></span>
         </button>
       </span>
     </div>
-
-    <span class="help-block" translate>Date of visit</span>
   </div>
 
   <!-- District -->
