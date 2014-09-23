@@ -1,1 +1,4 @@
 *.css
+
+# CSS source maps
+*.map
