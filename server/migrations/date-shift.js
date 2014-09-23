@@ -10,12 +10,10 @@ var conf = require('./../conf/index');
 var logger = conf.logger;
 var client = conf.elasticsearch.newClient();
 
-var index = 'outpatient';
-
 function shiftDates (callback) {
   client.get({
     index: 'date-shift',
-    type: 'shift',
+    type: 'date-shift',
     id: '1'
   }, function (err, hit) {
     if (err) {
@@ -26,7 +24,7 @@ function shiftDates (callback) {
 
     var dateToBecomeToday = hit._source.date;
     if (!dateToBecomeToday) {
-      return callback(new Error('No date set in /date-shift/shift/1'));
+      return callback(new Error('No date set in /date-shift/date-shift/1'));
     }
 
     dateToBecomeToday = new Date(dateToBecomeToday);
@@ -38,7 +36,7 @@ function shiftDates (callback) {
     // TODO backup so if something goes wrong we can roll back
 
     client.search({
-      index: index,
+      index: 'outpatient_visit',
       scroll: '30s',
       size: 1000
     }, function getMoreUntilDone (err, scrollResponse) {
@@ -76,7 +74,7 @@ function shiftDates (callback) {
         // make sure we store what date we shifted to so future shifts don't get messed up
         client.index({
           index: 'date-shift',
-          type: 'shift',
+          type: 'date-shift',
           id: '1',
           version: version,
           body: {

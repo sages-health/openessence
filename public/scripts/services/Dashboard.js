@@ -24,7 +24,7 @@ module.exports = function ($resource, $modal, $state, DashboardResource, crud) {
         {postSuccess: postSuccess});
     },
     update: function (state, dashboardId) {
-      DashboardResource.update(angular.extend({_id: dashboardId}, state), function () {
+      DashboardResource.update(angular.extend({id: dashboardId}, state), function () {
         $modal.open({
           template: require('../../dashboard/dashboard-saved-modal.html'),
           controller: /*ngInject*/ function ($scope, $modalInstance) {
@@ -36,7 +36,7 @@ module.exports = function ($resource, $modal, $state, DashboardResource, crud) {
       });
     },
     get: function (id, callback) {
-      DashboardResource.get({_id: id}, callback);
+      DashboardResource.get({id: id}, callback);
     },
 
     openModal: function () {

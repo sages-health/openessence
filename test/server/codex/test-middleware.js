@@ -15,6 +15,21 @@ describe('middleware', function () {
     nock.cleanAll();
   });
 
+  it('should allow controller to customize express app', function (done) {
+    var Model = codex.model({
+      index: 'foo',
+      type: 'bar'
+    });
+    var middleware = codex.middleware(codex.controller(Model, {
+      middleware: function (app) {
+        app.foo = 'bar';
+      }
+    }));
+
+    expect(middleware.foo).to.equal('bar');
+    done();
+  });
+
   describe('GET /', function () {
     it('should return 404 if search not set', function (done) {
       var Model = codex.model({

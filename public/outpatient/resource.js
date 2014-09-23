@@ -19,9 +19,9 @@ var services = require('../scripts/modules').services;
       resourceUrl = '/resources/' + resourceName.toLowerCase();
     }
     return angular.module(services.name).factory(resourceName + 'Resource', /*@ngInject*/ function ($resource) {
-      return $resource(resourceUrl + '/:_id',
+      return $resource(resourceUrl + '/:id',
         {
-          _id: '@_id', // TODO come up with a convention wrt _
+          id: '@id',
           version: '@version'
         },
         {

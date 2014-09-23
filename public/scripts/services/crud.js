@@ -45,7 +45,7 @@ module.exports = function ($modal) {
             var showError = function (data) {
               if (data.status === 409) {
                 // Get latest record data and update form
-                resource.get({_id: $scope.record._id}, function (newData) {
+                resource.get({id: $scope.record._id}, function (newData) {
                   $scope.conflictError = true;
                   $scope.record = newData;
                   $scope.data = newData._source;
@@ -61,7 +61,7 @@ module.exports = function ($modal) {
             }
             if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
               resource.update({
-                _id: $scope.record._id,
+                id: $scope.record._id,
                 version: $scope.record._version
               }, data, cleanup, showError);
             } else {
@@ -82,7 +82,7 @@ module.exports = function ($modal) {
         controller: /*ngInject*/ function ($scope, $modalInstance) {
           $scope.record  = record;
           $scope.delete = function () {
-            resource.remove({_id: record._id}, function () {
+            resource.remove({id: record._id}, function () {
               $modalInstance.close(record);
             });
           };

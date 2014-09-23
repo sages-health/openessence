@@ -122,7 +122,7 @@ angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ functi
               // if someone else has updated this record before you hit save
               if (data.status === 409) {
                 // Get latest record data and update form
-                OutpatientVisitResource.get({_id: scope.record._id}, function (newData) {
+                OutpatientVisitResource.get({id: scope.record._id}, function (newData) {
                   scope.conflictError = true;
                   scope.record = newData;
                   scope.visit = scope.record._source;
@@ -141,7 +141,7 @@ angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ functi
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
               OutpatientVisitResource.update({
-                _id: scope.record._id,
+                id: scope.record._id,
                 version: scope.record._version
               }, scope.visit, cleanup, showError);
             } else {
