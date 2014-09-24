@@ -12,10 +12,16 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
         name: gettextCatalog.getString('Age')
       },
       {
-        filterId: 'date',
+        filterId: 'visitDate',
         type: 'date-range',
         field: 'visitDate',
-        name: gettextCatalog.getString('Date')
+        name: gettextCatalog.getString('Visit date')
+      },
+      {
+        filterId: 'symptomOnsetDate',
+        type: 'date-range',
+        field: 'symptomOnsetDate',
+        name: gettextCatalog.getString('Symptom onset')
       },
       {
         filterId: 'diagnoses',
@@ -207,7 +213,7 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
     from.setDate(from.getDate() - 90); // 90 days back
     $scope.filters = [
       {
-        filterId: 'date',
+        filterId: 'visitDate',
         from: from,
         to: new Date()
       }

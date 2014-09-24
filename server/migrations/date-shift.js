@@ -10,6 +10,12 @@ var conf = require('./../conf/index');
 var logger = conf.logger;
 var client = conf.elasticsearch.newClient();
 
+// date fields to shift
+var dateFields = [
+  'visitDate',
+  'symptomOnsetDate'
+];
+
 function shiftDates (callback) {
   client.get({
     index: 'date-shift',
@@ -53,21 +59,26 @@ function shiftDates (callback) {
           return;
         }
 
-        var oldDate = new Date(hit._source.visitDate);
-        var newDate = new Date(now - (dateToBecomeToday.getTime() - oldDate.getTime()));
+        var doc = dateFields.reduce(function (doc, field) {
+          if (hit._source[field]) { // not every document has every date field
+            var oldDate = new Date(hit._source[field]);
+            doc[field] = new Date(now - (dateToBecomeToday.getTime() - oldDate.getTime()));
+          }
+          return doc;
+        }, {});
 
-        bulkBody.push({
-          update: {
-            _index: hit._index,
-            _type: hit._type,
-            _id: hit._id
-          }
-        });
-        bulkBody.push({
-          doc: {
-            visitDate: newDate
-          }
-        });
+        if (Object.keys(doc).length > 0) {
+          bulkBody.push({
+            update: {
+              _index: hit._index,
+              _type: hit._type,
+              _id: hit._id
+            }
+          });
+          bulkBody.push({
+            doc: doc
+          });
+        }
       });
 
       var finish = function () {

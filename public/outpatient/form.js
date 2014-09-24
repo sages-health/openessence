@@ -101,10 +101,11 @@ angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ functi
             }
           };
 
-          scope.openVisitDate = function ($event) {
+          scope.datePopupsOpen = {};
+          scope.openDatePopup = function (name, $event) {
             $event.preventDefault();
             $event.stopPropagation();
-            scope.visitDateOpened = true;
+            scope.datePopupsOpen[name] = !scope.datePopupsOpen[name];
           };
 
           scope.submit = function (visitForm) {

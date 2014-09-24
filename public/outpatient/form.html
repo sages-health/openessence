@@ -13,11 +13,27 @@
     <div class="input-group">
       <!-- TODO in angular-ui/bootstrap master they removed weeks -->
       <input id="entry-visit-date" name="visitDate" type="text" class="form-control" required
-             ng-model="visit.visitDate" datepicker-popup show-weeks="false" is-open="visitDateOpened">
+             ng-model="visit.visitDate" datepicker-popup show-weeks="false" is-open="datePopupsOpen.visitDate">
 
       <span class="input-group-btn">
-        <button class="btn btn-default" type="button" ng-click="openVisitDate($event)">
+        <button class="btn btn-default" type="button" ng-click="openDatePopup('visitDate', $event)">
          <span class="icon-calendar"></span>
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <!-- Symptom onset -->
+  <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate)}">
+    <label for="entry-visit-onset" translate>Symptom onset</label>
+
+    <div class="input-group">
+      <input id="entry-visit-onset" name="symptomOnsetDate" type="text" class="form-control"
+             ng-model="visit.symptomOnsetDate" datepicker-popup show-weeks="false" is-open="datePopupsOpen.symptomOnsetDate">
+
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="openDatePopup('symptomOnsetDate', $event)">
+          <span class="icon-calendar"></span>
         </button>
       </span>
     </div>
