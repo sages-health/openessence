@@ -91,6 +91,7 @@
     "lesshat": "^3.0.2",
     "mocha": "^1.20.1",
     "mock-fs": "~2.2.0",
+    "moment": "^2.8.3",
     "nock": "~0.31.0",
     "open": "0.0.5",
     "partialify": "~3.1.0",
@@ -132,7 +133,6 @@
     "text-angular-setup": "./bower_components/textAngular/src/textAngularSetup.js",
     "jquery-ui": "./bower_components/fracas-jquery-ui/jquery-ui.js",
     "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js",
-    "moment": "./bower_components/moment/moment.js",
     "ng-file-upload": "./bower_components/ng-file-upload/angular-file-upload.js",
     "ng-grid": "./bower_components/ng-grid/build/ng-grid.js",
     "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js"
@@ -148,6 +148,9 @@
       "parse": false
     },
     "leaflet": {
+      "parse": false
+    },
+    "moment": {
       "parse": false
     }
   },

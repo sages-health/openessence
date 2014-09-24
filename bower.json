@@ -18,7 +18,6 @@
     "angular-ui-sortable": "~0.12.8",
     "angular-gridster": "~0.9.11",
     "ng-debounce": "~0.1.4",
-    "moment": "~2.7.0",
     "ng-file-upload": "~1.6.1",
     "ng-grid": "~2.0.12",
     "jquery-csv": "https://github.com/mirlord/jquery-csv/archive/78724d620cc5e4d151142a7954535d27758396e8.zip"
