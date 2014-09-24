@@ -119,17 +119,6 @@
   </div>
 
   <div class="form-group">
-    <label for="entry-visit-syndromes" translate>Syndromes</label>
-
-    <select class="form-control select2-multiple" id="entry-visit-syndromes" name="syndromes" multiple ui-select2
-            ng-model="visit.syndromes">
-      <option ng-repeat="syndrome in syndromes" value="{{syndrome}}">{{syndrome}}</option>
-    </select>
-
-    <span ng-show="isInvalid(visitForm.syndromes)" class="help-block" translate>Select syndromes</span>
-  </div>
-
-  <div class="form-group">
     <label for="entry-visit-discharge" translate>Discharge type</label>
 
     <select class="form-control select2-multiple" id="entry-visit-discharge" name="discharge" multiple ui-select2
@@ -152,17 +141,14 @@
     <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
   </div>
 
+  <!-- Notes -->
+  <div class="form-group">
+    <label for="entry-visit-notes" translate>Notes</label>
 
-  <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
-
-<!-- Notes -->
-<div class="form-group">
-  <label for="entry-visit-notes" translate>Notes</label>
-
-  <textarea class="form-control" id="entry-visit-notes" name="Notes"
-            ng-model="visit.notes"></textarea>
-  <span class="help-block" translate>Anything else you want to add</span>
-</div>
+    <textarea class="form-control" id="entry-visit-notes" name="Notes"
+              ng-model="visit.notes"></textarea>
+    <span class="help-block" translate>Anything else you want to add</span>
+  </div>
 </div>
 </fieldset>
 
