@@ -26,12 +26,12 @@ angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ functi
           scope.visit = angular.copy(scope.record._source) || {};
 
           if (scope.visit.symptoms) {
-            scope.visit.symptoms = scope.visit.symptoms.map(function (r){
+            scope.visit.symptoms = scope.visit.symptoms.map(function (r) {
               return r.name;
             });
           }
           if (scope.visit.diagnoses) {
-            scope.visit.diagnoses = scope.visit.diagnoses.map(function (r){
+            scope.visit.diagnoses = scope.visit.diagnoses.map(function (r) {
               return r.name;
             });
           }

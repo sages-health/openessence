@@ -1,84 +1,84 @@
 <form name="visitForm" class="form" novalidate ng-submit="submit(visitForm)" ng-cloak>
-<fieldset>
 
-<div ng-if="page == 1">
-  <!-- TODO red text on white background instead of alert -->
-  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
-  <conflict-message ng-show="conflictError"></conflict-message>
+  <fieldset ng-if="page == 1">
+    <!-- TODO red text on white background instead of alert -->
+    <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+    <conflict-message ng-show="conflictError"></conflict-message>
 
-  <!-- Visit date -->
-  <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
-    <label for="entry-visit-date" translate>Visit date</label>
+    <!-- Visit date -->
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
+      <label for="entry-visit-date" translate>Visit date</label>
 
-    <div class="input-group">
-      <!-- TODO in angular-ui/bootstrap master they removed weeks -->
-      <input id="entry-visit-date" name="visitDate" type="text" class="form-control" required
-             ng-model="visit.visitDate" datepicker-popup show-weeks="false" is-open="datePopupsOpen.visitDate">
+      <div class="input-group">
+        <!-- TODO in angular-ui/bootstrap master they removed weeks -->
+        <input id="entry-visit-date" name="visitDate" type="text" class="form-control" required
+               ng-model="visit.visitDate" datepicker-popup show-weeks="false" is-open="datePopupsOpen.visitDate">
 
       <span class="input-group-btn">
         <button class="btn btn-default" type="button" ng-click="openDatePopup('visitDate', $event)">
-         <span class="icon-calendar"></span>
+          <span class="icon-calendar"></span>
         </button>
       </span>
+      </div>
     </div>
-  </div>
 
-  <!-- Symptom onset -->
-  <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate)}">
-    <label for="entry-visit-onset" translate>Symptom onset</label>
+    <!-- Symptom onset -->
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate)}">
+      <label for="entry-visit-onset" translate>Symptom onset</label>
 
-    <div class="input-group">
-      <input id="entry-visit-onset" name="symptomOnsetDate" type="text" class="form-control"
-             ng-model="visit.symptomOnsetDate" datepicker-popup show-weeks="false" is-open="datePopupsOpen.symptomOnsetDate">
+      <div class="input-group">
+        <input id="entry-visit-onset" name="symptomOnsetDate" type="text" class="form-control"
+               ng-model="visit.symptomOnsetDate" datepicker-popup show-weeks="false"
+               is-open="datePopupsOpen.symptomOnsetDate">
 
       <span class="input-group-btn">
         <button class="btn btn-default" type="button" ng-click="openDatePopup('symptomOnsetDate', $event)">
           <span class="icon-calendar"></span>
         </button>
       </span>
+      </div>
     </div>
-  </div>
 
-  <!-- District -->
-  <div class="form-group">
-    <label for="entry-visit-district" translate>District</label>
+    <!-- District -->
+    <div class="form-group">
+      <label for="entry-visit-district" translate>District</label>
 
-    <select class="form-control" id="entry-visit-district" name="district" ng-model="visit.medicalFacility.district"
-            ng-options="name for name in districts">
-      <option value=""></option>
-    </select>
-  </div>
-
-  <!-- Sex -->
-  <div class="form-group">
-    <label translate>Sex</label>
-    <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
-    <label class="radio-inline">
-      <input type="radio" name="sex" value="male" ng-model="visit.patient.sex">
-      <span translate>Male</span>
-    </label>
-    <label class="radio-inline">
-      <input type="radio" name="sex" value="female" ng-model="visit.patient.sex">
-      <span translate>Female</span>
-    </label>
-    <label class="radio-inline">
-      <input type="radio" name="sex" value="" ng-model="visit.patient.sex">
-      <span translate>Unknown</span>
-    </label>
-  </div>
-
-  <!-- Age -->
-  <div class="form-group"
-       ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120}">
-    <label for="entry-visit-age" translate>Age</label>
-
-    <div class="input-group">
-      <input class="form-control" id="entry-visit-age" name="age" ng-model="visit.patient.age" type="number"
-             min="0" max="200" placeholder="{{agePlaceholder | translate}}">
-
-      <!-- TODO this looks bad with has-error -->
-      <span class="input-group-addon" translate>years</span>
+      <select class="form-control" id="entry-visit-district" name="district" ng-model="visit.medicalFacility.district"
+              ng-options="name for name in districts">
+        <option value=""></option>
+      </select>
     </div>
+
+    <!-- Sex -->
+    <div class="form-group">
+      <label translate>Sex</label>
+      <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
+      <label class="radio-inline">
+        <input type="radio" name="sex" value="male" ng-model="visit.patient.sex">
+        <span translate>Male</span>
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="sex" value="female" ng-model="visit.patient.sex">
+        <span translate>Female</span>
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="sex" value="" ng-model="visit.patient.sex">
+        <span translate>Unknown</span>
+      </label>
+    </div>
+
+    <!-- Age -->
+    <div class="form-group"
+         ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120}">
+      <label for="entry-visit-age" translate>Age</label>
+
+      <div class="input-group">
+        <input class="form-control" id="entry-visit-age" name="age" ng-model="visit.patient.age" type="number"
+               min="0" max="200" placeholder="{{agePlaceholder | translate}}">
+
+        <!-- TODO this looks bad with has-error -->
+        <span class="input-group-addon" translate>years</span>
+      </div>
 
     <span ng-show="isInvalid(visitForm.age)" class="help-block" translate>
       Please enter a valid age in years, for example 15 or 0.5
@@ -89,69 +89,68 @@
     <span ng-show="visit.patient.age == 999" class="help-block" translate>
       Leave this field blank if you don't know the patient's age
     </span>
-  </div>
-</div>
+    </div>
+  </fieldset>
 
-<div ng-if="page == 2">
-  <!-- need this message for validation -->
-  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+  <fieldset ng-if="page == 2">
+    <!-- need this message for validation -->
+    <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
 
-  <div class="form-group">
-    <label for="entry-visit-symptoms" translate>Symptoms</label>
+    <div class="form-group">
+      <label for="entry-visit-symptoms" translate>Symptoms</label>
 
-    <select class="form-control select2-multiple" id="entry-visit-symptoms" multiple ui-select2
-            ng-model="visit.symptoms">
-      <option ng-repeat="symptom in symptoms" value="{{symptom}}">{{symptom}}</option>
-    </select>
+      <select class="form-control select2-multiple" id="entry-visit-symptoms" multiple ui-select2
+              ng-model="visit.symptoms">
+        <option ng-repeat="symptom in symptoms" value="{{symptom}}">{{symptom}}</option>
+      </select>
 
-    <span ng-show="isInvalid(visitForm.symptoms)" class="help-block" translate>Select symptom(s)</span>
-  </div>
+      <span ng-show="isInvalid(visitForm.symptoms)" class="help-block" translate>Select symptom(s)</span>
+    </div>
 
-  <div class="form-group">
-    <label for="entry-visit-diagnoses" translate>Diagnoses</label>
+    <div class="form-group">
+      <label for="entry-visit-diagnoses" translate>Diagnoses</label>
 
-    <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
-            ng-model="visit.diagnoses">
-      <option ng-repeat="diagnosis in diagnoses" value="{{diagnosis}}">{{diagnosis}}</option>
-    </select>
+      <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
+              ng-model="visit.diagnoses">
+        <option ng-repeat="diagnosis in diagnoses" value="{{diagnosis}}">{{diagnosis}}</option>
+      </select>
 
-    <span ng-show="isInvalid(visitForm.diagnoses)" class="help-block" translate>Select diagnoses</span>
-  </div>
+      <span ng-show="isInvalid(visitForm.diagnoses)" class="help-block" translate>Select diagnoses</span>
+    </div>
 
-  <div class="form-group">
-    <label for="entry-visit-discharge" translate>Discharge type</label>
+    <div class="form-group">
+      <label for="entry-visit-discharge" translate>Discharge type</label>
 
-    <select class="form-control select2-multiple" id="entry-visit-discharge" name="discharge" multiple ui-select2
-            ng-model="visit.discharge">
-      <option ng-repeat="discharge in discharges" value="{{discharge}}">{{discharge}}</option>
-    </select>
+      <select class="form-control select2-multiple" id="entry-visit-discharge" name="discharge" multiple ui-select2
+              ng-model="visit.discharge">
+        <option ng-repeat="discharge in discharges" value="{{discharge}}">{{discharge}}</option>
+      </select>
 
-    <span ng-show="isInvalid(visitForm.discharge)" class="help-block" translate>Select a discharge type</span>
-  </div>
+      <span ng-show="isInvalid(visitForm.discharge)" class="help-block" translate>Select a discharge type</span>
+    </div>
 
 
-  <div class="form-group">
-    <label for="entry-visit-visitType" translate>Visit type</label>
+    <div class="form-group">
+      <label for="entry-visit-visitType" translate>Visit type</label>
 
-    <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
-            ng-model="visit.visitType">
-      <option ng-repeat="visitType in visitTypes" value="{{visitType}}">{{visitType}}</option>
-    </select>
+      <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
+              ng-model="visit.visitType">
+        <option ng-repeat="visitType in visitTypes" value="{{visitType}}">{{visitType}}</option>
+      </select>
 
-    <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
-  </div>
+      <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
+    </div>
 
-  <!-- Notes -->
-  <div class="form-group">
-    <label for="entry-visit-notes" translate>Notes</label>
+    <!-- Notes -->
+    <div class="form-group">
+      <label for="entry-visit-notes" translate>Notes</label>
 
-    <textarea class="form-control" id="entry-visit-notes" name="Notes"
-              ng-model="visit.notes"></textarea>
-    <span class="help-block" translate>Anything else you want to add</span>
-  </div>
-</div>
-</fieldset>
+      <textarea class="form-control" id="entry-visit-notes" name="Notes"
+                ng-model="visit.notes"></textarea>
+      <span class="help-block" translate>Anything else you want to add</span>
+    </div>
+  </fieldset>
 
-<div ng-transclude></div>
+  <div ng-transclude></div>
 
 </form>
