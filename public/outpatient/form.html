@@ -51,7 +51,22 @@
 
   </fieldset>
 
+  <!-- Patient info page -->
   <fieldset ng-if="page === 2">
+    <!-- Patient ID -->
+    <div class="form-group">
+      <label for="entry-patient-id" translate>Patient ID</label>
+      <input type="text" id="entry-patient-id" class="form-control" name="patientID" ng-model="visit.patient.id">
+    </div>
+
+    <!-- Name -->
+    <div class="form-group">
+      <label for="entry-patient-name" translate>Name</label>
+      <!-- Don't impose ANY restricts on name, e.g. don't assume First name, Last name. Naming varies widely among
+           cultures. It's best to just have a single name field. -->
+      <input type="text" id="entry-patient-name" class="form-control" name="patientName" ng-model="visit.patient.name">
+    </div>
+
     <!-- Sex -->
     <div class="form-group">
       <label translate>Sex</label>
@@ -70,7 +85,7 @@
       </label>
     </div>
 
-    <!-- Age -->
+    <!-- Age TODO allow entering date of birth or age -->
     <div class="form-group"
          ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120}">
       <label for="entry-visit-age" translate>Age</label>
@@ -83,15 +98,32 @@
         <span class="input-group-addon" translate>years</span>
       </div>
 
-    <span ng-show="isInvalid(visitForm.age)" class="help-block" translate>
-      Please enter a valid age in years, for example 15 or 0.5
-    </span>
-    <span ng-show="visit.patient.age > 120 && visit.patient.age != 999" class="help-block" translate>
-      {{visit.patient.age}} years is quite old. Are you sure?
-    </span>
-    <span ng-show="visit.patient.age == 999" class="help-block" translate>
-      Leave this field blank if you don't know the patient's age
-    </span>
+      <span ng-show="isInvalid(visitForm.age)" class="help-block" translate>
+        Please enter a valid age in years, for example 15 or 0.5
+      </span>
+      <span ng-show="visit.patient.age > 120 && visit.patient.age != 999" class="help-block" translate>
+        {{visit.patient.age}} years is quite old. Are you sure?
+      </span>
+      <span ng-show="visit.patient.age == 999" class="help-block" translate>
+        Leave this field blank if you don't know the patient's age
+      </span>
+    </div>
+
+    <!-- Telephone -->
+    <div class="form-group">
+      <label for="entry-patient-phone" translate>Telephone number</label>
+      <!-- type="tel" doesn't actually enforce any syntax, but it will use the appropriate mobile keyboard, and it's
+           more semantically accurate -->
+      <input type="tel" id="entry-patient-phone" class="form-control" name="phone" ng-model="visit.patient.phone">
+    </div>
+
+    <!-- Address -->
+    <div class="form-group">
+      <label for="entry-patient-address" translate>Address</label>
+      <!-- Addresses are way too complicated to try and impose any kind of semantics on them besides free text. This
+           is more for followup in case a patient needs to be manually contacted anyway, so un-semanticness is fine. -->
+      <textarea id="entry-patient-address" class="form-control" name="patientAddress" ng-model="visit.patient.address">
+      </textarea>
     </div>
   </fieldset>
 

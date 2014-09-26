@@ -149,10 +149,29 @@ var indexRequests = [
 
               patient: {
                 properties: {
+                  // Some kind of unique patient identifier, e.g. SSN
                   id: {
-                    type: 'integer',
+                    type: 'string',
                     index: 'not_analyzed'
                   },
+
+                  // The only way to support names across cultures is with a single "name" field
+                  name: {
+                    type: 'string'
+                  },
+
+                  // Addresses are way too complicated to do anything but a single "address" field. This is more for
+                  // manual followup of a patient than analysis anyway.
+                  address: {
+                    type: 'string'
+                  },
+
+                  phone: {
+                    // phone numbers are not numbers!
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+
                   age: {
                     // we don't need that much precision, but we do want to support fractional ages, e.g. 0.5
                     type: 'double'
