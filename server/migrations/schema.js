@@ -202,6 +202,11 @@ var indexRequests = [
                         type: 'double'
                       }
                     }
+                  },
+
+                  // These are usually diagnoses
+                  preExistingConditions: {
+                    type: 'string'
                   }
                 }
               },

@@ -110,7 +110,7 @@
     </div>
 
     <!-- Telephone -->
-    <div class="form-group">
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.phone)}">
       <label for="entry-patient-phone" translate>Telephone number</label>
       <!-- type="tel" doesn't actually enforce any syntax, but it will use the appropriate mobile keyboard, and it's
            more semantically accurate -->
@@ -118,13 +118,57 @@
     </div>
 
     <!-- Address -->
-    <div class="form-group">
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.patientAddress)}">
       <label for="entry-patient-address" translate>Address</label>
       <!-- Addresses are way too complicated to try and impose any kind of semantics on them besides free text. This
            is more for followup in case a patient needs to be manually contacted anyway, so un-semanticness is fine. -->
       <textarea id="entry-patient-address" class="form-control" name="patientAddress" ng-model="visit.patient.address">
       </textarea>
     </div>
+  </fieldset>
+
+  <!-- Patient vitals -->
+  <fieldset ng-if="page === 3">
+
+    <!-- Temperature -->
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.temperature)}">
+      <label for="entry-temperature" translate>Temperature</label>
+      <div class="input-group">
+        <input type="number" id="entry-temperature" class="form-control" name="temperature"
+               ng-model="visit.patient.temperature">
+        <span class="input-group-addon" translate>°C</span>
+      </div>
+    </div>
+
+    <!-- Pulse -->
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.pulse)}">
+      <label for="entry-pulse" translate>Pulse</label>
+      <div class="input-group">
+        <input type="number" id="entry-pulse" class="form-control" name="pulse" ng-model="visit.patient.pulse">
+        <span class="input-group-addon" translate>BPM</span>
+      </div>
+    </div>
+
+    <!-- Weight -->
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.weight)}">
+      <label for="entry-weight" translate>Weight</label>
+      <div class="input-group">
+        <input type="number" id="entry-weight" class="form-control" name="weight" ng-model="visit.patient.weight">
+        <span class="input-group-addon" translate>kg</span>
+      </div>
+    </div>
+
+    <!-- Blood pressure is too annoying since it's 2 separate--but related--inputs, each with a label and unit -->
+
+    <!-- Pre-existing conditions. These are just diagnoses the patient already has. -->
+    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.preExistingConditions)}">
+      <label for="entry-pre-existing-conditions" translate>Pre-existing conditions</label>
+      <select class="form-control select2-multiple" id="entry-pre-existing-conditions" name="preExistingConditions"
+              multiple ui-select2 ng-model="visit.patient.preExistingConditions">
+        <option ng-repeat="diagnosis in diagnoses" value="{{diagnosis}}">{{diagnosis}}</option>
+      </select>
+    </div>
+
   </fieldset>
 
   <fieldset ng-if="page === 'last'">

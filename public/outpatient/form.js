@@ -150,10 +150,11 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisRes
             }
           };
 
+          var numPages = 4;
           scope.$on('next-page', function () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
-              if (scope.page === 2) {
+              if (scope.page === numPages - 1) {
                 scope.page = 'last'; // so modal-edit.html knows to add a submit button
               } else if (scope.page !== 'first') {
                 scope.page++;
@@ -165,7 +166,7 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisRes
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
               if (scope.page === 'last') {
-                scope.page = 2;
+                scope.page = numPages - 1;
               } else if (scope.page !== 1) {
                 scope.page--;
               }
