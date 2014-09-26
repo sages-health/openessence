@@ -2,9 +2,9 @@
 
 var codex = require('../codex');
 var Boom = require('boom');
-var District = require('../models/District');
+var Facility = require('../models/Facility');
 
-module.exports = codex.controller(District, {
+module.exports = codex.controller(Facility, {
   get: true,
   search: true,
   insert: true,

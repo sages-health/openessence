@@ -3,6 +3,7 @@
 module.exports = [
   'Dashboard',
   'District',
+  'Facility',
   'User',
   'Visualization',
   'Workbench'

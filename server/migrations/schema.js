@@ -190,23 +190,27 @@ var indexRequests = [
               // AKA the clinic, hospital, military treatment center, etc. where the patient was processed.
               // Why medicalFacility? Because that's what http://en.wikipedia.org/wiki/Medical_facility says.
               medicalFacility: {
-                properties: {
+                properties: { // same as facility type
 
                   // The name of this facility
                   name: {
                     type: 'string'
                   },
 
-                  // The administrative subdivision of this facility. Could be state, county, school district, etc.
-                  district: {
-                    type: 'string',
-                    fields: {
-                      raw: {
+                  location: {
+                    properties: {
+                      district: {
                         type: 'string',
-                        index: 'not_analyzed'
+                        fields: {
+                          raw: {
+                            type: 'string',
+                            index: 'not_analyzed'
+                          }
+                        }
                       }
                     }
                   },
+
                   sites: {
                     properties: {
                       total: {
@@ -236,7 +240,8 @@ var indexRequests = [
           'date-shift',
           'diagnosis',
           'discharge',
-          'location',
+          'district',
+          'facility',
           'symptom',
           'syndrome',
           'user',
@@ -314,7 +319,21 @@ var indexRequests = [
             }
           }),
 
-          location: addPaperTrail({
+          // Right now, this is the only thing that's mapped. In the future, we'll have the capability to map more
+          // things.
+          district: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string'
+              },
+              geometry: {
+                type: 'geo_shape'
+              }
+            }
+          }),
+
+          // medical facilities
+          facility: addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -325,8 +344,39 @@ var indexRequests = [
                   }
                 }
               },
-              geometry: {
-                type: 'geo_shape'
+              location: {
+                properties: {
+                  // Stick whatever info you have on the facility's location here. Obviously, not all of these fields
+                  // will be used.
+                  district: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  region: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  province: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  postalCode: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  county: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  state: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  country: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               }
             }
           }),

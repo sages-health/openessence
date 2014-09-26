@@ -12,8 +12,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
     scope: {
       options: '=?',
       queryString: '=',
-      filters: '=',
-      data: '='
+      filters: '='
     },
     link: function postLink (scope, element) {
 
@@ -63,7 +62,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
       var getLayerPolys = function () {
         var deferred = $q.defer();
 
-        // could also use $http's promise, but I can never figure out ngResource's API
+        // TODO don't assume district, let caller specify what geometries to use
         DistrictResource.get({
           size: 9999
         }, function (response) {
@@ -145,7 +144,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
           aggregations: {
             district: {
               terms: {
-                field: 'medicalFacility.district.raw',
+                field: 'medicalFacility.location.district.raw',
                 size: 0 // don't cap number of buckets
               }
             }

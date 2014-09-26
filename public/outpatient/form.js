@@ -6,9 +6,9 @@ var directives = require('../scripts/modules').directives;
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ function (gettextCatalog, OutpatientVisitResource,
-                                                                      DistrictResource, DiagnosisResource,
-                                                                      SymptomResource) {
+// @ngInject
+module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisResource, FacilityResource,
+                           SymptomResource) {
   return {
     restrict: 'E',
     template: require('./form.html'),
@@ -54,16 +54,16 @@ angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ functi
             }, {});
           };
 
-          DistrictResource.get({size: 9999, sort: 'name'}, function (response) {
-            var districtIndex = makeIndex(response.results);
+          FacilityResource.get({size: 9999, sort: 'name'}, function (response) {
+            var facilityIndex = makeIndex(response.results);
 
-            // add any districts that are on this record, but not in the ref table, so they show up when you edit the
+            // add any facilities that are on this record, but not in the ref table, so they show up when you edit the
             // record
-            if (scope.visit.district) {
-              districtIndex[scope.visit.district] = districtIndex[scope.visit.district] || true;
+            if (scope.visit.facility) {
+              facilityIndex[scope.visit.facility] = facilityIndex[scope.visit.facility] || true;
             }
 
-            scope.districts = Object.keys(districtIndex);
+            scope.facilities = Object.keys(facilityIndex);
           });
           SymptomResource.get(searchParams, function (response) {
             var symptomIndex = makeIndex(response.results);
@@ -171,4 +171,6 @@ angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ functi
       };
     }
   };
-});
+};
+
+angular.module(directives.name).directive('outpatientForm', module.exports);

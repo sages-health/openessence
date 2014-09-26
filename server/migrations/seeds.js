@@ -56,6 +56,10 @@ async.parallel([
     bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
   },
 
+  function dischargeType (callback) {
+    bulkInsert(require('../models/Discharge'), require('./discharge-type.json'), callback);
+  },
+
   function districts (callback) {
     var District = require('../models/District');
     var geoJson = require('./nebraska.json');
@@ -72,6 +76,32 @@ async.parallel([
     bulkInsert(District, features, callback);
   },
 
+  function facilities_ (callback) {
+    var Facility = require('../models/Facility');
+    var facilities = require('./nebraska.json').features.map(function (f) {
+      var name = f.properties.CTYNAMEUP + ' ';
+      // switch between hospital and clinic, just to show we can
+      if (f.properties.Population > 10000) {
+        name += 'Hospital';
+      } else {
+        name += 'Clinic';
+      }
+
+      // keep it simple - one facility per county
+      return {
+        name: name,
+        location: {
+          // need district for mapping right now
+          district: f.properties.CTYNAMEUP,
+
+          // we don't use these, but might come in handy
+          county: f.properties.CTYNAMEUP
+        }
+      };
+    });
+    bulkInsert(Facility, facilities, callback);
+  },
+
   function outpatientVisits (callback) {
     bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
   },
@@ -86,10 +116,6 @@ async.parallel([
 
   function syndrome (callback) {
     bulkInsert(require('../models/Syndrome'), require('./syndrome.json'), callback);
-  },
-
-  function dischargeType (callback) {
-    bulkInsert(require('../models/Discharge'), require('./discharge-type.json'), callback);
   },
 
   function visitType (callback) {

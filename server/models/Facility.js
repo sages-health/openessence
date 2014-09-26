@@ -6,26 +6,26 @@ var Boom = require('boom');
 var codex = require('../codex');
 var conf = require('../conf');
 
-var District = codex.model({
-  index: 'district',
-  type: 'district',
+var Facility = codex.model({
+  index: 'facility',
+  type: 'facility',
   refresh: true,
   client: conf.elasticsearch.client,
-  preInsert: function (district, callback) {
-    district.writeLock.lock(function (err, unlock) {
+  preInsert: function (facility, callback) {
+    facility.writeLock.lock(function (err, unlock) {
       if (err) {
         return callback(err);
       } else if (!unlock) {
-        return callback(new Error('Failed to acquire district write lock'));
+        return callback(new Error('Failed to acquire facility write lock'));
       }
 
-      District.search({
+      Facility.search({
         body: {
           query: {
             'constant_score': {
               filter: {
                 term: {
-                  'name.raw': district.doc.name
+                  'name.raw': facility.doc.name
                 }
               }
             }
@@ -36,11 +36,11 @@ var District = codex.model({
           return callback(err);
         }
 
-        if (facilities.length && facilities[0].id !== district.id) {
-          return callback(Boom.create(400, 'There\'s already a district with the name ' + district.doc.name, {
+        if (facilities.length && facilities[0].id !== facility.id) {
+          return callback(Boom.create(400, 'There\'s already a facility with the name ' + facility.doc.name, {
             error: 'UniqueConstraintViolation',
             field: 'name',
-            value: district.doc.name
+            value: facility.doc.name
           }));
         }
 
@@ -50,9 +50,9 @@ var District = codex.model({
   }
 }).with(require('../caper-trail').model);
 
-District.prototype.writeLock = District.writeLock = new Lock('district:write', {
+Facility.prototype.writeLock = Facility.writeLock = new Lock('facility:write', {
   client: conf.redis.client,
   maxAttempts: 100
 });
 
-module.exports = District;
+module.exports = Facility;

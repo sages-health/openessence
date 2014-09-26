@@ -56,7 +56,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
           visitDate: gettextCatalog.getString('Visit'),
-          district: gettextCatalog.getString('District'),
+          facility: gettextCatalog.getString('Facility'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
@@ -253,7 +253,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
                   age: source.patient ? source.patient.age : null,
-                  districts: source.medicalFacility ? source.medicalFacility.district : null
+                  districts: source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                 };
 
                 if (source.symptoms) {
