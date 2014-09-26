@@ -1,6 +1,6 @@
 <form name="visitForm" class="form" novalidate ng-submit="submit(visitForm)" ng-cloak>
 
-  <fieldset ng-if="page == 1">
+  <fieldset ng-if="page === 1">
     <!-- TODO red text on white background instead of alert -->
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
     <conflict-message ng-show="conflictError"></conflict-message>
@@ -49,6 +49,9 @@
       </select>
     </div>
 
+  </fieldset>
+
+  <fieldset ng-if="page === 2">
     <!-- Sex -->
     <div class="form-group">
       <label translate>Sex</label>
@@ -92,7 +95,7 @@
     </div>
   </fieldset>
 
-  <fieldset ng-if="page == 2">
+  <fieldset ng-if="page === 'last'">
     <!-- need this message for validation -->
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
 

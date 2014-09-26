@@ -153,14 +153,22 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisRes
           scope.$on('next-page', function () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
-              scope.page++;
+              if (scope.page === 2) {
+                scope.page = 'last'; // so modal-edit.html knows to add a submit button
+              } else if (scope.page !== 'first') {
+                scope.page++;
+              }
             }
           });
 
           scope.$on('previous-page', function () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
-              scope.page--;
+              if (scope.page === 'last') {
+                scope.page = 2;
+              } else if (scope.page !== 1) {
+                scope.page--;
+              }
             }
           });
 
