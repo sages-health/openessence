@@ -1,7 +1,7 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($scope, crud, tableUtil, gettextCatalog, DischargeResource) {
+module.exports = function ($scope, crud, tableUtil, gettextCatalog, DispositionResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -22,16 +22,16 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, DischargeRes
 
   // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {
-    discharge: gettextCatalog.getString('Discharge'),
-    newDischarge: gettextCatalog.getString('New discharge'),
+    disposition: gettextCatalog.getString('Disposition'),
+    newDisposition: gettextCatalog.getString('New disposition'),
     edit: gettextCatalog.getString('Edit'),
     phoneId: gettextCatalog.getString('Phone ID'),
     name: gettextCatalog.getString('Name')
   };
 
-  $scope.editTemplate = require('../../../partials/edit/forms/discharge-form.html');
+  $scope.editTemplate = require('../../../partials/edit/forms/disposition-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = DischargeResource;
+  $scope.resource = DispositionResource;
   var options = {
     sorting: {'name.raw': 'asc'},
     queryString : $scope.queryString

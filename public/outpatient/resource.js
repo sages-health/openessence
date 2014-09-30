@@ -5,7 +5,7 @@ var services = require('../scripts/modules').services;
 
 [
   'Diagnosis',
-  'Discharge',
+  'Disposition',
   {resource: 'OutpatientVisit', url: 'outpatient-visit'}, // a change-case module would be so great here
   'Symptom',
   'Syndrome',

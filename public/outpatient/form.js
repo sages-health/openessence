@@ -7,8 +7,8 @@ var directives = require('../scripts/modules').directives;
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
 // @ngInject
-module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisResource, FacilityResource,
-                           SymptomResource) {
+module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisResource, DispositionResource,
+                           FacilityResource, SymptomResource) {
   return {
     restrict: 'E',
     template: require('./form.html'),
@@ -43,7 +43,8 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisRes
           var searchParams = {
             size: 9999, // TODO search on demand if response indicates there are more records
             sort: 'name',
-            q: 'enabled:true'
+            // TODO enabled should be set per form, not per possible value
+            q: 'enabled:true OR _missing_:enabled'
           };
 
           // Construct a set of resources, indexed by their name
@@ -84,6 +85,16 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisRes
             }
 
             scope.diagnoses = Object.keys(diagnosisIndex);
+          });
+          DispositionResource.get(searchParams, function (response) {
+            var dispositionIndex = makeIndex(response.results);
+            if (scope.visit.diagnoses) {
+              scope.visit.diagnoses.forEach(function (disposition) {
+                dispositionIndex[disposition] = dispositionIndex[disposition] || true;
+              });
+            }
+
+            scope.dispositions = Object.keys(dispositionIndex);
           });
 
           scope.isInvalid = function (field) {

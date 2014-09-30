@@ -198,14 +198,14 @@
     </div>
 
     <div class="form-group">
-      <label for="entry-visit-discharge" translate>Discharge type</label>
+      <label for="entry-visit-disposition" translate>Disposition</label>
 
-      <select class="form-control select2-multiple" id="entry-visit-discharge" name="discharge" multiple ui-select2
-              ng-model="visit.discharge">
-        <option ng-repeat="discharge in discharges" value="{{discharge}}">{{discharge}}</option>
+      <select class="form-control select2-multiple" id="entry-visit-disposition" name="disposition" multiple ui-select2
+              ng-model="visit.disposition">
+        <option ng-repeat="disposition in dispositions" value="{{disposition}}">{{disposition}}</option>
       </select>
 
-      <span ng-show="isInvalid(visitForm.discharge)" class="help-block" translate>Select a discharge type</span>
+      <span ng-show="isInvalid(visitForm.disposition)" class="help-block" translate>Select a disposition type</span>
     </div>
 
 

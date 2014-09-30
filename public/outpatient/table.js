@@ -26,7 +26,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             diagnoses: gettextCatalog.getString('Diagnoses'),
             syndromes: gettextCatalog.getString('Syndromes'),
             visitType: gettextCatalog.getString('Visit type'),
-            discharge: gettextCatalog.getString('Discharge type'),
+            disposition: gettextCatalog.getString('Disposition'),
             sex: gettextCatalog.getString('Sex'),
             age: gettextCatalog.getString('Age'),
             returnVisit: gettextCatalog.getString('Return visit?'),

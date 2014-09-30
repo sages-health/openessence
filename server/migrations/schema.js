@@ -93,7 +93,7 @@ var indexRequests = [
                 index: 'not_analyzed'
               },
 
-              discharge: {
+              disposition: {
                 type: 'string',
                 index: 'not_analyzed'
               },
@@ -263,7 +263,7 @@ var indexRequests = [
           'dashboard',
           'date-shift',
           'diagnosis',
-          'discharge',
+          'disposition',
           'district',
           'facility',
           'symptom',
@@ -328,8 +328,7 @@ var indexRequests = [
             }
           }),
 
-          // Discharge types
-          discharge: addPaperTrail({
+          disposition: addPaperTrail({
             properties: {
               name: {
                 type: 'string',

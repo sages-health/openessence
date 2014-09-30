@@ -56,8 +56,8 @@ async.parallel([
     bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
   },
 
-  function dischargeType (callback) {
-    bulkInsert(require('../models/Discharge'), require('./discharge-type.json'), callback);
+  function disposition (callback) {
+    bulkInsert(require('../models/Disposition'), require('./disposition.json'), callback);
   },
 
   function districts (callback) {

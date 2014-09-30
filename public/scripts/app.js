@@ -210,10 +210,10 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/edit/syndrome.html'),
       controller: 'SyndromeEditCtrl'
     })
-    .state('edit.discharge', {
-      url: '/discharge',
-      template: require('../partials/edit/discharge.html'),
-      controller: 'DischargeEditCtrl'
+    .state('edit.disposition', {
+      url: '/disposition',
+      template: require('../partials/edit/disposition.html'),
+      controller: 'DispositionEditCtrl'
     })
     .state('edit.visitType', {
       url: '/visitType',

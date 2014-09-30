@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Admitted to general ward"
+  },
+  {
+    "name": "Admitted to intensive care unit"
+  },
+  {
+    "name": "Dead"
+  },
+  {
+    "name": "Discharged"
+  },
+  {
+    "name": "Follow-up visit needed"
+  },
+  {
+    "name": "Sick in quarters"
+  }
+]

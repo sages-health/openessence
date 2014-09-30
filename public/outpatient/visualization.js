@@ -63,7 +63,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           diagnoses: gettextCatalog.getString('Diagnoses'),
           syndromes: gettextCatalog.getString('Syndromes'),
           visitType: gettextCatalog.getString('Visit type'),
-          discharge: gettextCatalog.getString('Discharge type'),
+          disposition: gettextCatalog.getString('Disposition'),
           edit: gettextCatalog.getString('Edit')
         };
 
