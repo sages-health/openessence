@@ -64,6 +64,10 @@ function shiftDates (callback) {
           if (hit._source[field]) { // not every document has every date field
             var oldDate = new Date(hit._source[field]);
             doc[field] = new Date(now - (dateToBecomeToday.getTime() - oldDate.getTime()));
+
+            if (doc[field].getTime() > now) {
+              logger.warn('Record will be shifted into the future: %j', hit._source);
+            }
           }
           return doc;
         }, {});
