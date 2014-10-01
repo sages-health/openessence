@@ -6,9 +6,9 @@ var OutpatientVisit = require('../models/OutpatientVisit');
 
 module.exports = codex.controller(OutpatientVisit, {
   get: true,
-  postGet: function (req, esResponse, callback) {
+  postGet: function (req, esResponse, response, callback) {
     if (req.user.hasRightsToDocument(esResponse._source)) {
-      return callback(null, esResponse);
+      return callback(null, response);
     } else {
       return callback(Boom.forbidden());
     }
@@ -16,6 +16,10 @@ module.exports = codex.controller(OutpatientVisit, {
 
   search: true,
   preSearch: function (req, esRequest, callback) {
+    if (!req.user) {
+      return callback(Boom.forbidden());
+    }
+
     var filter = {
       terms: {
         'medicalFacility.district.raw': {

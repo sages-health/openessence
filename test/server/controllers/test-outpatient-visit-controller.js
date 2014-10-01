@@ -290,8 +290,7 @@ describe('OutpatientVisitController', function () {
         .expect(200)
         .end(function (err, res) {
           if (err) {
-            done(err);
-            return;
+            return done(err);
           }
 
           expect(res.body.results.length).to.equal(1);

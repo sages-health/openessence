@@ -78,11 +78,14 @@ function Controller (Model, options) {
         }
 
         var postSearch0 = function (callback) {
-          callback(null, esResponse);
+          // start with an empty response, first postSearch callback typically replaces response with its own anyway
+          callback(null, {});
         };
         var postSearchers = controller.postSearch.map(function (f) {
-          return function (esResponse, cb) {
-            f(req, esResponse, cb);
+          // postSearch callbacks are passed the original request, the response from elasticsearch, our (tentative)
+          // JSON response to the client, and a callback
+          return function (response, cb) {
+            f(req, esResponse, response, cb);
           };
         });
 
@@ -120,11 +123,11 @@ function Controller (Model, options) {
         req.codex.instance = instance;
 
         var postGet0 = function (callback) {
-          callback(null, esResponse);
+          callback(null, {});
         };
         var postGetters = controller.postGet.map(function (f) {
-          return function (esResponse, cb) {
-            f(req, esResponse, cb);
+          return function (response, cb) {
+            f(req, esResponse, response, cb);
           };
         });
 
@@ -361,8 +364,8 @@ function Controller (Model, options) {
       callback(null, esRequest);
     });
 
-    initHandler('postSearch', function (req, esResponse, callback) {
-      var response = {
+    initHandler('postSearch', function (req, esResponse, response, callback) {
+      response = {
         results: esResponse.hits.hits.map(function (hit) {
           return {
             // don't include _index or _type, it leaks information and isn't useful to client
@@ -399,7 +402,7 @@ function Controller (Model, options) {
       callback(null, {id: req.params.id});
     });
 
-    initHandler('postGet', function (req, esResponse, callback) {
+    initHandler('postGet', function (req, esResponse, response, callback) {
       // TODO warn if password is present in _source
       callback(null, {
         // don't include _index or _type

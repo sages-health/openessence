@@ -4,7 +4,7 @@
 <div class="modal-body">
   <!-- this is a generic display of the data: it displays JSON, e.g. medicalFacility is {"district": "District 1"}.
        We probably want a slightly friendlier, although non-universal, display of the record -->
-  <dl class="dl-horizontal" ng-repeat="(key, value) in record._source" ng-if="key != 'paperTrail'">
+  <dl class="dl-horizontal" ng-repeat="(key, value) in record._source">
     <dt>{{key | translate}}</dt>
     <dd>{{value | translate}}</dd>
   </dl>
