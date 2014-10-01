@@ -88,7 +88,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
                                                                             SymptomResource) {
   $scope.filters = [
     {
-      filterId: 'date'
+      filterId: 'visitDate'
     }
   ];
   $scope.filterTypes = [
@@ -99,10 +99,16 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
       name: gettextCatalog.getString('Age')
     },
     {
-      filterId: 'date',
+      filterId: 'visitDate',
       type: 'date-range',
       field: 'visitDate',
       name: gettextCatalog.getString('Visit date')
+    },
+    {
+      filterId: 'submissionDate',
+      type: 'date-range',
+      field: 'submissionDate',
+      name: gettextCatalog.getString('Form submission date')
     },
     {
       filterId: 'diagnoses',

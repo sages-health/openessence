@@ -501,8 +501,55 @@ describe('OutpatientVisitController', function () {
         .expect(201)
         .end(function (err) {
           if (err) {
-            done(err);
-            return;
+            return done(err);
+          }
+
+          expect(es.isDone()).to.be.true;
+
+          done();
+        });
+    });
+
+    it('should add submissionDate when creating new document', function (done) {
+      var es = nock(conf.elasticsearch.host)
+        .get('/outpatient_visit/outpatient_visit/1')
+        .reply(404, {
+          _index: 'outpatient',
+          _type: 'visit',
+          _id: '1',
+          found: false
+        })
+        .filteringRequestBody(function (body) {
+          if (!body) {
+            return false;
+          }
+
+          body = JSON.parse(body);
+          expect(body.submissionDate).to.be.ok;
+
+          return 'body';
+        })
+        .post('/outpatient_visit/outpatient_visit/1?refresh=true', 'body')
+        .reply(201, {
+          _index: 'outpatient',
+          _type: 'visit',
+          _id: '1',
+          _version: 1,
+          created: true
+        });
+
+      var app = express();
+      app.use(addUser(new User({roles: ['admin']})));
+      app.use(codex.middleware(OutpatientVisitController))
+        .use(errorMiddleware);
+
+      request(app)
+        .put('/1')
+        .send({foo: 'bar'})
+        .expect(201)
+        .end(function (err) {
+          if (err) {
+            return done(err);
           }
 
           expect(es.isDone()).to.be.true;

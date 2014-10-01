@@ -1,6 +1,7 @@
 'use strict';
 
 var async = require('async');
+var esErrors = require('elasticsearch').errors;
 
 function Controller (Model, options) {
   if (!(this instanceof Controller)) { // enable codex.controller(...) in addition to  new codex.controller(...)
@@ -36,16 +37,16 @@ function Controller (Model, options) {
       // Get a model instance, fulfilling the request from our cache if possible.
       get: function (esRequest, callback) {
         var id = esRequest.id;
-        var instance = req.codex.instances[id];
+        var instance = req.codex.instances[id]; // can be undefined if we cache the fact that this doc doesn't exist
         var version = esRequest.version;
         var noVersion = !version && version !== 0;
 
-        if (instance && (noVersion || version === instance.version)) {
+        if (id in req.codex.instances && (!instance || noVersion || version === instance.version)) {
           return callback(null, instance);
         }
 
         Model.get(esRequest, function (err, instance) {
-          if (err) {
+          if (err && !(err instanceof esErrors.NotFound)) {
             return callback(err);
           }
 

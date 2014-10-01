@@ -28,6 +28,8 @@ function makePaperTrail (model, req, callback) {
         return callback(err);
       }
 
+      instance = instance || {doc: {}};
+
       var trail = instance.doc.paperTrail || [];
       trail.push(createEntry());
 

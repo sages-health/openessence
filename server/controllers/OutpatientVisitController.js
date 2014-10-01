@@ -61,9 +61,14 @@ module.exports = codex.controller(OutpatientVisit, {
   replace: true,
   preInsert: function (req, esRequest, callback) {
     // don't let users log data for a region they don't have access to
-    if (!req.user.hasRightsToDocument(esRequest.body)) {
+    if (!req.user || !req.user.hasRightsToDocument(esRequest.body)) {
       return callback(Boom.forbidden());
     }
+
+    // Record form submission date. This duplicates what's stored in the paperTrail, but paperTrail isn't safe
+    // to send down to clients
+    esRequest.body = esRequest.body || {};
+    esRequest.body.submissionDate = new Date();
 
     if (!esRequest.id && esRequest.id !== 0) {
       // new document, good to go
@@ -78,7 +83,7 @@ module.exports = codex.controller(OutpatientVisit, {
         return callback(err);
       }
 
-      if (req.user.hasRightsToDocument(visit.doc)) {
+      if (!visit || req.user.hasRightsToDocument(visit.doc)) {
         return callback(null, esRequest);
       } else {
         return callback(Boom.forbidden());

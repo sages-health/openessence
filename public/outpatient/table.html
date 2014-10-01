@@ -2,8 +2,13 @@
   <table class="table table-striped table-hover table-condensed" frable="tableParams">
     <tr ng-repeat="visit in $data">
 
-      <td data-title="strings.date" data-sortable="'visitDate'">
-        <a ng-click="tableFilter('date', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
+      <td data-title="strings.visitDate" data-sortable="'visitDate'">
+        <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
+      </td>
+      <td data-title="strings.submissionDate" data-sortable="'submissionDate'">
+        <a ng-click="tableFilter('submissionDate', visit._source.submissionDate)">
+          {{visit._source.submissionDate | date}}
+        </a>
       </td>
       <td data-title="strings.district" data-sortable="'medicalFacility.district.raw'">
         <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">

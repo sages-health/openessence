@@ -13,7 +13,8 @@ var client = conf.elasticsearch.newClient();
 // date fields to shift
 var dateFields = [
   'visitDate',
-  'symptomOnsetDate'
+  'symptomOnsetDate',
+  'submissionDate'
 ];
 
 function shiftDates (callback) {

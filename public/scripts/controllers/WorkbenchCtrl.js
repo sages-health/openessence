@@ -18,6 +18,12 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
         name: gettextCatalog.getString('Visit date')
       },
       {
+        filterId: 'submissionDate',
+        type: 'date-range',
+        field: 'submissionDate',
+        name: gettextCatalog.getString('Form submission date')
+      },
+      {
         filterId: 'symptomOnsetDate',
         type: 'date-range',
         field: 'symptomOnsetDate',

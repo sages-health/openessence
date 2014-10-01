@@ -20,7 +20,8 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
         pre: function (scope) {
           scope.condensed = condensed;
           scope.strings = {
-            date: gettextCatalog.getString('Date'),
+            visitDate: gettextCatalog.getString('Visit'),
+            submissionDate: gettextCatalog.getString('Submitted'),
             district: gettextCatalog.getString('District'),
             symptoms: gettextCatalog.getString('Symptoms'),
             diagnoses: gettextCatalog.getString('Diagnoses'),
