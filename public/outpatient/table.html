@@ -25,16 +25,6 @@
           {{visit._source.diagnoses | pluck:'name' | join | truncate:30}}
         </a>
       </td>
-      <td data-title="strings.syndromes">
-        <a ng-click="tableFilter('syndromes', visit._source.syndromes)">
-          {{visit._source.syndromes | join | truncate:30}}
-        </a>
-      </td>
-      <td data-title="strings.visitType">
-        <a ng-click="tableFilter('visitType', visit._source.visitType)">
-          {{visit._source.visitType | join | truncate:30}}
-        </a>
-      </td>
       <td data-title="strings.disposition">
         <a ng-click="tableFilter('visitType', visit._source.disposition)">
           {{visit._source.disposition | join | truncate:30}}
@@ -47,19 +37,14 @@
         <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
       </td>
 
-      <!-- TODO check or X icon instead of true/false -->
-      <td data-title="strings.returnVisit" data-sortable="'returnVisit'">{{visit._source.returnVisit}}</td>
-
-      <td data-title="strings.patientId" data-sortable="'patient.patientId'">{{visit._source.patient.patientId}}</td>
-
       <!-- Edit controls -->
-      <td data-title="strings.edit">
+      <td>
         <div class="btn-group btn-group-xs edit-controls">
           <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
             <span class="icon-pencil"></span>
           </button>
           <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
-            <span class="icon-trash"></span>
+            <span class="icon-cancel"></span>
           </button>
         </div>
       </td>

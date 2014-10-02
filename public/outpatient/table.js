@@ -31,8 +31,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             sex: gettextCatalog.getString('Sex'),
             age: gettextCatalog.getString('Age'),
             returnVisit: gettextCatalog.getString('Return visit?'),
-            patientId: gettextCatalog.getString('Patient ID'),
-            edit: gettextCatalog.getString('Edit')
+            patientId: gettextCatalog.getString('Patient ID')
           };
 
           scope.editVisit = function (visit) {
