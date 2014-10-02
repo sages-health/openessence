@@ -22,7 +22,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
           scope.strings = {
             visitDate: gettextCatalog.getString('Visit'),
             submissionDate: gettextCatalog.getString('Submitted'),
-            district: gettextCatalog.getString('District'),
+            facility: gettextCatalog.getString('Facility'),
             symptoms: gettextCatalog.getString('Symptoms'),
             diagnoses: gettextCatalog.getString('Diagnoses'),
             syndromes: gettextCatalog.getString('Syndromes'),

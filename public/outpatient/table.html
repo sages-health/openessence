@@ -10,9 +10,9 @@
           {{visit._source.submissionDate | date}}
         </a>
       </td>
-      <td data-title="strings.district" data-sortable="'medicalFacility.district.raw'">
-        <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">
-          {{visit._source.medicalFacility.district}}
+      <td data-title="strings.facility" data-sortable="'medicalFacility.name'">
+        <a ng-click="tableFilter('facility', visit._source.medicalFacility.name)">
+          {{visit._source.medicalFacility.name | truncate:30}}
         </a>
       </td>
       <td data-title="strings.symptoms">
