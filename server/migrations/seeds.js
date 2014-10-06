@@ -77,29 +77,11 @@ async.parallel([
   },
 
   function facilities_ (callback) {
-    var Facility = require('../models/Facility');
-    var facilities = require('./nebraska.json').features.map(function (f) {
-      var name = f.properties.CTYNAMEUP + ' ';
-      // switch between hospital and clinic, just to show we can
-      if (f.properties.Population > 10000) {
-        name += 'Hospital';
-      } else {
-        name += 'Clinic';
-      }
+    bulkInsert(require('../models/Facility'), require('./facilities.json'), callback);
+  },
 
-      // keep it simple - one facility per county
-      return {
-        name: name,
-        location: {
-          // need district for mapping right now
-          district: f.properties.CTYNAMEUP,
-
-          // we don't use these, but might come in handy
-          county: f.properties.CTYNAMEUP
-        }
-      };
-    });
-    bulkInsert(Facility, facilities, callback);
+  function forms (callback) {
+    bulkInsert(require('../models/Form'), require('./forms.js'), callback);
   },
 
   function outpatientVisits (callback) {

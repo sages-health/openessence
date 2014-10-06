@@ -1,12 +1,14 @@
 <form name="visitForm" class="form" novalidate ng-submit="submit(visitForm)" ng-cloak>
 
+  <!-- TODO something like http://bootsnipp.com/snippets/featured/form-process-steps -->
+
   <fieldset ng-if="page === 1">
     <!-- TODO red text on white background instead of alert -->
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
     <conflict-message ng-show="conflictError"></conflict-message>
 
     <!-- Visit date -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
+    <div class="form-group" ng-show="fields.visitDate.enabled" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
       <label for="entry-visit-date" translate>Visit date</label>
 
       <div class="input-group">
@@ -22,8 +24,22 @@
       </div>
     </div>
 
+    <!-- Visit type -->
+    <div class="form-group" ng-show="fields.visitType.enabled">
+      <label for="entry-visit-visitType" translate>Visit type</label>
+
+      <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
+              ng-model="visit.visitType">
+        <option ng-repeat="v in fields.visitType.values" value="{{v.value}}">{{v.name}}</option>
+      </select>
+
+      <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
+    </div>
+
     <!-- Symptom onset -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate)}">
+    <div class="form-group" ng-show="fields.symptomOnsetDate.enabled"
+         ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate)}">
+
       <label for="entry-visit-onset" translate>Symptom onset</label>
 
       <div class="input-group">
@@ -40,11 +56,11 @@
     </div>
 
     <!-- Facility -->
-    <div class="form-group">
+    <div class="form-group" ng-show="fields.facility.enabled">
       <label for="entry-visit-facility" translate>Facility</label>
 
       <select class="form-control" id="entry-visit-facility" name="facility" ng-model="visit.medicalFacility.name"
-              ng-options="name for name in facilities">
+          ng-options="f.value as f.name for f in fields.facility.values">
         <option value=""></option>
       </select>
     </div>
@@ -54,13 +70,13 @@
   <!-- Patient info page -->
   <fieldset ng-if="page === 2">
     <!-- Patient ID -->
-    <div class="form-group">
+    <div class="form-group" ng-show="fields.patientID.enabled">
       <label for="entry-patient-id" translate>Patient ID</label>
       <input type="text" id="entry-patient-id" class="form-control" name="patientID" ng-model="visit.patient.id">
     </div>
 
     <!-- Name -->
-    <div class="form-group">
+    <div class="form-group" ng-show="fields.patientName.enabled">
       <label for="entry-patient-name" translate>Name</label>
       <!-- Don't impose ANY restricts on name, e.g. don't assume First name, Last name. Naming varies widely among
            cultures. It's best to just have a single name field. -->
@@ -68,7 +84,7 @@
     </div>
 
     <!-- Sex -->
-    <div class="form-group">
+    <div class="form-group" ng-show="fields.patientSex.enabled">
       <label translate>Sex</label>
       <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
       <label class="radio-inline">
@@ -86,7 +102,7 @@
     </div>
 
     <!-- Age TODO allow entering date of birth or age -->
-    <div class="form-group"
+    <div class="form-group" ng-show="fields.patientAge.enabled"
          ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120}">
       <label for="entry-visit-age" translate>Age</label>
 
@@ -94,7 +110,6 @@
         <input class="form-control" id="entry-visit-age" name="age" ng-model="visit.patient.age" type="number"
                min="0" max="200" placeholder="{{agePlaceholder | translate}}">
 
-        <!-- TODO this looks bad with has-error -->
         <span class="input-group-addon" translate>years</span>
       </div>
 
@@ -110,15 +125,20 @@
     </div>
 
     <!-- Telephone -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.phone)}">
+    <div class="form-group" ng-show="fields.patientPhone.enabled"
+         ng-class="{'has-error': isInvalid(visitForm.patientPhone)}">
+
       <label for="entry-patient-phone" translate>Telephone number</label>
-      <!-- type="tel" doesn't actually enforce any syntax, but it will use the appropriate mobile keyboard, and it's
+      <!-- type="tel" doesn't actually enforce any syntax, but it will use the appropriate mobile keyboard and it's
            more semantically accurate -->
-      <input type="tel" id="entry-patient-phone" class="form-control" name="phone" ng-model="visit.patient.phone">
+      <input type="tel" id="entry-patient-phone" class="form-control" name="patientPhone"
+             ng-model="visit.patient.phone">
     </div>
 
     <!-- Address -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.patientAddress)}">
+    <div class="form-group" ng-show="fields.patientAddress.enabled"
+         ng-class="{'has-error': isInvalid(visitForm.patientAddress)}">
+
       <label for="entry-patient-address" translate>Address</label>
       <!-- Addresses are way too complicated to try and impose any kind of semantics on them besides free text. This
            is more for followup in case a patient needs to be manually contacted anyway, so un-semanticness is fine. -->
@@ -131,7 +151,9 @@
   <fieldset ng-if="page === 3">
 
     <!-- Temperature -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.temperature)}">
+    <div class="form-group" ng-show="fields.temperature.enabled"
+         ng-class="{'has-error': isInvalid(visitForm.temperature)}">
+
       <label for="entry-temperature" translate>Temperature</label>
       <div class="input-group">
         <input type="number" id="entry-temperature" class="form-control" name="temperature"
@@ -141,7 +163,9 @@
     </div>
 
     <!-- Pulse -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.pulse)}">
+    <div class="form-group" ng-show="fields.pulse.enabled"
+         ng-class="{'has-error': isInvalid(visitForm.pulse)}">
+
       <label for="entry-pulse" translate>Pulse</label>
       <div class="input-group">
         <input type="number" id="entry-pulse" class="form-control" name="pulse" ng-model="visit.patient.pulse">
@@ -150,7 +174,7 @@
     </div>
 
     <!-- Weight -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.weight)}">
+    <div class="form-group" ng-show="fields.weight.enabled" ng-class="{'has-error': isInvalid(visitForm.weight)}">
       <label for="entry-weight" translate>Weight</label>
       <div class="input-group">
         <input type="number" id="entry-weight" class="form-control" name="weight" ng-model="visit.patient.weight">
@@ -160,68 +184,73 @@
 
     <!-- Blood pressure is too annoying since it's 2 separate--but related--inputs, each with a label and unit -->
 
-    <!-- Pre-existing conditions. These are just diagnoses the patient already has. -->
-    <div class="form-group" ng-class="{'has-error': isInvalid(visitForm.preExistingConditions)}">
+    <!-- Pre-existing conditions. These are just diagnoses the patient already has, but some sites use different
+         possible values than what gets stuck in diagnoses. -->
+    <div class="form-group" ng-show="fields.preExistingConditions.enabled"
+         ng-class="{'has-error': isInvalid(visitForm.preExistingConditions)}">
+
       <label for="entry-pre-existing-conditions" translate>Pre-existing conditions</label>
       <select class="form-control select2-multiple" id="entry-pre-existing-conditions" name="preExistingConditions"
               multiple ui-select2 ng-model="visit.patient.preExistingConditions">
-        <option ng-repeat="diagnosis in diagnoses" value="{{diagnosis}}">{{diagnosis}}</option>
+        <option ng-repeat="condition in fields.preExistingConditions.values" value="{{condition.value}}">
+          {{condition.name}}
+        </option>
       </select>
     </div>
 
+  </fieldset>
+
+  <!-- Specimen -->
+  <fieldset ng-if="page === 4">
+    <specimen-inputs fields="fields" ng-model="visit.specimen"></specimen-inputs>
+
+    <antiviral-inputs fields="fields" ng-model="visit.antiviral"></antiviral-inputs>
   </fieldset>
 
   <fieldset ng-if="page === 'last'">
     <!-- need this message for validation -->
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
 
-    <div class="form-group">
+    <!-- Symptoms -->
+    <div class="form-group" ng-show="fields.symptoms.enabled">
       <label for="entry-visit-symptoms" translate>Symptoms</label>
 
       <select class="form-control select2-multiple" id="entry-visit-symptoms" multiple ui-select2
               ng-model="visit.symptoms">
-        <option ng-repeat="symptom in symptoms" value="{{symptom}}">{{symptom}}</option>
+        <option ng-repeat="symptom in fields.symptoms.values" value="{{symptom.value}}">{{symptom.name}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.symptoms)" class="help-block" translate>Select symptom(s)</span>
     </div>
 
-    <div class="form-group">
+    <!-- Diagnoses -->
+    <div class="form-group" ng-show="fields.diagnoses.enabled">
       <label for="entry-visit-diagnoses" translate>Diagnoses</label>
 
       <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
               ng-model="visit.diagnoses">
-        <option ng-repeat="diagnosis in diagnoses" value="{{diagnosis}}">{{diagnosis}}</option>
+        <option ng-repeat="d in fields.diagnoses.values" value="{{d.value}}">{{d.name}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.diagnoses)" class="help-block" translate>Select diagnoses</span>
     </div>
 
-    <div class="form-group">
+    <!-- Disposition -->
+    <div class="form-group" ng-show="fields.disposition.enabled">
       <label for="entry-visit-disposition" translate>Disposition</label>
 
       <select class="form-control select2-multiple" id="entry-visit-disposition" name="disposition" multiple ui-select2
               ng-model="visit.disposition">
-        <option ng-repeat="disposition in dispositions" value="{{disposition}}">{{disposition}}</option>
+        <option ng-repeat="disposition in fields.disposition.values" value="{{disposition.value}}">
+          {{disposition.name}}
+        </option>
       </select>
 
       <span ng-show="isInvalid(visitForm.disposition)" class="help-block" translate>Select a disposition type</span>
     </div>
 
-
-    <div class="form-group">
-      <label for="entry-visit-visitType" translate>Visit type</label>
-
-      <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
-              ng-model="visit.visitType">
-        <option ng-repeat="visitType in visitTypes" value="{{visitType}}">{{visitType}}</option>
-      </select>
-
-      <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
-    </div>
-
     <!-- Notes -->
-    <div class="form-group">
+    <div class="form-group" ng-show="fields.notes.enabled">
       <label for="entry-visit-notes" translate>Notes</label>
 
       <textarea class="form-control" id="entry-visit-notes" name="Notes"

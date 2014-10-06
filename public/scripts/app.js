@@ -31,6 +31,7 @@ require('../dashboard');
 require('../workbench');
 require('../outpatient');
 require('../aggregate');
+require('../entry');
 
 var modules = require('./modules');
 require('./controllers');

@@ -4,6 +4,7 @@ module.exports = [
   'Dashboard',
   'District',
   'Facility',
+  'Form',
   'User',
   'Visualization',
   'Workbench'

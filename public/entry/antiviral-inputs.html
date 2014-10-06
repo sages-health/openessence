@@ -1,0 +1,51 @@
+<!-- Antiviral exposure -->
+<div class="form-group" ng-show="fields.antiviralExposure.enabled">
+  <label translate>
+    Exposure to influenza antiviral drugs during the last 14 days?
+  </label>
+  <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
+  <label class="radio-inline">
+    <input type="radio" name="antiviralExposure" ng-value="true" ng-model="model.exposure">
+    <span translate>Yes</span>
+  </label>
+  <label class="radio-inline">
+    <input type="radio" name="antiviralExposure" ng-value="false" ng-model="model.exposure">
+    <span translate>No</span>
+  </label>
+  <label class="radio-inline">
+    <input type="radio" name="antiviralExposure" ng-value="" ng-model="model.exposure">
+    <span translate>Unknown</span>
+  </label>
+</div>
+
+<!-- Antiviral source -->
+<div class="form-group" ng-show="fields.antiviralSource.enabled && model.exposure === true">
+  <label translate>Source of antiviral exposure</label>
+  <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
+  <label class="radio-inline">
+    <input type="radio" name="antiviralSource" value="patient" ng-model="model.source">
+    <span translate>Patient</span>
+  </label>
+  <label class="radio-inline">
+    <input type="radio" name="antiviralSource" value="household" ng-model="model.source">
+    <span translate>Household contact</span>
+  </label>
+  <label class="radio-inline">
+    <input type="radio" name="antiviralSource" value="" ng-model="model.source">
+    <span translate>Unknown</span>
+  </label>
+</div>
+
+<!-- Antiviral name -->
+<div class="form-group" ng-show="fields.antiviralName.enabled && model.exposure === true">
+  <label for="entry-visit-antiviral-name" translate>Name of antiviral</label>
+  <select class="form-control" id="entry-visit-antiviral-name" name="antiviralName" ng-model="model.name">
+    <option value="oseltamivir" translate>Oseltamivir (Tamiflu®)</option>
+    <option value="zanamivir" translate>Zanamivir (Relenza®)</option>
+    <option value="rimantadine" translate>Rimantadine (Flumadine®)</option>
+    <option value="amantadine" translate>Amantadine (Symmetrel®)</option>
+    <option value="umifenovir" translate>Umifenovir (Arbidol®)</option>
+    <option value="laninamivir" translate>Laninamivir</option>
+    <option value="peramivir" translate>Peramivir</option>
+  </select>
+</div>

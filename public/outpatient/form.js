@@ -7,8 +7,7 @@ var directives = require('../scripts/modules').directives;
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
 // @ngInject
-module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisResource, DispositionResource,
-                           FacilityResource, SymptomResource) {
+module.exports = function (gettextCatalog, OutpatientVisitResource, FormResource) {
   return {
     restrict: 'E',
     template: require('./form.html'),
@@ -25,77 +24,37 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisRes
           scope.record = scope.record || {};
           scope.visit = angular.copy(scope.record._source) || {};
 
-          if (scope.visit.symptoms) {
-            scope.visit.symptoms = scope.visit.symptoms.map(function (r) {
-              return r.name;
-            });
-          }
-          if (scope.visit.diagnoses) {
-            scope.visit.diagnoses = scope.visit.diagnoses.map(function (r) {
-              return r.name;
-            });
-          }
+          // TODO form can be quite large (>20KB for demo) since it includes every possible value for dropdowns
+          // that's probably not an issue for most sites collecting a handful of diagnoses at a few sites,
+          // but could be an issue for sites collecting a lot of symptoms, diagnoses, etc.
+          // "Correct" solution would involve linking to other resources and then fetching them on demand, e.g.
+          // returning JSON HAL and then querying for dropdown values as needed. In the meantime, at least it's cached.
+          FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+            if (response.results.length === 0) {
+              throw new Error('No configured forms');
+            }
+
+            var form = response.results[0]._source;
+
+            // convert array of fields to object indexed by field name
+            scope.fields = form.fields.reduce(function (fields, field) {
+              if (field.values) {
+                field.values = field.values.map(function (v) {
+                  return {
+                    // TODO still need to call gettextCatalog.getString('string') so that it can be extracted
+                    name: gettextCatalog.getString(v.name),
+                    value: v.name
+                  };
+                });
+              }
+
+              fields[field.name] = field;
+              return fields;
+            }, {});
+          });
 
           scope.agePlaceholder = gettextCatalog.getString('Patient\'s age');
           scope.yellAtUser = false;
-
-          // TODO use multi-get so we only have one XHR request
-          var searchParams = {
-            size: 9999, // TODO search on demand if response indicates there are more records
-            sort: 'name',
-            // TODO enabled should be set per form, not per possible value
-            q: 'enabled:true OR _missing_:enabled'
-          };
-
-          // Construct a set of resources, indexed by their name
-          var makeIndex = function (results) {
-            return results.reduce(function (prev, current) {
-              prev[current._source.name] = current;
-              return prev;
-            }, {});
-          };
-
-          FacilityResource.get({size: 9999, sort: 'name'}, function (response) {
-            var facilityIndex = makeIndex(response.results);
-
-            // add any facilities that are on this record, but not in the ref table, so they show up when you edit the
-            // record
-            if (scope.visit.facility) {
-              facilityIndex[scope.visit.facility] = facilityIndex[scope.visit.facility] || true;
-            }
-
-            scope.facilities = Object.keys(facilityIndex);
-          });
-          SymptomResource.get(searchParams, function (response) {
-            var symptomIndex = makeIndex(response.results);
-            if (scope.visit.symptoms) {
-              scope.visit.symptoms.forEach(function (symptom) {
-                symptomIndex[symptom] = symptomIndex[symptom] || true;
-              });
-            }
-
-            scope.symptoms = Object.keys(symptomIndex);
-          });
-          DiagnosisResource.get(searchParams, function (response) {
-            var diagnosisIndex = makeIndex(response.results);
-            if (scope.visit.diagnoses) {
-              scope.visit.diagnoses.forEach(function (diagnosis) {
-                diagnosisIndex[diagnosis] = diagnosisIndex[diagnosis] || true;
-              });
-            }
-
-            scope.diagnoses = Object.keys(diagnosisIndex);
-          });
-          DispositionResource.get(searchParams, function (response) {
-            var dispositionIndex = makeIndex(response.results);
-            if (scope.visit.diagnoses) {
-              scope.visit.diagnoses.forEach(function (disposition) {
-                dispositionIndex[disposition] = dispositionIndex[disposition] || true;
-              });
-            }
-
-            scope.dispositions = Object.keys(dispositionIndex);
-          });
 
           scope.isInvalid = function (field) {
             if (!field) {
@@ -161,7 +120,7 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, DiagnosisRes
             }
           };
 
-          var numPages = 4;
+          var numPages = 4; // skip ILI surveillance page for now
           scope.$on('next-page', function () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {

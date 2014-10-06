@@ -1,126 +1,95 @@
 [
   {
-    "name": "Acquired Immune Deficiency Syndrome (AIDS)",
-    "enabled": true
+    "name": "Acquired Immune Deficiency Syndrome (AIDS)"
   },
   {
-    "name": "Acute Flaccid Paralysis (AFP)",
-    "enabled": true
+    "name": "Acute Flaccid Paralysis (AFP)"
   },
   {
-    "name": "Back Pain",
-    "enabled": true
+    "name": "Back Pain"
   },
   {
-    "name": "Cardiac Illness",
-    "enabled": true
+    "name": "Cardiac Illness"
   },
   {
-    "name": "Dental",
-    "enabled": true
+    "name": "Dental"
   },
   {
-    "name": "Diarrhea",
-    "enabled": true
+    "name": "Diarrhea"
   },
   {
-    "name": "Eye Disease",
-    "enabled": true
+    "name": "Eye Disease"
   },
   {
-    "name": "Fever/Febrile Illness",
-    "enabled": true
+    "name": "Fever/Febrile Illness"
   },
   {
-    "name": "Gastrointestinal Illness",
-    "enabled": true
+    "name": "Gastrointestinal Illness"
   },
   {
-    "name": "Guinea Worm (Dracunculiasis)",
-    "enabled": true
+    "name": "Guinea Worm (Dracunculiasis)"
   },
   {
-    "name": "Gynecologic Illness",
-    "enabled": true
+    "name": "Gynecologic Illness"
   },
   {
-    "name": "Hemorrhagic Fever",
-    "enabled": true
+    "name": "Hemorrhagic Fever"
   },
   {
-    "name": "Hemorrhagic Illness",
-    "enabled": true
+    "name": "Hemorrhagic Illness"
   },
   {
-    "name": "Influenza-Like Illness (ILI)",
-    "enabled": true
+    "name": "Influenza-Like Illness (ILI)"
   },
   {
-    "name": "Injury",
-    "enabled": true
+    "name": "Injury"
   },
   {
-    "name": "Malnutrition",
-    "enabled": true
+    "name": "Malnutrition"
   },
   {
-    "name": "Musculoskeletal Injury",
-    "enabled": true
+    "name": "Musculoskeletal Injury"
   },
   {
-    "name": "Musculoskeletal Injury,  Acute",
-    "enabled": true
+    "name": "Musculoskeletal Injury,  Acute"
   },
   {
-    "name": "Musculoskeletal Injury, Chronic",
-    "enabled": true
+    "name": "Musculoskeletal Injury, Chronic"
   },
   {
-    "name": "Neurologic Illness",
-    "enabled": true
+    "name": "Neurologic Illness"
   },
   {
-    "name": "Obstetric",
-    "enabled": true
+    "name": "Obstetric"
   },
   {
-    "name": "Pneumonia (Acute Lower Respiratory Infection)",
-    "enabled": true
+    "name": "Pneumonia (Acute Lower Respiratory Infection)"
   },
   {
-    "name": "Psychiatric Illness",
-    "enabled": true
+    "name": "Psychiatric Illness"
   },
   {
-    "name": "Rash",
-    "enabled": true
+    "name": "Rash"
   },
   {
-    "name": "Respiratory Illness",
-    "enabled": true
+    "name": "Respiratory Illness"
   },
   {
-    "name": "Severe Acute Respiratory Infection (SARI)",
-    "enabled": true
+    "name": "Severe Acute Respiratory Infection (SARI)"
   },
   {
-    "name": "Sexually Transmitted Infection (STI)",
-    "enabled": true
+    "name": "Sexually Transmitted Infection (STI)"
   },
   {
-    "name": "Shock",
-    "enabled": true
+    "name": "Shock"
   },
   {
-    "name": "Skin Lesion (Dermatologic Lesion)",
-    "enabled": true
+    "name": "Skin Lesion (Dermatologic Lesion)"
   },
   {
-    "name": "Swollen Glands (Lymphadenopathy)",
-    "enabled": true
+    "name": "Swollen Glands (Lymphadenopathy)"
   },
   {
-    "name": "Urinary Illness",
-    "enabled": true
+    "name": "Urinary Illness"
   }
 ]

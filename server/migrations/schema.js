@@ -266,6 +266,7 @@ var indexRequests = [
           'disposition',
           'district',
           'facility',
+          'form',
           'symptom',
           'syndrome',
           'user',
@@ -398,6 +399,45 @@ var indexRequests = [
                   country: {
                     type: 'string',
                     index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          }),
+
+          // Collection forms
+          form: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+
+              // Array of fields
+              fields: {
+                properties: {
+                  name: {
+                    type: 'string'
+                  },
+                  enabled: {
+                    type: 'boolean'
+                  },
+
+                  // Array of possible values for this field. For example, a symptoms field might have "Cough", "Fever",
+                  // etc.
+                  values: {
+                    properties: {
+                      // Only store values. Labels are locale-dependent and belong in the views, not in the DB
+                      name: {
+                        type: 'string'
+                      }
+                      // other properties depend on the field, e.g. facility stores location info
+                    }
                   }
                 }
               }

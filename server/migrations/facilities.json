@@ -1,0 +1,331 @@
+[
+  {
+    "name": "Madison Hospital",
+    "location": {
+      "district": "Madison",
+      "county": "Madison"
+    }
+  },
+  {
+    "name": "Douglas Hospital",
+    "location": {
+      "district": "Douglas",
+      "county": "Douglas"
+    }
+  },
+  {
+    "name": "Wheeler Clinic",
+    "location": {
+      "district": "Wheeler",
+      "county": "Wheeler"
+    }
+  },
+  {
+    "name": "Richardson Clinic",
+    "location": {
+      "district": "Richardson",
+      "county": "Richardson"
+    }
+  },
+  {
+    "name": "Hall Hospital",
+    "location": {
+      "district": "Hall",
+      "county": "Hall"
+    }
+  },
+  {
+    "name": "Nance Clinic",
+    "location": {
+      "district": "Nance",
+      "county": "Nance"
+    }
+  },
+  {
+    "name": "Pierce Clinic",
+    "location": {
+      "district": "Pierce",
+      "county": "Pierce"
+    }
+  },
+  {
+    "name": "Butler Clinic",
+    "location": {
+      "district": "Butler",
+      "county": "Butler"
+    }
+  },
+  {
+    "name": "Gage Hospital",
+    "location": {
+      "district": "Gage",
+      "county": "Gage"
+    }
+  },
+  {
+    "name": "Pawnee Clinic",
+    "location": {
+      "district": "Pawnee",
+      "county": "Pawnee"
+    }
+  },
+  {
+    "name": "Saline Hospital",
+    "location": {
+      "district": "Saline",
+      "county": "Saline"
+    }
+  },
+  {
+    "name": "Seward Hospital",
+    "location": {
+      "district": "Seward",
+      "county": "Seward"
+    }
+  },
+  {
+    "name": "Saunders Hospital",
+    "location": {
+      "district": "Saunders",
+      "county": "Saunders"
+    }
+  },
+  {
+    "name": "Thayer Clinic",
+    "location": {
+      "district": "Thayer",
+      "county": "Thayer"
+    }
+  },
+  {
+    "name": "Burt Clinic",
+    "location": {
+      "district": "Burt",
+      "county": "Burt"
+    }
+  },
+  {
+    "name": "Merrick Clinic",
+    "location": {
+      "district": "Merrick",
+      "county": "Merrick"
+    }
+  },
+  {
+    "name": "Hamilton Clinic",
+    "location": {
+      "district": "Hamilton",
+      "county": "Hamilton"
+    }
+  },
+  {
+    "name": "Fillmore Clinic",
+    "location": {
+      "district": "Fillmore",
+      "county": "Fillmore"
+    }
+  },
+  {
+    "name": "Howard Clinic",
+    "location": {
+      "district": "Howard",
+      "county": "Howard"
+    }
+  },
+  {
+    "name": "Adams Hospital",
+    "location": {
+      "district": "Adams",
+      "county": "Adams"
+    }
+  },
+  {
+    "name": "Stanton Clinic",
+    "location": {
+      "district": "Stanton",
+      "county": "Stanton"
+    }
+  },
+  {
+    "name": "Webster Clinic",
+    "location": {
+      "district": "Webster",
+      "county": "Webster"
+    }
+  },
+  {
+    "name": "Polk Clinic",
+    "location": {
+      "district": "Polk",
+      "county": "Polk"
+    }
+  },
+  {
+    "name": "Dodge Hospital",
+    "location": {
+      "district": "Dodge",
+      "county": "Dodge"
+    }
+  },
+  {
+    "name": "Dakota Hospital",
+    "location": {
+      "district": "Dakota",
+      "county": "Dakota"
+    }
+  },
+  {
+    "name": "York Hospital",
+    "location": {
+      "district": "York",
+      "county": "York"
+    }
+  },
+  {
+    "name": "Cass Hospital",
+    "location": {
+      "district": "Cass",
+      "county": "Cass"
+    }
+  },
+  {
+    "name": "Clay Clinic",
+    "location": {
+      "district": "Clay",
+      "county": "Clay"
+    }
+  },
+  {
+    "name": "Knox Clinic",
+    "location": {
+      "district": "Knox",
+      "county": "Knox"
+    }
+  },
+  {
+    "name": "Wayne Clinic",
+    "location": {
+      "district": "Wayne",
+      "county": "Wayne"
+    }
+  },
+  {
+    "name": "Jefferson Clinic",
+    "location": {
+      "district": "Jefferson",
+      "county": "Jefferson"
+    }
+  },
+  {
+    "name": "Antelope Clinic",
+    "location": {
+      "district": "Antelope",
+      "county": "Antelope"
+    }
+  },
+  {
+    "name": "Cuming Clinic",
+    "location": {
+      "district": "Cuming",
+      "county": "Cuming"
+    }
+  },
+  {
+    "name": "Lancaster Hospital",
+    "location": {
+      "district": "Lancaster",
+      "county": "Lancaster"
+    }
+  },
+  {
+    "name": "Nuckolls Clinic",
+    "location": {
+      "district": "Nuckolls",
+      "county": "Nuckolls"
+    }
+  },
+  {
+    "name": "Thurston Clinic",
+    "location": {
+      "district": "Thurston",
+      "county": "Thurston"
+    }
+  },
+  {
+    "name": "Dixon Clinic",
+    "location": {
+      "district": "Dixon",
+      "county": "Dixon"
+    }
+  },
+  {
+    "name": "Cedar Clinic",
+    "location": {
+      "district": "Cedar",
+      "county": "Cedar"
+    }
+  },
+  {
+    "name": "Platte Hospital",
+    "location": {
+      "district": "Platte",
+      "county": "Platte"
+    }
+  },
+  {
+    "name": "Greeley Clinic",
+    "location": {
+      "district": "Greeley",
+      "county": "Greeley"
+    }
+  },
+  {
+    "name": "Nemaha Clinic",
+    "location": {
+      "district": "Nemaha",
+      "county": "Nemaha"
+    }
+  },
+  {
+    "name": "Otoe Hospital",
+    "location": {
+      "district": "Otoe",
+      "county": "Otoe"
+    }
+  },
+  {
+    "name": "Washington Hospital",
+    "location": {
+      "district": "Washington",
+      "county": "Washington"
+    }
+  },
+  {
+    "name": "Colfax Clinic",
+    "location": {
+      "district": "Colfax",
+      "county": "Colfax"
+    }
+  },
+  {
+    "name": "Boone Clinic",
+    "location": {
+      "district": "Boone",
+      "county": "Boone"
+    }
+  },
+  {
+    "name": "Johnson Clinic",
+    "location": {
+      "district": "Johnson",
+      "county": "Johnson"
+    }
+  },
+  {
+    "name": "Sarpy Hospital",
+    "location": {
+      "district": "Sarpy",
+      "county": "Sarpy"
+    }
+  }
+]
