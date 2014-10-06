@@ -30,7 +30,7 @@
 
       <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
               ng-model="visit.visitType">
-        <option ng-repeat="v in fields.visitType.values" value="{{v.value}}">{{v.name}}</option>
+        <option ng-repeat="(value, text) in fields.visitType.values" value="{{value}}">{{text}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
@@ -60,7 +60,7 @@
       <label for="entry-visit-facility" translate>Facility</label>
 
       <select class="form-control" id="entry-visit-facility" name="facility" ng-model="visit.medicalFacility.name"
-          ng-options="f.value as f.name for f in fields.facility.values">
+          ng-options="value as text for (value, text) in fields.facility.values">
         <option value=""></option>
       </select>
     </div>
@@ -192,9 +192,7 @@
       <label for="entry-pre-existing-conditions" translate>Pre-existing conditions</label>
       <select class="form-control select2-multiple" id="entry-pre-existing-conditions" name="preExistingConditions"
               multiple ui-select2 ng-model="visit.patient.preExistingConditions">
-        <option ng-repeat="condition in fields.preExistingConditions.values" value="{{condition.value}}">
-          {{condition.name}}
-        </option>
+        <option ng-repeat="(value, text) in fields.preExistingConditions.values" value="{{value}}">{{text}}</option>
       </select>
     </div>
 
@@ -217,7 +215,7 @@
 
       <select class="form-control select2-multiple" id="entry-visit-symptoms" multiple ui-select2
               ng-model="visit.symptoms">
-        <option ng-repeat="symptom in fields.symptoms.values" value="{{symptom.value}}">{{symptom.name}}</option>
+        <option ng-repeat="(value, text) in fields.symptoms.values" value="{{value}}">{{text}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.symptoms)" class="help-block" translate>Select symptom(s)</span>
@@ -229,7 +227,7 @@
 
       <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
               ng-model="visit.diagnoses">
-        <option ng-repeat="d in fields.diagnoses.values" value="{{d.value}}">{{d.name}}</option>
+        <option ng-repeat="(value, text) in fields.diagnoses.values" value="{{value}}">{{text}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.diagnoses)" class="help-block" translate>Select diagnoses</span>
@@ -241,9 +239,7 @@
 
       <select class="form-control select2-multiple" id="entry-visit-disposition" name="disposition" multiple ui-select2
               ng-model="visit.disposition">
-        <option ng-repeat="disposition in fields.disposition.values" value="{{disposition.value}}">
-          {{disposition.name}}
-        </option>
+        <option ng-repeat="(value, text) in fields.disposition.values" value="{{value}}">{{text}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.disposition)" class="help-block" translate>Select a disposition type</span>

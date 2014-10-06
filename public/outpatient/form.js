@@ -24,6 +24,19 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, FormResource
           scope.record = scope.record || {};
           scope.visit = angular.copy(scope.record._source) || {};
 
+          // fields that have count: X, we need to do some magic to make them work
+          var aggregateFields = ['symptoms', 'diagnoses'];
+
+          // strip counts from non-aggregate records since they make model equality
+          // (e.g. selecting correct dropdown value) difficult
+          aggregateFields.forEach(function (field) {
+              if (scope.visit[field]) {
+                scope.visit[field] = scope.visit[field].map(function (c) {
+                  return c.name;
+                });
+              }
+            });
+
           // TODO form can be quite large (>20KB for demo) since it includes every possible value for dropdowns
           // that's probably not an issue for most sites collecting a handful of diagnoses at a few sites,
           // but could be an issue for sites collecting a lot of symptoms, diagnoses, etc.
@@ -39,13 +52,21 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, FormResource
             // convert array of fields to object indexed by field name
             scope.fields = form.fields.reduce(function (fields, field) {
               if (field.values) {
-                field.values = field.values.map(function (v) {
-                  return {
-                    // TODO still need to call gettextCatalog.getString('string') so that it can be extracted
-                    name: gettextCatalog.getString(v.name),
-                    value: v.name
-                  };
-                });
+                var values = field.values.reduce(function (values, v) {
+                  // TODO still need to call gettextCatalog.getString('string') so that it can be extracted
+                  values[v.name] = gettextCatalog.getString(v.name);
+                  return values;
+                }, {});
+
+                // Add any values that are on the record but that we don't know about. Otherwise, the edit
+                // form will list this field as blank when it really isn't
+                if (scope.visit[field.name]) {
+                  scope.visit[field.name].forEach(function (v) {
+                    values[v] = gettextCatalog.getString(v);
+                  });
+                }
+
+                field.values = values;
               }
 
               fields[field.name] = field;
@@ -102,21 +123,23 @@ module.exports = function (gettextCatalog, OutpatientVisitResource, FormResource
               }
             };
 
-            scope.visit.symptoms = scope.visit.symptoms ? scope.visit.symptoms.map(function (r) {
-              return {name: r, count: 1};
-            }) : [];
-
-            scope.visit.diagnoses = scope.visit.diagnoses ? scope.visit.diagnoses.map(function (r) {
-              return {name: r, count: 1};
-            }) : [];
+            // don't make destructive modification on scope.visit since we may have to redo form
+            var recordToSubmit = angular.copy(scope.visit);
+            aggregateFields.forEach(function (field) {
+              if (recordToSubmit[field]) {
+                recordToSubmit[field] = recordToSubmit[field].map(function (v) {
+                  return {name: v, count: 1};
+                });
+              }
+            });
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
               OutpatientVisitResource.update({
                 id: scope.record._id,
                 version: scope.record._version
-              }, scope.visit, cleanup, showError);
+              }, recordToSubmit, cleanup, showError);
             } else {
-              OutpatientVisitResource.save(scope.visit, cleanup, showError);
+              OutpatientVisitResource.save(recordToSubmit, cleanup, showError);
             }
           };
 
