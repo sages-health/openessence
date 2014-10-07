@@ -2,44 +2,55 @@
   <table class="table table-striped table-hover table-condensed" frable="tableParams">
     <tr ng-repeat="visit in $data">
 
-      <td data-title="strings.visitDate" data-sortable="'visitDate'">
+      <td ng-show="fields.visitDate.enabled" data-title="strings.visitDate" data-sortable="'visitDate'">
         <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
       </td>
-      <td data-title="strings.submissionDate" data-sortable="'submissionDate'">
+
+      <!-- Unlike other fields which can be seen via the form, this one can't be since it's non-editable -->
+      <!-- TODO combine edit form and "record investigation" usecase into coherent UI -->
+      <td ng-show="fields.submissionDate.enabled" data-title="strings.submissionDate" data-sortable="'submissionDate'">
         <a ng-click="tableFilter('submissionDate', visit._source.submissionDate)">
           {{visit._source.submissionDate | date}}
         </a>
       </td>
-      <td data-title="strings.facility" data-sortable="'medicalFacility.name'">
+
+      <td ng-show="fields.facility.enabled" data-title="strings.facility" data-sortable="'medicalFacility.name'">
         <a ng-click="tableFilter('facility', visit._source.medicalFacility.name)">
           {{visit._source.medicalFacility.name | truncate:30}}
         </a>
       </td>
-      <td data-title="strings.symptoms">
+
+      <td ng-show="fields.patientSex.enabled" data-title="strings.sex" data-sortable="'patient.sex'">
+        <a ng-click="tableFilter('patientSex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
+      </td>
+      <td ng-show="fields.patientAge.enabled" data-title="strings.age" data-sortable="'patient.age'">
+        <a ng-click="tableFilter('patientAge', visit._source.patient.age)">{{visit._source.patient.age}}</a>
+      </td>
+
+      <td ng-show="fields.symptoms.enabled" data-title="strings.symptoms">
         <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
           {{visit._source.symptoms | pluck:'name' | join | truncate:30}}
         </a>
       </td>
-      <td data-title="strings.diagnoses">
+      <td ng-show="fields.diagnoses.enabled" data-title="strings.diagnoses">
         <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">
           {{visit._source.diagnoses | pluck:'name' | join | truncate:30}}
         </a>
       </td>
-      <td data-title="strings.disposition">
+
+      <td ng-show="fields.disposition.enabled" data-title="strings.disposition">
         <a ng-click="tableFilter('visitType', visit._source.disposition)">
           {{visit._source.disposition | join | truncate:30}}
         </a>
       </td>
-      <td data-title="strings.sex" data-sortable="'patient.sex'">
-        <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
-      </td>
-      <td data-title="strings.age" data-sortable="'patient.age'">
-        <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
+
+      <td ng-show="fields.antiviralName.enabled" data-title="strings.antiviral" data-sortable="'antiviral.name'">
+        <a ng-click="tableFilter('antiviral', visit._source.antiviral.name)">{{visit._source.antiviral.name}}</a>
       </td>
 
       <!-- Edit controls -->
       <td>
-        <div class="btn-group btn-group-xs edit-controls">
+        <div class="btn-group btn-group-xs edit-controls pull-right">
           <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
             <span class="icon-pencil"></span>
           </button>

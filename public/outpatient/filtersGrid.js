@@ -10,43 +10,27 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
     template: require('./filtersGrid.html'),
     transclude: true,
     scope: {
-      filters: '=',
-      filterTypes: '=',
+      activeFilters: '=',
+      possibleFilters: '=',
       queryString: '='
     },
     compile: function () {
       return {
         pre: function (scope) {
-          scope.filterTypes = scope.filterTypes || [];
-          scope.filters = scope.filters || [];
-
-          /**
-           * Applies pre-defined filter configs to a filter
-           */
-          var makeFilter = function (filter) {
-            var filterTypes = scope.filterTypes.filter(function (filterType) {
-              return filterType.filterId === filter.filterId;
-            });
-            if (filterTypes.length === 0) {
-              throw new Error('Unrecognized filterId ' + filter.filterId);
-            }
-
-            return angular.extend({}, filterTypes[0], filter);
-          };
-
-          scope.filters = scope.filters.map(makeFilter);
+          scope.possibleFilters = scope.possibleFilters || {};
+          scope.activeFilters = scope.activeFilters || [];
 
           scope.addFilter = function (filter) {
-            scope.filters.push(makeFilter(filter));
+            scope.activeFilters.push(angular.extend({}, scope.possibleFilters[filter.filterID], filter));
           };
 
           scope.removeFilter = function (index) {
-            scope.filters.splice(index, 1);
+            scope.activeFilters.splice(index, 1);
           };
 
           scope.$watchCollection(
             function () {
-              return scope.filters
+              return scope.activeFilters
                 .map(function (f) {
                   return f.queryString;
                 });

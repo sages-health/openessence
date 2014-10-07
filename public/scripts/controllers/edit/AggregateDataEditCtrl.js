@@ -32,18 +32,18 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
   };
 
   $scope.filters = [
-    {filterId: 'date'}
+    {filterID: 'date'}
   ];
 
   $scope.filterTypes = [
     {
-      filterId: 'date',
+      filterID: 'date',
       type: 'date-range',
       field: 'visitDate',
       name: gettextCatalog.getString('Visit date')
     },
     {
-      filterId: 'districts',
+      filterID: 'districts',
       type: 'multi-select',
       field: 'district',
       store: {
@@ -53,7 +53,7 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
       name: gettextCatalog.getString('District')
     },
     {
-      filterId: 'symptoms',
+      filterID: 'symptoms',
       type: 'multi-select',
       field: 'symptoms.name',
       store: {

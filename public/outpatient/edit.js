@@ -84,68 +84,12 @@ angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ fun
 
 angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ function ($scope, $modal, outpatientEditModal,
                                                                             gettextCatalog, outpatientDeleteModal,
-                                                                            DiagnosisResource, DistrictResource,
-                                                                            SymptomResource) {
-  $scope.filters = [
-    {
-      filterId: 'visitDate'
-    }
-  ];
-  $scope.filterTypes = [
-    {
-      filterId: 'age',
-      type: 'numeric-range',
-      field: 'patient.age',
-      name: gettextCatalog.getString('Age')
-    },
-    {
-      filterId: 'visitDate',
-      type: 'date-range',
-      field: 'visitDate',
-      name: gettextCatalog.getString('Visit date')
-    },
-    {
-      filterId: 'submissionDate',
-      type: 'date-range',
-      field: 'submissionDate',
-      name: gettextCatalog.getString('Form submission date')
-    },
-    {
-      filterId: 'diagnoses',
-      type: 'multi-select',
-      field: 'diagnoses.name',
-      store: {
-        resource: DiagnosisResource,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('Diagnoses')
-    },
-    {
-      filterId: 'districts',
-      type: 'multi-select',
-      field: 'medicalFacility.district',
-      store: {
-        resource: DistrictResource,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('District')
-    },
-    {
-      filterId: 'sex',
-      type: 'sex',
-      field: 'patient.sex',
-      name: gettextCatalog.getString('Sex')
-    },
-    {
-      filterId: 'symptoms',
-      type: 'multi-select',
-      field: 'symptoms.name',
-      store: {
-        resource: SymptomResource,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('Symptom')
-    }
+                                                                            possibleFilters, FormResource) {
+  $scope.activeFilters = [
+    angular.extend({
+      filterID: 'visitDate'
+      // no to/from window, we page the results anyway
+    }, possibleFilters.visitDate)
   ];
 
   $scope.createVisit = function () {
@@ -161,6 +105,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
   };
 
   $scope.editVisit = function (visit) {
+    // TODO pass edit modal the form so it doesn't have to re-fetch
     outpatientEditModal.open({record: visit}).result
       .then(function () {
         reload();
@@ -181,5 +126,28 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
 
   $scope.$on('outpatientDelete', function (event, visit) {
     $scope.deleteVisit(visit);
+  });
+
+  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+    if (response.results.length === 0) {
+      throw new Error('No configured forms');
+    }
+
+    var form = response.results[0]._source;
+    $scope.form = form; // need to pass to visualizations
+
+    $scope.possibleFilters = form.fields.reduce(function (filters, field) {
+      if (!field.enabled) {
+        return filters;
+      }
+
+      var filter = possibleFilters[field.name];
+      if (filter) {
+        filters[field.name] = filter;
+      }
+
+      return filters;
+    }, {});
+
   });
 });

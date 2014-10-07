@@ -6,11 +6,11 @@ var angular = require('angular');
 module.exports = function ($scope, $modal, crud, tableUtil, gettextCatalog, sortString, FrableParams,
                            DiagnosisResource) {
   $scope.filters = [
-    {filterId: 'name'}
+    {filterID: 'name'}
   ];
   $scope.filterTypes = [
     {
-      filterId: 'name',
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')

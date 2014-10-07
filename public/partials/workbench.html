@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <outpatient-filters-grid filters="filters" filter-types="filterTypes" query-string="queryString">
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString">
     <!-- TODO these buttons are in a weird place -->
     <div class="col-md-3 pull-right">
       <div class="well text-center">
@@ -24,7 +24,7 @@
         <li class="workbench-visualization" gridster-item="viz" ng-repeat="viz in visualizations">
           <div class="panel-body workbench-panel">
             <workbench-visualization pivot-options="pivotOptions" query-string="queryString"
-                                     filters="filters" options="options"
+                                     filters="filters" options="options" form="form"
                                      visualization="viz.visualization"
                                      pivot="viz.pivot"
                                      on-close="removeVisualization(viz)" on-settings="">

@@ -127,6 +127,7 @@
     "angular-ui-sortable": "./bower_components/angular-ui-sortable/sortable.js",
     "angular-gettext": "./bower_components/angular-gettext/dist/angular-gettext.js",
     "angular-gridster": "./bower_components/angular-gridster/src/angular-gridster.js",
+    "angular-order-object-by": "./bower_components/angular-order-object-by/src/ng-order-object-by.js",
     "d3": "./bower_components/d3/d3.js",
     "ng-debounce": "./bower_components/ng-debounce/angular-debounce.js",
     "text-angular": "./bower_components/textAngular/src/textAngular.js",

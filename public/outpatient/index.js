@@ -1,14 +1,15 @@
-module.exports = {
-  aggregation: require('./aggregation'),
-  edit: require('./edit'),
-  filter: require('./filter'),
-  filtersGrid: require('./filtersGrid'),
-  form: require('./form'),
-  leafletMap: require('./leaflet-map'),
-  resource: require('./resource'),
-  table: require('./table'),
-  timeSeries: require('./fracasTimeSeries'),
-  visualization: require('./visualization'),
-  pieChart: require('./fracasPieChart.js'),
-  barChart: require('./fracasBarChart.js')
-};
+'use strict';
+
+require('./aggregation');
+require('./edit');
+require('./filter');
+require('./filtersGrid');
+require('./form');
+require('./leaflet-map');
+require('./resource');
+require('./table');
+require('./fracasTimeSeries');
+require('./visualization');
+require('./fracasPieChart.js');
+require('./fracasBarChart.js');
+require('./possibleFilters');

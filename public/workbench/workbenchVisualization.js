@@ -7,7 +7,7 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
   return {
     template: '<hinge visualization="visualization" pivot="pivot" pivot-options="pivotOptions" on-close="close()" on-settings="settings()">' +
       '<outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString" ' +
-      'filters="filters" options="options"></outpatient-visualization></hinge>',
+      'filters="filters" form="form" options="options"></outpatient-visualization></hinge>',
     restrict: 'E',
     scope: {
       visualization: '=?',
@@ -16,7 +16,8 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
       close: '&onClose',
       settings: '&onSettings',
       queryString: '=',
-      filters: '='
+      filters: '=',
+      form: '='
     },
     compile: function () {
       return {

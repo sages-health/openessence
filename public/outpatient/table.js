@@ -11,7 +11,8 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
     template: require('./table.html'),
     scope: {
       records: '=?',
-      queryString: '='
+      queryString: '=',
+      form: '='
     },
     compile: function (element, attrs) {
       var condensed = angular.isDefined(attrs.condensed) && attrs.condensed !== 'false';
@@ -26,13 +27,23 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             symptoms: gettextCatalog.getString('Symptoms'),
             diagnoses: gettextCatalog.getString('Diagnoses'),
             syndromes: gettextCatalog.getString('Syndromes'),
-            visitType: gettextCatalog.getString('Visit type'),
             disposition: gettextCatalog.getString('Disposition'),
             sex: gettextCatalog.getString('Sex'),
             age: gettextCatalog.getString('Age'),
-            returnVisit: gettextCatalog.getString('Return visit?'),
-            patientId: gettextCatalog.getString('Patient ID')
+            antiviral: gettextCatalog.getString('Antiviral')
           };
+
+          // index fields by name
+          scope.$watch('form.fields', function (fields) {
+            if (!fields) {
+              return;
+            }
+
+            scope.fields = fields.reduce(function (fields, field) {
+              fields[field.name] = field;
+              return fields;
+            }, {});
+          });
 
           scope.editVisit = function (visit) {
             scope.$emit('outpatientEdit', visit);
@@ -105,7 +116,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
               var a = [].concat(value);
               a.forEach(function (v) {
                 var filter = {
-                  filterId: field,
+                  filterID: field,
                   value: ((typeof v) === 'object' ? v.name : v)
                 };
                 $rootScope.$emit('filterChange', filter, true, false);

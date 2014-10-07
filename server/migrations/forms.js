@@ -13,6 +13,14 @@ module.exports = [
         name: 'symptomOnsetDate',
         enabled: true
       },
+
+      // this is always collected automatically when the form is submitted (because why not?), but only displayed
+      // if this field is enabled
+      {
+        name: 'submissionDate',
+        enabled: true
+      },
+
       {
         name: 'facility',
         enabled: true,
@@ -93,15 +101,15 @@ module.exports = [
       // antiviral info
       {
         name: 'antiviralExposure',
-        enabled: true
+        enabled: false
       },
       {
         name: 'antiviralName',
-        enabled: true
+        enabled: false
       },
       {
         name: 'antiviralSource',
-        enabled: true
+        enabled: false
       },
 
       {

@@ -113,14 +113,14 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             var filter;
             if (data.col) {
               filter = {
-                filterId: data.col,
+                filterID: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                filterId: data.row,
+                filterID: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);

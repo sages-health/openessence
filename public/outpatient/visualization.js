@@ -16,6 +16,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
     template: require('./visualization.html'),
     scope: {
       filters: '=',
+      form: '=',
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',
@@ -25,6 +26,19 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
       // runs before nested directives, see http://stackoverflow.com/a/18491502
       pre: function (scope, element) {
         scope.options = scope.options || {};
+        scope.form = scope.form || {};
+
+        // index fields by name
+        scope.$watch('form.fields', function (fields) {
+          if (!fields) {
+            return;
+          }
+
+          scope.fields = fields.reduce(function (fields, field) {
+            fields[field.name] = field;
+            return fields;
+          }, {});
+        });
 
         scope.visualization = scope.visualization || scope.options.visualization || {
           name: 'table'
@@ -42,17 +56,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.crosstabData = [];
 
-        scope.xFunction = function () {
-          return function (d) {
-            return d.key;
-          };
-        };
-        scope.yFunction = function () {
-          return function (d) {
-            return d.value;
-          };
-        };
-
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
           visitDate: gettextCatalog.getString('Visit'),
@@ -64,9 +67,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           syndromes: gettextCatalog.getString('Syndromes'),
           visitType: gettextCatalog.getString('Visit type'),
           disposition: gettextCatalog.getString('Disposition'),
-          edit: gettextCatalog.getString('Edit')
+          antiviral: gettextCatalog.getString('Antiviral')
         };
 
+        // TODO make this a filter
         scope.printAggregate = function (field, includeCount) {
           var print = [];
           if (field) {
@@ -380,14 +384,14 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           var filter;
           if (event.point.col && event.point.colName.indexOf('missing') !== 0) {
             filter = {
-              filterId: event.point.col,
+              filterID: event.point.col,
               value: event.point.colName
             };
             $rootScope.$emit('filterChange', filter, true, true);
           }
           if (event.point.row && event.point.rowName.indexOf('missing') !== 0) {
             filter = {
-              filterId: event.point.row,
+              filterID: event.point.row,
               value: event.point.rowName
             };
             $rootScope.$emit('filterChange', filter, true, true);
@@ -400,7 +404,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             var a = [].concat(value);
             a.forEach(function (v) {
               var filter = {
-                filterId: field,
+                filterID: field,
                 value: ((typeof v) === 'object' ? v.name : v)
               };
               $rootScope.$emit('filterChange', filter, true, false);

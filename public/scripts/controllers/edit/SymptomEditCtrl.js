@@ -3,17 +3,17 @@
 // @ngInject
 module.exports = function ($scope, crud, tableUtil, gettextCatalog, SymptomResource) {
   $scope.filters = [
-    {filterId: 'name'}
+    {filterID: 'name'}
   ];
   $scope.filterTypes = [
     {
-      filterId: 'name',
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'phoneId',
+      filterID: 'phoneId',
       type: 'text',
       field: 'phoneId',
       name: gettextCatalog.getString('Phone ID')

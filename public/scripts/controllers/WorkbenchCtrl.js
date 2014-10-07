@@ -1,72 +1,12 @@
 'use strict';
 
+var angular = require('angular');
+
 // @ngInject
 module.exports = function ($scope, $location, $timeout, $modal, $window, $stateParams, gettextCatalog, scopeToJson,
-                           DiagnosisResource, DistrictResource, SymptomResource, WorkbenchResource) {
+                           FormResource, WorkbenchResource, possibleFilters) {
 
-  $scope.filterTypes = [
-      {
-        filterId: 'age',
-        type: 'numeric-range',
-        field: 'patient.age',
-        name: gettextCatalog.getString('Age')
-      },
-      {
-        filterId: 'visitDate',
-        type: 'date-range',
-        field: 'visitDate',
-        name: gettextCatalog.getString('Visit date')
-      },
-      {
-        filterId: 'submissionDate',
-        type: 'date-range',
-        field: 'submissionDate',
-        name: gettextCatalog.getString('Form submission date')
-      },
-      {
-        filterId: 'symptomOnsetDate',
-        type: 'date-range',
-        field: 'symptomOnsetDate',
-        name: gettextCatalog.getString('Symptom onset')
-      },
-      {
-        filterId: 'diagnoses',
-        type: 'multi-select',
-        field: 'diagnoses.name',
-        store: {
-          resource: DiagnosisResource,
-          field: 'name'
-        },
-        name: gettextCatalog.getString('Diagnoses')
-      },
-      {
-        filterId: 'districts',
-        type: 'multi-select',
-        field: 'medicalFacility.district',
-        store: {
-          resource: DistrictResource,
-          field: 'name'
-        },
-        name: gettextCatalog.getString('District')
-      },
-      {
-        filterId: 'sex',
-        type: 'sex',
-        field: 'patient.sex',
-        name: gettextCatalog.getString('Sex')
-      },
-      {
-        filterId: 'symptoms',
-        type: 'multi-select',
-        field: 'symptoms.name',
-        store: {
-          resource: SymptomResource,
-          field: 'name'
-        },
-        name: gettextCatalog.getString('Symptom')
-      }
-    ];
-
+  // TODO make dependent on enabled form fields
   $scope.pivotOptions = [
     {
       value: 'age',
@@ -92,6 +32,55 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
 
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];
+
+  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+    if (response.results.length === 0) {
+      throw new Error('No configured forms');
+    }
+
+    var form = response.results[0]._source;
+    $scope.form = form; // need to pass to visualizations
+
+    $scope.possibleFilters = form.fields.reduce(function (filters, field) {
+      if (!field.enabled) {
+        return filters;
+      }
+
+      var possibleFilter = possibleFilters[field.name];
+      if (possibleFilter) {
+        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
+      }
+
+      return filters;
+    }, {});
+
+    // don't set activeFilters until we know all possibleFilters, otherwise filtersGrid can throw an error
+    var workbenchId = $stateParams.workbenchId;
+    if (workbenchId) {
+      var workbenches = JSON.parse($window.sessionStorage.getItem('workbenches'));
+      var workbench = workbenches[workbenchId]._source.state;
+
+      $scope.activeFilters = workbench.filters;
+      if (Array.isArray(workbench.visualizations)) {
+        workbench.visualizations.forEach(function (v) {
+          $scope.addVisualization(v.visualization.name, v);
+        });
+      }
+    } else {
+      // default to a single 90 day date filter
+      var from = new Date();
+      from.setDate(from.getDate() - 90); // 90 days back
+      $scope.activeFilters = [
+        angular.extend({
+          from: from,
+          to: new Date()
+        }, possibleFilters.visitDate)
+      ];
+
+      // TODO don't do this
+      $scope.addVisualization();
+    }
+  });
 
   $scope.$watch('visualizations.length', function (numVizes) {
     if (numVizes % 2 === 0) { // plus is on its own row
@@ -143,12 +132,12 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
     $scope.filters = viz.filters.map(function (filter) {
       if (filter.value) {
         return {
-          filterId: filter.filterId,
+          filterID: filter.filterID,
           value: filter.value
         };
       } else {
         return {
-          filterId: filter.filterId,
+          filterID: filter.filterID,
           to: filter.to,
           from: filter.from
         };
@@ -201,31 +190,4 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
   $scope.$on('visualizationSelect', function (event, name, options) {
     $scope.addVisualization(name, options);
   });
-
-  var workbenchId = $stateParams.workbenchId;
-  if (workbenchId) {
-    var workbenches = JSON.parse($window.sessionStorage.getItem('workbenches'));
-    var workbench = workbenches[workbenchId]._source.state;
-
-    $scope.filters = workbench.filters;
-    if (Array.isArray(workbench.visualizations)) {
-      workbench.visualizations.forEach(function (v) {
-        $scope.addVisualization(v.visualization.name, v);
-      });
-    }
-  } else {
-    // default to a single 90 day date filter
-    var from = new Date();
-    from.setDate(from.getDate() - 90); // 90 days back
-    $scope.filters = [
-      {
-        filterId: 'visitDate',
-        from: from,
-        to: new Date()
-      }
-    ];
-
-    // TODO don't do this
-    $scope.addVisualization();
-  }
 };

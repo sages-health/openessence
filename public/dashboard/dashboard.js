@@ -129,7 +129,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
                 if (dateFilters.length === 0) {
                   widget.visualization.state.filters.push({
                     field: 'visitDate',
-                    filterId: 'date',
+                    filterID: 'date',
                     from: from,
                     name: 'Date',
                     queryString: queryString,

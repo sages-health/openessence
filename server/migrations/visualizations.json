@@ -43,7 +43,7 @@
     "state": {
       "filters": [
         {
-          "filterId": "date",
+          "filterID": "date",
           "type": "date-range",
           "field": "visitDate",
           "name": "Date",
@@ -90,7 +90,7 @@
     "state": {
       "filters": [
         {
-          "filterId": "date",
+          "filterID": "date",
           "type": "date-range",
           "field": "visitDate",
           "name": "Date",
@@ -142,7 +142,7 @@
       "queryString": "visitDate: [2011-05-23 TO 2011-08-21] AND symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\") AND medicalFacility.district:\"Country A\"",
       "filters": [
         {
-          "filterId": "date",
+          "filterID": "date",
           "type": "date-range",
           "field": "visitDate",
           "name": "Date",
@@ -151,7 +151,7 @@
           "queryString": "visitDate: [2011-05-23 TO 2011-08-21]"
         },
         {
-          "filterId": "symptoms",
+          "filterID": "symptoms",
           "type": "multi-select",
           "field": "symptoms.name",
           "store": {
@@ -166,7 +166,7 @@
           "queryString": "symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\")"
         },
         {
-          "filterId": "districts",
+          "filterID": "districts",
           "type": "multi-select",
           "field": "medicalFacility.district",
           "store": {

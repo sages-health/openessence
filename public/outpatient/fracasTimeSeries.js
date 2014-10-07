@@ -124,7 +124,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             if (!dateFilter) {
               dateFilter = {
-                filterId: 'date',
+                filterID: 'date',
                 from: new Date(from),
                 to: new Date(to)
               };
@@ -148,7 +148,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           var plotSeries = function (seriesName, seriesType) {
             if (scope.filters) {
               var filters = scope.filters.filter(function (filter) {
-                return filter.filterId === seriesType && filter.value.length > 0 &&
+                return filter.filterID === seriesType && filter.value.length > 0 &&
                   filter.value.indexOf(seriesName) === -1;
               });
               return filters.length === 0;

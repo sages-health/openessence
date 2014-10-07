@@ -83,7 +83,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
                 // TODO this leaves the map with a lot of 0 count districts that should be unshaded
                 map.fitBounds(e.target.getBounds());
                 var filter = {
-                  filterId: 'districts',
+                  filterID: 'districts',
                   value: layer.oeName
                 };
                 $rootScope.$emit('filterChange', filter, true, true);

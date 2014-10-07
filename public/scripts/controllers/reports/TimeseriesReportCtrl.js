@@ -62,7 +62,7 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
     if (viz.state.filters) {
       for (var ix = 0; ix < viz.state.filters.length; ix++) {
         // Update date filters
-        if (viz.state.filters[ix].filterId === 'districts') {
+        if (viz.state.filters[ix].filterID === 'districts') {
           viz.state.filters[ix].value[0] = country;
           viz.state.filters[ix].queryString = viz.state.filters[ix].queryString.replace('"Country A"', '"' + country + '"');
         }
