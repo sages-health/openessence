@@ -11,10 +11,14 @@ require('angular-ui-sortable');
 require('angular-gettext');
 require('angular-gridster');
 require('angular-loading-bar');
+require('angular-order-object-by');
 
 // explicitly require d3 and friends due to weird browserify issues,
 // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
 require('d3');
+
+// polyfills, try to require only what you need instead of entire es6 polyfills
+require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
 
 require('ng-debounce');
 require('text-angular');
