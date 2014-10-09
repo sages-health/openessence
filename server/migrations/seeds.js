@@ -56,20 +56,24 @@ async.parallel([
     bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
   },
 
+//  function districts (callback) {
+//    var District = require('../models/District');
+//    var geoJson = require('./nebraska.json');
+//    var features = geoJson.features.reduce(function (previous, current) {
+//      previous.push({
+//        name: current.properties.CTYNAMEUP,
+//        geometry: {
+//          type: 'polygon', // elasticsearch uses lowercase
+//          coordinates: current.geometry.coordinates
+//        }
+//      });
+//      return previous;
+//    }, []);
+//    bulkInsert(District, features, callback);
+//  },
+
   function districts (callback) {
-    var District = require('../models/District');
-    var geoJson = require('./nebraska.json');
-    var features = geoJson.features.reduce(function (previous, current) {
-      previous.push({
-        name: current.properties.CTYNAMEUP,
-        geometry: {
-          type: 'polygon', // elasticsearch uses lowercase
-          coordinates: current.geometry.coordinates
-        }
-      });
-      return previous;
-    }, []);
-    bulkInsert(District, features, callback);
+    bulkInsert(require('../models/District'), require('./districts_for_aggregates.json'), callback);
   },
 
   function outpatientVisits (callback) {
