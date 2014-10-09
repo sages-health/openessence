@@ -19,6 +19,7 @@ require('d3');
 
 // polyfills, try to require only what you need instead of entire es6 polyfills
 require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
+require('string.prototype.endswith'); // not in IE <= 11
 
 require('ng-debounce');
 require('text-angular');

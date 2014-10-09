@@ -41,6 +41,7 @@
     "redis": "^0.12.1",
     "scrypt": "~3.0.1",
     "serve-favicon": "^2.0.1",
+    "string.prototype.endswith": "^0.2.0",
     "useragent": "~2.0.8",
     "yarnl": "0.0.1"
   },
