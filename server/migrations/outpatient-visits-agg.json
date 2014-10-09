@@ -7,7 +7,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Adams"
+      "name": "Adams Hospital",
+      "location": {
+        "district": "Adams",
+        "county": "Adams"
+      }
     },
     "patient": {
       "sex": "female",
@@ -33,7 +37,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Thayer"
+      "name": "Thayer Clinic",
+      "location": {
+        "district": "Thayer",
+        "county": "Thayer"
+      }
     },
     "patient": {
       "sex": "male",
@@ -55,7 +63,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "male",
@@ -76,7 +88,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Merrick"
+      "name": "Merrick Clinic",
+      "location": {
+        "district": "Merrick",
+        "county": "Merrick"
+      }
     },
     "patient": {
       "sex": "female",
@@ -98,7 +114,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "male",
@@ -115,7 +135,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Lancaster"
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
     },
     "patient": {
       "sex": "female",
@@ -132,7 +156,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "female",
@@ -149,7 +177,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "female",
@@ -166,7 +198,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Lancaster"
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
     },
     "patient": {
       "sex": null,
@@ -183,7 +219,11 @@
       }
     ],
     "medicalFacility": {
-      "district": "Lancaster"
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
     },
     "patient": {
       "sex": "male",
