@@ -22,53 +22,65 @@ module.exports = [
       },
 
       {
-        name: 'facility',
+        // Name of the field should match how it's stored in document, otherwise it gets complicated to match up.
+        // It's not `medicalFacility.name` because the user is selecting the entire medical facility, not just the name
+        // (even though the name is what's displayed and queried on).
+        name: 'medicalFacility',
         enabled: true,
         // can't do this with JSON
         values: require('./facilities.json')
       },
 
+      // Allow user-supplied values for medical facility.
+      // NOTE: "other" fields MUST be named "$base_field" + ".other". Otherwise we'd have no idea what model to append
+      // the user submitted value to.
+      {
+        name: 'medicalFacility.other',
+        enabled: true
+      },
+
       // patient info
       {
-        name: 'patientID',
+        name: 'patient.id',
         enabled: true
       },
       {
-        name: 'patientName',
+        name: 'patient.name',
         enabled: true
       },
       {
-        name: 'patientSex',
+        name: 'patient.sex',
         enabled: true
       },
       {
-        name: 'patientAge',
+        name: 'patient.age',
         enabled: true
       },
       {
-        name: 'patientPhone',
+        name: 'patient.phone',
         enabled: true
       },
       {
-        name: 'patientAddress',
+        name: 'patient.address',
         enabled: true
       },
 
       // patient vitals
       {
-        name: 'temperature',
+        name: 'patient.temperature',
         enabled: true
       },
       {
-        name: 'pulse',
+        name: 'patient.pulse',
         enabled: true
       },
       {
-        name: 'weight',
+        name: 'patient.weight',
         enabled: true
       },
+
       {
-        name: 'preExistingConditions',
+        name: 'patient.preExistingConditions',
         enabled: true,
         values: [
           'Chronic cardiac disease',
@@ -80,35 +92,39 @@ module.exports = [
           'Chronic renal disease',
           'Chronic haematological disease',
           'Immune compromised',
-          'Unknown'
+          'Unknown' // Users don't actually comprehend 4-valued logic, but it makes them happy to see "Unknown"
         ].map(function (c) {
             return {
               name: c
             };
           })
       },
+      {
+        name: 'patient.preExistingConditions.other',
+        enabled: true
+      },
 
       // specimen collection, e.g. for flu culturing
       {
-        name: 'specimenCollectionDate',
+        name: 'specimen.collectionDate',
         enabled: true
       },
       {
-        name: 'specimenID',
+        name: 'specimen.id',
         enabled: true
       },
 
       // antiviral info
       {
-        name: 'antiviralExposure',
+        name: 'antiviral.exposure',
         enabled: false
       },
       {
-        name: 'antiviralName',
+        name: 'antiviral.name',
         enabled: false
       },
       {
-        name: 'antiviralSource',
+        name: 'antiviral.source',
         enabled: false
       },
 
@@ -118,10 +134,20 @@ module.exports = [
         values: require('./symptom.json')
       },
       {
+        name: 'symptoms.other',
+        enabled: true
+      },
+
+      {
         name: 'diagnoses',
         enabled: true,
         values: require('./diagnosis.json')
       },
+      {
+        name: 'diagnoses.other',
+        enabled: true
+      },
+
       {
         name: 'disposition',
         enabled: true,

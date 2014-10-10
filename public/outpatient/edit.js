@@ -141,9 +141,9 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
         return filters;
       }
 
-      var filter = possibleFilters[field.name];
-      if (filter) {
-        filters[field.name] = filter;
+      var possibleFilter = possibleFilters[field.name];
+      if (possibleFilter) {
+        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
       }
 
       return filters;

@@ -1,5 +1,5 @@
 <!-- Specimen collection date -->
-<div class="form-group" ng-show="fields.specimenCollectionDate.enabled"
+<div class="form-group" ng-show="fields['specimen.collectionDate'].enabled"
      ng-class="{'has-error': isInvalid(visitForm.specimenCollectionDate)}">
 
   <label for="entry-visit-specimen-collection" translate>Specimen collection</label>
@@ -18,7 +18,7 @@
 </div>
 
 <!-- Specimen ID -->
-<div class="form-group" ng-show="fields.specimenID.enabled">
+<div class="form-group" ng-show="fields['specimen.id'].enabled">
   <label for="entry-specimen-id" translate>Specimen ID</label>
   <input type="text" id="entry-specimen-id" class="form-control" name="specimenID" ng-model="visit.specimen.id">
 </div>

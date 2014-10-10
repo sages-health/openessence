@@ -206,7 +206,12 @@ var indexRequests = [
 
                   // These are usually diagnoses
                   preExistingConditions: {
-                    type: 'string'
+                    properties: {
+                      name: {
+                        type: 'string'
+                      }
+                      // room for other data
+                    }
                   }
                 }
               },
