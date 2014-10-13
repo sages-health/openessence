@@ -144,6 +144,26 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
             // don't make destructive modification on scope.visit since we may have to redo form
             var recordToSubmit = angular.copy(scope.visit);
 
+            // Clear conditional fields whose pre-conditions aren't met. We don't do this on the form itself b/c
+            // reversible actions. E.g. if you un-check and then immediately re-check the "Pregnant" checkbox, all
+            // the conditional pregnancy fields, e.g. trimester, should still be there.
+            var deleteConditionalFields = function (recordToSubmit) {
+              if (!recordToSubmit.patient) {
+                return;
+              }
+
+              if (recordToSubmit.patient.sex !== 'female') {
+                // can't be pregnant without being female
+                delete recordToSubmit.patient.pregnant;
+              } else if (recordToSubmit.patient.pregnant && !recordToSubmit.patient.pregnant.is) {
+                delete recordToSubmit.patient.pregnant.trimester;
+              }
+
+              return recordToSubmit;
+            };
+
+            recordToSubmit = deleteConditionalFields(recordToSubmit);
+
             // replace all 'Other' dropdown values with the supplied value
             Object.keys(scope.others).forEach(function (other) {
               var otherValue = scope.others[other];

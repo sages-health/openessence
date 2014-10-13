@@ -56,6 +56,18 @@ module.exports = [
         name: 'patient.age',
         enabled: true
       },
+
+      // pregnancy status
+      {
+        name: 'patient.pregnant.is',
+        enabled: true
+      },
+      {
+        name: 'patient.pregnant.trimester',
+        enabled: true
+      },
+
+      // patient contact info
       {
         name: 'patient.phone',
         enabled: true

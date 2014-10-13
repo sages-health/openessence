@@ -212,6 +212,25 @@ var indexRequests = [
                       }
                       // room for other data
                     }
+                  },
+
+                  pregnant: {
+                    properties: {
+                      // True if patient is pregnant
+                      is: {
+                        type: 'boolean'
+                      },
+
+                      // Number of weeks pregnant. Not currently used.
+                      weeks: {
+                        type: 'double'
+                      },
+
+                      // What trimester patient is in. Less granularity than weeks, but often collected instead.
+                      trimester: {
+                        type: 'double'
+                      }
+                    }
                   }
                 }
               },
