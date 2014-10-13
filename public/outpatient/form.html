@@ -221,14 +221,24 @@
 
     <!-- Temperature -->
     <div class="form-group" ng-show="fields['patient.temperature'].enabled"
-         ng-class="{'has-error': isInvalid(visitForm.temperature)}">
+         ng-class="{'has-error': isInvalid(visitForm.temperature), 'has-warning': visit.patient.temperature < 35 || visit.patient.temperature > 40}">
 
       <label for="entry-temperature" translate>Temperature</label>
       <div class="input-group">
-        <input type="number" id="entry-temperature" class="form-control" name="temperature"
+        <input type="number" id="entry-temperature" class="form-control" name="temperature" min="0" max="100"
                ng-model="visit.patient.temperature">
         <span class="input-group-addon" translate>°C</span>
       </div>
+
+      <!-- hypothermia -->
+      <span ng-show="visit.patient.temperature < 35" class="help-block" translate>
+        {{visit.patient.temperature}} °C is quite low. Are you sure?
+      </span>
+
+      <!-- hyperpyrexia -->
+      <span ng-show="visit.patient.temperature > 40" class="help-block" translate>
+        {{visit.patient.temperature}} °C is quite high. Are you sure?
+      </span>
     </div>
 
     <!-- Pulse -->
