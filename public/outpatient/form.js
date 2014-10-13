@@ -152,11 +152,18 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
                 return;
               }
 
+              // trimester -> pregnant -> female
               if (recordToSubmit.patient.sex !== 'female') {
-                // can't be pregnant without being female
+                // can't be pregnant without being female, modus tollens FTW!
                 delete recordToSubmit.patient.pregnant;
               } else if (recordToSubmit.patient.pregnant && !recordToSubmit.patient.pregnant.is) {
                 delete recordToSubmit.patient.pregnant.trimester;
+              }
+
+              // antiviral name || antiviral source -> antiviral exposure
+              if (recordToSubmit.antiviral && !recordToSubmit.antiviral.exposure) {
+                delete recordToSubmit.antiviral.name;
+                delete recordToSubmit.antiviral.source;
               }
 
               return recordToSubmit;
