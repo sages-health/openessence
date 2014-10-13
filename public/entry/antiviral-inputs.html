@@ -1,5 +1,5 @@
 <!-- Antiviral exposure -->
-<div class="form-group" ng-show="fields['antiviral.exposure'].enabled">
+<div class="form-group" data-field="antiviral.exposure" ng-show="fields['antiviral.exposure'].enabled">
   <label translate>
     Exposure to influenza antiviral drugs during the last 14 days?
   </label>
@@ -19,7 +19,9 @@
 </div>
 
 <!-- Antiviral source -->
-<div class="form-group" ng-show="fields['antiviral.source'].enabled && visit.antiviral.exposure === true">
+<div class="form-group" data-field="antiviral.source"
+     ng-show="fields['antiviral.source'].enabled && visit.antiviral.exposure === true">
+
   <label translate>Source of antiviral exposure</label>
   <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
   <label class="radio-inline">
@@ -37,7 +39,9 @@
 </div>
 
 <!-- Antiviral name -->
-<div class="form-group" ng-show="fields['antiviral.name'].enabled && visit.antiviral.exposure === true">
+<div class="form-group" data-field="antiviral.name"
+     ng-show="fields['antiviral.name'].enabled && visit.antiviral.exposure === true">
+
   <label for="entry-visit-antiviral-name" translate>Name of antiviral</label>
   <select class="form-control" id="entry-visit-antiviral-name" name="antiviralName" ng-model="visit.antiviral.name">
     <option value="oseltamivir" translate>Oseltamivir (Tamiflu®)</option>

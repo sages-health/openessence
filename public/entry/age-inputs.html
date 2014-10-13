@@ -1,5 +1,5 @@
 <!-- Date of birth -->
-<div class="form-group" ng-show="fields['patient.dateOfBirth'].enabled"
+<div class="form-group" data-field="patient.dateOfBirth" ng-show="fields['patient.dateOfBirth'].enabled"
      ng-class="{'has-error': isInvalid(visitForm.dateOfBirth)}">
 
   <label for="entry-visit-date-of-birth" translate>Date of birth</label>
@@ -18,7 +18,7 @@
 </div>
 
 <!-- Age -->
-<div class="form-group" ng-show="fields['patient.age'].enabled"
+<div class="form-group" data-field="patient.age" ng-show="fields['patient.age'].enabled"
      ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120 || !isAcceptableAge(visit.patient.age, visit.patient.dateOfBirth)}">
   <label for="entry-visit-age" translate>Age</label>
 

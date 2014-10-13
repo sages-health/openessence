@@ -9,8 +9,15 @@
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
     <conflict-message ng-show="conflictError"></conflict-message>
 
+    <!--
+      data-field="fieldName" is used to determine what fields live on a given page. If a page doesn't contain any
+      enabled fields, it is skipped. See nextPage() and previousPage() for more info.
+    -->
+
     <!-- Visit date -->
-    <div class="form-group" ng-show="fields.visitDate.enabled" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
+    <div class="form-group" data-field="visitDate"
+         ng-show="fields.visitDate.enabled" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
+
       <label for="entry-visit-date" translate>Visit date</label>
 
       <div class="input-group">
@@ -27,7 +34,7 @@
     </div>
 
     <!-- Visit type -->
-    <div class="form-group" ng-show="fields.visitType.enabled">
+    <div class="form-group" data-field="visitType" ng-show="fields.visitType.enabled">
       <label for="entry-visit-visitType" translate>Visit type</label>
 
       <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
@@ -39,7 +46,7 @@
     </div>
 
     <!-- Symptom onset -->
-    <div class="form-group" ng-show="fields.symptomOnsetDate.enabled"
+    <div class="form-group" data-field="symptomOnsetDate" ng-show="fields.symptomOnsetDate.enabled"
          ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate)}">
 
       <label for="entry-visit-onset" translate>Symptom onset</label>
@@ -58,7 +65,7 @@
     </div>
 
     <!-- Facility -->
-    <div class="form-group" ng-show="fields.medicalFacility.enabled">
+    <div class="form-group" data-field="medicalFacility" ng-show="fields.medicalFacility.enabled">
       <label for="entry-visit-facility" translate>Facility</label>
 
       <select class="form-control" id="entry-visit-facility" name="facility" ng-model="visit.medicalFacility">
@@ -94,13 +101,13 @@
   <!-- Patient info page -->
   <fieldset ng-show="page === 2">
     <!-- Patient ID -->
-    <div class="form-group" ng-show="fields['patient.id'].enabled">
+    <div class="form-group" data-field="patient.id" ng-show="fields['patient.id'].enabled">
       <label for="entry-patient-id" translate>Patient ID</label>
       <input type="text" id="entry-patient-id" class="form-control" name="patientID" ng-model="visit.patient.id">
     </div>
 
     <!-- Name -->
-    <div class="form-group" ng-show="fields['patient.name'].enabled">
+    <div class="form-group" data-field="patient.name" ng-show="fields['patient.name'].enabled">
       <label for="entry-patient-name" translate>Name</label>
       <!-- Don't impose ANY restricts on name, e.g. don't assume First name, Last name. Naming varies widely among
            cultures. It's best to just have a single name field. -->
@@ -115,7 +122,7 @@
   <!-- More patient info -->
   <fieldset ng-show="page === 3">
     <!-- Sex, this should be on the same page as pregnancy since they're linked -->
-    <div class="form-group" ng-show="fields['patient.sex'].enabled">
+    <div class="form-group" data-field="patient.sex" ng-show="fields['patient.sex'].enabled">
       <label translate>Sex</label>
       <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
       <label class="radio-inline">
@@ -136,7 +143,7 @@
     <pregnancy-inputs fields="fields"></pregnancy-inputs>
 
     <!-- Telephone -->
-    <div class="form-group" ng-show="fields['patient.phone'].enabled"
+    <div class="form-group" data-field="patient.phone" ng-show="fields['patient.phone'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.patientPhone)}">
 
       <label for="entry-patient-phone" translate>Telephone number</label>
@@ -147,7 +154,7 @@
     </div>
 
     <!-- Address -->
-    <div class="form-group" ng-show="fields['patient.address'].enabled"
+    <div class="form-group" data-field="patient.address" ng-show="fields['patient.address'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.patientAddress)}">
 
       <label for="entry-patient-address" translate>Address</label>
@@ -162,7 +169,7 @@
   <fieldset ng-show="page === 4">
 
     <!-- Temperature -->
-    <div class="form-group" ng-show="fields['patient.temperature'].enabled"
+    <div class="form-group" data-field="patient.temperature" ng-show="fields['patient.temperature'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.temperature), 'has-warning': visit.patient.temperature < 35 || visit.patient.temperature > 40}">
 
       <label for="entry-temperature" translate>Temperature</label>
@@ -184,7 +191,7 @@
     </div>
 
     <!-- Pulse -->
-    <div class="form-group" ng-show="fields['patient.pulse'].enabled"
+    <div class="form-group" data-field="patient.pulse" ng-show="fields['patient.pulse'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.pulse)}">
 
       <label for="entry-pulse" translate>Pulse</label>
@@ -195,7 +202,7 @@
     </div>
 
     <!-- Weight -->
-    <div class="form-group" ng-show="fields['patient.weight'].enabled"
+    <div class="form-group" data-field="patient.weight" ng-show="fields['patient.weight'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.weight)}">
 
       <label for="entry-weight" translate>Weight</label>
@@ -209,7 +216,8 @@
 
     <!-- Pre-existing conditions. These are just diagnoses the patient already has, but some sites use different
          possible values than what gets stuck in diagnoses. -->
-    <div class="form-group" ng-show="fields['patient.preExistingConditions'].enabled"
+    <div class="form-group" data-field="patient.preExistingConditions"
+         ng-show="fields['patient.preExistingConditions'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.preExistingConditions)}">
 
       <label for="entry-pre-existing-conditions" translate>Pre-existing conditions</label>
@@ -246,7 +254,7 @@
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
 
     <!-- Symptoms -->
-    <div class="form-group" ng-show="fields.symptoms.enabled">
+    <div class="form-group" data-field="symptoms" ng-show="fields.symptoms.enabled">
       <label for="entry-visit-symptoms" translate>Symptoms</label>
 
       <select class="form-control select2-multiple" id="entry-visit-symptoms" name="symptoms" multiple ui-select2
@@ -261,14 +269,14 @@
     </div>
 
     <!-- Other symptoms -->
-    <div class="form-group" ng-show="fields.symptoms.enabled && includesOther(visit.symptoms)">
+    <div class="form-group" ng-show="fields['symptoms.other'].enabled && includesOther(visit.symptoms)">
       <label for="entry-other-symptoms" translate>Other symptoms</label>
 
       <input type="text" id="entry-other-symptoms" class="form-control" name="otherSymptoms" ng-model="others.symptoms">
     </div>
 
     <!-- Diagnoses -->
-    <div class="form-group" ng-show="fields.diagnoses.enabled">
+    <div class="form-group" data-field="diagnoses" ng-show="fields.diagnoses.enabled">
       <label for="entry-visit-diagnoses" translate>Diagnoses</label>
 
       <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
@@ -283,14 +291,14 @@
     </div>
 
     <!-- Other diagnoses -->
-    <div class="form-group" ng-show="fields.diagnoses.enabled && includesOther(visit.diagnoses)">
+    <div class="form-group" ng-show="fields['diagnoses.other'].enabled && includesOther(visit.diagnoses)">
       <label for="entry-other-diagnoses" translate>Other diagnoses</label>
 
       <input type="text" id="entry-other-diagnoses" class="form-control" name="otherdiagnoses" ng-model="others.diagnoses">
     </div>
 
     <!-- Disposition -->
-    <div class="form-group" ng-show="fields.disposition.enabled">
+    <div class="form-group" data-field="disposition" ng-show="fields.disposition.enabled">
       <label for="entry-visit-disposition" translate>Disposition</label>
 
       <select class="form-control select2-multiple" id="entry-visit-disposition" name="disposition" multiple ui-select2
@@ -302,7 +310,7 @@
     </div>
 
     <!-- Notes -->
-    <div class="form-group" ng-show="fields.notes.enabled">
+    <div class="form-group" data-field="notes" ng-show="fields.notes.enabled">
       <label for="entry-visit-notes" translate>Notes</label>
 
       <textarea class="form-control" id="entry-visit-notes" name="Notes"

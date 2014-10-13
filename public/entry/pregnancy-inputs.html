@@ -1,12 +1,15 @@
 <!-- Pregnancy --> <!-- TODO this lonely checkbox doesn't look good -->
-<div class="form-group" ng-show="fields['patient.pregnant.is'].enabled && visit.patient.sex === 'female'">
+<div class="form-group" data-field="patient.pregnant.is"
+     ng-show="fields['patient.pregnant.is'].enabled && visit.patient.sex === 'female'">
+
   <label for="entry-pregnant" translate>Pregnant</label>
   <br>
   <input type="checkbox" id="entry-pregnant" ng-model="visit.patient.pregnant.is">
 </div>
 
 <!-- Trimester -->
-<div class="form-group" ng-show="fields['patient.pregnant.trimester'].enabled && visit.patient.pregnant.is"
+<div class="form-group" data-field="patient.pregnant.trimester"
+     ng-show="fields['patient.pregnant.trimester'].enabled && visit.patient.pregnant.is"
      ng-class="{'has-error': isInvalid(visitForm.trimester)}">
 
   <label for="entry-trimester" translate>Trimester</label>

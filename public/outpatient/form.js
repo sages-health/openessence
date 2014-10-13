@@ -260,9 +260,28 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
         },
 
         post: function (scope, element) {
+          // have to do this after all child directives are done rendering
           var numPages = element.find('form > fieldset').length;
 
-          scope.$on('next-page', function () {
+          var isBlankPage = function (page) {
+            if (page === 'last') {
+              // last page is the one that gets the submit button, so it has to be shown
+              // TODO move submit buttons if last page is blank
+              return false;
+            }
+
+            return element.find('form > fieldset:nth-child(' + page + ')')
+              .find('*[data-field]')
+              .map(function () {
+                return this.getAttribute('data-field');
+              })
+              .toArray()
+              .every(function (field) { // using universal quantification means we can fail fast
+                return !scope.fields[field].enabled;
+              });
+          };
+
+          scope.$on('next-page', function nextPage () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
               if (scope.page === numPages - 1) {
@@ -270,16 +289,24 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
               } else if (scope.page !== 'first') {
                 scope.page++;
               }
+
+              if (isBlankPage(scope.page)) {
+                nextPage();
+              }
             }
           });
 
-          scope.$on('previous-page', function () {
+          scope.$on('previous-page', function previousPage () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
               if (scope.page === 'last') {
                 scope.page = numPages - 1;
               } else if (scope.page !== 1) {
                 scope.page--;
+              }
+
+              if (isBlankPage(scope.page)) {
+                previousPage();
               }
             }
           });

@@ -124,11 +124,11 @@ module.exports = [
       // specimen collection, e.g. for flu culturing
       {
         name: 'specimen.collectionDate',
-        enabled: true
+        enabled: false
       },
       {
         name: 'specimen.id',
-        enabled: true
+        enabled: false
       },
 
       // antiviral info
