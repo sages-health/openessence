@@ -107,24 +107,6 @@
       <input type="text" id="entry-patient-name" class="form-control" name="patientName" ng-model="visit.patient.name">
     </div>
 
-    <!-- Sex -->
-    <div class="form-group" ng-show="fields['patient.sex'].enabled">
-      <label translate>Sex</label>
-      <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
-      <label class="radio-inline">
-        <input type="radio" name="sex" value="male" ng-model="visit.patient.sex">
-        <span translate>Male</span>
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="sex" value="female" ng-model="visit.patient.sex">
-        <span translate>Female</span>
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="sex" value="" ng-model="visit.patient.sex">
-        <span translate>Unknown</span>
-      </label>
-    </div>
-
     <!-- Age TODO allow entering date of birth or age -->
     <div class="form-group" ng-show="fields['patient.age'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120}">
@@ -146,6 +128,24 @@
       <span ng-show="visit.patient.age == 999" class="help-block" translate>
         Leave this field blank if you don't know the patient's age
       </span>
+    </div>
+
+    <!-- Sex -->
+    <div class="form-group" ng-show="fields['patient.sex'].enabled">
+      <label translate>Sex</label>
+      <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
+      <label class="radio-inline">
+        <input type="radio" name="sex" value="male" ng-model="visit.patient.sex">
+        <span translate>Male</span>
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="sex" value="female" ng-model="visit.patient.sex">
+        <span translate>Female</span>
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="sex" value="" ng-model="visit.patient.sex">
+        <span translate>Unknown</span>
+      </label>
     </div>
 
   </fieldset>
