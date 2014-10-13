@@ -3,6 +3,7 @@
 var angular = require('angular');
 
 // All possible filters for a data set
+// @ngInject
 module.exports = function (gettextCatalog) {
   return [
     // indexed by filterID for ease of toggling on/off, e.g. forms that don't track antiviral use can disable
