@@ -148,6 +148,10 @@
       </span>
     </div>
 
+  </fieldset>
+
+  <!-- Patient contact info -->
+  <fieldset ng-if="page === 3">
     <!-- Telephone -->
     <div class="form-group" ng-show="fields['patient.phone'].enabled"
          ng-class="{'has-error': isInvalid(visitForm.patientPhone)}">
@@ -172,7 +176,7 @@
   </fieldset>
 
   <!-- Patient vitals -->
-  <fieldset ng-if="page === 3">
+  <fieldset ng-if="page === 4">
 
     <!-- Temperature -->
     <div class="form-group" ng-show="fields['patient.temperature'].enabled"
@@ -238,7 +242,7 @@
   </fieldset>
 
   <!-- Specimen -->
-  <fieldset ng-if="page === 4">
+  <fieldset ng-if="page === 5">
     <specimen-inputs fields="fields" ng-model="visit.specimen"></specimen-inputs>
 
     <antiviral-inputs fields="fields" ng-model="visit.antiviral"></antiviral-inputs>

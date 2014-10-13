@@ -231,7 +231,7 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
             }
           };
 
-          var numPages = 4; // skip ILI surveillance page for now
+          var numPages = 5; // skip ILI surveillance page for now
           scope.$on('next-page', function () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
