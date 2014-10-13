@@ -180,10 +180,18 @@ var indexRequests = [
                     index: 'not_analyzed'
                   },
 
+                  dateOfBirth: {
+                    type: 'date'
+                  },
+
+                  // This should be populated even if dateOfBirth is set to make querying easier. It can also be used
+                  // as an alternative to dateOfBirth if date of birth is not known but a more general age is known,
+                  // e.g. "I don't know this patient's date of birth, but I know they're about 65."
                   age: {
                     // we don't need that much precision, but we do want to support fractional ages, e.g. 0.5
                     type: 'double'
                   },
+
                   sex: {
                     type: 'string',
                     analyzer: 'sex'

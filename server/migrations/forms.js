@@ -52,6 +52,11 @@ module.exports = [
         name: 'patient.sex',
         enabled: true
       },
+
+      {
+        name: 'patient.dateOfBirth',
+        enabled: true
+      },
       {
         name: 'patient.age',
         enabled: true
