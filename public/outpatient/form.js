@@ -257,8 +257,11 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
               OutpatientVisitResource.save(recordToSubmit, cleanup, showError);
             }
           };
+        },
 
-          var numPages = 5; // skip ILI surveillance page for now
+        post: function (scope, element) {
+          var numPages = element.find('form > fieldset').length;
+
           scope.$on('next-page', function () {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {

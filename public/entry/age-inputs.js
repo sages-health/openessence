@@ -10,12 +10,10 @@ module.exports = function ($parse) {
     compile: function (element, attrs) {
       // we're using a non-isolate scope
       var fieldsExp = $parse(attrs.fields);
-      var modelExp = $parse(attrs.ngModel);
 
       return {
         post: function (scope) {
           scope.fields = fieldsExp(scope);
-          scope.model = modelExp(scope);
 
           // convert date of birth to age in (decimal) years
           var dateToAge = function (dateOfBirth) {
@@ -36,7 +34,7 @@ module.exports = function ($parse) {
             // Round to 2 decimal places. Keep a copy on scope for when patient.age is overwritten.
             scope.roundedCalculatedAge = Math.round(scope.calculatedAge * 100) / 100;
 
-            scope.model.age = scope.roundedCalculatedAge;
+            scope.visit.patient.age = scope.roundedCalculatedAge;
           });
 
           scope.isAcceptableAge = function (ageInYears, dateOfBirth) {

@@ -6,7 +6,7 @@
 
   <div class="input-group">
     <input id="entry-visit-date-of-birth" name="dateOfBirth" type="text" class="form-control"
-           ng-model="model.dateOfBirth" datepicker-popup show-weeks="false"
+           ng-model="visit.patient.dateOfBirth" datepicker-popup show-weeks="false"
            is-open="datePopupsOpen.dateOfBirth">
 
       <span class="input-group-btn">
@@ -19,11 +19,11 @@
 
 <!-- Age -->
 <div class="form-group" ng-show="fields['patient.age'].enabled"
-     ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': model.age > 120 || !isAcceptableAge(model.age, model.dateOfBirth)}">
+     ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120 || !isAcceptableAge(visit.patient.age, visit.patient.dateOfBirth)}">
   <label for="entry-visit-age" translate>Age</label>
 
   <div class="input-group">
-    <input class="form-control" id="entry-visit-age" name="age" ng-model="model.age" type="number"
+    <input class="form-control" id="entry-visit-age" name="age" ng-model="visit.patient.age" type="number"
            min="0" max="200" placeholder="{{agePlaceholder | translate}}">
 
     <!-- Don't disable age even though date of birth is set. This way, the user can tweak the number, e.g.
@@ -35,13 +35,13 @@
   <span ng-show="isInvalid(visitForm.age)" class="help-block" translate>
     Please enter a valid age in years, for example 15 or 0.5
   </span>
-  <span ng-show="!isInvalid(visitForm.age) && model.age > 120 && model.age != 999" class="help-block" translate>
-    {{model.age}} years is quite old. Are you sure?
+  <span ng-show="!isInvalid(visitForm.age) && visit.patient.age > 120 && visit.patient.age != 999" class="help-block" translate>
+    {{visit.patient.age}} years is quite old. Are you sure?
   </span>
-  <span ng-show="!isInvalid(visitForm.age) && model.age == 999" class="help-block" translate>
+  <span ng-show="!isInvalid(visitForm.age) && visit.patient.age == 999" class="help-block" translate>
     Leave this field blank if you don't know the patient's age
   </span>
-  <span ng-show="!isInvalid(visitForm.age) && !isAcceptableAge(model.age, model.dateOfBirth)" class="help-block" translate>
+  <span ng-show="!isInvalid(visitForm.age) && !isAcceptableAge(visit.patient.age, visit.patient.dateOfBirth)" class="help-block" translate>
     Are you sure? According to the patient's date of birth, their age should be around {{roundedCalculatedAge}}.
   </span>
 </div>

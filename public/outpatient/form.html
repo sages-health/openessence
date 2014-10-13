@@ -4,7 +4,7 @@
 
   <!-- TODO split off sections of form into separate directives for ease of maintenance, ala antiviral and specimen -->
 
-  <fieldset ng-if="page === 1">
+  <fieldset ng-show="page === 1">
     <!-- TODO red text on white background instead of alert -->
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
     <conflict-message ng-show="conflictError"></conflict-message>
@@ -92,7 +92,7 @@
   </fieldset>
 
   <!-- Patient info page -->
-  <fieldset ng-if="page === 2">
+  <fieldset ng-show="page === 2">
     <!-- Patient ID -->
     <div class="form-group" ng-show="fields['patient.id'].enabled">
       <label for="entry-patient-id" translate>Patient ID</label>
@@ -108,12 +108,12 @@
     </div>
 
     <!-- Date of birth and age -->
-    <age-inputs fields="fields" ng-model="visit.patient"></age-inputs>
+    <age-inputs fields="fields"></age-inputs>
 
   </fieldset>
 
   <!-- More patient info -->
-  <fieldset ng-if="page === 3">
+  <fieldset ng-show="page === 3">
     <!-- Sex, this should be on the same page as pregnancy since they're linked -->
     <div class="form-group" ng-show="fields['patient.sex'].enabled">
       <label translate>Sex</label>
@@ -159,7 +159,7 @@
   </fieldset>
 
   <!-- Patient vitals -->
-  <fieldset ng-if="page === 4">
+  <fieldset ng-show="page === 4">
 
     <!-- Temperature -->
     <div class="form-group" ng-show="fields['patient.temperature'].enabled"
@@ -235,13 +235,13 @@
   </fieldset>
 
   <!-- Specimen -->
-  <fieldset ng-if="page === 5">
-    <specimen-inputs fields="fields" ng-model="visit.specimen"></specimen-inputs>
+  <fieldset ng-show="page === 5">
+    <specimen-inputs fields="fields"></specimen-inputs>
 
-    <antiviral-inputs fields="fields" ng-model="visit.antiviral"></antiviral-inputs>
+    <antiviral-inputs fields="fields"></antiviral-inputs>
   </fieldset>
 
-  <fieldset ng-if="page === 'last'">
+  <fieldset ng-show="page === 'last'">
     <!-- need this message for validation -->
     <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
 

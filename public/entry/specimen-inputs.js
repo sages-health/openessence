@@ -10,11 +10,9 @@ module.exports = function ($parse) {
     compile: function (element, attrs) {
       // we're using a non-isolate scope
       var fieldsExp = $parse(attrs.fields);
-      var modelExp = $parse(attrs.ngModel);
       return {
         pre: function (scope) {
           scope.fields = fieldsExp(scope);
-          scope.model = modelExp(scope);
         }
       };
     }

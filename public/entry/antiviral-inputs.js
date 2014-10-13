@@ -3,13 +3,18 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function () {
+module.exports = function ($parse) {
   return {
     restrict: 'E',
     template: require('./antiviral-inputs.html'),
-    scope: {
-      fields: '=',
-      model: '=ngModel'
+    compile: function (element, attrs) {
+      var fieldsExp = $parse(attrs.fields);
+
+      return {
+        post: function (scope) {
+          scope.fields = fieldsExp(scope);
+        }
+      };
     }
   };
 };
