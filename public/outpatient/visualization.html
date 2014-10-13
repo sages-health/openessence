@@ -10,16 +10,16 @@
           </td>
 
           <!-- could also roll up to geographic area, but we usually deal with so few sites that that's not helpful -->
-          <td ng-show="fields.facility.enabled" data-title="strings.facility" data-sortable="'medicalFacility.name'">
+          <td ng-show="fields.medicalFacility.enabled" data-title="strings.facility" data-sortable="'medicalFacility.name'">
             <a ng-click="tableFilter('facility', visit._source.medicalFacility.name)">
               {{visit._source.medicalFacility.name | truncate:15}}
             </a>
           </td>
 
-          <td ng-show="fields.patientSex.enabled" data-title="strings.sex" data-sortable="'patient.sex'">
+          <td ng-show="fields['patient.sex'].enabled" data-title="strings.sex" data-sortable="'patient.sex'">
             <a ng-click="tableFilter('patientSex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
           </td>
-          <td ng-show="fields.patientAge.enabled" data-title="strings.age" data-sortable="'patient.age'">
+          <td ng-show="fields['patient.age'].enabled" data-title="strings.age" data-sortable="'patient.age'">
             <a ng-click="tableFilter('patientAge', visit._source.patient.age)">{{visit._source.patient.age}}</a>
           </td>
 
@@ -34,7 +34,7 @@
             </a>
           </td>
 
-          <td ng-show="fields.antiviralName.enabled" data-title="strings.antiviral" data-sortable="'antiviral.name'">
+          <td ng-show="fields['antiviral.name'].enabled" data-title="strings.antiviral" data-sortable="'antiviral.name'">
             <a ng-click="tableFilter('antiviralName', visit._source.antiviral.name)">
               {{visit._source.antiviral.name}}
             </a>
