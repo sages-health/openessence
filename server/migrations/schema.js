@@ -89,13 +89,21 @@ var indexRequests = [
               },
 
               visitType: {
-                type: 'string',
-                index: 'not_analyzed'
+                properties: {
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
 
               disposition: {
-                type: 'string',
-                index: 'not_analyzed'
+                properties: {
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
 
               // Array of well-known diagnoses. Usually used with symptoms.

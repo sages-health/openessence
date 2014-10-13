@@ -32,7 +32,7 @@
 
       <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
               ng-model="visit.visitType">
-        <option ng-repeat="(value, text) in fields.visitType.values" value="{{value}}">{{text}}</option>
+        <option ng-repeat="v in fields.visitType.values" value="{{v.name}}">{{v.name}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
@@ -318,7 +318,7 @@
 
       <select class="form-control select2-multiple" id="entry-visit-disposition" name="disposition" multiple ui-select2
               ng-model="visit.disposition">
-        <option ng-repeat="(value, text) in fields.disposition.values" value="{{value}}">{{text}}</option>
+        <option ng-repeat="d in fields.disposition.values" value="{{d.name}}">{{d.name}}</option>
       </select>
 
       <span ng-show="isInvalid(visitForm.disposition)" class="help-block" translate>Select a disposition type</span>
