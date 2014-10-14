@@ -13,6 +13,7 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
     template: require('./form.html'),
     transclude: true,
     scope: {
+      form: '=',
       page: '=',
       onSubmit: '&',
       record: '=?' // to populate fields
@@ -30,63 +31,50 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, Form
           // Fields that have count: X. We need to add count: 1 to them on individual form
           var aggregateFields = ['symptoms', 'diagnoses'];
 
-          // TODO form can be quite large (>20KB for demo) since it includes every possible value for dropdowns
-          // that's probably not an issue for most sites collecting a handful of diagnoses at a few sites,
-          // but could be an issue for sites collecting a lot of symptoms, diagnoses, etc.
-          // "Correct" solution would involve linking to other resources and then fetching them on demand, e.g.
-          // returning JSON HAL and then querying for dropdown values as needed. In the meantime, at least it's cached.
-          FormResource.get({size: 1, q: 'name:demo'}, function (response) {
-            if (response.results.length === 0) {
-              throw new Error('No configured forms');
-            }
+          // convert array of fields to object indexed by field name
+          // TODO keep order of fields
+          scope.fields = scope.form.fields.reduce(function (fields, field) {
+            if (field.values) {
+              // index values by name to make lookups easy
+              var valuesByName = field.values.reduce(function (values, v) {
+                values[v.name] = v;
+                return values;
+              }, {});
 
-            var form = response.results[0]._source;
+              // $parse is fairly expensive, so it's best to cache the result
+              field.expression = $parse(field.name);
 
-            // convert array of fields to object indexed by field name
-            // TODO keep order of fields
-            scope.fields = form.fields.reduce(function (fields, field) {
-              if (field.values) {
-                // index values by name to make lookups easy
-                var valuesByName = field.values.reduce(function (values, v) {
-                  values[v.name] = v;
-                  return values;
-                }, {});
+              // Add any values that are on the record but that we don't know about. Otherwise, the edit
+              // form will list this field as blank when it really isn't
+              var existingValues = field.expression(scope.visit);
+              if (existingValues) {
+                if (Array.isArray(existingValues)) {
+                  existingValues = existingValues.map(function (v) {
+                    valuesByName[v.name] = v; // side effect inside map!
 
-                // $parse is fairly expensive, so it's best to cache the result
-                field.expression = $parse(field.name);
-
-                // Add any values that are on the record but that we don't know about. Otherwise, the edit
-                // form will list this field as blank when it really isn't
-                var existingValues = field.expression(scope.visit);
-                if (existingValues) {
-                  if (Array.isArray(existingValues)) {
-                    existingValues = existingValues.map(function (v) {
-                      valuesByName[v.name] = v; // side effect inside map!
-
-                      // convert from object to string b/c ng-model is dumb and doesn't like binding to objects
-                      return v.name;
-                    });
-                  } else if (existingValues.name) {
-                    valuesByName[existingValues.name] = existingValues;
-                    existingValues = existingValues.name;
-                  }
-
-                  field.expression.assign(scope.visit, existingValues);
+                    // convert from object to string b/c ng-model is dumb and doesn't like binding to objects
+                    return v.name;
+                  });
+                } else if (existingValues.name) {
+                  valuesByName[existingValues.name] = existingValues;
+                  existingValues = existingValues.name;
                 }
 
-                // convert values back to an array
-                field.values = Object.keys(valuesByName).map(function (name) {
-                  // Convert values to strings b/c ng-model is dumb. They get converted back to objects when we submit
-                  return valuesByName[name];
-                });
-
-                field.valuesByName = valuesByName;
+                field.expression.assign(scope.visit, existingValues);
               }
 
-              fields[field.name] = field;
-              return fields;
-            }, {});
-          });
+              // convert values back to an array
+              field.values = Object.keys(valuesByName).map(function (name) {
+                // Convert values to strings b/c ng-model is dumb. They get converted back to objects when we submit
+                return valuesByName[name];
+              });
+
+              field.valuesByName = valuesByName;
+            }
+
+            fields[field.name] = field;
+            return fields;
+          }, {});
 
           scope.includesOther = function (model) {
             return model && model.indexOf('Other') !== -1;

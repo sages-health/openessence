@@ -9,12 +9,13 @@ var services = require('../scripts/modules').services;
  */
 angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ function ($modal) {
   return {
-    open: function (options) {
-      options = angular.extend({
+    open: function (scope, modalOptions) { // TODO fix all usages of this
+      modalOptions = angular.extend({
         template: require('./modal-edit.html'),
-        controller: /*@ngInject*/ function ($scope, $modalInstance, record) {
-          $scope.record = record;
-          $scope.page = 1;
+        controller: /*@ngInject*/ function ($scope, $modalInstance) {
+          angular.extend($scope, {
+            page: 1
+          }, scope);
 
           // the save button on the modal
           $scope.save = function () {
@@ -40,15 +41,10 @@ angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ funct
             $scope.$broadcast('previous-page');
           };
 
-        },
-        resolve: {
-          record: function () {
-            return options.record;
-          }
         }
-      }, options);
+      }, modalOptions);
 
-      return $modal.open(options);
+      return $modal.open(modalOptions);
     }
   };
 });
@@ -104,15 +100,6 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     $scope.$broadcast('outpatientReload');
   };
 
-  $scope.editVisit = function (visit) {
-    // TODO pass edit modal the form so it doesn't have to re-fetch
-    outpatientEditModal.open({record: visit}).result
-      .then(function () {
-        reload();
-        // TODO highlight record that was modified
-      });
-  };
-
   $scope.deleteVisit = function (visit) {
     outpatientDeleteModal.open({record: visit}).result
       .then(function () {
@@ -128,6 +115,11 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     $scope.deleteVisit(visit);
   });
 
+  // TODO form can be quite large (>20KB for demo) since it includes every possible value for dropdowns
+  // that's probably not an issue for most sites collecting a handful of diagnoses at a few sites,
+  // but could be an issue for sites collecting a lot of symptoms, diagnoses, etc.
+  // "Correct" solution would involve linking to other resources and then fetching them on demand, e.g.
+  // returning JSON HAL and then querying for dropdown values as needed. In the meantime, at least it's cached.
   FormResource.get({size: 1, q: 'name:demo'}, function (response) {
     if (response.results.length === 0) {
       throw new Error('No configured forms');
@@ -149,5 +141,12 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
       return filters;
     }, {});
 
+    $scope.editVisit = function (visit) {
+      outpatientEditModal.open({record: visit, form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was modified
+        });
+    };
   });
 });

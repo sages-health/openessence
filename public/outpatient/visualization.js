@@ -288,9 +288,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         scope.editVisit = function (record) {
-          outpatientEditModal.open({
-            record: record
-          })
+          outpatientEditModal.open({record: record, form: scope.form})
             .result
             .then(function () {
               reload(); // TODO highlight changed record
