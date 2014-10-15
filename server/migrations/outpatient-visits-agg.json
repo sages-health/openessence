@@ -15,7 +15,9 @@
     },
     "patient": {
       "sex": "female",
-      "age": 54
+      "age": {
+        "years": 54
+      }
     },
     "diagnoses": [
       {
@@ -45,7 +47,9 @@
     },
     "patient": {
       "sex": "male",
-      "age": 8
+      "age": {
+        "years": 8
+      }
     },
     "diagnoses": [
       {
@@ -71,7 +75,9 @@
     },
     "patient": {
       "sex": "male",
-      "age": 1
+      "age": {
+        "years": 1
+      }
     },
     "diagnoses": null,
     "visitDate": "2014-03-17T00:00:00.000Z"
@@ -96,7 +102,9 @@
     },
     "patient": {
       "sex": "female",
-      "age": 0
+      "age": {
+        "years": 0
+      }
     },
     "diagnoses": [
       {
@@ -122,7 +130,9 @@
     },
     "patient": {
       "sex": "male",
-      "age": 17
+      "age": {
+        "years": 17
+      }
     },
     "diagnoses": null,
     "visitDate": "2014-03-16T00:00:00.000Z"
@@ -143,7 +153,9 @@
     },
     "patient": {
       "sex": "female",
-      "age": 0
+      "age": {
+        "years": 0
+      }
     },
     "diagnoses": null,
     "visitDate": "2014-03-15T00:00:00.000Z"
@@ -164,7 +176,9 @@
     },
     "patient": {
       "sex": "female",
-      "age": 7
+      "age": {
+        "years": 7
+      }
     },
     "diagnoses": null,
     "visitDate": "2014-03-15T00:00:00.000Z"
@@ -185,7 +199,9 @@
     },
     "patient": {
       "sex": "female",
-      "age": 3
+      "age": {
+        "years": 3
+      }
     },
     "diagnoses": null,
     "visitDate": "2014-03-15T00:00:00.000Z"
@@ -206,7 +222,9 @@
     },
     "patient": {
       "sex": null,
-      "age": 1
+      "age": {
+        "years": 1
+      }
     },
     "diagnoses": null,
     "visitDate": "2014-03-14T00:00:00.000Z"
@@ -227,7 +245,9 @@
     },
     "patient": {
       "sex": "male",
-      "age": 2
+      "age": {
+        "years": 2
+      }
     },
     "diagnoses": [
       {

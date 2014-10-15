@@ -18,30 +18,53 @@
 </div>
 
 <!-- Age -->
-<div class="form-group" data-field="patient.age" ng-show="fields['patient.age'].enabled"
-     ng-class="{'has-error': isInvalid(visitForm.age), 'has-warning': visit.patient.age > 120 || !isAcceptableAge(visit.patient.age, visit.patient.dateOfBirth)}">
-  <label for="entry-visit-age" translate>Age</label>
+<div class="form-group" data-field="patient.age" ng-show="fields['patient.age'].enabled">
 
-  <div class="input-group">
-    <input class="form-control" id="entry-visit-age" name="age" ng-model="visit.patient.age" type="number"
-           min="0" max="200" placeholder="{{agePlaceholder | translate}}">
+  <!-- label should target first input on the line, which is years -->
+  <label for="entry-visit-years" translate>Age</label>
 
-    <!-- Don't disable age even though date of birth is set. This way, the user can tweak the number, e.g.
-         0.99 -> 1 -->
+  <!-- years -->
+  <div class="row">
+    <div class="col-md-6" ng-class="{'has-error': isInvalid(visitForm.years), 'has-warning': warnings.years}">
+      <div class="input-group">
+        <input class="form-control" id="entry-visit-years" name="years" ng-model="visit.patient.age.years"
+               type="number" step="1" min="0" max="999">
 
-    <span class="input-group-addon" translate>years</span>
+        <!-- Don't disable age even though date of birth is set. This way, the user can tweak the number -->
+
+        <span class="input-group-addon" translate>years</span>
+      </div>
+
+      <span ng-show="warnings.years === 'old'" class="help-block" translate>
+        {{visit.patient.age.years}} years is quite old. Are you sure?
+      </span>
+      <span ng-show="warnings.years === '999'" class="help-block" translate>
+        Leave this field blank if you don't know the patient's age
+      </span>
+      <span ng-show="warnings.years === 'dateOfBirthMismatch'" class="help-block">
+        <span ng-show="expectedAge.years" translate>
+          Are you sure? According to the patient's date of birth, they should be {{expectedAge.years}} years old.
+        </span>
+        <span ng-show="!expectedAge.years" translate>
+          Are you sure? According to the patient's date of birth, they should be {{expectedAge.months}} months old.
+        </span>
+      </span>
+    </div>
+
+    <!-- months -->
+    <div class="col-md-6" ng-class="{'has-error': isInvalid(visitForm.months), 'has-warning': warnings.months}">
+      <label for="entry-visit-months" class="sr-only" translate>months</label>
+
+      <div class="input-group">
+        <input class="form-control" id="entry-visit-months" name="months" ng-model="visit.patient.age.months"
+               type="number" step="1" min="0" max="12">
+
+        <span class="input-group-addon" translate>months</span>
+      </div>
+
+      <span ng-show="warnings.months === 'dateOfBirthMismatch'" class="help-block" translate>
+        Are you sure? According to the patient's date of birth, they should be {{expectedAge.months}} months old.
+      </span>
+    </div>
   </div>
-
-  <span ng-show="isInvalid(visitForm.age)" class="help-block" translate>
-    Please enter a valid age in years, for example 15 or 0.5
-  </span>
-  <span ng-show="!isInvalid(visitForm.age) && visit.patient.age > 120 && visit.patient.age != 999" class="help-block" translate>
-    {{visit.patient.age}} years is quite old. Are you sure?
-  </span>
-  <span ng-show="!isInvalid(visitForm.age) && visit.patient.age == 999" class="help-block" translate>
-    Leave this field blank if you don't know the patient's age
-  </span>
-  <span ng-show="!isInvalid(visitForm.age) && !isAcceptableAge(visit.patient.age, visit.patient.dateOfBirth)" class="help-block" translate>
-    Are you sure? According to the patient's date of birth, their age should be around {{roundedCalculatedAge}}.
-  </span>
 </div>

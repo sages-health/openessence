@@ -256,7 +256,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 //currently we explode symptoms and diagnosis to make crosstab counts for them happy
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
-                  age: source.patient ? source.patient.age : null,
+                  age: (source.patient && source.patient.age) ? source.patient.age.years : null,
                   districts: source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                 };
 

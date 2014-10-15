@@ -24,8 +24,8 @@
       <td ng-show="fields['patient.sex'].enabled" data-title="strings.sex" data-sortable="'patient.sex'">
         <a ng-click="tableFilter('patient.sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
       </td>
-      <td ng-show="fields['patient.age'].enabled" data-title="strings.age" data-sortable="'patient.age'">
-        <a ng-click="tableFilter('patientAge', visit._source.patient.age)">{{visit._source.patient.age}}</a>
+      <td ng-show="fields['patient.age'].enabled" data-title="strings.age" data-sortable="'patient.age.years'">
+        <a ng-click="tableFilter('patientAge', visit._source.patient.age.years)">{{visit._source.patient.age.years}}</a>
       </td>
 
       <td ng-show="fields.symptoms.enabled" data-title="strings.symptoms">

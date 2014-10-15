@@ -30,7 +30,7 @@ module.exports = function (gettextCatalog) {
     {
       filterID: 'patient.age',
       type: 'numeric-range',
-      field: 'patient.age',
+      field: 'patient.age.years',
       name: gettextCatalog.getString('Age')
     },
     {

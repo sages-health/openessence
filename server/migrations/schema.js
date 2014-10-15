@@ -188,8 +188,23 @@ var indexRequests = [
                   // as an alternative to dateOfBirth if date of birth is not known but a more general age is known,
                   // e.g. "I don't know this patient's date of birth, but I know they're about 65."
                   age: {
-                    // we don't need that much precision, but we do want to support fractional ages, e.g. 0.5
-                    type: 'double'
+                    properties: {
+                      // We could store a single age decimal, but then we'd need to use floating point approximations
+                      // of rationals.
+                      // Note that this is not designed to store facts like "patient is 15-and-a-half,"
+                      // since epis don't really care about that. Instead, this is more of a union type:
+                      // if years is >= 1, then months is 0 or null, and if months is >0 then years is 0 or null.
+                      years: {
+                        type: 'integer'
+                      },
+
+                      // 1-12, more than that and you're in years
+                      months: {
+                        type: 'integer'
+                      }
+
+                      // per Brian, 0-1 month is typically binned together, so no need for more precision right now
+                    }
                   },
 
                   sex: {

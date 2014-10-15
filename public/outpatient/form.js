@@ -80,7 +80,6 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource) {
             return model && model.indexOf('Other') !== -1;
           };
 
-          scope.agePlaceholder = gettextCatalog.getString('Patient\'s age');
           scope.yellAtUser = false;
 
           scope.isInvalid = function (field) {
