@@ -41,7 +41,7 @@
 
       <td ng-show="fields.disposition.enabled" data-title="strings.disposition">
         <a ng-click="tableFilter('disposition', visit._source.disposition)">
-          {{visit._source.disposition | join | truncate:30}}
+          {{visit._source.disposition | pluck:'name' | join | truncate:30}}
         </a>
       </td>
 
