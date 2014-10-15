@@ -88,14 +88,6 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     }, possibleFilters.visitDate)
   ];
 
-  $scope.createVisit = function () {
-    outpatientEditModal.open().result
-      .then(function () {
-        reload();
-        // TODO highlight record that was created
-      });
-  };
-
   var reload = function () {
     $scope.$broadcast('outpatientReload');
   };
@@ -146,6 +138,14 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
         .then(function () {
           reload();
           // TODO highlight record that was modified
+        });
+    };
+
+    $scope.createVisit = function () {
+      outpatientEditModal.open({form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was created
         });
     };
   });
