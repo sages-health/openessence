@@ -1,5 +1,6 @@
 'use strict';
-
+var conf = require('./conf');
+var logger = conf.logger;
 if (module.parent) {
   // This is the parent process, just like Unix fork()
   module.exports = {
@@ -11,7 +12,15 @@ if (module.parent) {
     childProcess: null,
 
     // enqueue a phantom-cluster request
-    enqueue: function (request) {
+    enqueue: function (request, callback) {
+      var onMessage = function (message) {
+        if (message.queueItem) {
+          module.exports.childProcess.removeListener('message', onMessage);
+          callback();
+        }
+      };
+      module.exports.childProcess.on('message', onMessage);
+
       module.exports.childProcess.send({
         request: request
       });
@@ -25,8 +34,8 @@ if (module.parent) {
 var phantomCluster = require('phantom-cluster');
 var cluster = require('cluster');
 var path = require('path');
-var conf = require('./conf');
-var logger = conf.logger;
+
+
 
 var engine = phantomCluster.createQueued({
   workers: 2,
@@ -119,8 +128,10 @@ engine.on('queueItemReady', function (request) {
   logger.info('PhantomJS cluster received request for %s', request.url);
   var clusterClient = this;
   this.ph.createPage(function (page) {
+
+    console.log('printing tokens: ' + request.tokens);
     page.set('customHeaders', { // FIXME server is still throwing 403
-      Authorization: 'Bearer ' + request.token
+      Authorization: 'Bearer ' + request.tokens
     });
 
     setPageSize(request, page);
@@ -133,7 +144,7 @@ engine.on('queueItemReady', function (request) {
       }
 
       page.get('content', function (content) {
-        logger.debug('PhantomJS requested %s and got\n%s', request.url, content);
+        //logger.debug('PhantomJS requested %s and got\n%s', request.url, content);
       });
 
       logger.info('PhantomJS rendering URL %s to file %s', request.url, request.output);
@@ -142,30 +153,44 @@ engine.on('queueItemReady', function (request) {
           logger.info('PhantomJS done rendering %s', request.output);
           clusterClient.queueItemResponse(request);
         });
-      }, 200); // not sure if this helps, but it's what the examples use
+      }, 5000); // not sure if this helps, but it's what the examples use
     });
+
+
   });
 });
 
 engine.on('started', function () {
+  console.log('starting onstarted method');
   if (process.send) {
+    console.log('before onstarted process.send');
     // let parent know we started
     process.send({
       // we can't set module.exports.started = true ourselves because that's in our process space (not our parent's)
       // and it's only really useful to our parent
-      started: true
+      'started': true
     });
   }
 });
 
 // when parent process sends us a request, pass it along to cluster
 process.on('message', function (message) {
+  console.log('starting onmessage method');
   if (message.request) {
+    console.log('message has a request');
     if (cluster.isMaster) {
+      console.log('cluster is master, before enqueue');
       // there's some funky node-cluster stuff going on, but checking for isMaster is what the example code does
       // before enqueuing, otherwise we get an error because engine is a client instance
       // https://github.com/dailymuse/phantom-cluster/blob/master/example.coffee
-      engine.enqueue(message.request);
+      var result = engine.enqueue(message.request);
+      result.on('response', function () {
+        if (process.send) {
+          process.send({
+            queueItem: true
+          });
+        }
+      });
     }
   }
 });

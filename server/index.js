@@ -126,16 +126,30 @@ app.get('/', function (req, res) {
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
+app.use(function (req, res, next) {
+  //req check for bearer authorization
+  //grab token, look up user, set user
+  var reqAuth = req.get('Authorization');
+  if (reqAuth && reqAuth.indexOf('Bearer ') === 0 ) {
+    auth.bearer(req, res, next);
+  } else {
+    next();
+  }
+//  var User = require('./models/User');
+//  req.user = new User({name: 'admin', username: 'admin', roles: ['admin'], 'tokens': ['tokenABC']});
+
+})
+
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));
 
 // TODO rename /api and include version in URL
 app.use('/resources', express()
-  .use(auth.denyAnonymousAccess)
+//  .use(auth.denyAnonymousAccess)
   .use(require('./resources')()));
 
 app.use('/reports', express()
-  .use(auth.denyAnonymousAccess)
+//  .use(auth.denyAnonymousAccess)
   .use(require('./reports')()));
 
 app.use(require('./error').middleware);

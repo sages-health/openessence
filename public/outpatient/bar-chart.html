@@ -1,6 +1,14 @@
 <div class="row">
   <div class="col-md-12">
-    <svg class="bar-chart">
+    <svg id="svg-id-{{options.id}}" class="bar-chart">
+      <g class="title">
+        <text class="title-label" text-anchor="middle"
+              transform="translate({{titleXpx}},{{titleYpx}})">{{options.labels.title}}</text>
+      </g>
+
+      <text class="y-label" text-anchor="middle" transform="translate({{yLabelXpx}},{{yLabelYpx}})rotate(-90)">{{options.labels.y}}</text>
+      <text class="x-label" text-anchor="middle" transform="translate({{xLabelXpx}},{{xLabelYpx}})">{{options.labels.x}}</text>
+
     </svg>
   </div>
 </div>

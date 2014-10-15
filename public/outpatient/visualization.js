@@ -7,7 +7,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                                                                                orderByFilter, gettextCatalog,
                                                                                sortString, FrableParams,
                                                                                OutpatientVisitResource,
-                                                                               outpatientEditModal,
+                                                                               outpatientEditModal, updateURL,
                                                                                outpatientDeleteModal, scopeToJson,
                                                                                outpatientAggregation, visualization) {
 
@@ -20,7 +20,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',
-      options: '=?' // settings as single object, useful for loading persisted state
+      options: '=' // settings as single object, useful for loading persisted state
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
@@ -81,7 +81,30 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return print.join(',');
         };
 
-        scope.$on('export', function () {
+        scope.$on('vizualizationNameChanged', function () {
+          delete scope.options.labels;
+          updateVisualization();
+        });
+
+        scope.$on('exportVizualization', function () {
+          if (scope.visualization.name === 'line') {
+            // let timeSeries directive handle it
+            return;
+          }
+
+          // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
+          var state = scopeToJson(scope);
+          ['data', 'crosstabData'].forEach(function (k) {
+            delete state[k];
+          });
+          if (state.tableParams) {
+            delete state.tableParams.data;
+          }
+
+          visualization.export(state);
+        });
+
+        scope.$on('saveVizualization', function () {
           if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it
             return;
@@ -338,15 +361,34 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         });
 
         scope.$watch('queryString', function () {
+          updateURL.updateFilters(scope.filters);
           reload();
         });
+
+        var updateVisualization = function (){
+          delete scope.options.options;
+          updateURL.updateVisualization(scope.options.id, {
+            options: scope.options,
+            pivot: scope.pivot,
+            rows: scope.pivot.rows || [],
+            series: scope.pivot.cols || [],
+            visualization: scope.visualization
+          });
+
+        };
+
         scope.$watch('pivot.cols', function () {
+          updateVisualization();
           reload();
         });
+
         scope.$watch('pivot.rows', function () {
+          updateVisualization();
           reload();
         });
+
         scope.$watch('visualization.name', function () {
+          updateVisualization();
           reload();
         });
 

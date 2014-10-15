@@ -9,12 +9,30 @@ var Boom = require('boom');
 var conf = require('./conf');
 var logger = conf.logger;
 var User = require('./models/User');
+//var crypto = require('crypto');
+
+var setUserToken = function (user, callback) {
+//  logger.info('*************%s setting user token', user);
+//
+//  crypto.randomBytes(256, function (ex, buf) {
+//    if (ex) {
+//      callback(ex, null);
+//    } else {
+//      var token = buf.toString('hex');
+//      logger.info('*************%s successfuly assigned token: %s', user.doc.username, token);
+//      user.doc.tokens = [token];
+//      callback(null, user);
+//    }
+//  });
+  callback(null, user);
+};
 
 passport.serializeUser(function (user, done) {
   // store entire user object in session so we don't have to deserialize it from data store
   // this won't scale to large number of concurrent users, but it will be faster for small deployments
   done(null, user.doc);
 });
+
 passport.deserializeUser(function (user, done) {
   if (typeof user.codexModel === 'function') {
     // coming straight from authenticating
@@ -35,6 +53,7 @@ passport.use(new PersonaStrategy({
     return callback(null, new User({
       username: email,
       email: email,
+      tokens: ['token1'],
       authType: 'persona',
       roles: ['admin']
     }));
@@ -45,6 +64,7 @@ passport.use(new PersonaStrategy({
     localUser.username = email;
     localUser.email = email;
     localUser.authType = 'persona';
+    localUser.tokens = 'token1';
     logger.info({user: localUser}, '%s logged in with Persona via file system whitelist', email);
     return callback(null, new User(localUser));
   }
@@ -66,7 +86,14 @@ passport.use(new PersonaStrategy({
     logger.info({user: user}, '%s logged in using Persona', email);
     user.doc.authType = 'persona';
 
-    return callback(null, user);
+    setUserToken(user, function(err, user) {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, user);
+      }
+    });
+    return;
   });
 }));
 
@@ -106,22 +133,69 @@ passport.use(new LocalStrategy(function (username, password, callback) {
         logger.info({user: user}, '%s logged in using local auth', username);
         user.doc.authType = 'local';
 
-        callback(null, user);
+        setUserToken(user, function(err, user) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, user);
+          }
+        });
+        return;
       }
     });
   });
 }));
 
 passport.use(new BearerStrategy({}, function (token, done) {
-  var user = {}; // TODO lookup user by token
+  // Look up whitelisted user by token
+  if (conf.users) {
 
-  if (!user) {
+    var userFound = false;
+    console.log('***** logged in using bearer strategy - token = %s', token);
+    Object.keys(conf.users).forEach(function (username) {
+      var user = conf.users[username];
+      var tokens = user.tokens;
+      var length = typeof tokens === 'undefined' ? 0 : tokens.length;
+
+      for (var i = 0; i < length; i++) {
+        if (tokens[i] === token) {
+          logger.info('%s logged in using bearer auth', user.username);
+          user.authType = 'bearer';
+          userFound = true;
+          console.dir(user);
+          done(null, new User(user));
+          return;
+        }
+      }
+    });
+    if (!userFound){
+      return done(null, false, { message: 'Bearer token not found.' });
+    }
+  } else {
+    console.log('***** logged in using bearer strategy, finding user by token = %s', token);
+    new User().findByToken(token, function(err, user) {
+      if (err) {
+        done(err);
+        return;
+      }
+
+      if (!user) {
+        logger.info('Token:\n%s\ndid not match any users.', token);
+        done(new errors.UnregisteredUserError());
+        return;
+      }
+
+      delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
+
+      logger.info({user: user}, '%s logged in using bearer', user.doc.email || user.doc.username);
+      user.doc.authType = 'bearer';
+      done(null, user);
+      return;
+    });
     done(null, false);
-    return;
   }
-
-  done(null, user);
 }));
+
 
 function denyAnonymousAccess (req, res, next) {
   if (!req.user) {
@@ -132,6 +206,7 @@ function denyAnonymousAccess (req, res, next) {
 }
 
 function authenticate (strategy) {
+  logger.info('Strategy: %s', strategy);
   return function (req, res, next) {
     passport.authenticate(strategy, {session: strategy !== 'bearer'}, function (err, user) {
       if (err) {
@@ -158,11 +233,14 @@ function authenticate (strategy) {
             }
           });
         }
-
+        if (strategy === 'bearer')  {
+          return next();
+        }
         res.status(200)
           .json({
             // whitelist user properties that are OK to send to client
             username: user.doc.username,
+            tokens: user.doc.tokens,
             email: user.doc.email,
             name: user.doc.name,
             roles: user.doc.roles,

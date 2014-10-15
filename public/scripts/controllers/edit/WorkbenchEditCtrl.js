@@ -58,7 +58,7 @@ module.exports = function ($scope, $modal, tableUtil, crud, $rootScope, gettextC
 
   $scope.deleteRecord = function (record) {
     var deleteRecord = angular.copy(record);
-    delete deleteRecord._source.widgets;
+    delete deleteRecord._source.state;
     crud.delete(deleteRecord, $scope.resource, $scope.deleteTemplate).result.then(reload).then(workbenchChanged);
   };
 };

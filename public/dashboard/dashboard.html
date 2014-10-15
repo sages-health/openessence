@@ -35,8 +35,9 @@
               </div>
 
               <div class="panel-body" ng-click="clickthrough(widget)">
-                <dashboard-widget options="widget.content" size-x="widget.sizeX"
-                                  size-y="widget.sizeY"></dashboard-widget>
+                <dashboard-widget options="widget.content" size-x="widget.sizeX" size-y="widget.sizeY" row="widget.row"
+                                  col="widget.col">
+                </dashboard-widget>
               </div>
             </div>
           </li>

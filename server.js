@@ -3,6 +3,7 @@
 var cluster = require('cluster');
 var http = require('http');
 var https = require('https');
+var phantom = require('./server/phantom');
 
 var conf = require('./server/conf');
 var logger = conf.logger;
@@ -31,27 +32,27 @@ var startServer = function (callback) {
 if (cluster.isMaster) {
   logger.info('Running in %s mode', conf.env);
 
-  if (conf.phantom.enabled) {
-    // start PhantomJS cluster
-    var phantom = require('./server/phantom');
-    var fork = require('child_process').fork;
-    var phantomChild = fork(__dirname + '/server/phantom');
-
-    phantomChild.on('message', function (message) {
-      if (message.started) {
-        phantom.started = true; // TODO promise?
-        phantom.childProcess = phantomChild;
-      }
-    });
-    phantomChild.on('error', function (err) {
-      logger.error({err: err}, 'PhantomJS child process error');
-    });
-    phantomChild.on('exit', function () {
-      logger.info('PhantomJS child process exited');
-    });
-  } else {
-    logger.info('Skipping PhantomJS');
-  }
+//  if (conf.phantom.enabled) {
+//    // start PhantomJS cluster
+//
+//    var fork = require('child_process').fork;
+//    var phantomChild = fork(__dirname + '/server/phantom');
+//
+//    phantomChild.on('message', function (message) {
+//      if (message.started) {
+//        phantom.started = true; // TODO promise?
+//        phantom.childProcess = phantomChild;
+//      }
+//    });
+//    phantomChild.on('error', function (err) {
+//      logger.error({err: err}, 'PhantomJS child process error');
+//    });
+//    phantomChild.on('exit', function () {
+//      logger.info('PhantomJS child process exited');
+//    });
+//  } else {
+//    logger.info('Skipping PhantomJS');
+//  }
 
   var onServerListening = function () {
     // This message isn't just to be friendly. We really only support running Fracas at one URL, since it makes

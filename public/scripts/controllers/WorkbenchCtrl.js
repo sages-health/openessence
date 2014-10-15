@@ -3,8 +3,18 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog, scopeToJson,
-                           FormResource, WorkbenchResource, possibleFilters) {
+module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog, scopeToJson,//
+                           FormResource, WorkbenchResource, possibleFilters, updateURL) {
+  $scope.gridsterOptions = {
+    margins: [10, 10],
+    columns: 12,
+    draggable: {
+      enabled: true
+    },
+    resizable: {
+      enabled: true
+    }
+  };
 
   // TODO make dependent on enabled form fields
   $scope.pivotOptions = [
@@ -33,6 +43,14 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];
 
+  var getNextVizId = function () {
+    if (!$scope.nextVizId) {
+      $scope.nextVizId= 0;
+    }
+    $scope.nextVizId++;
+    return $scope.nextVizId;
+  };
+
   FormResource.get({size: 1, q: 'name:demo'}, function (response) {
     if (response.results.length === 0) {
       throw new Error('No configured forms');
@@ -54,20 +72,32 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       return filters;
     }, {});
 
-    // don't set activeFilters until we know all possibleFilters, otherwise filtersGrid can throw an error
     var workbenchId = $stateParams.workbenchId;
-    if (workbenchId) {
+    var state = updateURL.getState();
+    $scope.nextVizId = 0;
+
+    if (workbenchId) { // if we are loading a saved workbench
       var workbenches = JSON.parse($window.sessionStorage.getItem('workbenches'));
       var workbench = workbenches[workbenchId]._source.state;
-
+      $scope.nextVizId = workbench.nextVizId;
       $scope.activeFilters = workbench.activeFilters;
       if (Array.isArray(workbench.visualizations)) {
         workbench.visualizations.forEach(function (v) {
           $scope.addVisualization(v.visualization.name, v);
         });
       }
+    } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
+      $scope.activeFilters = state.filters || [];
+      if (Array.isArray(state.visualizations)) {
+        state.visualizations.forEach(function (v) {
+          var id = v.id ? parseInt(v.id.substring(4)) : 0;
+          $scope.nextVizId = $scope.nextVizId >= id ? $scope.nextVizId : id;
+        });
+        state.visualizations.forEach(function (v) {
+          $scope.addVisualization(v.visualization.name, v);
+        });
+      }
     } else {
-      // default to a single 90 day date filter
       var from = new Date();
       from.setDate(from.getDate() - 90); // 90 days back
       $scope.activeFilters = [
@@ -107,10 +137,22 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
   $scope.addVisualization = function (name, options) {
     options = options || {};
 
-    $scope.visualizations.push({
-      sizeX: 3,
-      sizeY: 4,
+    var id = options.id;
+    if (!id) {
+      id = 'viz-' + getNextVizId();
+
+      angular.extend(options, {
+        id: id // assign element a new id on insert to match the Fracas grid
+      });
+    }
+
+    var viz = {
+      sizeX: options.sizeX || 6,
+      sizeY: options.sizeY || 4,
+      row: options.row,
+      col: options.col,
       type: 'outpatient-visit',
+      options: options,
       visualization: {
         name: name || 'table'
       },
@@ -119,36 +161,13 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
         rows: [],
         cols: []
       }
-    });
+    };
+    $scope.visualizations.push(viz);
+    updateURL.updateVisualization(options.id, viz);
   };
 
-  var visualizationName = $location.search().visualization;
-  if (visualizationName) {
-    var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
-    var options = {
-      pivot: viz.pivot
-    };
-
-    $scope.filters = viz.filters.map(function (filter) {
-      if (filter.value) {
-        return {
-          filterID: filter.filterID,
-          value: filter.value
-        };
-      } else {
-        return {
-          filterID: filter.filterID,
-          to: filter.to,
-          from: filter.from
-        };
-      }
-    });
-
-    $scope.addVisualization(viz.visualization.name, options);
-    $scope.vizMenuOpen = false;
-  }
-
   $scope.removeVisualization = function (visualization) {
+    updateURL.removeVisualization(visualization.options.id);
     var index = $scope.visualizations.indexOf(visualization);
     $scope.visualizations.splice(index, 1);
   };
@@ -182,6 +201,31 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       });
   };
 
+  var visualizationName = $location.search().visualization;
+  if (visualizationName) {
+    var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
+    var options = {
+      pivot: viz.pivot
+    };
+
+    $scope.filters = viz.filters.map(function (filter) {
+      if (filter.value) {
+        return {
+          filterId: filter.filterId,
+          value: filter.value
+        };
+      } else {
+        return {
+          filterId: filter.filterId,
+          to: filter.to,
+          from: filter.from
+        };
+      }
+    });
+
+    $scope.addVisualization(viz.visualization.name, options);
+    $scope.vizMenuOpen = false;
+  }
 
   $scope.sortableOptions = {
     cursor: 'move',

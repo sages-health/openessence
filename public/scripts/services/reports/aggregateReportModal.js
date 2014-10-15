@@ -8,7 +8,7 @@ module.exports = function ($modal) {
     openWeeklyReport: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-weekly-report-dialog.html'),
-        controller: /*ngInject*/ function ($scope, $modalInstance, $window, $location, gettextCatalog) {
+        controller: /*ngInject*/ function ($scope, $modalInstance, $window, gettextCatalog) {
           $scope.report = {};
           $scope.report.name = gettextCatalog.getString('Reported Cases by Country - Weekly Report');
           $scope.isInvalid = function (field) {
@@ -29,14 +29,9 @@ module.exports = function ($modal) {
               return;
             }
             $window.report = $scope.report;
-            var location = $location;
-            if (location.path() === '/') {
-              location = location.absUrl() + 'weekly-report';
-            } else {
-              location = location.absUrl().replace(location.path(), '/weekly-report');
-            }
-
-            $window.open(location, 'report-weekly', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
+            var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+            url = url + 'weekly-report';
+            $window.open(url, 'report-weekly', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
 
             $modalInstance.close();
           };
@@ -52,7 +47,7 @@ module.exports = function ($modal) {
     openTimeseriesReport: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-timeseries-report-dialog.html'),
-        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, $location, gettextCatalog) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, gettextCatalog) {
           $scope.report = {};
           $scope.report.name = gettextCatalog.getString('Reported Cases by Country - Time Series');
           $scope.isInvalid = function (field) {
@@ -73,14 +68,9 @@ module.exports = function ($modal) {
               return;
             }
             $window.report = $scope.report;
-            var location = $location;
-            if (location.path() === '/') {
-              location = location.absUrl() + 'timeseries-report';
-            } else {
-              location = location.absUrl().replace(location.path(), '/timeseries-report');
-            }
-
-            $window.open(location, 'report-timeseries', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
+            var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+            url = url + 'timeseries-report';
+            $window.open(url, 'report-timeseries', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
 
             $modalInstance.close();
           };
