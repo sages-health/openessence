@@ -7,7 +7,7 @@ var directives = require('../scripts/modules').directives;
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
 // @ngInject
-module.exports = function ($parse, gettextCatalog, OutpatientVisitResource, FormResource) {
+module.exports = function ($parse, gettextCatalog, OutpatientVisitResource) {
   return {
     restrict: 'E',
     template: require('./form.html'),

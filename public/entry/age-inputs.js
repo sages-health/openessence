@@ -3,25 +3,21 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($parse) {
+module.exports = function () {
   return {
     restrict: 'E',
     template: require('./age-inputs.html'),
-    compile: function (element, attrs) {
-      // we're using a non-isolate scope
-      var fieldsExp = $parse(attrs.fields);
-
+    scope: true,
+    compile: function () {
       return {
         post: function (scope) {
-          scope.fields = fieldsExp(scope);
-
           // convert date of birth to age in (decimal) years
           var dateToAge = function (dateOfBirth) {
             return (Date.now() - dateOfBirth.getTime()) / (1000 * 60 * 60 * 24 * 365);
           };
 
           // set patient's age based on date of birth
-          scope.$watch('model.dateOfBirth', function (dateOfBirth) {
+          scope.$watch('visit.patient.dateOfBirth', function (dateOfBirth) {
             if (!dateOfBirth) {
               return;
             } else if (!angular.isDate(dateOfBirth)) {

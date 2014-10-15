@@ -115,7 +115,7 @@
     </div>
 
     <!-- Date of birth and age -->
-    <age-inputs fields="fields"></age-inputs>
+    <age-inputs></age-inputs>
 
   </fieldset>
 
@@ -139,8 +139,7 @@
       </label>
     </div>
 
-    <!-- ng-model isn't working here, maybe b/c it's nested under patient? -->
-    <pregnancy-inputs fields="fields"></pregnancy-inputs>
+    <pregnancy-inputs></pregnancy-inputs>
 
     <!-- Telephone -->
     <div class="form-group" data-field="patient.phone" ng-show="fields['patient.phone'].enabled"
@@ -244,9 +243,9 @@
 
   <!-- Specimen -->
   <fieldset ng-show="page === 5">
-    <specimen-inputs fields="fields"></specimen-inputs>
+    <specimen-inputs></specimen-inputs>
 
-    <antiviral-inputs fields="fields"></antiviral-inputs>
+    <antiviral-inputs></antiviral-inputs>
   </fieldset>
 
   <fieldset ng-show="page === 'last'">
