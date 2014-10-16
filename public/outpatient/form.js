@@ -97,6 +97,18 @@ module.exports = function ($parse, gettextCatalog, OutpatientVisitResource) {
             }
           };
 
+          scope.isInFuture = function (date) {
+            if (!date) {
+              return false;
+            }
+
+            if (!angular.isDate(date)) {
+              date = new Date(date);
+            }
+
+            return date.getTime() > Date.now();
+          };
+
           scope.datePopupsOpen = {};
           scope.openDatePopup = function (name, $event) {
             $event.preventDefault();

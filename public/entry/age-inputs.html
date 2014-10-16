@@ -1,6 +1,6 @@
 <!-- Date of birth -->
 <div class="form-group" data-field="patient.dateOfBirth" ng-show="fields['patient.dateOfBirth'].enabled"
-     ng-class="{'has-error': isInvalid(visitForm.dateOfBirth)}">
+     ng-class="{'has-error': isInvalid(visitForm.dateOfBirth), 'has-warning': isInFuture(visit.patient.dateOfBirth)}">
 
   <label for="entry-visit-date-of-birth" translate>Date of birth</label>
 
@@ -9,12 +9,16 @@
            ng-model="visit.patient.dateOfBirth" datepicker-popup show-weeks="false"
            is-open="datePopupsOpen.dateOfBirth">
 
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button" ng-click="openDatePopup('dateOfBirth', $event)">
-          <span class="icon-calendar"></span>
-        </button>
-      </span>
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="button" ng-click="openDatePopup('dateOfBirth', $event)">
+        <span class="icon-calendar"></span>
+      </button>
+    </span>
   </div>
+
+  <span class="help-block" ng-show="isInFuture(visit.patient.dateOfBirth)" translate>
+    Are you sure? This date is in the future.
+  </span>
 </div>
 
 <!-- Age -->

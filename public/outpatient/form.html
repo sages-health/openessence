@@ -15,8 +15,8 @@
     -->
 
     <!-- Visit date -->
-    <div class="form-group" data-field="visitDate"
-         ng-show="fields.visitDate.enabled" ng-class="{'has-error': isInvalid(visitForm.visitDate)}">
+    <div class="form-group" data-field="visitDate" ng-show="fields.visitDate.enabled"
+         ng-class="{'has-error': isInvalid(visitForm.visitDate), 'has-warning': isInFuture(visit.visitDate)}">
 
       <label for="entry-visit-date" translate>Visit date</label>
 
@@ -25,12 +25,16 @@
         <input id="entry-visit-date" name="visitDate" type="text" class="form-control" required
                ng-model="visit.visitDate" datepicker-popup show-weeks="false" is-open="datePopupsOpen.visitDate">
 
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button" ng-click="openDatePopup('visitDate', $event)">
-          <span class="icon-calendar"></span>
-        </button>
-      </span>
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" ng-click="openDatePopup('visitDate', $event)">
+            <span class="icon-calendar"></span>
+          </button>
+        </span>
       </div>
+
+      <span class="help-block" ng-show="isInFuture(visit.visitDate)" translate>
+        Are you sure? This date is in the future.
+      </span>
     </div>
 
     <!-- Visit type -->
@@ -47,7 +51,7 @@
 
     <!-- Symptom onset -->
     <div class="form-group" data-field="symptomOnsetDate" ng-show="fields.symptomOnsetDate.enabled"
-         ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate)}">
+         ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate), 'has-warning': isInFuture(visit.symptomOnsetDate)}">
 
       <label for="entry-visit-onset" translate>Symptom onset</label>
 
@@ -56,12 +60,16 @@
                ng-model="visit.symptomOnsetDate" datepicker-popup show-weeks="false"
                is-open="datePopupsOpen.symptomOnsetDate">
 
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button" ng-click="openDatePopup('symptomOnsetDate', $event)">
-          <span class="icon-calendar"></span>
-        </button>
-      </span>
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" ng-click="openDatePopup('symptomOnsetDate', $event)">
+            <span class="icon-calendar"></span>
+          </button>
+        </span>
       </div>
+
+      <span class="help-block" ng-show="isInFuture(visit.symptomOnsetDate)" translate>
+        Are you sure? This date is in the future.
+      </span>
     </div>
 
     <!-- Facility -->
