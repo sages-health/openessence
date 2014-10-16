@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $location, $timeout, $modal, $window, $stateParams, gettextCatalog, scopeToJson,
+module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog, scopeToJson,
                            FormResource, WorkbenchResource, possibleFilters) {
 
   // TODO make dependent on enabled form fields
@@ -60,7 +60,7 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
       var workbenches = JSON.parse($window.sessionStorage.getItem('workbenches'));
       var workbench = workbenches[workbenchId]._source.state;
 
-      $scope.activeFilters = workbench.filters;
+      $scope.activeFilters = workbench.activeFilters;
       if (Array.isArray(workbench.visualizations)) {
         workbench.visualizations.forEach(function (v) {
           $scope.addVisualization(v.visualization.name, v);
@@ -181,6 +181,7 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
           .$save();
       });
   };
+
 
   $scope.sortableOptions = {
     cursor: 'move',

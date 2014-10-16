@@ -14,7 +14,8 @@ services.factory('aggregateReportModal', require('./reports/aggregateReportModal
   .factory('tableUtil', require('./tableUtil'))
   .factory('user', require('./user'))
   .factory('version', require('./version'))
-  .factory('visualization', require('./visualization'));
+  .factory('visualization', require('./visualization'))
+  .factory('Workbench', require('./Workbench'));
 
 // maybe one day we'll need to require() constants, but not today
 require('./constants');

@@ -46,7 +46,7 @@
           </a>
           <ul class="dropdown-menu">
             <li><a ui-sref="workbench({workbenchId: ''})" translate>New workbench</a></li>
-            <li><a translate>Open workbench</a></li>
+            <li><a ng-click="openWorkbench()" translate>Open workbench</a></li>
             <li><a ui-sref="edit.workbench" translate>Manage workbenches</a></li>
 
             <li role="presentation" class="divider" ng-show="workbenches.length > 0"></li>
@@ -65,8 +65,6 @@
             <li><a ng-click="visitsReport()" translate>Outpatient Visits Report</a></li>
             <li><a ng-click="weeklyReport()" translate>Reported Cases by Country - Table</a></li>
             <li><a ng-click="timeseriesReport()" translate>Reported Cases by Country - Time Series</a></li>
-            <li><a translate>Saved query</a></li>
-            <li><a translate>Something else</a></li>
           </ul>
         </li>
 
