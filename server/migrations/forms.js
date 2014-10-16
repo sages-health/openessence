@@ -39,6 +39,29 @@ module.exports = [
         enabled: true
       },
 
+      // geographic fields, these are collected via medical facility, so users don't have to input them separately
+      {
+        name: 'medicalFacility.location.district',
+        enabled: true,
+        values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
+          // construct set of districts
+          if (facility.location && facility.location.district) {
+            var district = facility.location.district;
+            districts[district] = true;
+          }
+
+          return districts;
+        }, {}))
+          .sort()
+          .map(function (name) {
+            return {
+              name: name
+            };
+          })
+      },
+
+      // more geographic fields as needed
+
       // patient info
       {
         name: 'patient.id',

@@ -28,6 +28,13 @@ module.exports = function (gettextCatalog) {
       name: gettextCatalog.getString('Facility')
     },
     {
+      // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
+      filterID: 'medicalFacility.location.district',
+      type: 'multi-select',
+      field: 'medicalFacility.location.district',
+      name: gettextCatalog.getString('District')
+    },
+    {
       filterID: 'patient.age',
       type: 'numeric-range',
       field: 'patient.age.years',
