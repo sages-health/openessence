@@ -1,7 +1,7 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Dashboard,
+module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Workbench, Dashboard,
                            DashboardResource, WorkbenchResource) {
 
   $scope.visitsReport = function () {
@@ -34,6 +34,8 @@ module.exports = function ($scope, $window, $state, appName, user, visitsReportM
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
 
   $scope.openDashboard = Dashboard.openModal;
+
+  $scope.openWorkbench = Workbench.openModal;
 
   $scope.dashboards = [];
   $scope.loadDashboards = function () {

@@ -4,10 +4,15 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($scope, $modal, tableUtil, crud, $rootScope, gettextCatalog, WorkbenchResource) {
-  $scope.filters = [
-    {filterID: 'name'}
+  $scope.activeFilters = [
+    {
+      filterID: 'name',
+      type: 'text',
+      field: 'name',
+      name: gettextCatalog.getString('Name')
+    }
   ];
-  $scope.filterTypes = [
+  $scope.possibleFilters = [
     {
       filterID: 'name',
       type: 'text',
