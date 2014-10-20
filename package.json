@@ -51,7 +51,7 @@
     "browserify-istanbul": "^0.1.2",
     "browserify-middleware": "^3.0.0",
     "browserify-ngannotate": "^0.1.0",
-    "browserify-shim": "^3.5.0",
+    "browserify-shim": "^3.8.0",
     "browserify-transform-tools": "~1.2.1",
     "chai": "~1.9.0",
     "cheerio": "^0.17.0",
@@ -239,7 +239,7 @@
         "jquery:jQuery"
       ]
     },
-    "jquer-resize": {
+    "jquery-resize": {
       "depends": [
         "jquery:jQuery"
       ]
