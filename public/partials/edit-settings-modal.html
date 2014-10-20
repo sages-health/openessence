@@ -10,14 +10,14 @@
         Please enter title
       </div>
     </div>
-    <div class="form-group" ng-if="vizType !== 'pie'" ng-class="{'has-error': yellAtUser}">
+    <div class="form-group" ng-if="vizType !== 'pie' && vizType !== 'map'" ng-class="{'has-error': yellAtUser}">
       <label for="edit-x-label" translate>X-Axis Label</label>
       <input type="text" class="form-control" id="edit-x-label" name="xLabel" ng-model="labels.x" required>
       <div class="help-block" ng-show="yellAtUser" translate>
         Please enter label for x-axis
       </div>
     </div>
-    <div class="form-group" ng-if="vizType !== 'pie'" ng-class="{'has-error': yellAtUser}">
+    <div class="form-group" ng-if="vizType !== 'pie' && vizType !== 'map'" ng-class="{'has-error': yellAtUser}">
       <label for="edit-y-label" translate>Y-Axis Label</label>
       <input type="text" class="form-control" id="edit-y-label" name="yLabel" ng-model="labels.y" required>
       <div class="help-block" ng-show="yellAtUser" translate>

@@ -29,7 +29,8 @@ module.exports = function ($modal) {
               return;
             }
             $window.report = $scope.report;
-            var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+            //var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+            var url = document.baseURI;
             url = url + 'weekly-report';
             $window.open(url, 'report-weekly', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
 
@@ -68,7 +69,8 @@ module.exports = function ($modal) {
               return;
             }
             $window.report = $scope.report;
-            var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+            //var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+            var url = document.baseURI;
             url = url + 'timeseries-report';
             $window.open(url, 'report-timeseries', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
 

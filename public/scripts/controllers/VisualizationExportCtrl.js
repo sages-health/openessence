@@ -5,7 +5,6 @@ var angular = require('angular');
 // @ngInject
 module.exports = function ($scope, $window, $timeout, $log, Report, visualization, $document, updateURL) {
 
-  $scope.report = $window.opener.report;
   $scope.state = angular.copy($window.opener.state);
   $scope.state.options.labels = $scope.state.options.labels || {};
   $scope.state.options.showNotes = true;
