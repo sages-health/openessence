@@ -135,10 +135,7 @@ app.use(function (req, res, next) {
   } else {
     next();
   }
-//  var User = require('./models/User');
-//  req.user = new User({name: 'admin', username: 'admin', roles: ['admin'], 'tokens': ['tokenABC']});
-
-})
+});
 
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));

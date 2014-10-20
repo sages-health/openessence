@@ -27,13 +27,13 @@ module.exports = codex.controller(User, {
 
     callback(null, esRequest);
   },
-  postSearch: function (req, esResponse, callback) {
-    if (esResponse && esResponse.results) {
-      for (var i = 0; i < esResponse.results.length; i++) {
-        delete esResponse.results[i]._source.password;
+  postSearch: function (req, esResponse, response, callback) {
+    if (response && response.results) {
+      for (var i = 0; i < response.results.length; i++) {
+        delete response.results[i]._source.password;
       }
     }
-    callback(null, esResponse);
+    callback(null, response);
   },
 
   insert: true,
@@ -47,6 +47,9 @@ module.exports = codex.controller(User, {
     if (!user || !user.canCreateUser(esRequest.body)) {
       return callback(Boom.forbidden());
     }
+
+    // TODO: define a user token that will be used for bearer auth
+    esRequest.body.tokens = [esRequest.body.username];
 
     if (esRequest.id) {
       if (esRequest.id !== user.id && !user.isAdmin()) {

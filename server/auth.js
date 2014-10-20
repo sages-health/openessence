@@ -147,53 +147,46 @@ passport.use(new LocalStrategy(function (username, password, callback) {
 }));
 
 passport.use(new BearerStrategy({}, function (token, done) {
-  // Look up whitelisted user by token
-  if (conf.users) {
-
-    var userFound = false;
-    console.log('***** logged in using bearer strategy - token = %s', token);
-    Object.keys(conf.users).forEach(function (username) {
-      var user = conf.users[username];
-      var tokens = user.tokens;
-      var length = typeof tokens === 'undefined' ? 0 : tokens.length;
-
-      for (var i = 0; i < length; i++) {
-        if (tokens[i] === token) {
-          logger.info('%s logged in using bearer auth', user.username);
-          user.authType = 'bearer';
-          userFound = true;
-          console.dir(user);
-          done(null, new User(user));
-          return;
-        }
-      }
-    });
-    if (!userFound){
-      return done(null, false, { message: 'Bearer token not found.' });
-    }
-  } else {
-    console.log('***** logged in using bearer strategy, finding user by token = %s', token);
-    new User().findByToken(token, function(err, user) {
-      if (err) {
-        done(err);
-        return;
-      }
-
-      if (!user) {
-        logger.info('Token:\n%s\ndid not match any users.', token);
-        done(new errors.UnregisteredUserError());
-        return;
-      }
-
-      delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
-
-      logger.info({user: user}, '%s logged in using bearer', user.doc.email || user.doc.username);
-      user.doc.authType = 'bearer';
-      done(null, user);
-      return;
-    });
-    done(null, false);
+  if (!conf.users) {
+    // "Demo" mode: give any user who logs in via Persona full admin rights
+    return done(null, new User({
+      username: token,
+      email: token,
+      tokens: [token],
+      authType: 'bearer',
+      roles: ['admin']
+    }));
   }
+
+  var localUser = conf.users[token];
+  if (localUser) {
+    localUser.username = token;
+    localUser.email = token;
+    localUser.authType = 'bearer';
+    localUser.tokens = [token];
+    logger.info({user: localUser}, '%s logged in with bearer via file system whitelist', token);
+    return done(null, new User(localUser));
+  }
+  console.log('***** logged in using bearer strategy, finding user by token = %s', token);
+  User.findByToken(token, function(err, user) {
+    if (err) {
+      done(err);
+      return;
+    }
+
+    if (!user) {
+      logger.info('Token:\n%s\ndid not match any users.', token);
+      done(new errors.UnregisteredUserError());
+      return;
+    }
+
+    delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
+
+    logger.info({user: user}, '%s logged in using bearer', user.doc.email || user.doc.username);
+    user.doc.authType = 'bearer';
+    done(null, user);
+    return;
+  });
 }));
 
 

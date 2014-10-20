@@ -70,7 +70,6 @@ module.exports = function ($location) {
     removeVisualization: function (id) {
       var state = getState();
       state.visualizations = state.visualizations || [];
-
       var index = -1;
       angular.forEach(state.visualizations, function (val, key) {
         if (val.id === id) {
