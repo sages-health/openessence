@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Fracas</title>
   <meta name="description" content="Fracas, for disease surveillance">
   <meta name="viewport" content="width=device-width">
 
@@ -15,6 +14,10 @@
   <meta name="_version" content="[[= version ]]">
   <meta name="_commit" content="[[= commit ]]">
   <meta name="_deploy-date" content="[[= deployDate ]]">
+  <meta name="_app-name" content="[[= appName ]]">
+
+  <!-- Could have Angular template this, but that would be flicker-tastic -->
+  <title>[[= appName ]]</title>
 
   <!-- tell angular not to remove locale from URL when html5Mode is active -->
   <base href="[[= baseHref ]]">
@@ -23,7 +26,9 @@
   <link rel="stylesheet" href="/public/styles/main.css">
   <!-- endinject -->
 </head>
-<body ng-app="fracasApp" ng-csp>
+
+<!-- ng-strict-di requires Angular 1.3 which is still rough around the edges, so for now it's a no-op -->
+<body ng-app="fracasApp" ng-csp ng-strict-di>
 
 <!--[if lt IE 9]>
 <p>You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> to better

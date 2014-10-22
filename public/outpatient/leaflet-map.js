@@ -4,15 +4,15 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
-angular.module(directives.name).directive('leafletMap', function ($q, District, OutpatientVisit) {
+angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function ($q, DistrictResource, OutpatientVisitResource,
+                                                                  $timeout, $rootScope, debounce) {
 
   return {
     restrict: 'E',
     scope: {
       options: '=?',
       queryString: '=',
-      filters: '=',
-      data: '='
+      filters: '='
     },
     link: function postLink (scope, element) {
 
@@ -62,8 +62,8 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
       var getLayerPolys = function () {
         var deferred = $q.defer();
 
-        // could also use $http's promise, but I can never figure out ngResource's API
-        District.get({
+        // TODO don't assume district, let caller specify what geometries to use
+        DistrictResource.get({
           size: 9999
         }, function (response) {
           var layers = {}; // map of District name -> layer
@@ -76,10 +76,18 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
                 return L.latLng(lonlat[1], lonlat[0]);
               });
               var layer = L.polygon(coordinates, getOverlayStyle());
+              layer.oeName = current._source.name;
 
               // inspired by http://leafletjs.com/examples/choropleth.html
               layer.on('click', function (e) {
+                // TODO this leaves the map with a lot of 0 count districts that should be unshaded
                 map.fitBounds(e.target.getBounds());
+                var filter = {
+                  filterID: 'districts',
+                  value: layer.oeName
+                };
+                $rootScope.$emit('filterChange', filter, true, true);
+
               });
               layer.on('mouseover', function (e) {
                 var layer = e.target;
@@ -131,18 +139,23 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
       var polys = getLayerPolys();
 
       scope.$watch('queryString', function (queryString) {
-        OutpatientVisit.search({
+        OutpatientVisitResource.search({
           q: queryString,
           aggregations: {
             district: {
               terms: {
-                field: 'medicalFacility.district.raw',
+                field: 'medicalFacility.location.district.raw',
                 size: 0 // don't cap number of buckets
               }
             }
           }
         }, function (response) {
           polys.then(function (districts) {
+            // reset styles
+            angular.forEach(districts, function(district) {
+              district.setStyle(getOverlayStyle(0));
+            });
+            // re-apply styles for query results
             response.aggregations.district.buckets.forEach(function (bucket) {
               /*jshint camelcase:false */
               var district = districts[bucket.key];
@@ -154,9 +167,16 @@ angular.module(directives.name).directive('leafletMap', function ($q, District, 
         });
       });
 
-      scope.$watch('options.width', function() {
+      scope.$watch('options.width', function () {
         map.invalidateSize();
       });
+
+      scope.$watch('options.height', debounce(function () {
+        element.find('.map').css({
+          height: scope.options.height + 6
+        });
+        map.invalidateSize();
+      }, 50));
     }
   };
 });

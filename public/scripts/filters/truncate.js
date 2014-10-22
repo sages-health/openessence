@@ -4,10 +4,8 @@
  */
 'use strict';
 
-var angular = require('angular');
-var filters = require('../modules').filters;
-
-angular.module(filters.name).filter('truncate', function () {
+// @ngInject
+module.exports = function () {
   return function (input, chars, breakOnWord) {
     if (isNaN(chars)) {
       return input;
@@ -34,4 +32,4 @@ angular.module(filters.name).filter('truncate', function () {
     }
     return input;
   };
-});
+};

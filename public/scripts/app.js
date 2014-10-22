@@ -7,15 +7,25 @@ require('angular-sanitize');
 require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-ui-select2');
+require('angular-ui-sortable');
 require('angular-gettext');
 require('angular-gridster');
 require('angular-loading-bar');
+require('angular-order-object-by');
 
 // explicitly require d3 and friends due to weird browserify issues,
 // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
 require('d3');
+
+// polyfills, try to require only what you need instead of entire es6 polyfills
+require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
+require('string.prototype.endswith'); // not in IE <= 11
+
+require('ng-debounce');
 require('text-angular');
 require('leaflet');
+require('ng-file-upload');
+require('ng-grid');
 
 var frable = require('../frable');
 require('../select2');
@@ -23,17 +33,20 @@ require('../hinge');
 require('../crosstab');
 require('../fracas-filter');
 require('../dashboard');
+require('../workbench');
 require('../outpatient');
+require('../aggregate');
+require('../entry');
 
 var modules = require('./modules');
 require('./controllers');
 require('./services');
 require('./directives');
 require('./filters');
-var i18n = require('./i18n');
 
-var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'gettext',
-                    'angular-loading-bar', 'gridster', 'textAngular', frable.name]
+var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
+                    'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+                    'ngGrid', 'ngOrderObjectBy', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -127,7 +140,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       controller: 'LoginCtrl'
     })
     .state('workbench', {
-      url: '/workbench',
+      url: '/workbench/:workbenchId',
       template: require('../partials/workbench.html'),
       controller: 'WorkbenchCtrl',
       parent: 'home'
@@ -162,6 +175,16 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/reports/visits-report.html'),
       controller: 'VisitsReportCtrl'
     })
+    .state('weekly-report', {
+      url: '/weekly-report',
+      template: require('../partials/reports/weekly-report.html'),
+      controller: 'WeeklyReportCtrl'
+    })
+    .state('timeseries-report', {
+      url: '/timeseries-report',
+      template: require('../partials/reports/timeseries-report.html'),
+      controller: 'TimeseriesReportCtrl'
+    })
     .state('edit', {
       url: '/edit',
       parent: 'home',
@@ -172,6 +195,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/visit',
       template: require('../outpatient/edit.html'),
       controller: 'OutpatientEditCtrl'
+    })
+    .state('edit.aggregate', { // TODO define this in outpatient module
+      url: '/aggregate-data',
+      template: require('../partials/edit/aggregate-data.html'),
+      controller: 'AggregateDataEditCtrl'
     })
     .state('edit.district', {
       url: '/district',
@@ -188,10 +216,10 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/edit/syndrome.html'),
       controller: 'SyndromeEditCtrl'
     })
-    .state('edit.discharge', {
-      url: '/discharge',
-      template: require('../partials/edit/discharge.html'),
-      controller: 'DischargeEditCtrl'
+    .state('edit.disposition', {
+      url: '/disposition',
+      template: require('../partials/edit/disposition.html'),
+      controller: 'DispositionEditCtrl'
     })
     .state('edit.visitType', {
       url: '/visitType',
@@ -212,6 +240,16 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/dashboard',
       template: require('../partials/edit/dashboard.html'),
       controller: 'DashboardEditCtrl'
+    })
+    .state('edit.visualization', {
+      url: '/visualization',
+      template: require('../partials/edit/visualization.html'),
+      controller: 'VisualizationEditCtrl'
+    })
+    .state('edit.workbench', {
+      url: '/workbench',
+      template: require('../partials/edit/workbench.html'),
+      controller: 'WorkbenchEditCtrl'
     });
 });
 
@@ -219,18 +257,17 @@ app.config(function ($httpProvider) {
   $httpProvider.interceptors.push('errorInterceptor');
 });
 
-app.run(function ($rootScope, gettextCatalog) {
-  i18n.strings().then(function (strings) {
-    $rootScope.$apply(function () { // TODO this is really slow, think of a better way to load strings
+app.run(function ($rootScope, $http, gettextCatalog, lang) {
+  $http.get('/public/translations/' + lang + '.json')
+    .success(function (strings) {
       Object.keys(strings).forEach(function (lang) {
         // angular-gettext's JSON format allows for multiple locales in a single bundle
         // we don't use that now, but we may in the future
         gettextCatalog.setStrings(lang, strings[lang]);
       });
-      gettextCatalog.currentLanguage = document.documentElement.lang;
+      gettextCatalog.currentLanguage = lang;
       gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
     });
-  });
 });
 
 module.exports = app;

@@ -3,10 +3,10 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('dashboardWidget', function ($timeout) {
+angular.module(directives.name).directive('dashboardWidget', /*@ngInject*/ function ($timeout) {
   return {
     restrict: 'E',
-    template: '<outpatient-visualization options="options" height="height" width="width"></outpatient-visualization>',
+    template: '<outpatient-visualization options="options" height="height" width="width" filters="options.filters" query-string="options.queryString"></outpatient-visualization>',
     scope: {
       options: '=',
       sizeX: '=',
@@ -26,7 +26,6 @@ angular.module(directives.name).directive('dashboardWidget', function ($timeout)
           scope.$watchCollection(function () {
             return '[' + parent.width() + ', ' + parent.height() + ']';
           }, function () {
-
             // Use a timer to prevent a gazillion chart redraws
             if (scope.timeId) {
               $timeout.cancel(scope.timeId);
@@ -42,15 +41,6 @@ angular.module(directives.name).directive('dashboardWidget', function ($timeout)
               if (scope.options.visualization.name === 'line') {
                 scope.options.height = scope.height -= 30;
               }
-
-              parent.find('.panel').css({
-                width: width,
-                height: height
-              })
-                .find('.panel-body').css({
-                  width: width,
-                  height: height - 50
-                });
             }, 25);
           });
         }

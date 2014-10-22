@@ -1,9 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../modules').services;
 
-angular.module(services.name).factory('version', function ($filter, gettextCatalog) {
+// @ngInject
+module.exports = function ($filter, gettextCatalog) {
   var string = angular.element('meta[name="_version"]').attr('content');
   var commit = angular.element('meta[name="_commit"]').attr('content');
   var date = parseInt(angular.element('meta[name="_deploy-date"]').attr('content'), 10);
@@ -23,4 +23,4 @@ angular.module(services.name).factory('version', function ($filter, gettextCatal
     date: date,
     description: description
   };
-});
+};

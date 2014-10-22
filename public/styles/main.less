@@ -8,44 +8,22 @@
 @import (less) "angular-loading-bar/build/loading-bar.css";
 @import (less) "angular/angular-csp.css";
 @import (less) "fracas-jquery-ui/jquery-ui.css";
+@import (less) "ng-grid/ng-grid.css";
 @import "../frable/frable"; // TODO figure out a way to include addons w/o having to manually add it here
 @import "../select2/select2";
 @import "../crosstab/crosstab";
 @import "../hinge/hinge";
 @import "../outpatient/fracas-charts";
+@import "variables";
+@import "mixins";
 @import "animations";
 @import "maps";
 @import "dashboard";
-
-// Reset some settings. Most of these are Bootstrap's defaults
-
-@navbar-border-radius: 0px; // border radius makes sense when nav has top margin, but not when it doesn't
-@navbar-height: 50px;
-
-@padding-base-vertical: 6px;
-@padding-base-horizontal: 12px;
-
-@padding-large-vertical: 10px;
-@padding-large-horizontal: 16px;
-
-@padding-small-vertical: 5px;
-@padding-small-horizontal: 10px;
-
-@pagination-color: @gray-dark;
-@pagination-bg: @gray-lighter;
-@pagination-border: #ddd;
-
-@pagination-hover-color: #fff;
-@pagination-hover-bg: @gray-light;
-@pagination-hover-border: #ddd;
-
-@pagination-active-color: #fff;
-@pagination-active-bg: @brand-primary;
-@pagination-active-border: @brand-primary;
-
-@pagination-disabled-color: @gray-light;
-@pagination-disabled-bg: #fff;
-@pagination-disabled-border: #ddd;
+@import "popover";
+@import "tiles";
+@import "viz-menu";
+@import "workbench";
+@import "report";
 
 .navbar-brand {
   // Fix https://github.com/thomaspark/bootswatch/commit/5226a30d7df2eb15a06b9014507da767d205de30
@@ -77,6 +55,10 @@ a[ng-click] {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
+}
+
+.pager a, .pager a:hover {
+  color: @gray-dark;
 }
 
 table[datepicker] {
@@ -188,7 +170,8 @@ fracas-filter .panel {
   color: @brand-danger;
 }
 
-.export {
+.export,
+.settings {
   .close();
 }
 
@@ -224,6 +207,10 @@ fracas-filter .panel {
   min-width: 70px;
 }
 
+.fracas-filter {
+  height: 160px; // fixed height so tall elements don't cause weird wrapping in our >12 col filter grid
+}
+
 .date-filter input.form-control {
   width: 100%;
 }
@@ -240,6 +227,25 @@ fracas-filter .panel {
   padding: @padding-base-vertical @padding-base-horizontal;
 }
 
+.ui-resizable-helper {
+  border: 2px solid @brand-primary;
+  border-radius: 4px;
+}
+
+.hinge {
+  margin-bottom: 0px;
+  margin-top: 20px;
+}
+
+.add-viz-btn {
+  position: relative;
+  top: 20px;
+}
+
+workbench-visualization .frable-pagination {
+  margin: 12px 0;
+}
+
 .ta-editor {
   min-height: 350px;
   height: auto;
@@ -252,5 +258,26 @@ fracas-filter .panel {
 @media print {
   .ta-toolbar {
     display: none;
+  }
+}
+
+.preview-grid {
+  border: 1px solid rgb(212,212,212);
+  width: 550px;
+  height: 150px;
+}
+
+.symptoms-edit-grid {
+  border: 1px solid rgb(212,212,212);
+  height: 170px;
+}
+
+.csv-field {
+  width: 95%;
+}
+
+@media print{
+  @page {
+    size: landscape
   }
 }

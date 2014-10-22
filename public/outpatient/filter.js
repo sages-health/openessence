@@ -2,9 +2,9 @@
 
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
-require('./filters');
+require('./filter-types');
 
-angular.module(directives.name).directive('outpatientFilter', function ($compile, $parse) {
+angular.module(directives.name).directive('outpatientFilter', /*@ngInject*/ function ($compile, $parse) {
   return {
     restrict: 'A',
     replace: true,

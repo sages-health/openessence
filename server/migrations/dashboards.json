@@ -8,16 +8,16 @@
         "sizeY": 10,
         "content": {
           "options": {},
-          "queryString": "reportDate: [2009-03-06 TO 2010-06-04]",
+          "queryString": "visitDate: [2009-03-06 TO 2010-06-04]",
           "filters": [
             {
               "id": 0,
               "row": 0,
               "col": 0,
-              "type": "date",
+              "type": "date-range",
               "from": "2009-03-07T00:00:00.000Z",
               "to": "2010-06-05T00:00:00.000Z",
-              "queryString": "reportDate: [2009-03-06 TO 2010-06-04]"
+              "queryString": "visitDate: [2009-03-06 TO 2010-06-04]"
             }
           ],
           "series": [],
@@ -58,13 +58,13 @@
               "id": 0,
               "row": 0,
               "col": 0,
-              "type": "date",
-              "from": "2014-03-07T18:34:35.119Z",
-              "to": "2014-06-05T17:34:35.119Z",
-              "queryString": "reportDate: [2014-03-07 TO 2014-06-05]"
+              "type": "date-range",
+              "from": "2014-03-07T00:00:00.000Z",
+              "to": "2014-06-05T00:00:00.000Z",
+              "queryString": "visitDate: [2014-03-07 TO 2014-06-05]"
             }
           ],
-          "queryString": "reportDate: [2014-03-07 TO 2014-06-05]",
+          "queryString": "visitDate: [2014-03-07 TO 2014-06-05]",
           "visualization": {
             "name": "bar"
           },
@@ -145,7 +145,7 @@
                     "Fever Test"
                   ],
                   "diagnoses": [],
-                  "reportDate": "2014-05-01T04:00:00.000Z",
+                  "visitDate": "2014-05-01T04:00:00.000Z",
                   "medicalFacility": {
                     "district": "Alphaville"
                   }
@@ -163,7 +163,7 @@
                 "_source": {
                   "symptoms": [],
                   "diagnoses": [],
-                  "reportDate": "2014-05-01T04:00:00.000Z",
+                  "visitDate": "2014-05-01T04:00:00.000Z",
                   "medicalFacility": {
                     "district": "Alphaville"
                   },
@@ -184,7 +184,7 @@
                 "_version": 8,
                 "_score": null,
                 "_source": {
-                  "reportDate": "2014-04-22T16:40:09.655Z",
+                  "visitDate": "2014-04-22T16:40:09.655Z",
                   "medicalFacility": {
                     "district": "District 3"
                   },
@@ -206,7 +206,7 @@
                 "_version": 2,
                 "_score": null,
                 "_source": {
-                  "reportDate": "2014-04-16T04:00:00.000Z",
+                  "visitDate": "2014-04-16T04:00:00.000Z",
                   "patient": {
                     "sex": "female"
                   },
@@ -224,7 +224,7 @@
                 "_version": 3,
                 "_score": null,
                 "_source": {
-                  "reportDate": "2014-04-16",
+                  "visitDate": "2014-04-16",
                   "patient": {
                     "age": 20
                   },
@@ -245,7 +245,7 @@
                 "_version": 1,
                 "_score": null,
                 "_source": {
-                  "reportDate": "2014-04-16",
+                  "visitDate": "2014-04-16",
                   "patient": {
                     "age": 31,
                     "sex": "female"
@@ -265,7 +265,7 @@
                 "_version": 1,
                 "_score": null,
                 "_source": {
-                  "reportDate": "2014-04-02T21:18:49.569Z",
+                  "visitDate": "2014-04-02T21:18:49.569Z",
                   "medicalFacility": {
                     "district": "District 1"
                   },
@@ -284,7 +284,7 @@
                 "_version": 1,
                 "_score": null,
                 "_source": {
-                  "reportDate": "2014-04-02T04:00:00.000Z",
+                  "visitDate": "2014-04-02T04:00:00.000Z",
                   "medicalFacility": {
                     "district": "District 1"
                   },
@@ -303,7 +303,7 @@
                 "_version": 1,
                 "_score": null,
                 "_source": {
-                  "reportDate": "2014-04-01T21:18:49.569Z",
+                  "visitDate": "2014-04-01T21:18:49.569Z",
                   "medicalFacility": {
                     "district": "District 1"
                   },
@@ -327,7 +327,7 @@
                     "abdominal pain",
                     "cough"
                   ],
-                  "reportDate": "2014-03-31",
+                  "visitDate": "2014-03-31",
                   "medicalFacility": {
                     "district": "District 3"
                   }

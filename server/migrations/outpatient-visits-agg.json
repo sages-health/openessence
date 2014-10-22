@@ -1,0 +1,260 @@
+[
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 10
+      }
+    ],
+    "medicalFacility": {
+      "name": "Adams Hospital",
+      "location": {
+        "district": "Adams",
+        "county": "Adams"
+      }
+    },
+    "patient": {
+      "sex": "female",
+      "age": {
+        "years": 54
+      }
+    },
+    "diagnoses": [
+      {
+        "name": "Malaria",
+        "count": 11
+      }
+    ],
+    "visitDate": "2014-08-12T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 12
+      },
+      {
+        "name": "Rash",
+        "count": 13
+      }
+    ],
+    "medicalFacility": {
+      "name": "Thayer Clinic",
+      "location": {
+        "district": "Thayer",
+        "county": "Thayer"
+      }
+    },
+    "patient": {
+      "sex": "male",
+      "age": {
+        "years": 8
+      }
+    },
+    "diagnoses": [
+      {
+        "name": "Ear Infection",
+        "count": 14
+      }
+    ],
+    "visitDate": "2014-05-03T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 15
+      }
+    ],
+    "medicalFacility": {
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
+    },
+    "patient": {
+      "sex": "male",
+      "age": {
+        "years": 1
+      }
+    },
+    "diagnoses": null,
+    "visitDate": "2014-03-17T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 16
+      },
+      {
+        "name": "Rash",
+        "count": 17
+      }
+    ],
+    "medicalFacility": {
+      "name": "Merrick Clinic",
+      "location": {
+        "district": "Merrick",
+        "county": "Merrick"
+      }
+    },
+    "patient": {
+      "sex": "female",
+      "age": {
+        "years": 0
+      }
+    },
+    "diagnoses": [
+      {
+        "name": "Malaria",
+        "count": 18
+      }
+    ],
+    "visitDate": "2014-03-16T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 19
+      }
+    ],
+    "medicalFacility": {
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
+    },
+    "patient": {
+      "sex": "male",
+      "age": {
+        "years": 17
+      }
+    },
+    "diagnoses": null,
+    "visitDate": "2014-03-16T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 10
+      }
+    ],
+    "medicalFacility": {
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
+    },
+    "patient": {
+      "sex": "female",
+      "age": {
+        "years": 0
+      }
+    },
+    "diagnoses": null,
+    "visitDate": "2014-03-15T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 11
+      }
+    ],
+    "medicalFacility": {
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
+    },
+    "patient": {
+      "sex": "female",
+      "age": {
+        "years": 7
+      }
+    },
+    "diagnoses": null,
+    "visitDate": "2014-03-15T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 12
+      }
+    ],
+    "medicalFacility": {
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
+    },
+    "patient": {
+      "sex": "female",
+      "age": {
+        "years": 3
+      }
+    },
+    "diagnoses": null,
+    "visitDate": "2014-03-15T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 13
+      }
+    ],
+    "medicalFacility": {
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
+    },
+    "patient": {
+      "sex": null,
+      "age": {
+        "years": 1
+      }
+    },
+    "diagnoses": null,
+    "visitDate": "2014-03-14T00:00:00.000Z"
+  },
+  {
+    "symptoms": [
+      {
+        "name": "Fever",
+        "count": 14
+      }
+    ],
+    "medicalFacility": {
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
+    },
+    "patient": {
+      "sex": "male",
+      "age": {
+        "years": 2
+      }
+    },
+    "diagnoses": [
+      {
+        "name": "Ear Infection",
+        "count": 15
+      }
+    ],
+    "visitDate": "2014-03-14T00:00:00.000Z"
+  }
+]

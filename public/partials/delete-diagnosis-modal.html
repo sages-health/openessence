@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Are you sure you want to delete this diagnosis?</h4>
+</div>
+<div class="modal-body">
+  <h3 class="text-center" ng-bind="diagnosis"></h3>
+
+  <br>
+  <p translate>
+    Most of the time, you should disable a diagnosis instead of deleting it, in case you want to collect it
+    at some later time.
+  </p>
+  <p>
+    <strong translate>
+      Only delete this diagnosis if you're sure you will never collect it, for example, because it
+      was added in error.
+    </strong>
+  </p>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-danger" ng-click="delete()">
+    <span class="icon-trash"></span>
+    <span translate>Delete</span>
+  </button>
+</div>

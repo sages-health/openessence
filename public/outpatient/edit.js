@@ -7,13 +7,15 @@ var services = require('../scripts/modules').services;
 /**
  * Wraps an outpatientForm in a modal window.
  */
-angular.module(services.name).factory('outpatientEditModal', function ($modal) {
+angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ function ($modal) {
   return {
-    open: function (options) {
-      options = angular.extend({
+    open: function (scope, modalOptions) { // TODO fix all usages of this
+      modalOptions = angular.extend({
         template: require('./modal-edit.html'),
-        controller: ['$scope', '$modalInstance', 'record', function ($scope, $modalInstance, record) {
-          $scope.record = record;
+        controller: /*@ngInject*/ function ($scope, $modalInstance) {
+          angular.extend($scope, {
+            page: 1
+          }, scope);
 
           // the save button on the modal
           $scope.save = function () {
@@ -30,36 +32,40 @@ angular.module(services.name).factory('outpatientEditModal', function ($modal) {
           $scope.onSubmit = function () {
             $modalInstance.close();
           };
-        }],
-        resolve: {
-          record: function () {
-            return options.record;
-          }
-        }
-      }, options);
 
-      return $modal.open(options);
+          $scope.next = function () {
+            $scope.$broadcast('next-page');
+          };
+
+          $scope.previous = function () {
+            $scope.$broadcast('previous-page');
+          };
+
+        }
+      }, modalOptions);
+
+      return $modal.open(modalOptions);
     }
   };
 });
 
-angular.module(services.name).factory('outpatientDeleteModal', function ($modal, OutpatientVisit) {
+angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ function ($modal, OutpatientVisitResource) {
   return {
     open: function (options) {
       options = angular.extend({
         template: require('../partials/delete-record.html'),
-        controller: ['$scope', '$modalInstance', 'record', function ($scope, $modalInstance, record) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, record) {
           $scope.record = record;
 
           $scope.delete = function () {
-            OutpatientVisit.remove({_id: record._id}, function () {
+            OutpatientVisitResource.remove({id: record._id}, function () {
               $modalInstance.close(record);
             });
           };
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }],
+        },
         resolve: {
           record: function () {
             return options.record;
@@ -72,101 +78,18 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
   };
 });
 
-angular.module(controllers.name).controller('OutpatientEditCtrl', function ($scope, $modal, outpatientEditModal, //
+angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ function ($scope, $modal, outpatientEditModal,
                                                                             gettextCatalog, outpatientDeleteModal,
-                                                                            Diagnosis, District, Symptom) {
-  $scope.filters = [
-    {
-      filterId: 'date'
-    }
+                                                                            possibleFilters, FormResource) {
+  $scope.activeFilters = [
+    angular.extend({
+      filterID: 'visitDate'
+      // no to/from window, we page the results anyway
+    }, possibleFilters.visitDate)
   ];
-  $scope.filterTypes = [
-    {
-      filterId: 'age',
-      type: 'numeric-range',
-      field: 'patient.age',
-      name: gettextCatalog.getString('Age')
-    },
-    {
-      filterId: 'date',
-      type: 'date-range',
-      field: 'reportDate',
-      name: gettextCatalog.getString('Date')
-    },
-    {
-      filterId: 'diagnoses',
-      type: 'multi-select',
-      field: 'diagnoses',
-      store: {
-        resource: Diagnosis,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('Diagnoses')
-    },
-    {
-      filterId: 'districts',
-      type: 'multi-select',
-      field: 'medicalFacility.district',
-      store: {
-        resource: District,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('District')
-    },
-    {
-      filterId: 'pulse',
-      type: 'numeric-range',
-      field: 'patient.pulse',
-      name: gettextCatalog.getString('Pulse')
-    },
-    {
-      filterId: 'sex',
-      type: 'sex',
-      field: 'patient.sex',
-      name: gettextCatalog.getString('Sex')
-    },
-    {
-      filterId: 'symptoms',
-      type: 'multi-select',
-      field: 'symptoms',
-      store: {
-        resource: Symptom,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('Symptom')
-    },
-    {
-      filterId: 'temperature',
-      type: 'numeric-range',
-      field: 'patient.temperature',
-      name: gettextCatalog.getString('Temperature')
-    },
-    {
-      filterId: 'weight',
-      type: 'numeric-range',
-      field: 'patient.weight',
-      name: gettextCatalog.getString('Weight')
-    }
-  ];
-
-  $scope.createVisit = function () {
-    outpatientEditModal.open().result
-      .then(function () {
-        reload();
-        // TODO highlight record that was created
-      });
-  };
 
   var reload = function () {
     $scope.$broadcast('outpatientReload');
-  };
-
-  $scope.editVisit = function (visit) {
-    outpatientEditModal.open({record: visit}).result
-      .then(function () {
-        reload();
-        // TODO highlight record that was modified
-      });
   };
 
   $scope.deleteVisit = function (visit) {
@@ -182,5 +105,48 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', function ($sco
 
   $scope.$on('outpatientDelete', function (event, visit) {
     $scope.deleteVisit(visit);
+  });
+
+  // TODO form can be quite large (>20KB for demo) since it includes every possible value for dropdowns
+  // that's probably not an issue for most sites collecting a handful of diagnoses at a few sites,
+  // but could be an issue for sites collecting a lot of symptoms, diagnoses, etc.
+  // "Correct" solution would involve linking to other resources and then fetching them on demand, e.g.
+  // returning JSON HAL and then querying for dropdown values as needed. In the meantime, at least it's cached.
+  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+    if (response.results.length === 0) {
+      throw new Error('No configured forms');
+    }
+
+    var form = response.results[0]._source;
+    $scope.form = form; // need to pass to visualizations
+
+    $scope.possibleFilters = form.fields.reduce(function (filters, field) {
+      if (!field.enabled) {
+        return filters;
+      }
+
+      var possibleFilter = possibleFilters[field.name];
+      if (possibleFilter) {
+        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
+      }
+
+      return filters;
+    }, {});
+
+    $scope.editVisit = function (visit) {
+      outpatientEditModal.open({record: visit, form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was modified
+        });
+    };
+
+    $scope.createVisit = function () {
+      outpatientEditModal.open({form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was created
+        });
+    };
   });
 });

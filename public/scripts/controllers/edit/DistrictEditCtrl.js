@@ -1,21 +1,19 @@
 'use strict';
 
-var angular = require('angular');
-var controllers = require('../../modules').controllers;
-
-angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, District) {
+// @ngInject
+module.exports = function ($scope, crud, tableUtil, gettextCatalog, DistrictResource) {
   $scope.filters = [
-    {filterId: 'name'}
+    {filterID: 'name'}
   ];
   $scope.filterTypes = [
     {
-      filterId: 'name',
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'phoneId',
+      filterID: 'phoneId',
       type: 'text',
       field: 'phoneId',
       name: gettextCatalog.getString('Phone ID')
@@ -32,7 +30,7 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
   };
   $scope.editTemplate = require('../../../partials/edit/forms/district-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = District;
+  $scope.resource = DistrictResource;
   var options = {
     sorting: {'name.raw': 'asc'},
     queryString: $scope.queryString
@@ -56,4 +54,4 @@ angular.module(controllers.name).controller('DistrictEditCtrl', function ($scope
     crud.delete(record, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
   // ---------------- End: Common functions
-});
+};

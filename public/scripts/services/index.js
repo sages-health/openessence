@@ -1,18 +1,26 @@
 'use strict';
 
-module.exports = {
-  crud: require('./crud'),
-  csrfToken: require('./csrfToken'),
-  Dashboard: require('./Dashboard'),
-  errorInterceptor: require('./errorInterceptor'),
-  FracasGrid: require('./FracasGrid'),
-  notification: require('./notification'),
-  persona: require('./persona'),
-  Report: require('./Report'),
-  sortString: require('./sortString'),
-  tableUtil: require('./tableUtil'),
-  user: require('./user'),
-  version: require('./version'),
-  visitsReportModal: require('./reports/visitsReportModal'),
-  visualization: require('./visualization')
-};
+var services = require('../modules').services;
+
+services.factory('aggregateReportModal', require('./reports/aggregateReportModal'))
+  .factory('visitsReportModal', require('./reports/visitsReportModal'))
+  .factory('crud', require('./crud'))
+  .factory('Dashboard', require('./Dashboard'))
+  .factory('errorInterceptor', require('./errorInterceptor'))
+  .factory('notification', require('./notification'))
+  .factory('Report', require('./Report'))
+  .factory('scopeToJson', require('./scopeToJson'))
+  .factory('sortString', require('./sortString'))
+  .factory('tableUtil', require('./tableUtil'))
+  .factory('user', require('./user'))
+  .factory('version', require('./version'))
+  .factory('visualization', require('./visualization'))
+  .factory('Workbench', require('./Workbench'));
+
+// maybe one day we'll need to require() constants, but not today
+require('./constants');
+
+var resources = require('./resources');
+Object.keys(resources).forEach(function (resourceName) {
+  services.factory(resourceName + 'Resource', resources[resourceName]);
+});

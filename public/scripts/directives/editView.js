@@ -1,24 +1,16 @@
 'use strict';
 
-var angular = require('angular');
-var directives = require('../modules').directives;
-
-angular.module(directives.name).directive('editView', function () {
+// @ngInject
+module.exports = function () {
   return {
     restrict: 'E',
     template: require('../../partials/edit.html'),
     transclude: true,
     scope: {
       title: '=',
+      hideButton: '=',
       buttonText: '=',
       createRecord: '&onCreate'
     }
-//    compile: function () {
-//      return {
-//        pre: function (scope) {
-//
-//        }
-//      };
-//    }
   };
-});
+};

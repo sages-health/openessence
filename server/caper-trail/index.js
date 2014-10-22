@@ -28,6 +28,8 @@ function makePaperTrail (model, req, callback) {
         return callback(err);
       }
 
+      instance = instance || {doc: {}};
+
       var trail = instance.doc.paperTrail || [];
       trail.push(createEntry());
 
@@ -62,30 +64,59 @@ function caperTrailModel (Model) {
 }
 
 function caperTrailController (controller) {
-  if (!controller.preInsert) {
-    logger.warn('Cannot use CaperTrail on a controller that doesn\'t support insert');
-    return;
-  }
-
-  controller.preInsert.push(function paperTrail (req, esRequest, callback) {
-    if (esRequest.body.paperTrail) {
-      logger.warn({req: req}, 'Client tried to overwrite paper trail. Don\'t worry, we got \'em');
-    }
-
-    makePaperTrail(new controller.Model(esRequest.body, esRequest), req, function (err, trail) {
-      if (err) {
-        return callback(err);
+  // Don't send paperTrail down to client. It has potentially sensitive information (usernames, access times)
+  // that the client doesn't really need. The paper trail is more useful for forensics with access to elasticsearch
+  // anyway.
+  if (controller.postSearch) {
+    controller.postSearch.push(function (req, esResponse, response, callback) {
+      if (!response || !response.results) {
+        return callback(null, response);
       }
 
-      // this is why it's important not to keep around extra properties (like passwords) on req.user
-      trail[trail.length - 1].user = req.user.doc;
-      // TODO don't send users down to client, the utility is limited but the security implications are real
+      response.results = response.results.map(function (result) {
+        if (result._source) {
+          delete result._source.paperTrail;
+        }
 
-      // the order of these assigns is crucial - this way we overwrite any paperTrails the client tried to send
-      var body = _.assign({}, esRequest.body, {paperTrail: trail});
-      callback(null, _.assign({}, esRequest, {body: body}));
+        return result;
+      });
+
+      callback(null, response);
     });
-  });
+  }
+
+  if (controller.postGet) {
+    controller.postGet.push(function (req, esResponse, response, callback) {
+      if (response && response._source) {
+        delete response._source.paperTrail;
+      }
+
+      callback(null, response);
+    });
+  }
+
+  if (controller.preInsert) {
+    controller.preInsert.push(function paperTrail (req, esRequest, callback) {
+      /*jshint quotmark:false */
+      if (esRequest.body.paperTrail) {
+        logger.warn({req: req}, "Client tried to overwrite paper trail. Don't worry, we got 'em");
+      }
+
+      makePaperTrail(new controller.Model(esRequest.body, esRequest), req, function (err, trail) {
+        if (err) {
+          return callback(err);
+        }
+
+        // this is why it's important not to keep around extra properties (like passwords) on req.user
+        trail[trail.length - 1].user = req.user.doc;
+        // TODO don't send users down to client, the utility is limited but the security implications are real
+
+        // the order of these assigns is crucial - this way we overwrite any paperTrails the client tried to send
+        var body = _.assign({}, esRequest.body, {paperTrail: trail});
+        callback(null, _.assign({}, esRequest, {body: body}));
+      });
+    });
+  }
 }
 
 function caperTrailMapping (mapping) {

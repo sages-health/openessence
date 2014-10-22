@@ -11,20 +11,25 @@
   </div>
 </div>
 
-<br>
-
-<div class="row" ng-repeat="r in filterGrid.rows">
-  <div class="col-xs-3 filter-panel" ng-repeat="filter in r track by filter.id" ng-switch="filter.plus">
-    <div class="btn-group" ng-switch-when="true">
+<!-- filter panels -->
+<div class="row">
+  <div class="col-xs-3 filter-panel" ng-repeat="filter in activeFilters">
+    <div class="fracas-filter" outpatient-filter="filter" on-close="removeFilter($index)"></div>
+  </div>
+  <div class="col-md-1">
+    <div class="btn-group">
       <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
         <span class="icon-plus"></span>
       </button>
       <ul class="dropdown-menu" role="menu" aria-labelledby="add-filter-btn">
-        <li ng-repeat="filter in filterTypes">
+        <!-- The filters should be in a consistent order, and alphabetical order is as good as any
+             (and easier to maintain) -->
+        <li ng-repeat="filter in possibleFilters | orderObjectBy:'name'">
           <a ng-click="addFilter(filter)">{{filter.name}}</a>
         </li>
       </ul>
     </div>
-    <div ng-switch-default outpatient-filter="filter" on-close="removeFilter(filter)"></div>
   </div>
+
+  <div ng-transclude></div>
 </div>

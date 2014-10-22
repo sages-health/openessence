@@ -1,0 +1,26 @@
+@-webkit-keyframes fade-out-down {
+  0% {
+    opacity: 1;
+    .transform(translateY(0));
+  }
+
+  100% {
+    opacity: 0;
+    .transform(translateY(20px));
+  }
+}
+@keyframes fade-out-down {
+  0% {
+    opacity: 1;
+    .transform(translateY(0));
+  }
+
+  100% {
+    opacity: 0;
+    .transform(translateY(20px));
+  }
+}
+
+.fade-out-down() {
+  .animation(fade-out-down 0.5s);
+}

@@ -1,42 +1,46 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 
-var pluckName = function (r) {
-  return r._source.name;
-};
-
-angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $modal, tableUtil, crud, gettextCatalog, User, District) {
-  $scope.filters = [
-    {filterId: 'username'}
-  ];
-  $scope.filterTypes = [
+// @ngInject
+module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, DistrictResource) {
+  $scope.activeFilters = [
     {
-      filterId: 'username',
+      filterID: 'username',
+      type: 'text',
+      field: 'username',
+      name: gettextCatalog.getString('User Name')
+    }
+  ];
+  $scope.possibleFilters = [
+    {
+      filterID: 'username',
       type: 'text',
       field: 'username',
       name: gettextCatalog.getString('User Name')
     },
     {
-      filterId: 'name',
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'email',
+      filterID: 'email',
       type: 'text',
       field: 'email',
       name: gettextCatalog.getString('Email')
     },
     {
-      filterId: 'disabled',
+      filterID: 'disabled',
       type: 'check-box',
       field: 'disabled',
       name: gettextCatalog.getString('Disabled')
     }
-  ];
+  ].reduce(function (filters, filter) {
+      filters[filter.filterID] = filter;
+      return filters;
+    }, {});
 
   // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {
@@ -57,13 +61,13 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
   $scope.changePasswordTemplate = require('../../../partials/edit/forms/change-password-form.html');
   $scope.editTemplate = require('../../../partials/edit/forms/user-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = User;
+  $scope.resource = UserResource;
   var options = {
     sorting: {'username.raw': 'asc'},
     queryString: $scope.queryString
   };
   $scope.tableFilter = tableUtil.addFilter;
-  $scope.tableParams = tableUtil.tableParams(options, User);
+  $scope.tableParams = tableUtil.tableParams(options, UserResource);
 
   var reload = function () {
     options.queryString = $scope.queryString;
@@ -90,8 +94,10 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
     size: 100, // TODO search on demand if response indicates there are more records
     sort: 'name'
   };
-  District.get(searchParams, function (response) {
-    editOptions.districts = response.results.map(pluckName);
+  DistrictResource.get(searchParams, function (response) {
+    editOptions.districts = response.results.map(function (r) {
+      return r._source.name;
+    });
   });
 
   $scope.$watchCollection('queryString', reload);
@@ -111,4 +117,4 @@ angular.module(controllers.name).controller('UserEditCtrl', function ($scope, $m
   $scope.deleteRecord = function (record) {
     crud.delete(record, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
-});
+};

@@ -245,6 +245,98 @@ describe('caper trail', function () {
         });
     });
 
+    it('should not send paper trail down to client on search requests', function (done) {
+      nock(conf.elasticsearch.host)
+        .post('/foo/bar/_search?version=true', {
+          query: {'match_all': {}}
+        })
+        .reply(200, {
+          hits: {
+            total: 1,
+            hits: [
+              {
+                _index: 'foo',
+                _type: 'bar',
+                _version: 1,
+                _id: '1',
+                _source: {
+                  a: 'b',
+                  paperTrail: [{}]
+                }
+              }
+            ]
+          }
+        });
+
+      var Bar = codex.model({
+        index: 'foo',
+        type: 'bar'
+      });
+      var controller = codex.controller(Bar, {search: true}).with(caperTrail.controller);
+      var app = express();
+      app.use(function (req, res, next) {
+        req.user = new User({username: 'admin'});
+        next();
+      });
+      app.use(codex.middleware(controller));
+
+      request(app)
+        .get('/')
+        .expect(200)
+        .end(function (err, resp) {
+          if (err) {
+            return done(err);
+          }
+
+          expect(resp.body).to.include.keys('results');
+          expect(resp.body.results[0]._source).to.deep.equal({a: 'b'});
+          expect(resp.body.results[0]._source).to.not.include.keys('paperTrail'); // just so we're clear
+
+          done();
+        });
+    });
+
+    it('should not send paper trail down to client on get requests', function (done) {
+      nock(conf.elasticsearch.host)
+        .get('/foo/bar/1')
+        .reply(200, {
+          _index: 'foo',
+          _type: 'bar',
+          _version: 1,
+          _id: '1',
+          _source: {
+            a: 'b',
+            paperTrail: [{}]
+          }
+        });
+
+      var Bar = codex.model({
+        index: 'foo',
+        type: 'bar'
+      });
+      var controller = codex.controller(Bar, {'get': true}).with(caperTrail.controller);
+      var app = express();
+      app.use(function (req, res, next) {
+        req.user = new User({username: 'admin'});
+        next();
+      });
+      app.use(codex.middleware(controller));
+
+      request(app)
+        .get('/1')
+        .expect(200)
+        .end(function (err, resp) {
+          if (err) {
+            return done(err);
+          }
+
+          expect(resp.body).to.include.keys('_source');
+          expect(resp.body._source).to.deep.equal({a: 'b'});
+
+          done();
+        });
+    });
+
     it('should preserve existing paper trail', function (done) {
       // TODO
       done();

@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" ui-sref="home.content">Fracas</a>
+      <a class="navbar-brand" ui-sref="home.content" ng-bind="appName"></a>
     </div>
 
     <div class="collapse navbar-collapse" id="fracas-navbar-collapse-1">
@@ -16,7 +16,12 @@
 
         <!-- Dashboard -->
         <li class="dropdown"> <!-- TODO active -->
-          <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-gauge"></span></a>
+          <!-- Delay loading items until we need them. This prevents Ajax spam every time you load the page, and means
+               that the list of items will always be up to date. This should really fire on mousenter so that the query
+               runs even earlier, but that doesn't work on mobile. -->
+          <a class="dropdown-toggle" data-toggle="dropdown" ng-click="loadDashboards()">
+            <span class="icon-gauge"></span>
+          </a>
           <ul class="dropdown-menu">
             <li><a ui-sref="dashboard({dashboardId: ''})" translate>New dashboard</a></li>
             <li><a ng-click="openDashboard()" translate>Open dashboard</a></li>
@@ -24,27 +29,42 @@
             <!-- TODO get rid of this and fold functionality into dashboard view  -->
             <li><a ui-sref="edit.dashboard" translate>Manage dashboards</a></li>
 
-            <li role="presentation" class="divider" ng-show="user.isAdmin() && dashboards.length > 0"></li>
+            <li role="presentation" class="divider" ng-show="dashboards.length > 0"></li>
             <!-- We don't actually show the most recent dashboards, but oh well -->
             <li role="presentation" class="dropdown-header" translate>Recent dashboards</li>
-            <li data-ng-repeat="dashboard in dashboards">
+            <!-- TODO show spinner while we're loading the dashboards -->
+            <li ng-repeat="dashboard in dashboards | limitTo:5">
               <a ui-sref="dashboard({dashboardId:'{{dashboard.id}}'})">{{dashboard.name}}</a>
             </li>
           </ul>
         </li>
 
         <!-- Workbench -->
-        <li ui-sref-active="active">
-          <a class="icon-chart-bar" ui-sref="workbench"></a>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" ng-click="loadWorkbenches()">
+            <span class="icon-chart-bar"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a ui-sref="workbench({workbenchId: ''})" translate>New workbench</a></li>
+            <li><a ng-click="openWorkbench()" translate>Open workbench</a></li>
+            <li><a ui-sref="edit.workbench" translate>Manage workbenches</a></li>
+
+            <li role="presentation" class="divider" ng-show="workbenches.length > 0"></li>
+            <!-- We don't actually show the most recent workbenches, but oh well -->
+            <li role="presentation" class="dropdown-header" translate>Recent workbenches</li>
+            <li ng-repeat="workbench in workbenches | limitTo:5">
+              <a ui-sref="workbench({workbenchId:'{{workbench._id}}'})">{{workbench._source.name}}</a>
+            </li>
+          </ul>
         </li>
 
-        <!-- Open -->
+        <!-- Open TODO make this reports -->
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-folder-open"></span></a>
           <ul class="dropdown-menu">
             <li><a ng-click="visitsReport()" translate>Outpatient Visits Report</a></li>
-            <li><a translate>Saved query</a></li>
-            <li><a translate>Something else</a></li>
+            <li><a ng-click="weeklyReport()" translate>Reported Cases by Country - Table</a></li>
+            <li><a ng-click="timeseriesReport()" translate>Reported Cases by Country - Time Series</a></li>
           </ul>
         </li>
 
@@ -52,22 +72,22 @@
         <li class="dropdown" ng-show="user.isDataEnterer() || user.isAdmin()">
           <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-pencil"></span></a>
           <ul class="dropdown-menu">
+            <li role="presentation" class="dropdown-header" translate>Edit</li>
             <!-- TODO define this in outpatient module -->
             <li><a ui-sref="edit.visit" translate>Outpatient visits</a></li>
+            <li><a ui-sref="edit.aggregate" translate>Aggregate Data</a></li>
             <li role="presentation" class="divider" ng-show="user.isAdmin()"></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.district" translate>Districts</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.diagnosis" translate>Diagnoses</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.symptom" translate>Symptoms</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.syndrome" translate>Syndromes</a></li>
-            <li><a ng-show="user.isAdmin()" ui-sref="edit.discharge" translate>Discharges</a></li>
+            <li><a ng-show="user.isAdmin()" ui-sref="edit.disposition" translate>Dispositions</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.visitType" translate>Visit Types</a></li>
             <li role="presentation" class="divider" ng-show="user.isAdmin()"></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.user" translate>Users</a></li>
+            <li><a ng-show="user.isAdmin()" ui-sref="edit.visualization" translate>Visualizations</a></li>
           </ul>
         </li>
-
-        <!-- Export report -->
-        <li><a class="icon-export" ui-sref="report.save({url: currentPath})"></a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">

@@ -1,14 +1,14 @@
 'use strict';
 
 var angular = require('angular');
-var services = require('../../modules').services;
 
-angular.module(services.name).factory('visitsReportModal', function ($modal) {
+// @ngInject
+module.exports = function ($modal) {
   return {
     open: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-visits-report-dialog.html'),
-        controller: ['$scope', '$modalInstance', '$window', '$location', function ($scope, $modalInstance, $window, $location) {
+        controller: /*ngInject*/ function ($scope, $modalInstance, $window, $location) {
           $scope.report = {};
 
           $scope.isInvalid = function (field) {
@@ -49,10 +49,10 @@ angular.module(services.name).factory('visitsReportModal', function ($modal) {
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }]
+        }
       }, options);
 
       return $modal.open(options);
     }
   };
-});
+};

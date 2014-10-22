@@ -39,7 +39,7 @@ describe('OutpatientVisitController', function () {
 
     it('should return no results if user does not belong to proper district', function (done) {
       nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -75,7 +75,7 @@ describe('OutpatientVisitController', function () {
 
     it('should return no results if user belongs to no districts', function (done) {
       nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -112,7 +112,7 @@ describe('OutpatientVisitController', function () {
 
     it('should return full results if user has rights to district', function (done) {
       nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -152,7 +152,7 @@ describe('OutpatientVisitController', function () {
 
     it('should return full results if user has district_all role', function (done) {
       nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -191,7 +191,7 @@ describe('OutpatientVisitController', function () {
 
     it('should return full results if user has undefined districts', function (done) {
       nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -231,7 +231,7 @@ describe('OutpatientVisitController', function () {
   describe('GET /', function () {
     it('should filter results by user\'s district', function (done) {
       nock(conf.elasticsearch.host)
-        .post('/outpatient/visit/_search?version=true', {
+        .post('/outpatient_visit/outpatient_visit/_search?version=true', {
           query: {
             filtered: {
               filter: {
@@ -290,8 +290,7 @@ describe('OutpatientVisitController', function () {
         .expect(200)
         .end(function (err, res) {
           if (err) {
-            done(err);
-            return;
+            return done(err);
           }
 
           expect(res.body.results.length).to.equal(1);
@@ -347,7 +346,7 @@ describe('OutpatientVisitController', function () {
 
           return 'body';
         })
-        .post('/outpatient/visit?refresh=true', 'body')
+        .post('/outpatient_visit/outpatient_visit?refresh=true', 'body')
         .reply(201, {
           _index: 'outpatient',
           _type: 'visit',
@@ -379,7 +378,7 @@ describe('OutpatientVisitController', function () {
     /*jshint quotmark:false */
     it("should return 403 if user doesn't have rights to district", function (done) {
       nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -412,7 +411,7 @@ describe('OutpatientVisitController', function () {
 
     it('should return 200 if user does have rights to district', function (done) {
       nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -425,7 +424,7 @@ describe('OutpatientVisitController', function () {
             }
           }
         })
-        .delete('/outpatient/visit/1?refresh=true')
+        .delete('/outpatient_visit/outpatient_visit/1?refresh=true')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -462,7 +461,7 @@ describe('OutpatientVisitController', function () {
       };
 
       var es = nock(conf.elasticsearch.host)
-        .get('/outpatient/visit/1')
+        .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
           _index: 'outpatient',
           _type: 'visit',
@@ -483,7 +482,7 @@ describe('OutpatientVisitController', function () {
 
           return 'body';
         })
-        .post('/outpatient/visit/1?refresh=true', 'body')
+        .post('/outpatient_visit/outpatient_visit/1?refresh=true', 'body')
         .reply(201, {
           _index: 'outpatient',
           _type: 'visit',
@@ -502,8 +501,55 @@ describe('OutpatientVisitController', function () {
         .expect(201)
         .end(function (err) {
           if (err) {
-            done(err);
-            return;
+            return done(err);
+          }
+
+          expect(es.isDone()).to.be.true;
+
+          done();
+        });
+    });
+
+    it('should add submissionDate when creating new document', function (done) {
+      var es = nock(conf.elasticsearch.host)
+        .get('/outpatient_visit/outpatient_visit/1')
+        .reply(404, {
+          _index: 'outpatient',
+          _type: 'visit',
+          _id: '1',
+          found: false
+        })
+        .filteringRequestBody(function (body) {
+          if (!body) {
+            return false;
+          }
+
+          body = JSON.parse(body);
+          expect(body.submissionDate).to.be.ok;
+
+          return 'body';
+        })
+        .post('/outpatient_visit/outpatient_visit/1?refresh=true', 'body')
+        .reply(201, {
+          _index: 'outpatient',
+          _type: 'visit',
+          _id: '1',
+          _version: 1,
+          created: true
+        });
+
+      var app = express();
+      app.use(addUser(new User({roles: ['admin']})));
+      app.use(codex.middleware(OutpatientVisitController))
+        .use(errorMiddleware);
+
+      request(app)
+        .put('/1')
+        .send({foo: 'bar'})
+        .expect(201)
+        .end(function (err) {
+          if (err) {
+            return done(err);
           }
 
           expect(es.isDone()).to.be.true;

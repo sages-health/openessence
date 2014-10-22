@@ -4,7 +4,7 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientPieChart', function ($rootScope) {
+angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope) {
   return {
     restrict: 'E',
     template: require('./pie-chart.html'),
@@ -40,11 +40,8 @@ angular.module(directives.name).directive('outpatientPieChart', function ($rootS
 
           /**
            * Return a 'g' element in the SVG for drawing the Pie
-           * @param svgWidth
-           * @param svgHeight
-           * @returns g
            */
-          var getSVG = function (svgWidth, svgHeight, radius) {
+          var getSVG = function (svgWidth, svgHeight) {
             var svg = d3.select(element[0])
               .select('svg.pie-chart');
 
@@ -52,13 +49,13 @@ angular.module(directives.name).directive('outpatientPieChart', function ($rootS
               return svg.attr('width', svgWidth)
                 .attr('height', svgHeight)
                 .style({
-                  'width': svgWidth,
-                  'height': svgHeight
+                  width: svgWidth,
+                  height: svgHeight
                 })
                 .append('g')
                 .attr('class', 'pie')
                 .attr('transform', function () {
-                  var x = (svgWidth / 2) - (radius / 2);
+                  var x = svgWidth / 2;
                   var y = svgHeight / 2;
                   return 'translate(' + x + ',' + y + ')';
                 });
@@ -71,7 +68,7 @@ angular.module(directives.name).directive('outpatientPieChart', function ($rootS
                 });
               return svg.select('g.pie')
                 .attr('transform', function () {
-                  var x = (svgWidth / 2) - (radius / 2);
+                  var x = svgWidth / 2;
                   var y = svgHeight / 2;
                   return 'translate(' + x + ',' + y + ')';
                 });
@@ -133,14 +130,14 @@ angular.module(directives.name).directive('outpatientPieChart', function ($rootS
             var filter;
             if (data.col) {
               filter = {
-                filterId: data.col,
+                filterID: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                filterId: data.row,
+                filterID: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);
@@ -341,7 +338,7 @@ angular.module(directives.name).directive('outpatientPieChart', function ($rootS
               .sort(null)
               .value(function (d) { return d.value; });
 
-            var svg = getSVG(svgWidth, svgHeight, radius);
+            var svg = getSVG(svgWidth, svgHeight);
 
             // TODO: Remove this remove statement and debug transitions
             // It wipes the slate clean to prevent bugs with transitions that I haven't

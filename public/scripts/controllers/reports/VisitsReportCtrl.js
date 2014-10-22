@@ -1,9 +1,7 @@
 'use strict';
 
-var angular = require('angular');
-var controllers = require('../../modules').controllers;
-
-angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope, gettextCatalog, FracasGrid, $window, visualization, user, dateFilter) {
+// @ngInject
+module.exports = function ($scope, $window, visualization, user, dateFilter) {
   $scope.someText = '';
   $scope.user = user.getUser();
   $scope.today = (new Date()).toString();
@@ -11,16 +9,16 @@ angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope
   var dateFormat = 'yyyy-MM-dd';
   var startDate = dateFilter($scope.report.startDate, dateFormat);
   var endDate = dateFilter($scope.report.endDate, dateFormat);
-  $scope.report.dateString = 'reportDate: [' + startDate + ' TO ' + endDate + ']';
+  $scope.report.dateString = 'visitDate: [' + startDate + ' TO ' + endDate + ']';
 
-  var fixReportDate = function (query) {
+  var fixVisitDate = function (query) {
     var result = query;
     var startPosition = 0;
     var i = -1;
 
     // Search the string and counts the number of e's
     while (startPosition !== -1) {
-      startPosition = result.indexOf('reportDate:', i + 1);
+      startPosition = result.indexOf('visitDate:', i + 1);
       if (startPosition === -1) {
         break;
       }
@@ -34,7 +32,7 @@ angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope
   var fixVisualization = function (viz) {
 
     // fix queryString
-    viz.queryString = fixReportDate(viz.queryString);
+    viz.queryString = fixVisitDate(viz.queryString);
 
     // fix date filters
     for (var ix = 0; ix < viz.filters.length; ix++) {
@@ -49,14 +47,14 @@ angular.module(controllers.name).controller('VisitsReportCtrl', function ($scope
 
   //TODO: hardcoded saved query names: weeklyseries, sexbarchart, and symptomspie
   visualization.resource.get({q: 'name:"weeklyseries"'}, function (data) {
-    $scope.viz = fixVisualization(data.results[0]._source);
+    $scope.viz = fixVisualization(data.results[0]._source.state);
   });
 
   visualization.resource.get({q: 'name:"sexbarchart"'}, function (data) {
-    $scope.viz1 = fixVisualization(data.results[0]._source);
+    $scope.viz1 = fixVisualization(data.results[0]._source.state);
   });
 
   visualization.resource.get({q: 'name:"symptomspie"'}, function (data) {
-    $scope.viz2 = fixVisualization(data.results[0]._source);
+    $scope.viz2 = fixVisualization(data.results[0]._source.state);
   });
-});
+};

@@ -1,0 +1,24 @@
+<!-- Specimen collection date -->
+<div class="form-group" data-field="specimen.collectionDate" ng-show="fields['specimen.collectionDate'].enabled"
+     ng-class="{'has-error': isInvalid(visitForm.specimenCollectionDate)}">
+
+  <label for="entry-visit-specimen-collection" translate>Specimen collection</label>
+
+  <div class="input-group">
+    <input id="entry-visit-specimen-collection" name="specimenCollectionDate" type="text" class="form-control"
+           ng-model="visit.specimen.collectionDate" datepicker-popup show-weeks="false"
+           is-open="datePopupsOpen.specimenCollectionDate">
+
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="openDatePopup('specimenCollectionDate', $event)">
+          <span class="icon-calendar"></span>
+        </button>
+      </span>
+  </div>
+</div>
+
+<!-- Specimen ID -->
+<div class="form-group" data-field="specimen.id" ng-show="fields['specimen.id'].enabled">
+  <label for="entry-specimen-id" translate>Specimen ID</label>
+  <input type="text" id="entry-specimen-id" class="form-control" name="specimenID" ng-model="visit.specimen.id">
+</div>

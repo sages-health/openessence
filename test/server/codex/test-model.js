@@ -188,6 +188,24 @@ describe('model', function () {
       });
     });
 
+    it('should respect version', function (done) {
+      nock(conf.elasticsearch.host)
+        .post('/foo/bar?version=5', {})
+        .reply(200, {
+          _index: 'foo',
+          _type: 'bar',
+          _id: 'whatever',
+          _version: 6,
+          created: false
+        });
+      var Bar = codex.model({
+        index: 'foo',
+        type: 'bar'
+      });
+
+      new Bar({}, {version: 5}).insert(done);
+    });
+
     it('should allow passing refresh=true to model definition', function (done) {
       var a1 = {a: 1};
       var response = {
@@ -311,7 +329,7 @@ describe('model', function () {
       });
     });
 
-    it('should search respect `version: false`', function (done) {
+    it('should respect `version: false`', function (done) {
       var Bar = codex.model({
         index: 'foo',
         type: 'bar',
@@ -528,7 +546,7 @@ describe('model', function () {
       });
     });
 
-    it('should set _. properties', function (done) {
+    it('should set properties', function (done) {
       var response = {
         _index: 'foo',
         _type: 'bar',
@@ -551,6 +569,43 @@ describe('model', function () {
         expect(bar.version).to.equal(2);
 
         done();
+      });
+    });
+
+    it('should be insertable', function (done) {
+      nock(conf.elasticsearch.host)
+        .get('/foo/bar/1')
+        .reply(200, {
+          _index: 'foo',
+          _type: 'bar',
+          _id: '1',
+          _version: 1,
+          found: true,
+          _source: {a: 1}
+        })
+        .post('/foo/bar/1?version=1', {a: 1})
+        .reply(200, {
+          _index: 'foo',
+          _type: 'bar',
+          _id: '1',
+          _version: 2,
+          created: false
+        });
+
+      var Bar = codex.model({
+        index: 'foo',
+        type: 'bar'
+      });
+
+      Bar.get({id: 1}, function  (err, bar) {
+        if (err) {
+          return done(err);
+        }
+
+        expect(bar.version).to.equal(1);
+        expect(bar.insert).to.exist;
+
+        bar.insert(done);
       });
     });
   });

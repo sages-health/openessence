@@ -20,7 +20,7 @@
       <div gridster="gridsterOptions">
         <ul>
           <li class="dashboard-widget" gridster-item="widget" ng-repeat="widget in dashboard.widgets">
-            <div class="panel panel-default" ng-controller="WidgetCtrl">
+            <div class="panel panel-default dashboard-panel" ng-controller="WidgetCtrl">
               <div class="panel-heading clearfix">
                 <h4 class="panel-title pull-left">{{ widget.name }}</h4>
 
@@ -34,7 +34,7 @@
                 </div>
               </div>
 
-              <div class="panel-body">
+              <div class="panel-body" ng-click="clickthrough(widget)">
                 <dashboard-widget options="widget.content" size-x="widget.sizeX"
                                   size-y="widget.sizeY"></dashboard-widget>
               </div>

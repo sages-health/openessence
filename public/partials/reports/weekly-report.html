@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3>{{report.name}}</h3>
+
+      <div>Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}</div>
+    </div>
+
+    <div class="panel-body">
+      <table class="table table-striped table-hover table-condensed">
+        <thead>
+        <tr>
+          <th translate>Country / Area</th>
+          <th translate>Date of report</th>
+          <th translate>Number of <br>sites reporting</th>
+          <th translate>Acute Fever and Rash</th>
+          <th translate>Diarrhoea</th>
+          <th translate>Influenza-like Illness</th>
+          <th translate>Prolonged Fever</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="rec in $data">
+          <td>{{rec._source.medicalFacility.district}}</td>
+          <td>{{rec._source.visitDate | date}}</td>
+          <td>{{rec._source.medicalFacility.sites.reporting}}</td>
+          <td>{{getSymptomCount(rec._source.symptoms, 'Acute Fever and Rash')}}</td>
+          <td>{{getSymptomCount(rec._source.symptoms, 'Diarrhoea')}}</td>
+          <td>{{getSymptomCount(rec._source.symptoms, 'Influenza-like Illness')}}</td>
+          <td>{{getSymptomCount(rec._source.symptoms, 'Prolonged Fever')}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel-footer">
+      <div class="clearfix">
+        <div class="pull-left">{{userString}}</div>
+        <div class="pull-right">{{todayString}}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,19 +1,27 @@
 'use strict';
 
-module.exports = {
-  login: require('./LoginCtrl'),
-  main: require('./MainCtrl'),
-  notFound: require('./NotFoundCtrl'),
-  relogin: require('./ReloginCtrl'),
-  report: require('./ReportCtrl'),
-  reportVisitsWindow: require('./reports/VisitsReportCtrl'),
-  workbench: require('./WorkbenchCtrl'),
-  dashboardEdit: require('./edit/DashboardEditCtrl'),
-  districtEdit: require('./edit/DistrictEditCtrl') ,
-  symptomEdit: require('./edit/SymptomEditCtrl')  ,
-  diagnosisEdit: require('./edit/DiagnosisEditCtrl'),
-  syndromeEdit: require('./edit/SyndromeEditCtrl'),
-  dischargeEdit: require('./edit/DischargeEditCtrl'),
-  visitTypeEdit: require('./edit/VisitTypeEditCtrl'),
-  userEdit: require('./edit/UserEditCtrl')
-};
+require('../modules').controllers
+  // edit controllers
+  .controller('AggregateDataEditCtrl', require('./edit/AggregateDataEditCtrl'))
+  .controller('DashboardEditCtrl', require('./edit/DashboardEditCtrl'))
+  .controller('DispositionEditCtrl', require('./edit/DispositionEditCtrl'))
+  .controller('DistrictEditCtrl', require('./edit/DistrictEditCtrl'))
+  .controller('SymptomEditCtrl', require('./edit/SymptomEditCtrl'))
+  .controller('SyndromeEditCtrl', require('./edit/SyndromeEditCtrl'))
+  .controller('UserEditCtrl', require('./edit/UserEditCtrl'))
+  .controller('VisitTypeEditCtrl', require('./edit/VisitTypeEditCtrl'))
+  .controller('VisualizationEditCtrl', require('./edit/VisualizationEditCtrl'))
+  .controller('WorkbenchEditCtrl', require('./edit/WorkbenchEditCtrl'))
+
+  // report controllers
+  .controller('TimeseriesReportCtrl', require('./reports/TimeseriesReportCtrl'))
+  .controller('VisitsReportCtrl', require('./reports/VisitsReportCtrl'))
+  .controller('WeeklyReportCtrl', require('./reports/WeeklyReportCtrl'))
+
+  // everything else
+  .controller('LoginCtrl', require('./LoginCtrl'))
+  .controller('MainCtrl', require('./MainCtrl'))
+  .controller('NotFoundCtrl', require('./NotFoundCtrl'))
+  .controller('ReloginCtrl', require('./ReloginCtrl'))
+  .controller('ReportCtrl', require('./ReportCtrl'))
+  .controller('WorkbenchCtrl', require('./WorkbenchCtrl'));

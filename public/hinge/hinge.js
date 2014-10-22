@@ -8,7 +8,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 require('../select2');
 
-angular.module(directives.name).directive('hinge', function (gettextCatalog) {
+angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gettextCatalog) {
   return {
     restrict: 'E',
     transclude: true,
@@ -16,21 +16,21 @@ angular.module(directives.name).directive('hinge', function (gettextCatalog) {
     scope: {
       visualization: '=?', // what visualization we're working with
       pivot: '=?', // what rows/columns we're currently pivoting on
-      options: '=', // available options to pivot on
-      close: '&onClose'
+      close: '&onClose',
+      settings: '&onSettings',
+      pivotOptions: '=?'
     },
     link: {
       pre: function (scope) {
         scope.visualization = scope.visualization || {
           name: 'table'
         };
+        scope.pivotOptions = scope.pivotOptions || [];
 
-        scope.pivot = scope.options.pivot || {
+        scope.pivot = scope.pivot || {
           rows: [],
           cols: []
         };
-
-        scope.options = scope.options || [];
 
         // TODO think of visualization-independent name, e.g. 'Grouping', but better, or change placeholder depending
         // on the selected visualization
@@ -40,7 +40,7 @@ angular.module(directives.name).directive('hinge', function (gettextCatalog) {
         scope.select2Options = {
           sortable: true,
           'simple_tags': true,
-          data: scope.options.map(function (o) {
+          data: scope.pivotOptions.map(function (o) {
             return {
               id: o.value,
               text: o.label

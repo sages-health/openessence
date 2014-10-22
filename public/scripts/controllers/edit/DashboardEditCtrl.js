@@ -1,21 +1,26 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DashboardEditCtrl', function ($scope, $modal, tableUtil, crud, gettextCatalog, DashboardResource) {
-  $scope.filters = [
-    {filterId: 'name'}
-  ];
-  $scope.filterTypes = [
+// @ngInject
+module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, DashboardResource) {
+  $scope.activeFilters = [
     {
-      filterId: 'name',
+      filterID: 'name',
+      type: 'text',
+      field: 'name',
+      name: gettextCatalog.getString('Name')
+    }
+  ];
+  $scope.possibleFilters = [
+    {
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'description',
+      filterID: 'description',
       type: 'text',
       field: 'description',
       name: gettextCatalog.getString('Description')
@@ -66,4 +71,4 @@ angular.module(controllers.name).controller('DashboardEditCtrl', function ($scop
     delete deleteRecord._source.widgets;
     crud.delete(deleteRecord, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
-});
+};

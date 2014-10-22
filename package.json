@@ -5,16 +5,17 @@
   "main": "./server.js",
   "dependencies": {
     "angular-loading-bar": "~0.4.2",
+    "array.prototype.find": "^1.0.0",
     "async": "^0.9.0",
     "bluebird": "^2.1.3",
     "body-parser": "^1.4.3",
     "boom": "^2.4.2",
-    "bootstrap": "^3.2.0",
     "bunyan": "^0.23.1",
     "bunyan-prettystream": "~0.1.3",
     "change-case": "^2.1.1",
     "compression": "~1.0.1",
     "connect-flash": "~0.1.1",
+    "connect-redis": "^2.0.0",
     "connect-restreamer": "~1.0.0",
     "cookie-parser": "^1.3.1",
     "csurf": "^1.2.2",
@@ -36,22 +37,24 @@
     "passport-http-bearer": "~1.0.1",
     "passport-local": "^1.0.0",
     "passport-persona": "~0.1.7",
-    "pem": "~1.4.1",
     "phantom-cluster": "~0.1.1",
-    "redis": "^0.10.3",
+    "redis": "^0.12.1",
     "scrypt": "~3.0.1",
-    "static-favicon": "~1.0.2",
+    "serve-favicon": "^2.0.1",
+    "string.prototype.endswith": "^0.2.0",
     "useragent": "~2.0.8",
     "yarnl": "0.0.1"
   },
   "devDependencies": {
+    "bootstrap": "^3.2.0",
     "browserify": "^4.1.11",
+    "browserify-istanbul": "^0.1.2",
     "browserify-middleware": "^3.0.0",
-    "browserify-shim": "^3.5.0",
+    "browserify-ngannotate": "^0.1.0",
+    "browserify-shim": "^3.8.0",
     "browserify-transform-tools": "~1.2.1",
     "chai": "~1.9.0",
     "cheerio": "^0.17.0",
-    "connect-redis": "~2.0.0",
     "cookie": "^0.1.2",
     "esprima": "^1.2.2",
     "gulp": "^3.8.1",
@@ -69,7 +72,7 @@
     "gulp-livereload": "^2.1.0",
     "gulp-minify-css": "^0.3.4",
     "gulp-mocha": "^0.4.1",
-    "gulp-ngmin": "^0.3.0",
+    "gulp-ng-annotate": "^0.3.0",
     "gulp-replace": "^0.3.0",
     "gulp-rev": "^0.4.1",
     "gulp-rimraf": "^0.1.0",
@@ -79,15 +82,23 @@
     "jshint-stylish": "~0.1.5",
     "karma": "^0.12.16",
     "karma-browserify": "^0.2.1",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-coverage": "^0.2.6",
     "karma-mocha": "^0.1.4",
+    "karma-mocha-reporter": "^0.3.1",
     "karma-phantomjs-launcher": "^0.1.4",
+    "karma-sourcemap-loader": "^0.2.0",
     "less": "~1.7.0",
     "less-middleware": "^1.0.3",
+    "lesshat": "^3.0.2",
     "mocha": "^1.20.1",
     "mock-fs": "~2.2.0",
+    "moment": "^2.8.3",
     "nock": "~0.31.0",
     "open": "0.0.5",
     "partialify": "~3.1.0",
+    "pem": "~1.4.1",
+    "request": "^2.40.0",
     "require-dir": "^0.1.0",
     "sinon": "~1.8.1",
     "sinon-chai": "~2.5.0",
@@ -108,26 +119,44 @@
   "browser": {
     "angular": "./bower_components/angular/angular.js",
     "angular-animate": "./bower_components/angular-animate/angular-animate.js",
+    "angular-mocks": "./bower_components/angular-mocks/angular-mocks.js",
     "angular-resource": "./bower_components/angular-resource/angular-resource.js",
     "angular-sanitize": "./bower_components/angular-sanitize/angular-sanitize.js",
     "angular-bootstrap": "./bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
     "angular-ui-router": "./bower_components/angular-ui-router/release/angular-ui-router.js",
     "angular-ui-select2": "./bower_components/angular-ui-select2/src/select2.js",
+    "angular-ui-sortable": "./bower_components/angular-ui-sortable/sortable.js",
     "angular-gettext": "./bower_components/angular-gettext/dist/angular-gettext.js",
     "angular-gridster": "./bower_components/angular-gridster/src/angular-gridster.js",
+    "angular-order-object-by": "./bower_components/angular-order-object-by/src/ng-order-object-by.js",
     "d3": "./bower_components/d3/d3.js",
+    "ng-debounce": "./bower_components/ng-debounce/angular-debounce.js",
     "text-angular": "./bower_components/textAngular/src/textAngular.js",
     "text-angular-sanitize": "./bower_components/textAngular/src/textAngular-sanitize.js",
     "text-angular-setup": "./bower_components/textAngular/src/textAngularSetup.js",
     "jquery-ui": "./bower_components/fracas-jquery-ui/jquery-ui.js",
-    "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js"
+    "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js",
+    "ng-file-upload": "./bower_components/ng-file-upload/angular-file-upload.js",
+    "ng-grid": "./bower_components/ng-grid/build/ng-grid.js",
+    "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js"
   },
-  "browser-libs": [
-    "jquery",
-    "humane-js",
-    "angular-loading-bar",
-    "leaflet"
-  ],
+  "browser-libs": {
+    "jquery": {
+      "parse": false
+    },
+    "humane-js": {
+      "parse": false
+    },
+    "angular-loading-bar": {
+      "parse": false
+    },
+    "leaflet": {
+      "parse": false
+    },
+    "moment": {
+      "parse": false
+    }
+  },
   "browserify-shim": {
     "angular": {
       "exports": "angular",
@@ -136,6 +165,11 @@
       ]
     },
     "angular-animate": {
+      "depends": [
+        "angular:angular"
+      ]
+    },
+    "angular-mocks": {
       "depends": [
         "angular:angular"
       ]
@@ -167,6 +201,13 @@
         "jquery-ui"
       ]
     },
+    "angular-ui-sortable": {
+      "depends": [
+        "angular:angular",
+        "jquery:jQuery",
+        "jquery-ui"
+      ]
+    },
     "angular-gettext": {
       "depends": [
         "angular:angular"
@@ -181,6 +222,11 @@
     "d3": {
       "exports": "d3"
     },
+    "ng-debounce": {
+      "depends": [
+        "angular:angular"
+      ]
+    },
     "text-angular": {
       "depends": [
         "angular:angular",
@@ -193,7 +239,7 @@
         "jquery:jQuery"
       ]
     },
-    "jquer-resize": {
+    "jquery-resize": {
       "depends": [
         "jquery:jQuery"
       ]

@@ -1,29 +1,10 @@
 'use strict';
 
-var angular = require('angular');
-var services = require('../modules').services;
-
-angular.module(services.name).factory('visualization', function ($resource, $modal) {
-  var Visualization = $resource('/resources/visualization/:_id',
-    {
-      _id: '@_id'
-    },
-    {
-      update: {
-        method: 'PUT'
-      }
-    });
-
+// @ngInject
+module.exports = function ($resource, $modal, VisualizationResource) {
   return {
-    resource: Visualization,
-    state: function (scope) {
-      return Object.keys(scope).reduce(function (prev, current) {
-        if (!/^\$/.test(current) && current !== 'this' && !angular.isFunction(scope[current])) {
-          prev[current] = scope[current];
-        }
-        return prev;
-      }, {});
-    },
+    // TODO make clients use this directly
+    resource: VisualizationResource,
 
     save: function (state) {
       $modal.open({
@@ -46,11 +27,12 @@ angular.module(services.name).factory('visualization', function ($resource, $mod
       })
         .result
         .then(function (name) {
-          new Visualization(angular.extend({}, state, {
-            name: name
-          }))
+          new VisualizationResource({
+            name: name,
+            state: state
+          })
             .$save();
         });
     }
   };
-});
+};

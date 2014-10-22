@@ -1,21 +1,19 @@
 'use strict';
 
-var angular = require('angular');
-var controllers = require('../../modules').controllers;
-
-angular.module(controllers.name).controller('VisitTypeEditCtrl', function ($scope, crud, tableUtil, gettextCatalog, VisitType) {
+// @ngInject
+module.exports = function ($scope, crud, tableUtil, gettextCatalog, VisitTypeResource) {
   $scope.filters = [
-    {filterId: 'name'}
+    {filterID: 'name'}
   ];
   $scope.filterTypes = [
     {
-      filterId: 'name',
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'phoneId',
+      filterID: 'phoneId',
       type: 'text',
       field: 'phoneId',
       name: gettextCatalog.getString('Phone ID')
@@ -33,7 +31,7 @@ angular.module(controllers.name).controller('VisitTypeEditCtrl', function ($scop
 
   $scope.editTemplate = require('../../../partials/edit/forms/visit-type-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
-  $scope.resource = VisitType;
+  $scope.resource = VisitTypeResource;
   var options = {
     sorting: {'name.raw': 'asc'},
     queryString : $scope.queryString
@@ -58,4 +56,4 @@ angular.module(controllers.name).controller('VisitTypeEditCtrl', function ($scop
     crud.delete(record, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
   // ---------------- End: Common functions
-});
+};

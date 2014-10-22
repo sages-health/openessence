@@ -35,7 +35,7 @@ if (https) {
 
 // favicon
 app.use((function () {
-  var favicon = require('static-favicon');
+  var favicon = require('serve-favicon');
   if (conf.env === 'development') {
     return favicon('public/images/favicon.ico');
   } else {
@@ -62,7 +62,7 @@ app.use((function () {
     logger.info('Using Redis session store');
     var RedisStore = require('connect-redis')(session); // conditionally require since it's an optional dependency
     store = new RedisStore({
-      url: conf.redis.url
+      client: conf.redis.client
     });
   }
 
@@ -129,6 +129,7 @@ app.use(auth.passport.session());
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));
 
+// TODO rename /api and include version in URL
 app.use('/resources', express()
   .use(auth.denyAnonymousAccess)
   .use(require('./resources')()));

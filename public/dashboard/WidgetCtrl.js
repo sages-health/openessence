@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../scripts/modules').controllers;
 
-angular.module(controllers.name).controller('WidgetCtrl', function ($scope, $modal) {
+angular.module(controllers.name).controller('WidgetCtrl', /*@ngInject*/ function ($scope, $modal) {
   $scope.remove = function (widget) {
     $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
   };

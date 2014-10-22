@@ -1,7 +1,6 @@
 'use strict';
 
-module.exports = {
-  join: require('./join'),
-  truncate: require('./truncate'),
-  object2Array: require('./object2Array')
-};
+require('../modules').filters
+  .filter('join', require('./join'))
+  .filter('pluck', require('./pluck'))
+  .filter('truncate', require('./truncate'));

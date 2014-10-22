@@ -9,18 +9,12 @@ var defaults = require('./defaults');
 var env = defaults.env;
 process.env.NODE_ENV = env;
 
-var configFile = path.join(__dirname, 'config.js');
-var envFile = path.join(__dirname, env) + '.js';
-
+var configFile = path.resolve(__dirname, '../..', 'config/settings.js');
 var settings = defaults;
 
-// apply global config first, then environment-specific config
 if (fs.existsSync(configFile)) {
   // use whatever is returned from the settings function or fall back to using settings as an out parameter
   settings = require(configFile)(settings) || settings;
-}
-if (fs.existsSync(envFile)) {
-  settings = require(envFile)(settings) || settings;
 }
 
 // Set computed properties after we're done loading properties.
@@ -72,15 +66,26 @@ if (settings.session.store === 'memory' && settings.workers > 1) {
 // use shared Redis connection
 if (!settings.redis.client) {
   var redis = require('redis');
-  var url = require('url').parse(settings.redis.url);
+  var redisUrl = require('url').parse(settings.redis.url);
+  var redisPass;
+
+  if (redisUrl.auth) {
+    var auth = redisUrl.auth.split(':');
+    if (auth.length === 2) {
+      redisPass = auth[1];
+      // Redis only uses passwords, so the username can be ignored
+    } else {
+      // ignore the username and move on
+    }
+  }
 
   var redisClient;
   Object.defineProperty(settings.redis, 'client', {
     enumerable: true,
     get: function () { // lazily initialize redis connection so Redis doesn't have to be online unless we're using it
       if (!redisClient) {
-        redisClient = redis.createClient(url.port, url.hostname, {
-          'auth_pass': settings.redis.password
+        redisClient = redis.createClient(redisUrl.port, redisUrl.hostname, {
+          'auth_pass': redisPass
         });
       }
       return redisClient;
@@ -92,8 +97,15 @@ if (!settings.elasticsearch.client) {
   var elasticsearch = require('elasticsearch');
 
   // share client instance
+  var client;
   Object.defineProperty(settings.elasticsearch, 'client', {
-    value: new elasticsearch.Client(_.clone(settings.elasticsearch))
+    get: function () {
+      if (!client) { // lazily initialize so we don't get spam about connecting to elasticsearch
+        client = new elasticsearch.Client(_.clone(settings.elasticsearch));
+      }
+
+      return client;
+    }
   });
 
   // Create a new client. Useful for one-off processes that want to close their connection after they're done.

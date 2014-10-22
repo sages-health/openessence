@@ -3,13 +3,20 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientVisualization', function ($http, $modal, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisit, outpatientEditModal, outpatientDeleteModal, outpatientAggregation, visualization, $rootScope) {
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout,
+                                                                               orderByFilter, gettextCatalog,
+                                                                               sortString, FrableParams,
+                                                                               OutpatientVisitResource,
+                                                                               outpatientEditModal,
+                                                                               outpatientDeleteModal, scopeToJson,
+                                                                               outpatientAggregation, visualization) {
 
   return {
     restrict: 'E',
     template: require('./visualization.html'),
     scope: {
       filters: '=',
+      form: '=',
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',
@@ -17,8 +24,21 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
-      pre: function (scope) {
+      pre: function (scope, element) {
         scope.options = scope.options || {};
+        scope.form = scope.form || {};
+
+        // index fields by name
+        scope.$watch('form.fields', function (fields) {
+          if (!fields) {
+            return;
+          }
+
+          scope.fields = fields.reduce(function (fields, field) {
+            fields[field.name] = field;
+            return fields;
+          }, {});
+        });
 
         scope.visualization = scope.visualization || scope.options.visualization || {
           name: 'table'
@@ -36,28 +56,29 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
 
         scope.crosstabData = [];
 
-        scope.xFunction = function () {
-          return function (d) {
-            return d.key;
-          };
-        };
-        scope.yFunction = function () {
-          return function (d) {
-            return d.value;
-          };
-        };
-
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
-          date: gettextCatalog.getString('Date'),
-          district: gettextCatalog.getString('District'),
+          visitDate: gettextCatalog.getString('Visit'),
+          facility: gettextCatalog.getString('Facility'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
+          diagnoses: gettextCatalog.getString('Diagnoses'),
           syndromes: gettextCatalog.getString('Syndromes'),
           visitType: gettextCatalog.getString('Visit type'),
-          discharge: gettextCatalog.getString('Discharge type'),
-          edit: gettextCatalog.getString('Edit')
+          disposition: gettextCatalog.getString('Disposition'),
+          antiviral: gettextCatalog.getString('Antiviral')
+        };
+
+        // TODO make this a filter
+        scope.printAggregate = function (field, includeCount) {
+          var print = [];
+          if (field) {
+            field.map(function (val) {
+              print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
+            });
+          }
+          return print.join(',');
         };
 
         scope.$on('export', function () {
@@ -66,18 +87,22 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             return;
           }
 
-          visualization.save(visualization.state(scope));
-        });
+          // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
+          var state = scopeToJson(scope);
+          ['data', 'crosstabData'].forEach(function (k) {
+            delete state[k];
+          });
+          if (state.tableParams) {
+            delete state.tableParams.data;
+          }
 
-        var buildAggregation = function (field) {
-          var agg = {};
-          agg[field] = outpatientAggregation.getAggregation(field, 10);
-          return agg;
-        };
+          visualization.save(state);
+        });
 
         //assuming only two deep for now..
         var buildAggregationQuery = function (cols, rows) {
-          var query, first, second;
+          var first, second;
+          var query = {};
           if (cols[0]) {
             first = cols[0];
             if (rows[0]) {
@@ -87,20 +112,21 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             first = rows[0];
           }
           //build first aggregation
-          if (first) {
-            query = buildAggregation(first);
+          if (first && second) {
+            query[first] = outpatientAggregation.getAggregation(first, 10);
             //if a second exists, add to first aggregation object
-            if (second) {
-              query[first].aggs = buildAggregation(second);
-            }
+            query[first].aggs = {};
+            query[first].aggs[second] = outpatientAggregation.getAggregation(second, 10);
+          } else if (first) {
+            query[first] = outpatientAggregation.getAggregation(first, 10);
           }
           return query;
         };
 
         //assuming only two deep BY one for now...
         var parseAggQuery = function (aggregation, cols, rows) {
+          /*jshint camelcase:false */
           var aggs = aggregation.aggregations;
-
           var col = cols[0];
           var colLabel = scope.strings[col] || col;
 
@@ -110,15 +136,16 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           var pieData = []; //{ col: col, key: col, value: count }
           var barData = []; //{ col: col, key: keyStr, values: [{col: col, key: keyStr, value: count}]}...
           var missingCount = aggregation.total;
-          var slice;
+          var slice, bucket;
           if (aggs) {
             //if there is only one aggregation selected parse as normal
             if (col && !row) {
-              aggs[col].buckets.map(function (entry) {
+              bucket = aggs[col].buckets || aggs[col]._name.buckets;
+              bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
-                /*jshint camelcase:false */
-                missingCount -= entry.doc_count;
-                slice = {col: col, colName: keyStr, key: keyStr, value: entry.doc_count};
+                var count = entry.count ? entry.count.value : entry.doc_count;
+                missingCount -= count;
+                slice = {col: col, colName: keyStr, key: keyStr, value: count};
                 pieData.push(slice);
                 barData.push({col: col, colName: keyStr, key: keyStr, values: [slice]});
               });
@@ -130,11 +157,13 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               }
             }
             if (!col && row) {
-              aggs[row].buckets.map(function (entry) {
+              bucket = aggs[row].buckets || aggs[row]._name.buckets;
+              bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
-                missingCount -= entry.doc_count;
-                slice = {row: row, rowName: keyStr, key: keyStr, value: entry.doc_count};
+                missingCount -= count;
+                slice = {row: row, rowName: keyStr, key: keyStr, value: count};
                 pieData.push(slice);
               });
               //add missing fields count from total hits - aggs total doc count
@@ -145,19 +174,23 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               barData.push({row: row, key: rowLabel, values: pieData});
             }
             //if there are two aggregations parse and return as agg1-agg2..
-            if (col && row) {
+            if (col && row && aggs[col] && (aggs[col].buckets || aggs[col]._name)) {
               var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
-              aggs[col].buckets.map(function (entry) {
+              bucket = aggs[col].buckets || aggs[col]._name.buckets;
+              bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
+                var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
-                missingTotalCount -= entry.doc_count;
-                var missingCount = entry.doc_count;
+                missingTotalCount -= count;
+                var missingCount = count;
                 var data = [];
-                entry[row].buckets.map(function (sub) {
+                var subBucket = entry[row].buckets || entry[row]._name.buckets;
+                subBucket.map(function (sub) {
                   var subStr = outpatientAggregation.bucketToKey(sub);
-                  missingCount -= sub.doc_count;
+                  var scount = sub.count ? sub.count.value : sub.doc_count;
+                  missingCount -= scount;
                   slice = {col: col, colName: entry.key, row: row, rowName: sub.key,
-                    key: (keyStr + '_' + subStr), value: sub.doc_count};
+                    key: (keyStr + '_' + subStr), value: scount};
                   data.push(slice);
                   pieData.push(slice);
                 });
@@ -192,7 +225,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           var cols = angular.copy(scope.pivot.cols);
           var rows = angular.copy(scope.pivot.rows);
           //query the new data for aggregations
-          OutpatientVisit.search({
+          OutpatientVisitResource.search({
             size: 0,
             q: scope.queryString,
             aggregations: buildAggregationQuery(cols, rows)
@@ -212,26 +245,50 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             aggReload();
           } else if (scope.visualization.name === 'crosstab') {
             // TODO do this via aggregation
-            OutpatientVisit.get({
+            OutpatientVisitResource.get({
               size: 999999,
               q: scope.queryString
             }, function (data) {
-              scope.crosstabData = data.results.map(function (r) {
+              var flatRecs = [];
+              data.results.forEach(function (r) {
+
                 var source = r._source;
-                return {
+                //currently we explode symptoms and diagnosis to make crosstab counts for them happy
+                var rec = {
                   sex: source.patient ? source.patient.sex : null,
-                  age: source.patient ? source.patient.age : null,
-                  symptoms: source.symptoms
+                  age: (source.patient && source.patient.age) ? source.patient.age.years : null,
+                  districts: source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                 };
+
+                if (source.symptoms) {
+                  source.symptoms.forEach(function (v) {
+                    var r = angular.copy(rec);
+                    r.symptoms = [
+                      {name: v.name || v, count: v.count || 1}
+                    ];
+                    flatRecs.push(r);
+                  });
+                }
+                if (source.diagnoses) {
+                  source.diagnoses.forEach(function (v) {
+                    var r = angular.copy(rec);
+                    r.diagnoses = [
+                      {name: v.name || v, count: v.count || 1}
+                    ];
+                    flatRecs.push(r);
+                  });
+                }
+                if (!(source.symptoms) && !(source.diagnoses)) {
+                  flatRecs.push(rec);
+                }
               });
+              scope.crosstabData = flatRecs;
             });
           }
         };
 
         scope.editVisit = function (record) {
-          outpatientEditModal.open({
-            record: record
-          })
+          outpatientEditModal.open({record: record, form: scope.form})
             .result
             .then(function () {
               reload(); // TODO highlight changed record
@@ -249,7 +306,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           page: 1,
           count: 10,
           sorting: {
-            reportDate: 'desc'
+            visitDate: 'desc'
           }
         }, {
           total: 0,
@@ -266,7 +323,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               return;
             }
 
-            OutpatientVisit.get({
+            OutpatientVisitResource.get({
               q: scope.queryString,
               from: (params.page() - 1) * params.count(),
               size: params.count(),
@@ -293,18 +350,46 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           reload();
         });
 
+        scope.$watchCollection('[options.height, options.width, visualization.name]', function () {
+          if (scope.visualization.name !== 'table') {
+            return;
+          }
+          // TODO: Maybe this should be moved? All the other vizs handle resizing in their respective files
+          // Table doesn't have its own viz file
+
+          // Use a timer to prevent a gazillion table queries
+          if (scope.tableTimeout) {
+            $timeout.cancel(scope.tableTimeout);
+            scope.tableTimeout = null;
+          }
+          scope.tableTimeout = $timeout(function () {
+            // TODO: Could this be done w/out redoing the query? Just roll the results differently on the client or cache
+            var rowHeight = 34;
+            var rows = element.find('tbody tr');
+            angular.forEach(rows, function (row) {
+              var currRowHeight = angular.element(row).height();
+              rowHeight = currRowHeight > rowHeight ? currRowHeight : rowHeight;
+            });
+
+            var numRows = Math.floor((scope.options.height - 75) / rowHeight);
+            if (!isNaN(numRows)) {
+              scope.tableParams.parameters({count: numRows});
+            }
+          }, 25);
+        });
+
         scope.$on('elementClick.directive', function (angularEvent, event) {
           var filter;
           if (event.point.col && event.point.colName.indexOf('missing') !== 0) {
             filter = {
-              filterId: event.point.col,
+              filterID: event.point.col,
               value: event.point.colName
             };
             $rootScope.$emit('filterChange', filter, true, true);
           }
           if (event.point.row && event.point.rowName.indexOf('missing') !== 0) {
             filter = {
-              filterId: event.point.row,
+              filterID: event.point.row,
               value: event.point.rowName
             };
             $rootScope.$emit('filterChange', filter, true, true);
@@ -317,8 +402,8 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
             var a = [].concat(value);
             a.forEach(function (v) {
               var filter = {
-                filterId: field,
-                value: v
+                filterID: field,
+                value: ((typeof v) === 'object' ? v.name : v)
               };
               $rootScope.$emit('filterChange', filter, true, false);
             });

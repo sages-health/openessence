@@ -3,161 +3,41 @@
 var angular = require('angular');
 var services = require('../scripts/modules').services;
 
-angular.module(services.name).factory('OutpatientVisit', function ($resource) {
-  return $resource('/resources/outpatient-visit/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT'
-      },
-      search: {
-        method: 'POST', // really should be GET with body, but you can't do that in HTTP
-        url: '/resources/outpatient-visit/search',
-        headers: { 'Accept': 'application/json' }
-      }
+[
+  'Diagnosis',
+  'Disposition',
+  {resource: 'OutpatientVisit', url: 'outpatient-visit'}, // a change-case module would be so great here
+  'Symptom',
+  'Syndrome',
+  {resource: 'VisitType', url: 'visit-type'}
+].forEach(function (resourceName) {
+    var resourceUrl;
+    if (!angular.isString(resourceName)) {
+      resourceUrl = '/resources/' + resourceName.url;
+      resourceName = resourceName.resource;
+    } else {
+      resourceUrl = '/resources/' + resourceName.toLowerCase();
+    }
+    return angular.module(services.name).factory(resourceName + 'Resource', /*@ngInject*/ function ($resource) {
+      return $resource(resourceUrl + '/:id',
+        {
+          id: '@id',
+          version: '@version'
+        },
+        {
+          update: {
+            method: 'PUT',
+            headers: { 'Accept': 'application/json' }
+          },
+          save: {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' }
+          },
+          search: {
+            method: 'POST', // really should be GET with body, but you can't do that in HTTP 1.1
+            url: resourceUrl + '/search',
+            headers: { 'Accept': 'application/json' }
+          }
+        });
     });
-});
-
-angular.module(services.name).factory('District', function ($resource) {
-  return $resource('/resources/district/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
-
-angular.module(services.name).factory('Diagnosis', function ($resource) {
-  return $resource('/resources/diagnosis/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
-
-angular.module(services.name).factory('Symptom', function ($resource) {
-  return $resource('/resources/symptom/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
-
-angular.module(services.name).factory('Syndrome', function ($resource) {
-  return $resource('/resources/syndrome/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
-
-angular.module(services.name).factory('Discharge', function ($resource) {
-  return $resource('/resources/discharge/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
-angular.module(services.name).factory('VisitType', function ($resource) {
-  return $resource('/resources/visit-type/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
-angular.module(services.name).factory('User', function ($resource) {
-  return $resource('/resources/user/:_id',
-    {
-      _id: '@_id',
-      version: '@version'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
-
-angular.module(services.name).factory('DashboardResource', function ($resource) {
-  return $resource('/resources/dashboard/:_id',
-    {
-      _id: '@_id'
-    },
-    {
-      update: {
-        method: 'PUT',
-        headers: { 'Accept': 'application/json' }
-      },
-      save: {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      }
-    });
-});
+  });

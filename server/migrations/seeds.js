@@ -43,7 +43,7 @@ async.parallel([
   function dateShift (callback) {
     client.index({
       index: 'date-shift',
-      type: 'shift',
+      type: 'date-shift',
       id: '1', // so it's easy to get
       body: {
         // this should be changed if the dates in outpatient-visits.json are ever changed
@@ -54,6 +54,10 @@ async.parallel([
 
   function diagnoses (callback) {
     bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
+  },
+
+  function disposition (callback) {
+    bulkInsert(require('../models/Disposition'), require('./disposition.json'), callback);
   },
 
   function districts (callback) {
@@ -72,8 +76,20 @@ async.parallel([
     bulkInsert(District, features, callback);
   },
 
+  function facilities_ (callback) {
+    bulkInsert(require('../models/Facility'), require('./facilities.json'), callback);
+  },
+
+  function forms (callback) {
+    bulkInsert(require('../models/Form'), require('./forms.js'), callback);
+  },
+
   function outpatientVisits (callback) {
     bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
+  },
+
+  function outpatientVisitsAgg (callback) {
+    bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits-agg.json'), callback);
   },
 
   function symptoms (callback) {
@@ -82,10 +98,6 @@ async.parallel([
 
   function syndrome (callback) {
     bulkInsert(require('../models/Syndrome'), require('./syndrome.json'), callback);
-  },
-
-  function dischargeType (callback) {
-    bulkInsert(require('../models/Discharge'), require('./discharge-type.json'), callback);
   },
 
   function visitType (callback) {
@@ -102,8 +114,16 @@ async.parallel([
     logger.error({err: err}, 'Error seeding data');
   }
 
-  client.close();
+  client.indices.refresh({
+    index: '_all'
+  }, function (err) {
+    client.close();
 
-  // FIXME this shouldn't be necessary
-  process.exit(0);
+    if (err) {
+      logger.error({err: err}, 'Error refreshing indices');
+    }
+
+    // FIXME this shouldn't be necessary
+    process.exit(0);
+  });
 });

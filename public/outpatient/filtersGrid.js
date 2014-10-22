@@ -3,54 +3,34 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientFiltersGrid', function (gettextCatalog, FracasGrid, $rootScope) {
+angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/ function (gettextCatalog, $rootScope) {
 
   return {
     restrict: 'E',
     template: require('./filtersGrid.html'),
+    transclude: true,
     scope: {
-      filters: '=',
-      filterTypes: '=',
+      activeFilters: '=',
+      possibleFilters: '=',
       queryString: '='
     },
     compile: function () {
       return {
         pre: function (scope) {
-
-          scope.filters = scope.filters ? scope.filters : [];
-          scope.filterGrid = new FracasGrid(4);
-
-          var applyConfig = function (filter) {
-            for (var i = 0; i < scope.filterTypes.length; i++) {
-              if (scope.filterTypes[i].filterId === filter.filterId) {
-                // Make a copy of filter config and apply new filter values
-                return angular.extend(angular.copy(scope.filterTypes[i]), filter);
-              }
-            }
-            return null;
-          };
+          scope.possibleFilters = scope.possibleFilters || {};
+          scope.activeFilters = scope.activeFilters || [];
 
           scope.addFilter = function (filter) {
-            var filterConfig = applyConfig(filter);
-            if (filterConfig) {
-              scope.filterGrid.add(filterConfig);
-            }
+            scope.activeFilters.push(angular.extend({}, scope.possibleFilters[filter.filterID], filter));
           };
 
-          scope.removeFilter = function (filter) {
-            var filterConfig = applyConfig(filter);
-            if (filterConfig) {
-              scope.filterGrid.remove(filterConfig);
-            }
+          scope.removeFilter = function (index) {
+            scope.activeFilters.splice(index, 1);
           };
 
           scope.$watchCollection(
             function () {
-              return scope.filterGrid
-                .toArray()
-                .filter(function (f) {
-                  return !f.plus;
-                })
+              return scope.activeFilters
                 .map(function (f) {
                   return f.queryString;
                 });
@@ -81,17 +61,6 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
             }
           });
 
-          scope.$watchCollection(
-            function () {
-              return scope.filterGrid.toArray();
-            },
-            function (filters) {
-              scope.filters = filters.filter(function (f) {
-                return !f.plus;
-              });
-            }
-          );
-
           scope.$watch('queryString', function () {
             scope.queryForm.queryStrings.$setValidity('syntaxError', true);
           });
@@ -106,10 +75,6 @@ angular.module(directives.name).directive('outpatientFiltersGrid', function (get
           scope.isInvalid = function (field) {
             return field.$invalid;
           };
-
-          angular.forEach(scope.filters, function (value) {
-            scope.addFilter(value);
-          });
         }
       };
     }

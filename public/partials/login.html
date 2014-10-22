@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-5 col-md-offset-4">
       <header class="login-header">
-        <span class="h1">Fracas</span>
+        <span class="h1" ng-bind="appName"></span>
         <span class="h2 tagline"><small>&hellip;for disease surveillance</small></span>
       </header>
 
@@ -62,9 +62,6 @@
     <div class="collapse navbar-collapse">
       <p class="navbar-text" ng-bind="version"></p>
       <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a class="navbar-link" href="http://en.wikipedia.org/wiki/Girolamo_Fracastoro">Girolamo Fracastoro</a>
-        </li>
         <li ng-show="persona"><a ng-click="showLocalSignInForm()">Local sign in</a></li>
         <!-- TODO more links -->
       </ul>

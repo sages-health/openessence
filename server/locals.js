@@ -14,6 +14,7 @@ function locals (req, res, next) {
   res.locals.persona = conf.persona.enabled;
   res.locals.baseHref = conf.url + '/' + req.locale + '/'; // use proxy URL (if applicable), not req.url
   res.locals.environment = conf.env;
+  res.locals.appName = conf.appName;
   res.locals.version = pjson.version;
   res.locals.commit = process.env.COMMIT_HASH || '';
 

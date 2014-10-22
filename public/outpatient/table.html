@@ -2,88 +2,61 @@
   <table class="table table-striped table-hover table-condensed" frable="tableParams">
     <tr ng-repeat="visit in $data">
 
-      <td data-title="strings.date" sortable="'reportDate'">
-        <a ng-click="tableFilter('date', visit._source.reportDate)">{{visit._source.reportDate | date}}</a>
+      <td ng-show="fields.visitDate.enabled" data-title="strings.visitDate" data-sortable="'visitDate'">
+        <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
       </td>
-      <td data-title="strings.district" sortable="'medicalFacility.district.raw'">
-        <a ng-click="tableFilter('districts', visit._source.medicalFacility.district)">
-          {{visit._source.medicalFacility.district}}
+
+      <!-- Unlike other fields which can be seen via the form, this one can't be since it's non-editable -->
+      <!-- TODO combine edit form and "record investigation" usecase into coherent UI -->
+      <td ng-show="fields.submissionDate.enabled" data-title="strings.submissionDate" data-sortable="'submissionDate'">
+        <a ng-click="tableFilter('submissionDate', visit._source.submissionDate)">
+          {{visit._source.submissionDate | date}}
         </a>
       </td>
 
-      <td data-title="strings.symptoms">
+      <td ng-show="fields['medicalFacility'].enabled" data-title="strings.facility"
+          data-sortable="'medicalFacility'">
+        <a ng-click="tableFilter('medicalFacility.name', visit._source.medicalFacility.name)">
+          {{visit._source.medicalFacility.name | truncate:30}}
+        </a>
+      </td>
+
+      <td ng-show="fields['patient.sex'].enabled" data-title="strings.sex" data-sortable="'patient.sex'">
+        <a ng-click="tableFilter('patient.sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
+      </td>
+      <td ng-show="fields['patient.age'].enabled" data-title="strings.age" data-sortable="'patient.age.years'">
+        <a ng-click="tableFilter('patientAge', visit._source.patient.age.years)">{{visit._source.patient.age.years}}</a>
+      </td>
+
+      <td ng-show="fields.symptoms.enabled" data-title="strings.symptoms">
         <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
-          {{visit._source.symptoms | join | truncate:30}}
+          {{visit._source.symptoms | pluck:'name' | join | truncate:30}}
         </a>
       </td>
-      <td data-title="strings.diagnoses">
+      <td ng-show="fields.diagnoses.enabled" data-title="strings.diagnoses">
         <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">
-          {{visit._source.diagnoses | join | truncate:30}}
-        </a>
-      </td>
-      <td data-title="strings.syndromes">
-        <a ng-click="tableFilter('syndromes', visit._source.syndromes)">
-          {{visit._source.syndromes | join | truncate:30}}
-        </a>
-      </td>
-      <td data-title="strings.visitType">
-        <a ng-click="tableFilter('visitType', visit._source.visitType)">
-          {{visit._source.visitType | join | truncate:30}}
-        </a>
-      </td>
-      <td data-title="strings.discharge">
-        <a ng-click="tableFilter('visitType', visit._source.discharge)">
-          {{visit._source.discharge | join | truncate:30}}
-        </a>
-      </td>
-      <td data-title="strings.sex" sortable="'patient.sex'">
-        <a ng-click="tableFilter('sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
-      </td>
-      <td data-title="strings.age" sortable="'patient.age'">
-        <a ng-click="tableFilter('age', visit._source.patient.age)">{{visit._source.patient.age}}</a>
-      </td>
-
-      <!-- TODO we probably don't need most of these columns -->
-      <td data-title="strings.weight" sortable="'patient.weight'">
-        <a ng-click="tableFilter('weight', visit._source.patient.weight)">{{visit._source.patient.weight}}
-          <!-- TODO this might not be the best way to abstract units -->
-          <span ng-show="visit._source.patient.weight" translate>kg</span>
-        </a>
-      </td>
-      <td data-title="strings.bloodPressure" ng-if="!condensed"><!-- TODO ng-if doesn't work -->
-        {{visit._source.patient.bloodPressure.systolic}}
-        <span ng-show="visit._source.patient.bloodPressure.systolic || visit._source.patient.bloodPressure.diastolic">
-          /
-        </span>
-        {{visit._source.patient.bloodPressure.diastolic}}
-      </td>
-      <td data-title="strings.pulse" sortable="'patient.pulse'">
-        <a ng-click="tableFilter('pulse', visit._source.patient.pulse)">{{visit._source.patient.pulse}}
-          <span ng-show="visit._source.patient.pulse" translate>BPM</span>
-        </a>
-      </td>
-      <td data-title="strings.temperature" sortable="'patient.temperature'">
-        <a ng-click="tableFilter('temperature', visit._source.patient.temperature)">{{visit._source.patient.temperature}}
-          <span ng-show="visit._source.patient.temperature" translate>°C</span>
+          {{visit._source.diagnoses | pluck:'name' | join | truncate:30}}
         </a>
       </td>
 
-      <!-- TODO check or X icon instead of true/false -->
-      <td data-title="strings.returnVisit" sortable="'returnVisit'">{{visit._source.returnVisit}}</td>
+      <td ng-show="fields.disposition.enabled" data-title="strings.disposition">
+        <a ng-click="tableFilter('disposition', visit._source.disposition)">
+          {{visit._source.disposition | pluck:'name' | join | truncate:30}}
+        </a>
+      </td>
 
-      <td data-title="strings.patientId" sortable="'patient.patientId'">{{visit._source.patient.patientId}}</td>
+      <td ng-show="fields['antiviral.name'].enabled" data-title="strings.antiviral" data-sortable="'antiviral.name'">
+        <a ng-click="tableFilter('antiviral', visit._source.antiviral.name)">{{visit._source.antiviral.name}}</a>
+      </td>
 
-      <!-- TODO this column has no business being here -->
-      <td data-title="strings.oeId" sortable="'oeId'">{{visit._source.oeId}}</td>
-
-      <!-- Edit controls, they're floated right to offset them from the rest of the table -->
-      <td data-title="strings.edit">
-        <div class="btn-group btn-group-xs edit-controls">
+      <!-- Edit controls -->
+      <td>
+        <div class="btn-group btn-group-xs edit-controls pull-right">
           <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
             <span class="icon-pencil"></span>
           </button>
           <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
-            <span class="icon-trash"></span>
+            <span class="icon-cancel"></span>
           </button>
         </div>
       </td>

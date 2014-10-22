@@ -3,7 +3,8 @@
 var angular = require('angular');
 var services = require('../scripts/modules').services;
 
-angular.module(services.name).factory('outpatientAggregation', function (gettextCatalog) {
+angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function (gettextCatalog) {
+  //backend will wrap with "aggs : {"
   var aggregations = {
     sex: {
       terms: {
@@ -12,9 +13,36 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
       }
     },
     symptoms: {
+      nested: {
+        path: 'symptoms'
+      },
+      aggs: {
+        _name: { //double check that using an underscore is kosher
+          terms: {
+            field: 'symptoms.name.raw',
+            order: { '_term': 'asc' }
+          },
+          aggs: {
+            count: { //calling this doc_count may be cheating a little..
+              sum: {
+                field: 'symptoms.count'
+              }
+            }
+          }
+        }
+      }
+    },
+    diagnoses: {
       terms: {
-        field: 'symptoms.raw',
+        field: 'diagnoses.name.raw',
         order: { '_term': 'asc' }
+      },
+      aggs: {
+        count: {
+          sum: {
+            field: 'diagnoses.count'
+          }
+        }
       }
     },
     districts: {
@@ -25,7 +53,7 @@ angular.module(services.name).factory('outpatientAggregation', function (gettext
     },
     age: {
       range: { // age is actually an age group, b/c that's almost always what you actually want
-        field: 'patient.age',
+        field: 'patient.age.years',
         ranges: [
           {key: '[0 TO 1]', to: 1},
           {key: '[1 TO 5]', from: 1, to: 5},
