@@ -3,7 +3,6 @@
 var express = require('express');
 var path = require('path');
 var conf = require('./conf');
-//var phantom = require('./phantom');
 var fs = require('fs');
 var os = require('os');
 var crypto = require('crypto');
@@ -108,11 +107,12 @@ module.exports = function () {
           });
           setPageSize({output: file, size: size}, page);
           page.open(reportUrl, function (status) {
-            logger.info('PhantomJS rendering URL %s to file %s', reportUrl, file);
+            logger.info('PhantomJS rendering URL %s to file %s. Status [%s]', reportUrl, file, status);
             setTimeout(function () {
               if(selector){
                 page.evaluate((function () {
                   var func = function (s) {
+                    /* global document*/
                     return document.querySelector('#' + s).getBoundingClientRect();
                   };
                   return 'function() { return (' + func.toString() + ').apply(this, ' + JSON.stringify([selector]) + ');}';

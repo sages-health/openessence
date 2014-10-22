@@ -53,7 +53,7 @@ passport.use(new PersonaStrategy({
     return callback(null, new User({
       username: email,
       email: email,
-      tokens: ['token1'],
+      tokens: [email],
       authType: 'persona',
       roles: ['admin']
     }));
@@ -64,7 +64,7 @@ passport.use(new PersonaStrategy({
     localUser.username = email;
     localUser.email = email;
     localUser.authType = 'persona';
-    localUser.tokens = 'token1';
+    localUser.tokens = [email];
     logger.info({user: localUser}, '%s logged in with Persona via file system whitelist', email);
     return callback(null, new User(localUser));
   }
@@ -167,7 +167,6 @@ passport.use(new BearerStrategy({}, function (token, done) {
     logger.info({user: localUser}, '%s logged in with bearer via file system whitelist', token);
     return done(null, new User(localUser));
   }
-  console.log('***** logged in using bearer strategy, finding user by token = %s', token);
   User.findByToken(token, function(err, user) {
     if (err) {
       done(err);
@@ -176,7 +175,7 @@ passport.use(new BearerStrategy({}, function (token, done) {
 
     if (!user) {
       logger.info('Token:\n%s\ndid not match any users.', token);
-      done(new errors.UnregisteredUserError());
+      done(null, false, { message: 'Bearer token not found.'});
       return;
     }
 
@@ -199,7 +198,6 @@ function denyAnonymousAccess (req, res, next) {
 }
 
 function authenticate (strategy) {
-  logger.info('Strategy: %s', strategy);
   return function (req, res, next) {
     passport.authenticate(strategy, {session: strategy !== 'bearer'}, function (err, user) {
       if (err) {

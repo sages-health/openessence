@@ -24,6 +24,7 @@ if (!Function.prototype.bind) {
       };
 
     fNOP.prototype = this.prototype;
+    /*jshint newcap: false */
     fBound.prototype = new fNOP();
 
     return fBound;

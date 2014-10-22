@@ -135,6 +135,9 @@ app.use(function (req, res, next) {
   } else {
     next();
   }
+//  var User = require('./models/User');
+//  req.user = new User({name: 'admin', username: 'admin', roles: ['admin'], 'tokens': ['tokenABC']});
+
 });
 
 app.use(require('./locale').middleware);
@@ -146,7 +149,7 @@ app.use('/resources', express()
   .use(require('./resources')()));
 
 app.use('/reports', express()
-//  .use(auth.denyAnonymousAccess)
+  .use(auth.denyAnonymousAccess)
   .use(require('./reports')()));
 
 app.use(require('./error').middleware);

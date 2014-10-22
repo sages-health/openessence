@@ -100,6 +100,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     } else {
       var from = new Date();
       from.setDate(from.getDate() - 90); // 90 days back
+
       $scope.activeFilters = [
         angular.extend({
           from: from,

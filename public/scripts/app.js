@@ -82,6 +82,7 @@ app.run(function ($rootScope, $state, $http, cfpLoadingBar, user, $injector) {
       if(user.getUser()){
         $injector.get('$http').defaults.transformRequest = function (data, headersGetter) {
           if ($rootScope.oauth) {
+            /*jshint sub:true*/
             headersGetter()['Authorization'] = 'Bearer ' + user.getUser().tokens;
           }
           if (data) {

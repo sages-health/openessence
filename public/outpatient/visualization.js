@@ -377,19 +377,25 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         };
 
-        scope.$watch('pivot.cols', function () {
-          updateVisualization();
-          reload();
+        scope.$watch('pivot.cols', function (newValue, oldValue) {
+          if(newValue !== oldValue) {
+            updateVisualization();
+            reload();
+          }
         });
 
-        scope.$watch('pivot.rows', function () {
-          updateVisualization();
-          reload();
+        scope.$watch('pivot.rows', function (newValue, oldValue) {
+          if(newValue !== oldValue) {
+            updateVisualization();
+            reload();
+          }
         });
 
-        scope.$watch('visualization.name', function () {
-          updateVisualization();
-          reload();
+        scope.$watch('visualization.name', function (newValue, oldValue) {
+          if(newValue !== oldValue) {
+            updateVisualization();
+            reload();
+          }
         });
 
         scope.$watchCollection('[options.height, options.width, visualization.name]', function () {
