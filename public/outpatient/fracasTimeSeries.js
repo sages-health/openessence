@@ -40,7 +40,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             return d3.time.format('%Y-%m-%d')(new Date(d));
           };
 
-          scope.interval = scope.options.interval || 'day'; // TODO auto-select based on date range
+          scope.interval = scope.interval || scope.options.interval || 'day'; // TODO auto-select based on date range
 
           scope.$on('editVizualizationSettings', function () {
             EditSettings.openSettingsModal('timeseries', scope.options.labels)
