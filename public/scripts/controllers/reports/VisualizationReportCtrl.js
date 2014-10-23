@@ -2,7 +2,6 @@
 
 // @ngInject
 module.exports = function ($scope, updateURL) {
-  $scope.log = [];
   //better error handling?
   try {
     var state = updateURL.getState();
