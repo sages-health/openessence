@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (gettextCatalog, $modal, visualization, Dashboard,
-                                                                 $location, dateFilter) {
+                                                                 $location, dateFilter, updateURL) {
   return {
     restrict: 'E',
     template: require('./dashboard.html'),
@@ -25,6 +25,20 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
             }
           };
 
+          var getNextVizId = function () {
+            if (!scope.dashboard) {
+              scope.dashboard = {
+                nextVizId: 0,
+                name: ''
+              };
+            }
+            if (!scope.dashboard.nextVizId) {
+              scope.dashboard.nextVizId = 0;
+            }
+            scope.dashboard.nextVizId++;
+            return scope.dashboard.nextVizId;
+          };
+
           /**
            * The dashboard date window is a rolling window that calculates the difference in the start
            * and the end dates that a user sets and creates a date interval starting from today going "x" number of days
@@ -38,6 +52,21 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
             var date2 = new Date(end);
             var timeDiff = Math.abs(date2.getTime() - date1.getTime());
             return Math.ceil(timeDiff / (1000 * 3600 * 24));
+          };
+
+          var updateDateRange = function (widget) {
+            var dateFilters = widget.content.filters.filter(checkFilters);
+            var interval = getDaysDifference(dateFilters[0].from, dateFilters[0].to);
+            var x = widget.content.filters.indexOf(dateFilters[0]);
+            var today = new Date();
+            today.setDate(today.getDate() - interval);
+            var start = today;
+            var end = new Date();
+            widget.content.filters[x].from = start;
+            widget.content.filters[x].to = end;
+            var queryString = getQueryString(widget.content.queryString, start, end);
+            widget.content.filters[x].queryString = queryString;
+            widget.content.queryString = queryString;
           };
 
           var getQueryString = function (queryString, start, end) {
@@ -63,31 +92,48 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
             return f.type === 'date-range';
           };
 
+          scope.dashboard = {
+            name: '',
+            widgets: [],
+            nextVizId: 0
+          };
+
+          var state = updateURL.getState();
           // set dashboard data and make the date window rolling
           if (scope.dashboardId) {
             Dashboard.get(scope.dashboardId, function (data) {
               scope.dashboard = data._source;
+              scope.dashboard.widgets.forEach(updateDateRange);
+            });
+          } else if (state.visualizations || state.filters) {
+            var widgets = [];
 
-              scope.dashboard.widgets.forEach(function (widget) {
-                var dateFilters = widget.content.filters.filter(checkFilters);
-                var interval = getDaysDifference(dateFilters[0].from, dateFilters[0].to);
-                var x = widget.content.filters.indexOf(dateFilters[0]);
-                var today = new Date();
-                today.setDate(today.getDate() - interval);
-                var start = today;
-                var end = new Date();
-                widget.content.filters[x].from = start;
-                widget.content.filters[x].to = end;
-                var queryString = getQueryString(widget.content.queryString, start, end);
-                widget.content.filters[x].queryString = queryString;
-                widget.content.queryString = queryString;
+            // Set nextVizId to be max id value
+            state.visualizations.forEach(function (viz) {
+              var id = viz.id ? parseInt(viz.id.substring(4)) : 0;
+              scope.dashboard.nextVizId = scope.dashboard.nextVizId >= id ? scope.dashboard.nextVizId : id;
+            });
+
+            state.visualizations.forEach(function (viz) {
+
+              var id = viz.options.id;
+              if (!id) {
+                id = 'viz-' + getNextVizId();
+              }
+              angular.extend(viz.options, {
+                id: id // assign element a new id on insert to match the Fracas grid
+              });
+              widgets.push({
+                name: viz.name,
+                sizeX: viz.sizeX,
+                sizeY: viz.sizeY,
+                row: viz.row,
+                col: viz.col,
+                content: viz.options
               });
             });
-          } else {
-            scope.dashboard = {
-              name: '',
-              widgets: []
-            };
+            scope.dashboard.widgets = widgets;
+            scope.dashboard.widgets.forEach(updateDateRange);
           }
 
           scope.addWidget = function () {
@@ -130,9 +176,9 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
                   widget.visualization.state.filters.push({
                     field: 'visitDate',
                     filterID: 'date',
-                    from: from,
                     name: 'Date',
                     queryString: queryString,
+                    from: from,
                     to: to,
                     type: 'date-range'
                   });
@@ -147,6 +193,9 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
                   widget.visualization.state.filters[x].queryString = getQueryString(widget.visualization.state.queryString, from, to);
                   widget.visualization.state.queryString = getQueryString(widget.visualization.state.queryString, from, to);
                 }
+                angular.extend(widget.visualization.state, {
+                  id: 'viz-' + getNextVizId()// assign element a new id on insert to match the Fracas grid
+                });
                 scope.dashboard.widgets.push({
                   name: widget.visualization.name,
                   sizeX: 6,
@@ -157,6 +206,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
           };
           scope.clear = function () {
             scope.dashboard.widgets = [];
+            scope.dashboard.nextVizId = 0;
           };
 
           scope.export = function () {
@@ -173,6 +223,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
             sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
             $location.path('/workbench/').search('visualization', widget.name);
           };
+
         }
       };
     }

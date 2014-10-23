@@ -105,12 +105,7 @@ module.exports = {
   })(),
 
   phantom: {
-    enabled: process.env.PHANTOM !== 'false',
-
-    // Base port for PhantomJS cluster. Worker n is assigned basePort + n, e.g. 12301 for the first worker.
-    // 12300 is the default port number used by phantom-cluster. We specify it here in case they ever change it.
-    // https://github.com/dailymuse/phantom-cluster/blob/87ebc9f2c5fc81792aa4c98ae1c6cf44c784cc5e/index.coffee#L105
-    basePort: 12300
+    enabled: process.env.PHANTOM !== 'false'
   },
 
   // Define extra users. The auth layers checks if a user is defined here first and then checks if the user is in the

@@ -557,6 +557,10 @@ var indexRequests = [
                 type: 'string',
                 index: 'not_analyzed'
               },
+              tokens: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
               disabled: {
                 type: 'boolean'
               },

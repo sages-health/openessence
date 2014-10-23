@@ -88,9 +88,9 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
       var rows = [
         []
       ];
-
       districts.forEach(function (district, i) {
         var v = angular.copy(vizTemplate);
+        v.state.options.id = i;
         v = fixCountry(v, district);
         v.name = district;
         rows[rows.length - 1].push(v);

@@ -30,6 +30,8 @@ module.exports = function ($resource, $rootScope, $log, $window, appName, person
   var user = userEl ? JSON.parse(userEl) : null;
 
   var afterLogin = function (_user) {
+
+    console.log ('Logged in user is ' + _user);
     user = _user;
     $rootScope.$broadcast('login');
   };
@@ -38,7 +40,7 @@ module.exports = function ($resource, $rootScope, $log, $window, appName, person
     $rootScope.$broadcast('logout');
   };
 
-  if (persona) {
+  if (persona && $window.navigator.id) { //quick fix for exporting, not positive if this is long term solution
     $window.navigator.id.watch({
       loggedInUser: user ? user.email : null,
       onlogin: function (assertion) {
