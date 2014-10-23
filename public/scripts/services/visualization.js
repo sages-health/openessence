@@ -49,11 +49,12 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
         delete v.values;
         return v;
       });
-      $window.state.form.fields.map(function(v){
-        delete v.values;
-        return v;
-      });
-
+      if($window.state.form){
+        $window.state.form.fields.map(function(v){
+          delete v.values;
+          return v;
+        });
+      }
       //var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
       var url = document.baseURI;
       url = url + 'visualization-export';
