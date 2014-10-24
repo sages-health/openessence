@@ -169,22 +169,19 @@ passport.use(new BearerStrategy({}, function (token, done) {
   }
   User.findByToken(token, function(err, user) {
     if (err) {
-      done(err);
-      return;
+      return done(err);
     }
 
     if (!user) {
       logger.info('Token:\n%s\ndid not match any users.', token);
-      done(null, false, { message: 'Bearer token not found.'});
-      return;
+      return done(null, false, { message: 'Bearer token not found.'});
     }
 
     delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
 
     logger.info({user: user}, '%s logged in using bearer', user.doc.email || user.doc.username);
     user.doc.authType = 'bearer';
-    done(null, user);
-    return;
+    return done(null, user);
   });
 }));
 

@@ -7,34 +7,10 @@ var modalCtrl = function ($scope, $modalInstance, $state, $log, Report, urlToSav
   $scope.state = urlToSave.state;
   $scope.ok = function () {
     var status = 0;
-    var filename = $scope.container.report.name.replace(/ /g, '_');
+    var title = $scope.container.report.name.replace(/ /g, '_');
 
-    Report.update({
-      size: '1500px*1500px',
-      name: filename,
-      url: '/' + urlToSave.lang + '/?state=' + urlToSave.state
-    }).$promise
-      .catch(function () {
-        status = 1;
-        updateProgressBar();
-        $log.error('Error saving report');
-      })
-      .then(function () { // download file
-        // TODO: extension is currently specified implicitly? routes.js determines it (currently png)
-        $timeout(function () {
-          $window.location = '/reports/' + encodeURIComponent(filename);
-        }, 1000);
-      })
-      .finally(function () {
-        // make the loading bar finish cleanly
-        status = 0.99;
-        updateProgressBar();
-        status = 1;
-        updateProgressBar();
-        $timeout(function () {
-          cleanUp();
-        }, 1000); // Give the user time to see the bar finish (it feels more complete)
-      });
+    $window.location = '/reports/' + title + '?size=1500px*1500px' + '&name=' + title + '&url=/' + urlToSave.lang +
+      '/?state=' + urlToSave.state;
 
     angular.element('.modal-footer > button').css('display', 'none');
     angular.element('.modal-footer .progress').css('display', 'block');

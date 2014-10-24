@@ -3,7 +3,7 @@
 var cluster = require('cluster');
 var http = require('http');
 var https = require('https');
-//var phantom = require('./server/phantom');
+var fork = require('child_process').fork;
 
 var conf = require('./server/conf');
 var logger = conf.logger;
@@ -46,6 +46,16 @@ if (cluster.isMaster) {
       });
     }
   };
+
+  // Start single phantom master process. Phantom master process uses phantom-cluster directly, so no need for us
+  // to cluster ourselves
+  var phantom = fork(__dirname + '/server/phantom.js');
+  phantom.on('error', function (err) {
+    logger.error({err: err}, 'Error from phantom master process');
+  });
+  phantom.on('exit', function () {
+    logger.error('Phantom master process exited. You should probably restart Fracas.');
+  });
 
   var debug = process.execArgv.some(function (arg) {
     // Regex taken from https://github.com/joyent/node/commit/43ec1b1c2e77d21c7571acd39860b9783aaf5175

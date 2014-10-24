@@ -1,14 +1,10 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($resource, user) {
-  return $resource('/reports/:name',
+module.exports = function ($resource) {
+  return $resource('/reports/:name', // TODO ReportResource
     {
       name: '@name'
-    },
-    {
-      update: {
-        method: 'PUT'
-      }
-    });
+    }
+  );
 };

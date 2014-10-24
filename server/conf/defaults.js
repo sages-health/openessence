@@ -105,7 +105,13 @@ module.exports = {
   })(),
 
   phantom: {
-    enabled: process.env.PHANTOM !== 'false'
+    enabled: process.env.PHANTOM !== 'false',
+
+    // URL for Phantom HTTP proxy. The proxy provides an HTTP API to submit requests to PhantomJS.
+    // This settings has two purposes: if phantom is enabled, it specifies what hostname and port to listen on;
+    // and even if phantom is disabled (e.g. because it's running on another host), it specifies the URL requests
+    // should be routed to. The default port of 23680 is just a random available port we picked.
+    url: process.env.PHANTOM_URL || 'http://localhost:23680'
   },
 
   // Define extra users. The auth layers checks if a user is defined here first and then checks if the user is in the
