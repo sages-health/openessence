@@ -20,6 +20,10 @@ require('d3');
 // polyfills, try to require only what you need instead of entire es6 polyfills
 require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
 require('string.prototype.endswith'); // not in IE <= 11
+if (!Function.prototype.bind) {
+  // PhantomJS doesn't have bind, see https://github.com/ariya/phantomjs/issues/10522#issuecomment-50621310
+  Function.prototype.bind = require('function-bind');
+}
 
 require('ng-debounce');
 require('text-angular');
@@ -44,7 +48,6 @@ require('./services');
 require('./directives');
 require('./filters');
 
-require('./polyfills/bind');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
                     'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
