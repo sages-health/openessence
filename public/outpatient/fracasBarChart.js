@@ -19,9 +19,6 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
     compile: function () {
       return {
         pre: function (scope, element) {
-
-          scope.titleXpx = scope.titleYpx = scope.yLabelXpx = scope.yLabelYpx = scope.xLabelXpx = scope.xLabelYpx = 10;
-
           scope.options = scope.options || {};
 
           scope.options.labels = scope.options.labels ||
@@ -163,6 +160,14 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             scope.xLabelXpx = (svgWidth / 2);
             scope.xLabelYpx = (svgHeight - ymargin / 6);
 
+            var barChart = d3.select(element[0]).select('.bar-chart');
+            barChart.select('text.title-label').attr('transform',
+              'translate(' + scope.titleXpx + ', ' + scope.titleYpx + ')');
+            barChart.select('text.x-label').attr('transform',
+              'translate(' + scope.xLabelXpx + ', ' + scope.xLabelYpx + ')');
+            barChart.select('text.y-label').attr('transform',
+              'translate(' + scope.yLabelXpx + ', ' + scope.yLabelYpx + ')rotate(-90)');
+
             var svg = getSVG(svgWidth, svgHeight);
             var data = scope.aggData;
 
@@ -252,11 +257,11 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               .orient('left')
               .tickFormat(d3.format('d'));
 
-            var yMax = d3.max(data, function (d1) {
-              return d3.max(d1.values, function (d2) {
+            var yMax = data ? d3.max(data, function (d1) {
+              return d1.values ? d3.max(d1.values, function (d2) {
                 return d2.value;
-              });
-            });
+              }) : 0;
+            }) : 0;
 
             x0.domain(data.map(function (d) {
               return d.colName || d.key;
@@ -347,9 +352,9 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
             var rect = col.selectAll('rect')
               .data(function (d) {
-                return d.values.filter(function (d1) {
+                return d.values ? d.values.filter(function (d1) {
                   return d1.value > 0;
-                });
+                }) : 0;
               });
             rect.exit().remove();
 

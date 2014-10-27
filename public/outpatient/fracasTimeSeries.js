@@ -24,8 +24,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
     compile: function () {
       return {
         pre: function (scope, element) {
-          scope.titleXpx = scope.titleYpx = scope.yLabelXpx = scope.yLabelYpx = scope.xLabelXpx = scope.xLabelYpx = 10;
-
           var defaultLabels = {
             title: gettextCatalog.getString('Timeseries'),
             y: gettextCatalog.getString('Count'),
@@ -650,6 +648,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 .tickPadding(6);
 
             var timeseries = d3.select(element[0]).select('.custom-timeseries');
+
+            timeseries.select('text.title-label').attr('transform',
+              'translate(' + scope.titleXpx + ', ' + scope.titleYpx + ')');
+            timeseries.select('text.x-label').attr('transform',
+              'translate(' + scope.xLabelXpx + ', ' + scope.xLabelYpx + ')');
+            timeseries.select('text.y-label').attr('transform',
+              'translate(' + scope.yLabelXpx + ', ' + scope.yLabelYpx + ')rotate(-90)');
+
             var g = timeseries.select('g.chart');
             var topLayer = timeseries.select('g.ts-top-layer');
 
