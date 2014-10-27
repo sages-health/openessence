@@ -1,7 +1,8 @@
 'use strict';
 
 var gulp = require('gulp');
-var gutil  = require('gulp-util');
+var gutil = require('gulp-util');
+var del = require('del');
 var _ = require('lodash');
 
 // load all tasks in tasks directory
@@ -15,12 +16,11 @@ require('require-dir')('./tasks');
 //  // TODO do this instead of middleware to simplify the codebase (but complicate the build)
 //});
 
-gulp.task('clean', function () {
-  // recommended over gulp-clean, see https://github.com/peter-vilja/gulp-clean/pull/3
-  var rimraf = require('gulp-rimraf');
-
-  return gulp.src(['dist', '.tmp'], {read: false})
-    .pipe(rimraf());
+gulp.task('clean', function (callback) {
+  del([
+    'dist',
+    '.tmp'
+  ], callback);
 });
 
 gulp.task('build', ['images', 'fonts', 'views', 'translations']);
