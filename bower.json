@@ -14,7 +14,6 @@
     "fracas-jquery-ui": "gabegorelick/fracas-jquery-ui#0.0.4",
     "fracas-theme": "gabegorelick/fracas-theme#0.0.1",
     "textAngular": "~1.2.1",
-    "d3": "~3.4.8",
     "angular-ui-sortable": "~0.12.8",
     "angular-gridster": "~0.9.11",
     "ng-debounce": "~0.1.4",
