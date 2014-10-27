@@ -10,6 +10,7 @@ module.exports = function ($scope, $window, $timeout, $log, Report, visualizatio
   $scope.state.options.showNotes = true;
 
   $scope.state.options.labels.notes = $scope.state.queryString;
+  $scope.state.options.labels.title = $scope.state.options.labels.title || 'Export';
 
   $scope.export = function () {
     var pad = 10;

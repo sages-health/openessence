@@ -182,7 +182,7 @@ if (cluster.isMaster) {
     var extension = mime.extension(contentType);
 
     // A4 is ISO standard, even if USA uses Letter
-    var size = extension === 'pdf' ? 'A4' : '1240px';
+    var size = extension === 'pdf' ? 'A4' : (req.query.size || '1240px');
 
     tmp.tmpName({postfix: '.' + extension}, function (err, filename) {
       if (err) {
