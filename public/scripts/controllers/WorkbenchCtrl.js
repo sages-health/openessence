@@ -9,7 +9,8 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     margins: [10, 10],
     columns: 12,
     draggable: {
-      enabled: true
+      enabled: true,
+      handle: '.viz-drag-handle'
     },
     resizable: {
       enabled: true
