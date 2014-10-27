@@ -17,7 +17,6 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
       visualization: '=?', // what visualization we're working with
       pivot: '=?', // what rows/columns we're currently pivoting on
       close: '&onClose',
-      settings: '&onSettings',
       pivotOptions: '=?'
     },
     link: {
@@ -48,9 +47,19 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
           })
         };
 
+        scope.settings = function () {
+          // broadcast on parent since transcluded scope is our sibling
+          scope.$parent.$broadcast('editVizualizationSettings');
+        };
+
         scope.exportViz = function () {
           // broadcast on parent since transcluded scope is our sibling
-          scope.$parent.$broadcast('export');
+          scope.$parent.$broadcast('exportVizualization');
+        };
+
+        scope.saveViz = function () {
+          // broadcast on parent since transcluded scope is our sibling
+          scope.$parent.$broadcast('saveVizualization');
         };
       },
       post: function (scope, element) {
@@ -91,6 +100,11 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
           updateViz(scope.pivot.rows, cols);
           sort(element.find('.pivot-cols'));
         });
+
+        scope.$watchCollection('visualization.name', function () {
+          scope.$parent.$broadcast('vizualizationNameChanged');
+        });
+
       }
     }
   };

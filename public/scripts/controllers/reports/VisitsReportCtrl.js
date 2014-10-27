@@ -47,14 +47,20 @@ module.exports = function ($scope, $window, visualization, user, dateFilter) {
 
   //TODO: hardcoded saved query names: weeklyseries, sexbarchart, and symptomspie
   visualization.resource.get({q: 'name:"weeklyseries"'}, function (data) {
-    $scope.viz = fixVisualization(data.results[0]._source.state);
+    var viz = fixVisualization(data.results[0]._source.state);
+    viz.options.id = 1;
+    $scope.viz = viz;
   });
 
   visualization.resource.get({q: 'name:"sexbarchart"'}, function (data) {
-    $scope.viz1 = fixVisualization(data.results[0]._source.state);
+    var viz = fixVisualization(data.results[0]._source.state);
+    viz.options.id = 2;
+    $scope.viz1 = viz;
   });
 
   visualization.resource.get({q: 'name:"symptomspie"'}, function (data) {
-    $scope.viz2 = fixVisualization(data.results[0]._source.state);
+    var viz = fixVisualization(data.results[0]._source.state);
+    viz.options.id = 3;
+    $scope.viz2 = viz;
   });
 };

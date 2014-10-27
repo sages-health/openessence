@@ -3,6 +3,7 @@
 var cluster = require('cluster');
 var http = require('http');
 var https = require('https');
+var fork = require('child_process').fork;
 
 var conf = require('./server/conf');
 var logger = conf.logger;
@@ -31,28 +32,6 @@ var startServer = function (callback) {
 if (cluster.isMaster) {
   logger.info('Running in %s mode', conf.env);
 
-  if (conf.phantom.enabled) {
-    // start PhantomJS cluster
-    var phantom = require('./server/phantom');
-    var fork = require('child_process').fork;
-    var phantomChild = fork(__dirname + '/server/phantom');
-
-    phantomChild.on('message', function (message) {
-      if (message.started) {
-        phantom.started = true; // TODO promise?
-        phantom.childProcess = phantomChild;
-      }
-    });
-    phantomChild.on('error', function (err) {
-      logger.error({err: err}, 'PhantomJS child process error');
-    });
-    phantomChild.on('exit', function () {
-      logger.info('PhantomJS child process exited');
-    });
-  } else {
-    logger.info('Skipping PhantomJS');
-  }
-
   var onServerListening = function () {
     // This message isn't just to be friendly. We really only support running Fracas at one URL, since it makes
     // a lot of things, e.g. redirects, a lot easier. This log statement helps nudge the admin into using the preferred
@@ -67,6 +46,20 @@ if (cluster.isMaster) {
       });
     }
   };
+
+  if (conf.phantom.enabled) {
+    // Start single phantom master process. Phantom master process uses phantom-cluster directly, so no need for us
+    // to cluster ourselves
+    var phantom = fork(__dirname + '/server/phantom.js');
+    phantom.on('error', function (err) {
+      logger.error({err: err}, 'Error from phantom master process');
+    });
+    phantom.on('exit', function () {
+      logger.error('Phantom master process exited. You should probably restart Fracas.');
+    });
+  } else {
+    logger.info('Not starting PhantomJS');
+  }
 
   var debug = process.execArgv.some(function (arg) {
     // Regex taken from https://github.com/joyent/node/commit/43ec1b1c2e77d21c7571acd39860b9783aaf5175

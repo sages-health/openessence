@@ -4,7 +4,8 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope) {
+angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, updateURL, //
+                                                                                        gettextCatalog, EditSettings) {
   return {
     restrict: 'E',
     template: require('./bar-chart.html'),
@@ -19,6 +20,20 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
       return {
         pre: function (scope, element) {
           scope.options = scope.options || {};
+
+          scope.options.labels = scope.options.labels ||
+          {
+            title: gettextCatalog.getString('Bar Chart'),
+            y: gettextCatalog.getString('Count'),
+            x: gettextCatalog.getString('Category')
+          };
+
+          scope.$on('editVizualizationSettings', function () {
+            EditSettings.openSettingsModal('bar', scope.options.labels)
+              .result.then(function (labels) {
+                scope.options.labels = labels;
+              });
+          });
 
           /**
            * Return a 'g' element in the SVG for drawing the Bar
@@ -129,14 +144,31 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
           // http://bl.ocks.org/mbostock/3887051
           var redraw = function () {
-            var svgWidth = scope.options.width || element.find('svg.bar-chart')[0].parentNode.offsetWidth,
+            var svgWidth = scope.options.width || element.find('svg.bar-chart')[0].parentNode.offsetWidth || 500,
               svgHeight = scope.options.height || 400;
 
             var chartWidth = svgWidth - 125,
               chartHeight = svgHeight - 100;
 
-            var svg = getSVG(svgWidth, svgHeight);
+            var ymargin = 100;
+            var xmargin = 50;
 
+            scope.titleXpx = (svgWidth / 2);
+            scope.titleYpx = 20;
+            scope.yLabelXpx = (xmargin / 3);
+            scope.yLabelYpx = (svgHeight / 2);
+            scope.xLabelXpx = (svgWidth / 2);
+            scope.xLabelYpx = (svgHeight - ymargin / 6);
+
+            var barChart = d3.select(element[0]).select('.bar-chart');
+            barChart.select('text.title-label').attr('transform',
+              'translate(' + scope.titleXpx + ', ' + scope.titleYpx + ')');
+            barChart.select('text.x-label').attr('transform',
+              'translate(' + scope.xLabelXpx + ', ' + scope.xLabelYpx + ')');
+            barChart.select('text.y-label').attr('transform',
+              'translate(' + scope.yLabelXpx + ', ' + scope.yLabelYpx + ')rotate(-90)');
+
+            var svg = getSVG(svgWidth, svgHeight);
             var data = scope.aggData;
 
             if (data.length === 0) {
@@ -225,11 +257,11 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               .orient('left')
               .tickFormat(d3.format('d'));
 
-            var yMax = d3.max(data, function (d1) {
-              return d3.max(d1.values, function (d2) {
+            var yMax = data ? d3.max(data, function (d1) {
+              return d1.values ? d3.max(d1.values, function (d2) {
                 return d2.value;
-              });
-            });
+              }) : 0;
+            }) : 0;
 
             x0.domain(data.map(function (d) {
               return d.colName || d.key;
@@ -320,9 +352,9 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
             var rect = col.selectAll('rect')
               .data(function (d) {
-                return d.values.filter(function (d1) {
+                return d.values ? d.values.filter(function (d1) {
                   return d1.value > 0;
-                });
+                }) : 0;
               });
             rect.exit().remove();
 
@@ -372,12 +404,30 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               });
           };
 
+          var updateVisualization = function () {
+            delete scope.options.options;
+            updateURL.updateVisualization(scope.options.id, {
+              options: scope.options,
+              pivot: scope.pivot
+            });
+          };
+
           scope.$watchCollection('[aggData]', function () {
             redraw();
+            updateVisualization();
+          });
+
+          scope.$watchCollection('[pivot.cols, pivot.rows]', function () {
+            updateVisualization();
+          });
+
+          scope.$watchCollection('[options.labels.title, options.labels.x, options.labels.y]', function () {
+            updateVisualization();
           });
 
           scope.$watchCollection('[options.width, options.height]', function () {
             redraw();
+            updateVisualization();
           });
         }
       };

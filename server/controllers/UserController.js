@@ -48,6 +48,9 @@ module.exports = codex.controller(User, {
       return callback(Boom.forbidden());
     }
 
+    // TODO: define a user token that will be used for bearer auth
+    esRequest.body.tokens = [esRequest.body.username];
+
     if (esRequest.id) {
       if (esRequest.id !== user.id && !user.isAdmin()) {
         // can't modify other users

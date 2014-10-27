@@ -1,27 +1,39 @@
 <div class="container-fluid">
-  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters"
-                           query-string="workbench.queryString">
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString">
+    <!-- TODO these buttons are in a weird place -->
+    <div class="col-md-3 pull-right">
+      <div class="well text-center">
+        <button class="btn btn-primary" ng-click="addVisualization()">
+          <span class="icon-plus"></span>
+          <span translate>Add widget</span>
+        </button>
+        <button class="btn btn-default" ng-click="saveWorkbench()">
+          <span class="icon-floppy"></span>
+          <span translate>Save</span>
+        </button>
+      </div>
+    </div>
   </outpatient-filters-grid>
 </div>
 
+<!-- visualizations-->
 <div class="container-fluid">
   <div class="row">
-
-    <div class="panel panel-default">
-      <div gridster="gridsterOptions">
-        <ul>
-          <li class="workbench-visualization" gridster-item="viz" ng-repeat="viz in workbench.visualizations">
-            <div class="panel-body workbench-panel">
-              <workbench-visualization pivot-options="workbench.pivotOptions" query-string="workbench.queryString"
-                                       filters="workbench.filters" options="options"
-                                       visualization="viz.visualization"
-                                       pivot="viz.pivot"
-                                       on-close="removeVisualization(viz)">
-              </workbench-visualization>
-            </div>
-          </li>
-        </ul>
-      </div>
+    <div gridster="gridsterOptions">
+      <ul>
+        <li class="workbench-visualization"  id="{{viz.id}}" gridster-item="viz" ng-repeat="viz in visualizations">
+          <div class="panel-body workbench-panel">
+            <workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="activeFilters"
+                                     form="form"
+                                     options="viz.options"
+                                     visualization="viz.visualization"
+                                     pivot="viz.pivot"
+                                     size-x="viz.sizeX" size-y="viz.sizeY" row="viz.row" col="viz.col"
+                                     on-close="removeVisualization(viz)">
+            </workbench-visualization>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

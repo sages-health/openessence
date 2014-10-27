@@ -20,6 +20,10 @@ require('d3');
 // polyfills, try to require only what you need instead of entire es6 polyfills
 require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
 require('string.prototype.endswith'); // not in IE <= 11
+if (!Function.prototype.bind) {
+  // PhantomJS doesn't have bind, see https://github.com/ariya/phantomjs/issues/10522#issuecomment-50621310
+  Function.prototype.bind = require('function-bind');
+}
 
 require('ng-debounce');
 require('text-angular');
@@ -43,6 +47,7 @@ require('./controllers');
 require('./services');
 require('./directives');
 require('./filters');
+
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
                     'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
@@ -70,11 +75,24 @@ app.config(function (cfpLoadingBarProvider) {
 
 var previousState = {};
 var stateChanged = false; // there's probably a better way to track initial state change, but this works
-app.run(function ($rootScope, $state, $http, cfpLoadingBar, user) {
+app.run(function ($rootScope, $state, $http, cfpLoadingBar, user, $injector) {
+
+
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
     cfpLoadingBar.start();
 
     if (!stateChanged) {
+      if(user.getUser()){
+        $injector.get('$http').defaults.transformRequest = function (data, headersGetter) {
+          if ($rootScope.oauth) {
+            /*jshint sub:true*/
+            headersGetter()['Authorization'] = 'Bearer ' + user.getUser().tokens;
+          }
+          if (data) {
+            return angular.toJson(data);
+          }
+        };
+      }
       // We only "redirect" on initial page load. Once you're in the app, there are better ways of dealing with this
       stateChanged = true;
       if (!user.isLoggedIn()) {
@@ -131,7 +149,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/',
       // home.content is the same as the workbench right now, just at a different URL.
       // It may be different in the future though.
-      template: require('../partials/workbench.html'),
+      template: require('../workbench/workbench.html'),
       controller: 'WorkbenchCtrl'
     })
     .state('login', {
@@ -141,7 +159,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('workbench', {
       url: '/workbench/:workbenchId',
-      template: require('../partials/workbench.html'),
+      template: require('../workbench/workbench.html'),
       controller: 'WorkbenchCtrl',
       parent: 'home'
     })
@@ -169,6 +187,16 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('report.save', {
       url: '/save'
+    })
+    .state('visualization-export', {
+      url: '/visualization-export',
+      template: require('../partials/visualization-export.html'),
+      controller: 'VisualizationExportCtrl'
+    })
+    .state('visualization-report', {
+      url: '/visualization-report',
+      template: require('../partials/reports/visualization-report.html'),
+      controller: 'VisualizationReportCtrl'
     })
     .state('visits-report', {
       url: '/visits-report',
