@@ -51,6 +51,18 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     return $scope.nextVizId;
   };
 
+  // Sort visualization using row numbers
+  // This function is called while loading saved workbench or
+  // using URL state variable
+  // If visualizations are not sorted using row number,
+  // gridster may change row number of widget
+  var sortVisualizations = function (a, b) {
+    if (a.row === b.row) {
+      return 0;
+    }
+    return (a.row < b.row) ? -1 : 1;
+  };
+
   FormResource.get({size: 1, q: 'name:demo'}, function (response) {
     if (response.results.length === 0) {
       throw new Error('No configured forms');
@@ -81,6 +93,9 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       var workbench = workbenches[workbenchId]._source.state;
       $scope.nextVizId = workbench.nextVizId;
       $scope.activeFilters = workbench.activeFilters;
+
+      workbench.visualizations.sort(sortVisualizations);
+
       if (Array.isArray(workbench.visualizations)) {
         workbench.visualizations.forEach(function (v) {
           $scope.addVisualization(v.visualization.name, v);
@@ -89,6 +104,8 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
       $scope.activeFilters = state.filters || [];
       if (Array.isArray(state.visualizations)) {
+        state.visualizations.sort(sortVisualizations);
+
         state.visualizations.forEach(function (v) {
           var id = v.id ? parseInt(v.id.substring(4)) : 0;
           $scope.nextVizId = $scope.nextVizId >= id ? $scope.nextVizId : id;
@@ -137,7 +154,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
 
   $scope.addVisualization = function (name, options) {
     options = options || {};
-
     var id = options.id;
     if (!id) {
       id = 'viz-' + getNextVizId();
