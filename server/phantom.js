@@ -129,6 +129,7 @@ engine.on('queueItemReady', function (options) {
 
         page.render(options.filename, function () {
           logger.info('PhantomJS done rendering %s', options.filename);
+          page.close();
           clusterClient.queueItemResponse(options);
         });
 
