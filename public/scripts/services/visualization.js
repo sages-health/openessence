@@ -36,8 +36,25 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
         });
     },
     export: function (state) {
-
-      $window.state = angular.copy(state);
+      $window.state = angular.copy({
+        visualization: state.visualization,
+        queryString: state.queryString,
+        filters: state.filters,
+        pivot: state.pivot,
+        options: state.options,
+        form: state.form
+      });
+      //TODO quick fix for url length, need to handle state/URL/viz better
+      $window.state.filters.map(function(v){
+        delete v.values;
+        return v;
+      });
+      if($window.state.form){
+        $window.state.form.fields.map(function(v){
+          delete v.values;
+          return v;
+        });
+      }
       //var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
       var url = document.baseURI;
       url = url + 'visualization-export';
