@@ -251,5 +251,7 @@ if (cluster.isMaster) {
     .use(require('./error').notFound); // this must be the last route
 
   var phantomUrl = url.parse(conf.phantom.url);
-  http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname);
+  http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname, function () {
+    logger.info('Phantom HTTP proxy started at %s', conf.phantom.url);
+  });
 }
