@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <outpatient-filters-grid filters="filters" filter-types="filterTypes"
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters"
                            query-string="queryString"></outpatient-filters-grid>
 </div>
 <div class="container">
@@ -31,8 +31,8 @@
               <td data-title="strings.year">
                 <a>{{getYear(record._source.visitDate)}}</a>
               </td>
-              <td data-title="strings.district" data-sortable="'medicalFacility.district'">
-                <a ng-click="tableFilter('districts', record._source.medicalFacility.district)">{{record._source.medicalFacility.district}}</a>
+              <td data-title="strings.district" data-sortable="'medicalFacility.location.district'">
+                <a ng-click="tableFilter('medicalFacility.location.district', record._source.medicalFacility.location.district)">{{record._source.medicalFacility.location.district}}</a>
               </td>
               <td data-title="strings.sitesTotal" data-sortable="'medicalFacility.sites.total'">
                 <a>{{record._source.medicalFacility.sites.total}}</a>

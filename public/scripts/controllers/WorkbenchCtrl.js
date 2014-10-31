@@ -18,26 +18,10 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
 
   $scope.filterTypes = [
       {
-        filterId: 'age',
-        type: 'numeric-range',
-        field: 'patient.age',
-        name: gettextCatalog.getString('Age')
-      },
-      {
         filterId: 'date',
         type: 'date-range',
         field: 'reportDate',
         name: gettextCatalog.getString('Date')
-      },
-      {
-        filterId: 'diagnoses',
-        type: 'multi-select',
-        field: 'diagnoses.name',
-        store: {
-          resource: DiagnosisResource,
-          field: 'name'
-        },
-        name: gettextCatalog.getString('Diagnoses')
       },
       {
         filterId: 'districts',
@@ -48,12 +32,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
           field: 'name'
         },
         name: gettextCatalog.getString('District')
-      },
-      {
-        filterId: 'sex',
-        type: 'sex',
-        field: 'patient.sex',
-        name: gettextCatalog.getString('Sex')
       },
       {
         filterId: 'symptoms',
@@ -67,9 +45,10 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       }
     ];
 
+  // TODO make dependent on enabled form fields
   $scope.pivotOptions = [
     {
-      value: 'districts',
+      value: 'medicalFacility.location.district',
       label: gettextCatalog.getString('District')
     },
     {

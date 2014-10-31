@@ -52,13 +52,13 @@ async.parallel([
     }, callback);
   },
 
-  function diagnoses (callback) {
-    bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
-  },
+  //function diagnoses (callback) {
+    //bulkInsert(require('../models/Diagnosis'), require('./diagnosis.json'), callback);
+  //},
 
-  function disposition (callback) {
-    bulkInsert(require('../models/Disposition'), require('./disposition.json'), callback);
-  },
+  //function disposition (callback) {
+    //bulkInsert(require('../models/Disposition'), require('./disposition.json'), callback);
+  //},
 
   function districts (callback) {
     var District = require('../models/District');
@@ -76,21 +76,21 @@ async.parallel([
     bulkInsert(District, features, callback);
   },
 
-  function facilities_ (callback) {
-    bulkInsert(require('../models/Facility'), require('./facilities.json'), callback);
-  },
+  //function facilities_ (callback) {
+  //  bulkInsert(require('../models/Facility'), require('./facilities.json'), callback);
+  //},
 
   function forms (callback) {
     bulkInsert(require('../models/Form'), require('./forms.js'), callback);
   },
 
-  function outpatientVisits (callback) {
-    bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
-  },
+  //function outpatientVisits (callback) {
+  //  bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
+  //},
 
-  function outpatientVisitsAgg (callback) {
-    bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits-agg.json'), callback);
-  },
+  //function outpatientVisitsAgg (callback) {
+  //  bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits-agg.json'), callback);
+  //},
 
   function symptoms (callback) {
     bulkInsert(require('../models/Symptom'), require('./symptom_for_aggregates.json'), callback);

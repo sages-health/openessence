@@ -8,6 +8,12 @@
           <td ng-show="fields.visitDate.enabled" data-title="strings.visitDate" data-sortable="'visitDate'">
             <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
           </td>
+          <td data-title="strings.week">
+            <a>{{getWeek(visit._source.reportDate)}}</a>
+          </td>
+          <td data-title="strings.year">
+            <a>{{getYear(visit._source.reportDate)}}</a>
+          </td>
 
           <!-- could also roll up to geographic area, but we usually deal with so few sites that that's not helpful -->
           <td ng-show="fields.medicalFacility.enabled" data-title="strings.facility" data-sortable="'medicalFacility.name'">

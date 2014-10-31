@@ -21,16 +21,14 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
         pre: function (scope) {
           scope.condensed = condensed;
           scope.strings = {
-            visitDate: gettextCatalog.getString('Visit'),
-            submissionDate: gettextCatalog.getString('Submitted'),
+            visitDate: gettextCatalog.getString('Date'),
             facility: gettextCatalog.getString('Facility'),
+            district: gettextCatalog.getString('District'),
             symptoms: gettextCatalog.getString('Symptoms'),
-            diagnoses: gettextCatalog.getString('Diagnoses'),
-            syndromes: gettextCatalog.getString('Syndromes'),
-            disposition: gettextCatalog.getString('Disposition'),
-            sex: gettextCatalog.getString('Sex'),
-            age: gettextCatalog.getString('Age'),
-            antiviral: gettextCatalog.getString('Antiviral')
+            week: gettextCatalog.getString('Week'),
+            year: gettextCatalog.getString('Year'),
+            sitesReporting: gettextCatalog.getString('Number of Sites Reporting'),
+            sitesTotal: gettextCatalog.getString('Total Sites')
           };
 
           // index fields by name

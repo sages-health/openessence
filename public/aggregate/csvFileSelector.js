@@ -74,7 +74,11 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
                     week: row[1],
                     visitDate: parseDate(row[2]),
                     medicalFacility: {
-                      district: row[3],
+                      name: row[3],
+                      location: {
+                        district: row[3],
+                        country: row[3]
+                      },
                       sites: {
                         total: !isNaN(row[5]) ? row[5] : undefined,
                         reporting: !isNaN(row[6]) ? row[6] : undefined
@@ -109,7 +113,7 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
               {field: 'week', displayName: 'Week'},
               {field: 'visitDate', displayName: 'Visit date', width: 100,
                 cellTemplate: '<div class="ngCellText">{{formatDate(row.getProperty(col.field))}}</div>'},
-              {field: 'medicalFacility.district', displayName: 'District', width: 100},
+              {field: 'medicalFacility.location.country', displayName: 'Country', width: 100},
               {field: 'medicalFacility.sites.total', displayName: 'Total Sites'},
               {field: 'medicalFacility.sites.reporting', displayName: 'Sites Reporting'},
               {field: 'acuteFever', displayName: 'Acute Fever and Rashes', width: 80},
