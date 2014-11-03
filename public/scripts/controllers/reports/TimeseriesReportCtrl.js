@@ -79,8 +79,8 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
     var vizTemplate = fixVisualization(data.results[0]._source);
 
     var searchParams = {
-      size: 30,  //TODO: get data for all district/country
-      sort: 'name'
+      size: 999,  //TODO: get data for all district/country
+      sort: 'name.raw'
     };
 
     DistrictResource.get(searchParams, function (response) {
