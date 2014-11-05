@@ -72,8 +72,8 @@
       <div class="form-group">
         <label for="entry-user-districts" translate>Districts</label>
         <select class="form-control select2-multiple" id="entry-user-districts" multiple ui-select2
-                ng-model="data.districts">
-          <option ng-repeat="district in districts" value="{{district}}">{{district}}</option>
+                ng-model="data.medicalFacility.location.districts">
+          <option ng-repeat="district in medicalFacility.location.districts" value="{{district}}">{{district}}</option>
         </select>
       </div>
 

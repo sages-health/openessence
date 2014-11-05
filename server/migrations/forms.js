@@ -29,7 +29,7 @@ module.exports = [
         name: 'medicalFacility',
         enabled: false,
         // can't do this with JSON
-        values: require('./facilities.json')
+        values: require('./facilities_agg.json')
       },
 
       // Allow user-supplied values for medical facility.
@@ -44,7 +44,7 @@ module.exports = [
       {
         name: 'medicalFacility.location.district',
         enabled: true,
-        values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
+        values: Object.keys(require('./facilities_agg.json').reduce(function (districts, facility) {
           // construct set of districts
           if (facility.location && facility.location.district) {
             var district = facility.location.district;
@@ -63,7 +63,7 @@ module.exports = [
       {
         name: 'medicalFacility.location.country',
         enabled: false,
-        values: Object.keys(require('./facilities.json').reduce(function (countries, facility) {
+        values: Object.keys(require('./facilities_agg.json').reduce(function (countries, facility) {
           // construct set of country
           if (facility.location && facility.location.country) {
             var country = facility.location.country;
