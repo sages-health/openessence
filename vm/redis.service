@@ -7,5 +7,6 @@ Requires=docker.service
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill redis
 ExecStartPre=-/usr/bin/docker rm redis
-ExecStart=/usr/bin/docker run -p 6379:6379 --name redis redis
+ExecStartPre=/usr/bin/docker pull gabegorelick/fracas-redis
+ExecStart=/usr/bin/docker run -p 6379:6379 --name redis gabegorelick/fracas-redis
 ExecStop=/usr/bin/docker stop redis
