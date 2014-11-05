@@ -109,17 +109,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             // let timeSeries directive handle it
             return;
           }
-
-          // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
-          var state = scopeToJson(scope);
-          ['data', 'crosstabData'].forEach(function (k) {
-            delete state[k];
-          });
-          if (state.tableParams) {
-            delete state.tableParams.data;
-          }
-
-          visualization.save(state);
+          visualization.save(scopeToJson(scope));
         });
 
         //assuming only two deep for now..
