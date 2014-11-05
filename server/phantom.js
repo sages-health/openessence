@@ -111,26 +111,43 @@ engine.on('queueItemReady', function (options) {
 
     setPageSize();
 
-    page.open(options.url, function () {
+    page.open(options.url, function (status) {
+      var finish = function () {
+        page.close();
+        clusterClient.queueItemResponse(options);
+      };
+
+      if (status !== 'success') {
+        logger.error('Error opening page %s', options.url);
+        return finish();
+      }
+
       logger.info('PhantomJS rendering %s to %s', options.url, options.filename);
       setTimeout(function () {
-        if (options.selector) {
-          page.evaluate((function () {
-            var func = function (s) {
-              /* global document*/
-              return document.querySelector('#' + s).getBoundingClientRect();
-            };
-            return 'function() { return (' + func.toString() + ').apply(this, ' + JSON.stringify([options.selector]) + ');}';
-          }()), function (value) {
-            page.clipRect = value;
-            page.set('clipRect', value);
-          });
-        }
+        var clip = function (callback) {
+          if (!options.selector) {
+            return callback(null);
+          }
 
-        page.render(options.filename, function () {
-          logger.info('PhantomJS done rendering %s', options.filename);
-          page.close();
-          clusterClient.queueItemResponse(options);
+          page.evaluate(function (selector) {
+            /* global document */
+            return document.querySelector('#' + selector).getBoundingClientRect();
+          }, options.selector, function (clientRect) {
+            page.set('clipRect', clientRect);
+            callback(null);
+          });
+        };
+
+        clip(function (err) {
+          if (err) {
+            logger.error(err);
+            return finish();
+          }
+
+          page.render(options.filename, function () {
+            logger.info('PhantomJS done rendering %s', options.filename);
+            finish();
+          });
         });
 
       }, 1000);
@@ -234,5 +251,7 @@ if (cluster.isMaster) {
     .use(require('./error').notFound); // this must be the last route
 
   var phantomUrl = url.parse(conf.phantom.url);
-  http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname);
+  http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname, function () {
+    logger.info('Phantom HTTP proxy started at %s', conf.phantom.url);
+  });
 }

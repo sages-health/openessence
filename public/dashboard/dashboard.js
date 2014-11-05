@@ -18,7 +18,8 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
             margins: [10, 10],
             columns: 12,
             draggable: {
-              enabled: true
+              enabled: true,
+              handle: '.viz-drag-handle'
             },
             resizable: {
               enabled: true
