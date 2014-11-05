@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Settings</h4>
+</div>
+<div class="modal-body">
+<form class="form" role="form" novalidate name="editForm">
+    <div class="form-group" ng-class="{'has-error': yellAtUser}">
+      <label for="edit-title" translate>Title</label>
+      <input type="text" class="form-control" id="edit-title" name="title" ng-model="labels.title" required>
+      <div class="help-block" ng-show="yellAtUser" translate>
+        Please enter title
+      </div>
+    </div>
+    <div class="form-group" ng-if="vizType === 'line' || vizType === 'bar'" ng-class="{'has-error': yellAtUser}">
+      <label for="edit-x-label" translate>X-Axis Label</label>
+      <input type="text" class="form-control" id="edit-x-label" name="xLabel" ng-model="labels.x" required>
+      <div class="help-block" ng-show="yellAtUser" translate>
+        Please enter label for x-axis
+      </div>
+    </div>
+    <div class="form-group" ng-if="vizType === 'line' || vizType === 'bar'" ng-class="{'has-error': yellAtUser}">
+      <label for="edit-y-label" translate>Y-Axis Label</label>
+      <input type="text" class="form-control" id="edit-y-label" name="yLabel" ng-model="labels.y" required>
+      <div class="help-block" ng-show="yellAtUser" translate>
+        Please enter label for y-axis
+      </div>
+    </div>
+</form>
+
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="ok()">
+    <span class="icon-ok"></span>
+    <span translate>OK</span>
+  </button>
+</div>

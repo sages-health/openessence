@@ -8,7 +8,7 @@ module.exports = function ($modal) {
     open: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-visits-report-dialog.html'),
-        controller: /*ngInject*/ function ($scope, $modalInstance, $window, $location) {
+        controller: /*ngInject*/ function ($scope, $modalInstance, $window) {
           $scope.report = {};
 
           $scope.isInvalid = function (field) {
@@ -34,14 +34,11 @@ module.exports = function ($modal) {
               return;
             }
             $window.report = $scope.report;
-            var location = $location;
-            if (location.path() === '/') {
-              location = location.absUrl() + 'visits-report';
-            } else {
-              location = location.absUrl().replace(location.path(), '/visits-report');
-            }
 
-            $window.open(location, 'report-visits', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
+            var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+            url = url + 'visits-report';
+
+            $window.open(url, 'report-visits', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
 
             $modalInstance.close();
           };

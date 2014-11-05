@@ -1,6 +1,13 @@
 <div class="row">
   <div class="col-md-12">
-    <svg class="bar-chart">
+    <svg id="svg-id-{{options.id}}" class="bar-chart">
+      <g ng-show="aggData.length > 0" class="title">
+        <text class="title-label" text-anchor="middle">{{options.labels.title}}</text>
+      </g>
+
+      <text ng-show="aggData.length > 0" class="y-label" text-anchor="middle">{{options.labels.y}}</text>
+      <text ng-show="aggData.length > 0" class="x-label" text-anchor="middle">{{options.labels.x}}</text>
+
     </svg>
   </div>
 </div>

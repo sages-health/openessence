@@ -3,14 +3,16 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('dashboardWidget', /*@ngInject*/ function ($timeout) {
+angular.module(directives.name).directive('dashboardWidget', /*@ngInject*/ function ($timeout, updateURL) {
   return {
     restrict: 'E',
     template: '<outpatient-visualization options="options" height="height" width="width" filters="options.filters" query-string="options.queryString"></outpatient-visualization>',
     scope: {
       options: '=',
       sizeX: '=',
-      sizeY: '='
+      sizeY: '=',
+      row: '=',
+      col: '='
     },
     compile: function () {
       return {
@@ -21,6 +23,15 @@ angular.module(directives.name).directive('dashboardWidget', /*@ngInject*/ funct
             if (value.contains(element[0])) {
               parent = angular.element(value);
             }
+          });
+
+          scope.$watchCollection('[sizeX, sizeY, row, col]', function () {
+            updateURL.updateVisualization(scope.options.id, {
+              sizeX: scope.sizeX,
+              sizeY: scope.sizeY,
+              row: scope.row,
+              col: scope.col
+            });
           });
 
           scope.$watchCollection(function () {

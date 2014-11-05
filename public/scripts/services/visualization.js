@@ -1,11 +1,12 @@
 'use strict';
 
+var angular = require('angular');
+
 // @ngInject
-module.exports = function ($resource, $modal, VisualizationResource) {
+module.exports = function ($resource, $modal, $window, $location, VisualizationResource) {
   return {
     // TODO make clients use this directly
     resource: VisualizationResource,
-
     save: function (state) {
       $modal.open({
         template: require('../../partials/save-visualization-modal.html'),
@@ -33,6 +34,32 @@ module.exports = function ($resource, $modal, VisualizationResource) {
           })
             .$save();
         });
+    },
+    export: function (state) {
+      $window.state = angular.copy({
+        visualization: state.visualization,
+        queryString: state.queryString,
+        filters: state.filters,
+        pivot: state.pivot,
+        options: state.options,
+        form: state.form
+      });
+      //TODO quick fix for url length, need to handle state/URL/viz better
+      $window.state.filters.map(function(v){
+        delete v.values;
+        return v;
+      });
+      if ($window.state.form) {
+        $window.state.form.fields.map(function (v) {
+          delete v.values;
+          return v;
+        });
+      }
+      //var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
+      var url = document.baseURI;
+      url = url + 'visualization-export';
+
+      $window.open(url, 'visualizationExport', 'width=1200,resizable=1,scrollbars=1,toolbar=0,location=0,menubar=0,titlebar=0');
     }
   };
 };

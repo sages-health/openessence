@@ -20,6 +20,42 @@ var User = codex.model({
   client: conf.elasticsearch.client,
 
   classMethods: {
+
+    findByToken: function (token, esRequest, callback) {
+      if (!callback) {
+        callback = arguments[1];
+        esRequest = null;
+      }
+
+      esRequest = _.assign({
+        body: {
+          query: {
+            'constant_score': {
+              filter: {
+                term: {
+                  tokens: token // tokens saved as not-analyzed
+                }
+              }
+            }
+          }
+        }
+      }, esRequest);
+
+      return User.search(esRequest, function (err, users) {
+        if (err) {
+          return callback(err);
+        }
+
+        if (users.length > 1) {
+          return callback(new Error('Multiple users for token ' + token));
+        } else if (users.length === 0) {
+          return callback(null, null);
+        } else {
+          return callback(null, users[0]);
+        }
+      });
+    },
+
     findByUsername: function (username, esRequest, callback) {
       if (!callback) {
         callback = arguments[1];

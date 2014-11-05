@@ -24,6 +24,7 @@
 @import "viz-menu";
 @import "workbench";
 @import "report";
+@import "export";
 
 .navbar-brand {
   // Fix https://github.com/thomaspark/bootswatch/commit/5226a30d7df2eb15a06b9014507da767d205de30
@@ -43,8 +44,10 @@
 }
 
 // for ng-bootstrap, see http://angular-ui.github.io/bootstrap
-.nav, .pagination, .carousel, .panel-title a {
-  cursor: pointer;
+.nav, .panel-title, .pagination {
+  a {
+    cursor: pointer;
+  }
 }
 
 a[ng-click] {
@@ -171,6 +174,7 @@ fracas-filter .panel {
 }
 
 .export,
+.save,
 .settings {
   .close();
 }
@@ -280,4 +284,8 @@ workbench-visualization .frable-pagination {
   @page {
     size: landscape
   }
+}
+
+input.invalidFilename-true {
+  background-color: #e74c3c;
 }
