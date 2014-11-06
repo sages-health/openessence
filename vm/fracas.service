@@ -1,13 +1,13 @@
 [Unit]
 Description=Fracas
 After=docker.service elasticsearch.service redis.service
-Requires=docker.service
-Wants=elasticsearch.service redis.service
+Requires=docker.service elasticsearch.service redis.service
 
 [Service]
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill fracas
 ExecStartPre=-/usr/bin/docker rm fracas
+# ExecStartPre=/usr/bin/docker pull gabegorelick/fracas
 ExecStart=/usr/bin/docker run -p 9000:9000 \
   -e NODE_ENV=production \
   -e USERS=false \
@@ -18,6 +18,9 @@ ExecStart=/usr/bin/docker run -p 9000:9000 \
   --link elasticsearch:elasticsearch --link redis:redis \
   --name fracas fracas
 ExecStop=/usr/bin/docker stop fracas
+
+[Install]
+WantedBy=multi-user.target
 
 [X-Fleet]
 X-ConditionMachineOf=elasticsearch.service

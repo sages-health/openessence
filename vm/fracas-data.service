@@ -1,0 +1,13 @@
+[Unit]
+Description=Data-only container for fracas-elasticsearch
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker create --name fracas-data -v /data busybox true
+ExecStart=/usr/bin/docker start fracas-data
+ExecStop=/usr/bin/docker stop fracas-data
+
+[Install]
+WantedBy=multi-user.target
