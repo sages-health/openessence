@@ -17,6 +17,9 @@ require('angular-order-object-by');
 // see https://github.com/ForbesLindesay/browserify-middleware/issues/43
 require('d3');
 
+require('highcharts');
+require('highcharts-ng');
+
 // polyfills, try to require only what you need instead of entire es6 polyfills
 require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
 require('string.prototype.endswith'); // not in IE <= 11
@@ -51,7 +54,7 @@ require('./filters');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
                     'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-                    'ngGrid', 'ngOrderObjectBy', frable.name]
+                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));

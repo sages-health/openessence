@@ -87,7 +87,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         });
 
         scope.$on('exportVizualization', function () {
-          if (scope.visualization.name === 'line') {
+          if (scope.visualization.name === 'line' || scope.visualization.name === 'smallline') {
             // let timeSeries directive handle it
             return;
           }

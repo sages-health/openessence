@@ -31,7 +31,7 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
 
           scope.onFileSelect = function ($files) {
             // Check if file is CSV type
-            if ($files[0].type !== 'application/vnd.ms-excel') {
+            if ($files[0].type !== 'application/vnd.ms-excel' && $files[0].type !== 'text/csv') {
               scope.badFile = true;
               scope.$apply(function () {
                 scope.tableData = [];

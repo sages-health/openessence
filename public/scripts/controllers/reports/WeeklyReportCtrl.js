@@ -24,10 +24,10 @@ module.exports = function ($scope, $window, gettextCatalog, user, visualization,
     return result.length > 0 ? result[0].count : '';
   };
 
-  OutpatientVisitResource.get({
+  OutpatientVisitResource.search({
       q: dateString,
       size: 100,
-      sort: 'medicalFacility.district:desc'
+      sort: 'medicalFacility.location.district.raw:desc'
     },
     function (response) {
       $scope.$data = response.results;

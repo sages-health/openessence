@@ -69,6 +69,10 @@
     <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
                             options="options"></outpatient-time-series>
   </div>
+  <div class="animation-switch" ng-switch-when="smallline">
+    <outpatient-small-time-series filters="filters" query-string="queryString" series="pivot.cols"
+                                  options="options"></outpatient-small-time-series>
+  </div>
   <div class="animation-switch" ng-switch-when="pie">
     <outpatient-pie-chart
         filters="filters"

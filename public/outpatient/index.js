@@ -8,6 +8,7 @@ require('./form');
 require('./leaflet-map');
 require('./resource');
 require('./table');
+require('./fracasSmallTimeSeries');
 require('./fracasTimeSeries');
 require('./visualization');
 require('./fracasPieChart.js');
