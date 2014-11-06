@@ -60,8 +60,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # a copy of Rails. If it becomes an issue, we can use more obscure port numbers.
     config.vm.network :forwarded_port, :guest => 9000, :host => 9000
 
-    # Expose elasticsearch to the host. Useful to seed data. TODO: this might be a security risk.
-    config.vm.network :forwarded_port, :guest => 9200, :host => 9200
+    # Expose elasticsearch to the host. Useful to seed data from outside the VM
+    #config.vm.network :forwarded_port, :guest => 9200, :host => 9200
 
     # Uncomment this to port forward to guest's Docker
     #config.vm.network "forwarded_port", guest: 2375, host: 2375, auto_correct: true
@@ -80,30 +80,31 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                           :privileged => true
     end
 
-    # Install service files. Without an [Install] section, all `systemctl enable` does is yell at you and symlink your
-    # service into the systemd service directory. So we symlink the service files ourselves.
-    ['fracas-data', 'elasticsearch', 'redis'].each { |name|
-      service_file = "/home/core/share/vm/#{name}.service"
-      config.vm.provision :shell, :inline => "ln -s #{service_file} /etc/systemd/system/#{name}.service",
-                          :privileged => true
-    }
-
     # TODO put docker registry in VM
+
+    start_service = lambda do |name|
+      config.vm.provision :shell, :inline => "systemctl enable /home/core/share/vm/#{name}.service"
+      config.vm.provision :shell, :inline => "systemctl start #{name}.service"
+    end
+
+    # Manually start these containers before fracas to give them time to fully initialize
+    # (I'm bad at systemd)
+    ["fracas-data", "elasticsearch", "redis"].each { |name|
+      start_service.call(name)
+    }
 
     # We build fracas here (instead of pulling it from Docker Hub) so you can tweak the app, e.g. build a VM from
     # a branch.
     config.vm.provision :shell, :inline => "docker kill fracas || true"
     config.vm.provision :shell, :inline => "docker rm fracas || true"
     config.vm.provision :shell, :inline => "docker build -t fracas /home/core/share"
+    start_service.call("fracas")
 
-    # Use `systemctl enable` (instead of symlinking) since we want fracas to start on boot. All the other services
-    # (fracas-data, elasticsearch, redis) don't directly start on boot. Instead, since fracas requires them, they start
-    # when fracas starts. This makes sense since the other services aren't supposed to be general purpose system-wide
-    # services, they're really just for fracas. But since fracas starts on boot, all the other services will start at
-    # boot anyway, so it doesn't really matter.
-    config.vm.provision :shell, :inline => "systemctl enable /home/core/share/vm/fracas.service"
-    config.vm.provision :shell, :inline => "systemctl start fracas.service"
-
-    # TODO seed data using fracas-tools container
+    # Seed elasticsearch. This won't work if clean or reseed depends on devDeps on other stuff that's not in the fracas
+    # container. But the alternative is to have a separate fracas-tools container that would probably duplicate a lot
+    # of what's in the fracas container. That may be best long term, but this works for now. And you can always seed
+    # manually, e.g. from outside the VM.
+    migrations_dir = "/code/server/migrations"
+    config.vm.provision :shell, :inline => "docker run --rm --link elasticsearch:elasticsearch fracas /bin/bash -c 'node #{migrations_dir}/clean; node #{migrations_dir}/reseed'"
   end
 end

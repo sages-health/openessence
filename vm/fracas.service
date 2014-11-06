@@ -1,8 +1,7 @@
 [Unit]
 Description=Fracas
 After=docker.service elasticsearch.service redis.service
-Requires=docker.service
-Wants=elasticsearch.service redis.service
+Requires=docker.service elasticsearch.service redis.service
 
 [Service]
 TimeoutStartSec=0
