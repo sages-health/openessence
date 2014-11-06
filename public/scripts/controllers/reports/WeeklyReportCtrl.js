@@ -27,7 +27,7 @@ module.exports = function ($scope, $window, gettextCatalog, user, visualization,
   OutpatientVisitResource.search({
       q: dateString,
       size: 100,
-      sort: 'medicalFacility.location.district.raw:desc'
+      sort: 'medicalFacility.location.district.raw:asc'
     },
     function (response) {
       $scope.$data = response.results;

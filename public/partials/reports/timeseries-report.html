@@ -6,7 +6,6 @@
       padding: 0 !important;
       margin: 0 !important;
     }
-
     @media print {
       @page {
         size: landscape;
@@ -33,7 +32,7 @@
               <div class="panel panel-default report-panel">
                 <div class="panel-heading" style="font-size: 80%">{{viz.name}}</div>
                 <outpatient-visualization options="viz.state" query-string="viz.state.queryString"
-                                          filters="viz.state.filters">
+                                          filters="viz.state.filters" form="{}">
                 </outpatient-visualization>
               </div>
             </div>

@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, gettextCatalog, $window, visualization, user, DistrictResource) {
+module.exports = function ($scope, gettextCatalog, $window, visualization, user, FacilityResource) {
 
   $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
   $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
@@ -79,12 +79,14 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
   visualization.resource.get({q: 'name:"DistrictWeeklyData"'}, function (data) {
     var vizTemplate = fixVisualization(data.results[0]._source);
 
+    vizTemplate.state.visualization.name = 'smallline';
+
     var searchParams = {
       size: 999,  //TODO: get data for all district/country
       sort: 'name'
     };
 
-    DistrictResource.get(searchParams, function (response) {
+    FacilityResource.get(searchParams, function (response) {
       var districts = response.results.map(pluckName);
       var rows = [
         []

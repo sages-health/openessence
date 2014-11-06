@@ -107,7 +107,7 @@ angular.module(directives.name).directive('outpatientSmallTimeSeries', //
                 var aggs = {
                   date: {
                     'date_histogram': {
-                      field: 'reportDate',
+                      field: 'visitDate',
                       interval: scope.interval,
                       'min_doc_count': 0
                     }

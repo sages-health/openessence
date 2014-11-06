@@ -139,7 +139,7 @@
         "height": 826,
         "width": 1470
       },
-      "queryString": "visitDate: [2011-05-23 TO 2011-08-21] AND symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\") AND medicalFacility.district:\"Country A\"",
+      "queryString": "visitDate: [2011-05-23 TO 2011-08-21] AND symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\") AND medicalFacility.location.district:\"Country A\"",
       "filters": [
         {
           "filterID": "date",
@@ -168,7 +168,7 @@
         {
           "filterID": "districts",
           "type": "multi-select",
-          "field": "medicalFacility.district",
+          "field": "medicalFacility.location.district",
           "store": {
             "field": "name"
           },
@@ -176,7 +176,7 @@
           "value": [
             "Country A"
           ],
-          "queryString": "medicalFacility.district:\"Country A\""
+          "queryString": "medicalFacility.location.district:\"Country A\""
         }
       ],
       "series": [
