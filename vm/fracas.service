@@ -7,7 +7,10 @@ Requires=docker.service elasticsearch.service redis.service
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill fracas
 ExecStartPre=-/usr/bin/docker rm fracas
-# ExecStartPre=/usr/bin/docker pull gabegorelick/fracas
+
+# Pull updates from a registry
+#ExecStartPre=-/usr/bin/docker pull localhost:5000/fracas
+
 ExecStart=/usr/bin/docker run -p 9000:9000 \
   -e NODE_ENV=production \
   -e USERS=false \
