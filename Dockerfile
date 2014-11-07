@@ -30,7 +30,7 @@ RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev lib
     set -x; \
     apt-get update && apt-get install -y $buildDeps --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
-    && gpg --keyserver pgp.mit.edu --recv-keys 7937DFD2AB06298B2293C3187D33FF9D0246406D \
+    && gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7937DFD2AB06298B2293C3187D33FF9D0246406D \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --verify SHASUMS256.txt.asc \
