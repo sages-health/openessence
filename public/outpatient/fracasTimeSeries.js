@@ -24,6 +24,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
     compile: function () {
       return {
         pre: function (scope, element) {
+          scope.titleXpx = scope.titleYpx = scope.yLabelXpx = scope.yLabelYpx = scope.xLabelXpx = scope.xLabelYpx = 10;
+
           var defaultLabels = {
             title: gettextCatalog.getString('Timeseries'),
             y: gettextCatalog.getString('Count'),
@@ -34,6 +36,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           scope.options.labels = scope.options.labels || defaultLabels;
 
           scope.series = scope.series || scope.options.series || [];
+          scope.seriesAggIndex = {};
           scope.xAxisTickFormat = function (d) {
             return d3.time.format('%Y-%m-%d')(new Date(d));
           };
@@ -197,8 +200,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             if (scope.series.length > 0) {
               aggs.date.aggs = {};
+              var index = 1;
               scope.series.forEach(function (s) {
-                aggs.date.aggs[s] = outpatientAggregation.getAggregation(s);
+                aggs.date.aggs[index] = outpatientAggregation.getAggregation(s);
+                scope.seriesAggIndex[s] = index;
+                index += 1;
               });
             }
 
@@ -216,7 +222,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   data.aggregations.date.buckets.map(function (d) {
 
                     scope.series.forEach(function (s) {
-                      var buk = d[s].buckets || d[s]._name.buckets;
+                      var buk = d[scope.seriesAggIndex[s]].buckets || d[scope.seriesAggIndex[s]]._name.buckets;
                       buk.map(function (entry) {
                         /*jshint camelcase:false */
                         // if we have filter on this field/series = s

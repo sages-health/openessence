@@ -11,19 +11,26 @@ module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, Frable
   $scope.printMe = function(){
     console.log('stuff:' + $scope.checkboxes);
   };
-  $scope.filters = [
+  $scope.activeFilters = [
     //{type: 'name'} // no need right now
   ];
-  $scope.filterTypes = [
+  $scope.possibleFilters = [
     {
-      type: 'name',
+      filterID: 'name',
+      type: 'text',
+      field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      type: 'visualization.name',
+      filterID: 'type',
+      type: 'text',
+      field: 'visualization.name',
       name: gettextCatalog.getString('Type')
     }
-  ];
+  ].reduce(function (filters, filter) {
+      filters[filter.filterID] = filter;
+      return filters;
+    }, {});
   $scope.$watchCollection('queryString', function () {
     $scope.tableParams.reload();
   });
@@ -151,7 +158,8 @@ module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, Frable
     $modal.open({
       template: require('../../../partials/delete-record.html'),
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
-        $scope.record = record;
+        $scope.record = angular.copy(record);
+        delete $scope.record._source.state;
         $scope.delete = function () {
           VisualizationResource.remove({id: record._id}, function () {
             $modalInstance.close(record);

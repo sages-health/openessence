@@ -45,9 +45,9 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         }
       }
     },
-    districts: {
+    'medicalFacility.location.district': {
       terms: {
-        field: 'medicalFacility.district.raw',
+        field: 'medicalFacility.location.district.raw',
         order: { '_term': 'asc' }
       }
     },

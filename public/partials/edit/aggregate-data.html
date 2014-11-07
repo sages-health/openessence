@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <outpatient-filters-grid filters="filters" filter-types="filterTypes"
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters"
                            query-string="queryString"></outpatient-filters-grid>
 </div>
 <div class="container">
@@ -12,11 +12,9 @@
           <div class="btn-group pull-right">
             <button type="button" class="btn btn-primary" ng-click="createRecord()" ng-bind="strings.newAggregateData">
             </button>
-            <button type="button" class="btn btn-default" ng-click="upload()" ng-bind="strings.upload">
-            </button>
+            <button type="button" class="btn btn-default" ng-click="upload()" ng-bind="strings.upload"></button>
             <button type="button" class="btn btn-primary" ng-click="importRecord()" ng-bind="strings.import">
             </button>
-
           </div>
 
         </div>
@@ -32,8 +30,8 @@
               <td data-title="strings.year">
                 <a>{{getYear(record._source.visitDate)}}</a>
               </td>
-              <td data-title="strings.district" data-sortable="'medicalFacility.district'">
-                <a ng-click="tableFilter('districts', record._source.medicalFacility.district)">{{record._source.medicalFacility.district}}</a>
+              <td data-title="strings.district" data-sortable="'medicalFacility.location.district'">
+                <a ng-click="tableFilter('medicalFacility.location.district', record._source.medicalFacility.location.district)">{{record._source.medicalFacility.location.district}}</a>
               </td>
               <td data-title="strings.sitesTotal" data-sortable="'medicalFacility.sites.total'">
                 <a>{{record._source.medicalFacility.sites.total}}</a>

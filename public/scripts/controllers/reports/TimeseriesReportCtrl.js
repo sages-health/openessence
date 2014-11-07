@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, gettextCatalog, $window, visualization, user, DistrictResource) {
+module.exports = function ($scope, gettextCatalog, $window, visualization, user, FacilityResource) {
 
   $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
   $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
@@ -45,7 +45,7 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
     if (viz.state.filters) {
       for (var ix = 0; ix < viz.state.filters.length; ix++) {
         // Update date filters
-        if (viz.state.filters[ix].type === 'date') {
+        if (viz.state.filters[ix].type === 'date-range') {
           viz.state.filters[ix].from = $scope.report.startDate; //new Date(viz.filters[ix].from);
           viz.state.filters[ix].to = $scope.report.endDate; // new Date(viz.filters[ix].to);
         }
@@ -64,7 +64,8 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
         // Update date filters
         if (viz.state.filters[ix].filterID === 'districts') {
           viz.state.filters[ix].value[0] = country;
-          viz.state.filters[ix].queryString = viz.state.filters[ix].queryString.replace('"Country A"', '"' + country + '"');
+          viz.state.filters[ix].queryString =
+            viz.state.filters[ix].queryString.replace('"Country A"', '"' + country + '"');
         }
       }
     }
@@ -79,15 +80,18 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
     var vizTemplate = fixVisualization(data.results[0]._source);
 
     var searchParams = {
-      size: 30,  //TODO: get data for all district/country
+      size: 999,  //TODO: get data for all district/country
       sort: 'name'
     };
 
-    DistrictResource.get(searchParams, function (response) {
+    FacilityResource.get(searchParams, function (response) {
       var districts = response.results.map(pluckName);
       var rows = [
         []
       ];
+
+      districts.sort();
+      districts.push('LEGEND');
       districts.forEach(function (district, i) {
         var v = angular.copy(vizTemplate);
         v.state.options.id = i;
