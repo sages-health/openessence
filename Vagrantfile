@@ -68,7 +68,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # If we used something like NFS, it
     # 1. wouldn't work on every host and 2. wouldn't persist across guest restarts without Vagrant remounting it
-    config.vm.synced_folder ".", "/home/core/share", :type => "rsync",
+    config.vm.synced_folder ".", "/home/core/fracas", :type => "rsync",
         :rsync__exclude => [".vagrant", ".git", "node_modules", "config/settings.js"]
 
     # Allow configuration of CoreOS via user-data. We don't currently use this, but it is useful to configure
@@ -80,31 +80,58 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                           :privileged => true
     end
 
-    # TODO put docker registry in VM
+    # Copy services from fracas-services container onto host
+    config.vm.provision :shell, :inline => "docker pull gabegorelick/fracas-services" # make sure image is up to date
+    config.vm.provision :shell, :inline => "docker run --rm -v /home/core/services:/out gabegorelick/fracas-services sh -c 'cp /services/* /out'"
 
-    start_service = lambda do |name|
-      config.vm.provision :shell, :inline => "systemctl enable /home/core/share/vm/#{name}.service"
-      config.vm.provision :shell, :inline => "systemctl start #{name}.service"
-    end
+    # Uncomment this to override the settings in fracas-services.
+    # fracas_env = <<-END.gsub(/^\s+/, '')
+    #   URL=http://localhost:9000
+    #   USERS=false
+    #   SESSION_SECRET=$UPER_DUPER_$ECRET
+    #
+    #   # commented out b/c if you're using this you probably want to build fracas locally, rather than pull it down
+    #   #PULL_IMAGE=fracas
+    #
+    #   IMAGE_NAME=fracas
+    #   WORKERS=1
+    #   NODE_ENV=production
+    #   SESSION_STORE=redis
+    # END
+    # config.vm.provision :shell, :inline => "echo '#{fracas_env}' > /home/core/services/fracas.env"
 
-    # Manually start these containers before fracas to give them time to fully initialize
-    # (I'm bad at systemd)
-    ["fracas-data", "elasticsearch", "redis"].each { |name|
-      start_service.call(name)
-    }
 
-    # We build fracas here (instead of pulling it from Docker Hub) so you can tweak the app, e.g. build a VM from
-    # a branch.
-    config.vm.provision :shell, :inline => "docker kill fracas || true"
-    config.vm.provision :shell, :inline => "docker rm fracas || true"
-    config.vm.provision :shell, :inline => "docker build -t fracas /home/core/share"
-    start_service.call("fracas")
+    # This is necessary if the service files have changed
+    config.vm.provision :shell, :inline => "systemctl daemon-reload"
+
+    # Install the services
+    config.vm.provision :shell, :inline => "systemctl enable /home/core/services/*.service"
+
+    # Build Fracas if we're not pulling it down
+    build_fracas = <<-END
+      source /home/core/services/fracas.env
+      if [ "$PULL_IMAGE" == "" ]; then
+        docker build -t $IMAGE_NAME /home/core/fracas
+      fi
+    END
+    config.vm.provision :shell, :inline => build_fracas
+
+    # systemd doesn't like it if you pass full paths to start (or restart), so we have to get fancy.
+    # We use restart (as opposed to start) in case old versions of the services are already running.
+    config.vm.provision :shell, :inline => "for f in /home/core/services/*.service; do systemctl restart $(basename $f .service); done"
+
+    # You may want to restart CoreOS so that any services that got removed are shut down.
+    # But that's best left as a manual process.
 
     # Seed elasticsearch. This won't work if clean or reseed depends on devDeps on other stuff that's not in the fracas
     # container. But the alternative is to have a separate fracas-tools container that would probably duplicate a lot
     # of what's in the fracas container. That may be best long term, but this works for now. And you can always seed
     # manually, e.g. from outside the VM.
     migrations_dir = "/code/server/migrations"
-    config.vm.provision :shell, :inline => "docker run --rm --link elasticsearch:elasticsearch fracas /bin/bash -c 'node #{migrations_dir}/clean; node #{migrations_dir}/reseed'"
+    reseed_command = "docker run --rm --link elasticsearch:elasticsearch gabegorelick/fracas /bin/bash -c 'node #{migrations_dir}/clean; node #{migrations_dir}/reseed'"
+    check_es = "curl --output /dev/null --silent --head --fail http://localhost:9200"
+    wait_for_es = "until $(#{check_es}); do printf '.'; sleep 1; done"
+    config.vm.provision :shell, :inline => "echo Waiting for elasticsearch"
+    config.vm.provision :shell, :inline => "#{wait_for_es}; echo 'Elasticsearch up and running. Reseeding now'; #{reseed_command}"
   end
 end
