@@ -15,6 +15,7 @@ angular.module(services.name).factory('aggregateUtil', function () {
         delete aggregateRec.diarrhoea;
         delete aggregateRec.influenza;
         delete aggregateRec.prolongedFever;
+        delete aggregateRec.dengue;
 
         if (csvRec.medicalFacility && csvRec.medicalFacility.sites) {
           if (csvRec.medicalFacility.sites.reporting) {
@@ -36,6 +37,9 @@ angular.module(services.name).factory('aggregateUtil', function () {
         }
         if (csvRec.prolongedFever) {
           aggregateRec.symptoms.push({name: 'Prolonged Fever', count: parseInt(csvRec.prolongedFever)});
+        }
+        if (csvRec.dengue) {
+          aggregateRec.symptoms.push({name: 'Dengue-like Illness', count: parseInt(csvRec.dengue)});
         }
         return aggregateRec;
       }

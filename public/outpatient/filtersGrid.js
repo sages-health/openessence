@@ -66,7 +66,7 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
             scope.queryForm.queryStrings.$setValidity('syntaxError', true);
           });
 
-          $rootScope.$on('filterError', function(event, response){
+          $rootScope.$on('filterError', function (event, response) {
             var requestNum = response.status;
             if (requestNum === 400) {
               scope.queryForm.queryStrings.$setValidity('syntaxError', false);
