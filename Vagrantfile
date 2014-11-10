@@ -128,10 +128,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # of what's in the fracas container. That may be best long term, but this works for now. And you can always seed
     # manually, e.g. from outside the VM.
     migrations_dir = "/code/server/migrations"
-    reseed_command = "docker run --rm --link elasticsearch:elasticsearch gabegorelick/fracas /bin/bash -c 'node #{migrations_dir}/clean; node #{migrations_dir}/reseed'"
-    check_es = "curl --output /dev/null --silent --head --fail http://localhost:9200"
-    wait_for_es = "until $(#{check_es}); do printf '.'; sleep 1; done"
-    config.vm.provision :shell, :inline => "echo Waiting for elasticsearch"
-    config.vm.provision :shell, :inline => "#{wait_for_es}; echo 'Elasticsearch up and running. Reseeding now'; #{reseed_command}"
+    reseed_command = "node #{migrations_dir}/clean && node #{migrations_dir}/reseed"
+    seed_es = <<-END
+      if [ $(systemctl show --property ActiveState elasticsearch) == 'ActiveState=failed' ]; then
+        echo 'Elasticsearch failed to start. Not seeding.'
+      else
+        echo 'Waiting for elasticsearch...'
+        until $(curl --output /dev/null --silent --head --fail http://localhost:9200); do
+          sleep 1
+        done
+        echo 'Elasticsearch up and running. Reseeding now.'
+        docker run --rm --link elasticsearch:elasticsearch gabegorelick/fracas /bin/bash -c '#{reseed_command}'
+      fi
+    END
+
+    config.vm.provision :shell, :inline => seed_es
   end
 end
