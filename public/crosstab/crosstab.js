@@ -39,7 +39,7 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function ($p
 
                     if (record[col]) {
                       if (typeof record[col] !== 'string') {
-                        if (record[col][0] && record[col][0][countKey]) {
+                        if (record[col][0] && record[col][0][countKey] !== undefined) {
                           this.count += record[col][0][countKey];
                           return;
                         }
@@ -47,7 +47,7 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function ($p
                       this.count++;
                     } else if (record[row]) {
                       if (typeof record[row] !== 'string') {
-                        if (record[row][0] && record[row][0][countKey]) {
+                        if (record[row][0] && record[row][0][countKey] !== undefined) {
                           this.count += record[row][0][countKey];
                           return;
                         }

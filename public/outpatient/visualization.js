@@ -4,13 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var moment = require('moment');
 
-angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout,
-                                                                               orderByFilter, gettextCatalog,
-                                                                               sortString, FrableParams,
-                                                                               OutpatientVisitResource,
-                                                                               outpatientEditModal, updateURL,
-                                                                               outpatientDeleteModal, scopeToJson,
-                                                                               outpatientAggregation, visualization) {
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
 
   return {
     restrict: 'E',
@@ -288,8 +282,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 if (source.symptoms) {
                   source.symptoms.forEach(function (v) {
                     var r = angular.copy(rec);
+                    var count = 1;
+                    if (v.name) {
+                      count = v.count;
+                    }
                     r.symptoms = [
-                      {name: v.name || v, count: v.count || 1}
+                      {name: v.name || v, count: count}
                     ];
                     flatRecs.push(r);
                   });
@@ -297,8 +295,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 if (source.diagnoses) {
                   source.diagnoses.forEach(function (v) {
                     var r = angular.copy(rec);
+                    var count = 1;
+                    if (v.name) {
+                      count = v.count;
+                    }
                     r.diagnoses = [
-                      {name: v.name || v, count: v.count || 1}
+                      {name: v.name || v, count: count}
                     ];
                     flatRecs.push(r);
                   });
@@ -363,7 +365,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }, function (data) {
               params.total(data.total);
               $defer.resolve(data.results);
-            }, function error (response) {
+            }, function error(response) {
               $rootScope.$broadcast('filterError', response);
             });
           }
@@ -374,7 +376,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           reload();
         });
 
-        var updateVisualization = function (){
+        var updateVisualization = function () {
           delete scope.options.options;
           updateURL.updateVisualization(scope.options.id, {
             options: scope.options,
@@ -387,21 +389,21 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         scope.$watch('pivot.cols', function (newValue, oldValue) {
-          if(newValue !== oldValue) {
+          if (newValue !== oldValue) {
             updateVisualization();
             reload();
           }
         });
 
         scope.$watch('pivot.rows', function (newValue, oldValue) {
-          if(newValue !== oldValue) {
+          if (newValue !== oldValue) {
             updateVisualization();
             reload();
           }
         });
 
         scope.$watch('visualization.name', function (newValue, oldValue) {
-          if(newValue !== oldValue) {
+          if (newValue !== oldValue) {
             updateVisualization();
             reload();
           }
