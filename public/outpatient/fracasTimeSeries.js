@@ -27,8 +27,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
     compile: function () {
       return {
         pre: function (scope, element) {
-          scope.titleXpx = scope.titleYpx = scope.yLabelXpx = scope.yLabelYpx = scope.xLabelXpx = scope.xLabelYpx = 10;
-
           var defaultLabels = {
             title: gettextCatalog.getString('Timeseries'),
             y: gettextCatalog.getString('Count'),
@@ -894,42 +892,43 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
              });
              */
 
-            var circles = g.selectAll('circle')
-              .data(data[0].values).remove();
-            //var circles;
-            var circles = g.selectAll("circle")
-                  .data(data[0].values).remove();
+            if (data[0] !== undefined && data[0] !== null) {
+              //var circles;
+              var circles = g.selectAll("circle")
+                .data(data[0].values).remove();
 
-            circles.enter()
-              .append('circle')
-              .attr('class', 'data-point')
-              .attr('cx', function (d) {
-                console.log(d[0]);
-                if (d[0]) {
-                  return x(d[0]);
-                } else {
-                  return 1000;
-                }
-              })
-              .attr('cy', function (d) {
-                return y(d[1]);
-              })
-              .attr('r', function (d) {
-                if (d[2] < 0.1) {
-                  return 4;
-                } else {
-                  return 0;
-                }
-              })
-              .attr('fill', function (d) {
-                if (d[2] < 0.05) {
-                  return 'red';
-                } else if (d[2] < 0.1 && d[2] > 0.05) {
-                  return 'yellow';
-                }
-              })
-              .attr('transform', 'translate(0, 0)')
-            ;
+              circles.enter()
+                .append('circle')
+                .attr('class', 'data-point')
+                .attr('cx', function (d) {
+                  console.log(d[0]);
+                  if (d[0]) {
+                    return x(d[0]);
+                  } else {
+                    return 1000;
+                  }
+                })
+                .attr('cy', function (d) {
+                  return y(d[1]);
+                })
+                .attr('r', function (d) {
+                  if (d[2] < 0.1) {
+                    return 4;
+                  } else {
+                    return 0;
+                  }
+                })
+                .attr('fill', function (d) {
+                  if (d[2] < 0.05) {
+                    return 'red';
+                  } else if (d[2] < 0.1 && d[2] > 0.05) {
+                    return 'yellow';
+                  }
+                })
+                .attr('transform', 'translate(0, 0)');
+            } else {
+              g.selectAll('circle').remove();
+            }
 
             var lines = g.selectAll('.pivotPath')
               .data(data, function (d) {
