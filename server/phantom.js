@@ -14,7 +14,7 @@ var BearerStrategy = require('passport-http-bearer').Strategy;
 var Boom = require('boom');
 
 var conf = require('./conf');
-var logger = conf.logger;
+var logger = conf.createLogger({name: 'PhantomJS'});
 var User = require('./models/User');
 
 var engine = phantomCluster.createQueued({
@@ -25,27 +25,27 @@ var engine = phantomCluster.createQueued({
 });
 
 engine.on('workerStarted', function (worker) {
-  logger.info('PhantomJS cluster worker %s started', worker.id);
+  logger.info('Cluster worker %s started', worker.id);
 });
 
 engine.on('workerDied', function (worker) {
-  logger.info('PhantomJS cluster worker %s died', worker.id);
+  logger.info('Cluster worker %s died', worker.id);
 });
 
 engine.on('stopped', function () {
-  logger.warn('PhantomJS cluster stopped');
+  logger.warn('Cluster stopped');
 });
 
 engine.on('phantomStarted', function () {
-  logger.debug('PhantomJS instance started');
+  logger.debug('Instance started');
 });
 
 engine.on('phantomDied', function () {
-  logger.info('PhantomJS instance stopped');
+  logger.info('Instance stopped');
 });
 
 engine.on('queueItemReady', function (options) {
-  logger.info('PhantomJS cluster received request for %s', options.url);
+  logger.info('Cluster received request for %s', options.url);
 
   var clusterClient = this;
   this.ph.createPage(function (page) {
@@ -122,7 +122,7 @@ engine.on('queueItemReady', function (options) {
         return finish();
       }
 
-      logger.info('PhantomJS rendering %s to %s', options.url, options.filename);
+      logger.info('Rendering %s to %s', options.url, options.filename);
       setTimeout(function () {
         var clip = function (callback) {
           if (!options.selector) {
@@ -145,7 +145,7 @@ engine.on('queueItemReady', function (options) {
           }
 
           page.render(options.filename, function () {
-            logger.info('PhantomJS done rendering %s', options.filename);
+            logger.info('Done rendering %s', options.filename);
             finish();
           });
         });
@@ -240,7 +240,7 @@ if (cluster.isMaster) {
       });
 
       queueItem.on('timeout', function () {
-        next(Boom.serverTimeout('PhantomJS timed out rendering page'));
+        next(Boom.serverTimeout('Timed out rendering page'));
       });
 
     });
@@ -252,6 +252,6 @@ if (cluster.isMaster) {
 
   var phantomUrl = url.parse(conf.phantom.url);
   http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname, function () {
-    logger.info('Phantom HTTP proxy started at %s', conf.phantom.url);
+    logger.info('PhantomJS HTTP proxy started at %s', conf.phantom.url);
   });
 }
