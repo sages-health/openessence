@@ -132,7 +132,7 @@ module.exports = {
   },
 
   persona: {
-    enabled: true
+    enabled: process.env.PERSONA !== 'false'
   },
 
   proxy: {
