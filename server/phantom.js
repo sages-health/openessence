@@ -21,7 +21,9 @@ var engine = phantomCluster.createQueued({
   workers: 2,
   workerIterators: 4, // default of 100 is a little high when we might only get 1 report a day
   phantomBasePort: conf.phantom.basePort,
-  phantomArguments: [/*'--ignore-ssl-errors=true'*/]
+
+  // Fixed in v1.9.8, see https://github.com/ariya/phantomjs/issues/12670
+  phantomArguments: ['--ssl-protocol=tlsv1']
 });
 
 engine.on('workerStarted', function (worker) {
