@@ -12,8 +12,9 @@ module.exports = function ($scope, $window, $location, $document, gettextCatalog
     var params = angular.copy($scope.params);
     params.print = false;
 
-    $window.location = '/reports/' + title + '?size=1100px*550px&name=' + title + '&url=/' + lang +
-      '/weekly-report?params=' + btoa(JSON.stringify(params));
+    $window.location =
+      '/reports/' + title + '?size=' + angular.element('body').width() + 'px*' + angular.element('body').height() +
+        'px&name=' + title + '&url=/' + lang + '/weekly-report?params=' + btoa(JSON.stringify(params));
   };
   $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
   $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');

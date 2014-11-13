@@ -12,7 +12,8 @@ module.exports = function ($scope, gettextCatalog, $location, visualization, use
     var params = angular.copy($scope.params);
     params.print = false;
 
-    $window.location = '/reports/' + title + '?size=1100px*670px&name=' + title + '&url=/' + lang +
+    $window.location = '/reports/' + title + '?size=' + angular.element('body').width() + 'px*' + angular.element('body').height() +
+      'px&name=' + title + '&url=/' + lang +
       '/timeseries-report?params=' + btoa(JSON.stringify(params));
   };
   $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
