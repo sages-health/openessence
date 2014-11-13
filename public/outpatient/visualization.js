@@ -55,6 +55,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         scope.strings = {
           visitDate: gettextCatalog.getString('Visit'),
           facility: gettextCatalog.getString('Facility'),
+          'medicalFacility.location.district': gettextCatalog.getString('District'),
+          district: gettextCatalog.getString('District'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
@@ -276,6 +278,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
                   age: (source.patient && source.patient.age) ? source.patient.age.years : null,
+                  //'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                   'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                 };
 

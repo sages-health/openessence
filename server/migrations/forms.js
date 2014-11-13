@@ -26,7 +26,7 @@ module.exports = [
         // It's not `medicalFacility.name` because the user is selecting the entire medical facility, not just the name
         // (even though the name is what's displayed and queried on).
         name: 'medicalFacility',
-        enabled: true,
+        enabled: false,
         // can't do this with JSON
         values: require('./facilities.json')
       },

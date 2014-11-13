@@ -5,12 +5,7 @@ var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location,
-                                                                                          updateURL, gettextCatalog,
-                                                                                          outpatientAggregation,
-                                                                                          visualization,
-                                                                                          OutpatientVisitResource,
-                                                                                          scopeToJson, EditSettings, $http) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, possibleFilters, $http) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
@@ -27,6 +22,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
     compile: function () {
       return {
         pre: function (scope, element) {
+          scope.titleXpx = scope.titleYpx = scope.yLabelXpx = scope.yLabelYpx = scope.xLabelXpx = scope.xLabelYpx = 10;
+
           var defaultLabels = {
             title: gettextCatalog.getString('Timeseries'),
             y: gettextCatalog.getString('Count'),
@@ -155,12 +152,19 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }
 
             if (!dateFilter) {
-              dateFilter = {
-                filterID: 'date',
+//              dateFilter = {
+//                filterID: 'date',
+//                from: new Date(from),
+//                to: new Date(to)
+//              };
+
+              dateFilter = angular.extend({
                 from: new Date(from),
                 to: new Date(to)
-              };
-              scope.filters.push(dateFilter);
+              }, possibleFilters.visitDate);
+
+
+              //scope.filters.push(dateFilter);
               scope.$emit('filterChange', dateFilter, true);
             } else {
               dateFilter.from = new Date(from);
@@ -205,58 +209,58 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }
           };
 
-         var getPValues = function (dataStore, countStore){
-             Object.keys(dataStore).forEach(function (k) {
-                 var counts = countStore[k];
-                 var pValues = [];
+          var getPValues = function (dataStore, countStore) {
+            Object.keys(dataStore).forEach(function (k) {
+              var counts = countStore[k];
+              var pValues = [];
 
-                 $http.post('/detectors/cusum',
-                     {
-                         data: counts,
-                         baseline: 28,
-                         guardBand: 2
-                     }
-                 ).
-                     success(function(resp) {
-                         //console.log(resp.pValues);
-                         pValues = resp.pValues;
-                         if (pValues.length > 0) {
-                             var values = [];
+              $http.post('/detectors/cusum',
+                {
+                  data: counts,
+                  baseline: 28,
+                  guardBand: 2
+                }
+              ).
+                success(function (resp) {
+                  //console.log(resp.pValues);
+                  pValues = resp.pValues;
+                  if (pValues.length > 0) {
+                    var values = [];
 
-                             for (var i = 0; i < dataStore[k].length && i < pValues.length; i++) {
-                                 var pValue = pValues[i] === null ? 1 : pValues[i];
-                                 //dataStore[entry.key].push([d.key, count]);
-                                 //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
-                                 values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue]);
-                             }
-                             scope.data.push(
-                                {
-                                    key: k,
-                                    values: values
-                                }
-                             );
-                             scope.redraw();
-                         }else{
-                             scope.data.push(
-                                 {
-                                     key: k,
-                                     values: dataStore[k]
-                                 }
-                             );
-                             scope.redraw();
-                         }
-                     }).error(function(){
-                         scope.data.push(
-                             {
-                                 key: k,
-                                 values: dataStore[k]
-                             }
-                         );
-                         scope.redraw();
-                     });
-             });
-             scope.redraw();
-         };
+                    for (var i = 0; i < dataStore[k].length && i < pValues.length; i++) {
+                      var pValue = pValues[i] === null ? 1 : pValues[i];
+                      //dataStore[entry.key].push([d.key, count]);
+                      //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
+                      values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue]);
+                    }
+                    scope.data.push(
+                      {
+                        key: k,
+                        values: values
+                      }
+                    );
+                    scope.redraw();
+                  } else {
+                    scope.data.push(
+                      {
+                        key: k,
+                        values: dataStore[k]
+                      }
+                    );
+                    scope.redraw();
+                  }
+                }).error(function () {
+                  scope.data.push(
+                    {
+                      key: k,
+                      values: dataStore[k]
+                    }
+                  );
+                  scope.redraw();
+                });
+            });
+            scope.redraw();
+          };
 
 
           var plotSeries = function (seriesName, seriesType) {
@@ -342,7 +346,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     }
                   ).
                     success(function (resp) {
-                      console.log(resp.pValues);
+                      //console.log(resp.pValues);
                       pValues = resp.pValues;
                       if (pValues.length > 0) {
                         scope.data = [
@@ -744,17 +748,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }
             }
             dates = sortUnique(dates);
-            for (i = 0; i < colNames.length; i++) {
-              console.log('<td>' + colNames[i] + '</td>');
-            }
-            for (i = 0; i < dates.length; i++) {
-              var date = dates[i];
-              console.log('<tr>');
-              var entry = map[date];
-              for (var j = 0; j < colNames.length * 2; j += 2) {
-                //console.log('<td>' + entry[j] +'</td>');
-              }
-            }
+            //for (i = 0; i < colNames.length; i++) {
+            //  console.log('<td>' + colNames[i] + '</td>');
+            //}
+            //for (i = 0; i < dates.length; i++) {
+            //var date = dates[i];
+            //console.log('<tr>');
+            //var entry = map[date];
+            //for (var j = 0; j < colNames.length * 2; j += 2) {
+            //console.log('<td>' + entry[j] +'</td>');
+            //}
+            //}
           };
 
           /**
@@ -807,7 +811,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 if (xAxisType === 'timestamp') {
                   return d3.time.format('%Y-%m-%d')(new Date(d));
                 } else if (xAxisType === 'week') {
-                  return ($window.parseInt(d3.time.format('%W')(new Date(d)))) + '-' + d3.time.format('%Y')(new Date(d));
+                  return (($window.parseInt(d3.time.format('%W')(new Date(d)))) + 1) + '-' + d3.time.format('%Y')(new Date(d));
                 } else if (xAxisType === 'month' && domain !== null) {
                   return domain[$window.parseInt(d3.time.format('%m')(new Date(d))) - 1] + ' ' + d3.time.format('%Y')(new Date(d));
                 } else if (xAxisType === 'quarter') {
@@ -892,16 +896,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
              });
              */
 
+            g.selectAll('circle').remove();
             if (data[0] !== undefined && data[0] !== null) {
-              //var circles;
-              var circles = g.selectAll("circle")
-                .data(data[0].values).remove();
+              var circles = g.selectAll('circle').data(data[0].values).remove();
 
               circles.enter()
                 .append('circle')
                 .attr('class', 'data-point')
                 .attr('cx', function (d) {
-                  console.log(d[0]);
+                  //console.log(d[0]);
                   if (d[0]) {
                     return x(d[0]);
                   } else {
@@ -926,8 +929,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   }
                 })
                 .attr('transform', 'translate(0, 0)');
-            } else {
-              g.selectAll('circle').remove();
             }
 
             var lines = g.selectAll('.pivotPath')
