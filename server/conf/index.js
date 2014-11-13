@@ -19,8 +19,8 @@ if (fs.existsSync(configFile)) {
 
 // Set computed properties after we're done loading properties.
 var ssl = settings.ssl.enabled;
-var httpPort = process.env.HTTP_PORT || (!settings.ssl.enabled && process.env.PORT) || 9000;
-var httpsPort = process.env.HTTPS_PORT || (settings.ssl.enabled ? (process.env.PORT || 9001) : null);
+var httpPort = settings.httpPort || process.env.HTTP_PORT || (!settings.ssl.enabled && process.env.PORT) || 9000;
+var httpsPort = settings.httpsPort || process.env.HTTPS_PORT || (settings.ssl.enabled ? (process.env.PORT || 9001) : null);
 
 settings = _.assign({
   httpPort: httpPort,
@@ -85,7 +85,8 @@ if (!settings.redis.client) {
     get: function () { // lazily initialize redis connection so Redis doesn't have to be online unless we're using it
       if (!redisClient) {
         redisClient = redis.createClient(redisUrl.port, redisUrl.hostname, {
-          'auth_pass': redisPass
+          'auth_pass': redisPass,
+          'detect_buffers': true // so we can store binary data
         });
       }
       return redisClient;

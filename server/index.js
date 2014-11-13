@@ -93,25 +93,29 @@ app.use(helmet.contentTypeOptions()); // X-Content-Type-Options: nosniff
 
 // Content Security Policy headers
 app.use(function (req, res, next) {
+  /*jshint quotmark:false */
+
+  var ua = useragent.lookup(req.headers['user-agent']);
 
   // CSP breaks IE10 (and IE < 10 doesn't support CSP anyway). Not worth the headache.
-  if (useragent.lookup(req.headers['user-agent']).family === 'IE') {
+  if (ua.family === 'IE') {
+    return next();
+  } else if (ua.family === 'PhantomJS') {
+    // see https://github.com/ariya/phantomjs/issues/11337
     return next();
   }
 
-  var self = '\'self\'';
-  var none = '\'none\'';
+  var self = "'self'";
+  var none = "'none'";
 
   helmet.csp({
     'default-src': [self],
     'script-src': [self, 'https://login.persona.org'],
     // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
-    'style-src': [self, 'fonts.googleapis.com', '\'unsafe-inline\''],
+    'style-src': [self, "'unsafe-inline'"],
     'img-src': [self, 'data:', 'https://otile1-s.mqcdn.com', 'https://otile2-s.mqcdn.com', 'https://otile3-s.mqcdn.com',
                 'https://otile4-s.mqcdn.com', 'https://developer.mapquest.com/content/osm/mq_logo.png'],
-    'font-src': [self, 'themes.googleusercontent.com'],
     'frame-src': ['https://login.persona.org'],
-    'media-src': [self], // someday we might use <audio> and/or <video>
     'object-src': [none] // I really hope we never need Flash or any other plugins
   })(req, res, next);
 });

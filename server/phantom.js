@@ -14,38 +14,44 @@ var BearerStrategy = require('passport-http-bearer').Strategy;
 var Boom = require('boom');
 
 var conf = require('./conf');
-var logger = conf.logger;
+var logger = conf.createLogger({name: 'PhantomJS'});
 var User = require('./models/User');
 
 var engine = phantomCluster.createQueued({
   workers: 2,
   workerIterators: 4, // default of 100 is a little high when we might only get 1 report a day
   phantomBasePort: conf.phantom.basePort,
-  phantomArguments: [/*'--ignore-ssl-errors=true'*/]
+
+  // Fixed in v1.9.8, see https://github.com/ariya/phantomjs/issues/12670
+  phantomArguments: ['--ssl-protocol=tlsv1']
 });
 
 engine.on('workerStarted', function (worker) {
-  logger.info('PhantomJS cluster worker %s started', worker.id);
+  logger.info('Cluster worker %s started', worker.id);
 });
 
 engine.on('workerDied', function (worker) {
-  logger.info('PhantomJS cluster worker %s died', worker.id);
+  logger.info('Cluster worker %s died', worker.id);
 });
 
 engine.on('stopped', function () {
-  logger.warn('PhantomJS cluster stopped');
+  logger.warn('Cluster stopped');
 });
 
 engine.on('phantomStarted', function () {
-  logger.debug('PhantomJS instance started');
+  logger.debug('Instance started');
 });
 
 engine.on('phantomDied', function () {
-  logger.info('PhantomJS instance stopped');
+  logger.info('Instance stopped');
 });
 
+var filenameToKey = function (filename) {
+  return 'snapshot:' + path.basename(filename);
+};
+
 engine.on('queueItemReady', function (options) {
-  logger.info('PhantomJS cluster received request for %s', options.url);
+  logger.info('Cluster received request for %s', options.url);
 
   var clusterClient = this;
   this.ph.createPage(function (page) {
@@ -111,10 +117,24 @@ engine.on('queueItemReady', function (options) {
 
     setPageSize();
 
+    page.set('onError', function (msg, trace) {
+      logger.error('Error %s: %s', msg, trace);
+    });
+
+    page.set('onResourceError', function (rErr) {
+      logger.error('Resource error %d for URL %s: %s', rErr.errorCode, rErr.url, rErr.errorString);
+    });
+
     page.open(options.url, function (status) {
-      var finish = function () {
+      var finish = function (err) {
         page.close();
-        clusterClient.queueItemResponse(options);
+
+        if (err) {
+          logger.error({err: err});
+        }
+
+        // TODO nothing gets passed to caller
+        clusterClient.queueItemResponse(err, options);
       };
 
       if (status !== 'success') {
@@ -122,7 +142,7 @@ engine.on('queueItemReady', function (options) {
         return finish();
       }
 
-      logger.info('PhantomJS rendering %s to %s', options.url, options.filename);
+      logger.info('Rendering %s to %s', options.url, options.filename);
       setTimeout(function () {
         var clip = function (callback) {
           if (!options.selector) {
@@ -144,9 +164,32 @@ engine.on('queueItemReady', function (options) {
             return finish();
           }
 
+          // render snapshot to temporary storage
           page.render(options.filename, function () {
-            logger.info('PhantomJS done rendering %s', options.filename);
-            finish();
+            logger.info('Done rendering %s', options.filename);
+
+            // it'd be nice if phantom could render to a buffer, but what can you do?
+            fs.readFile(options.filename, function (err, data) {
+              if (err) {
+                return finish(err);
+              }
+
+              // Save in Redis for 30 seconds, since the requesting process might not have access to our filesystem
+              conf.redis.client.set(filenameToKey(options.filename), data, 'EX', '30', function (err) {
+                // try to delete file no matter what
+                fs.unlink(options.filename, function () {
+                  // ignore any errors
+                });
+
+                if (err) {
+                  return finish(err);
+                }
+
+                logger.debug('Saved snapshot to %s', filenameToKey(options.filename));
+
+                finish();
+              });
+            });
           });
         });
 
@@ -223,24 +266,40 @@ if (cluster.isMaster) {
         selector: req.query.selector,
         size: size
       });
-      queueItem.on('response', function () {
-        // TODO sanitize file name
-        res.download(filename, req.params.name + '.' + extension, function (err) {
-          // try to delete file no matter what
-          fs.unlink(filename, function () {
-            // ignore any errors
+      queueItem.on('response', function (err) {
+        if (err) {
+          return next(err);
+        }
+
+        var key = filenameToKey(filename);
+
+        // using buffer as key tells node-redis to return a buffer to us
+        conf.redis.client.get(new Buffer(key), function (err, data) {
+          if (err) {
+            return next(err);
+          }
+
+          // Asynchronously delete key
+          conf.redis.client.del(key, function (err) {
+            if (err) {
+              logger.warn({err: err}, 'Error deleting snapshot %s from Redis', key);
+            }
           });
 
-          if (err && !res.headersSent) {
-            return next(err);
-          } else if (err) {
-            return logger.error({err: err}, 'Error sending rendered page to client');
+          if (!data) {
+            return next(new Error('Error generating snapshot'));
           }
+
+          // TODO sanitize file name
+          res.attachment(req.params.name + '.' + extension);
+
+          res.set('Content-Type', contentType);
+          res.send(data);
         });
       });
 
       queueItem.on('timeout', function () {
-        next(Boom.serverTimeout('PhantomJS timed out rendering page'));
+        next(Boom.serverTimeout('Timed out rendering page'));
       });
 
     });
@@ -252,6 +311,6 @@ if (cluster.isMaster) {
 
   var phantomUrl = url.parse(conf.phantom.url);
   http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname, function () {
-    logger.info('Phantom HTTP proxy started at %s', conf.phantom.url);
+    logger.info('PhantomJS HTTP proxy started at %s', conf.phantom.url);
   });
 }

@@ -48,7 +48,8 @@ gulp.task('client-tests', function (callback) {
       callback = callback || function () {};
 
       browserify(testFiles, {
-        noparse: noParseLibs
+        noparse: noParseLibs,
+        debug: true
       })
         .transform(partialify)
         .transform(browserifyIstanbul({

@@ -20,13 +20,20 @@ if (module.parent) {
  * @param [callback] - Optional callback
  */
 var startServer = function (callback) {
+  callback = callback || function () {};
+
   if (conf.ssl.enabled) {
     https.createServer({key: conf.ssl.key, cert: conf.ssl.cert}, app)
-      .listen(conf.ssl.port);
+      .listen(conf.ssl.port, function () {
+        logger.info('Listening on port %d for HTTPS traffic', conf.ssl.port);
+      });
   }
 
   // If we're running behind TLS, then our HTTP server just redirects to HTTPS
-  http.createServer(app).listen(conf.httpPort, callback);
+  http.createServer(app).listen(conf.httpPort, function () {
+    logger.info('Listening on port %d for HTTP traffic', conf.httpPort);
+    callback();
+  });
 };
 
 if (cluster.isMaster) {

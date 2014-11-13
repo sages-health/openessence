@@ -15,7 +15,7 @@ prettyStdOut.pipe(process.stdout);
 
 var env = process.env.NODE_ENV || 'development';
 
-var createLogger = function (name) {
+var createLogger = function (options) {
   var serializers = _.assign({
     user: function userSerializer (user) {
       if (!user) {
@@ -34,8 +34,8 @@ var createLogger = function (name) {
     }
   }, bunyan.stdSerializers);
 
-  return bunyan.createLogger({
-    name: name,
+  options = _.assign({
+    name: 'fracas',
     serializers: serializers,
     streams: [
       // human-readable output on stdout
@@ -52,11 +52,13 @@ var createLogger = function (name) {
       // it should be handled independently, e.g. by logrotate on Linux. All the more reason to deploy to a managed
       // container.
     ]
-  });
+  }, options);
+
+  return bunyan.createLogger(options);
 };
 
 function ElasticSearchLogger () {
-  var logger = createLogger('elasticsearch.js');
+  var logger = createLogger({name: 'elasticsearch.js'});
 
   this.error = logger.error.bind(logger);
   this.warning = logger.warn.bind(logger);
@@ -80,7 +82,10 @@ var sessionStore = process.env.SESSION_STORE || 'memory'; // 'redis' is also acc
 
 module.exports = {
   env: env,
-  logger: createLogger('fracas'),
+  createLogger: createLogger,
+
+  // the default logger
+  logger: createLogger(),
 
   appName: process.env.APP_NAME || 'Fracas',
 

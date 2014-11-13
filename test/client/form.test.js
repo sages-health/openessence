@@ -14,7 +14,7 @@ describe('form', function () {
   var $httpBackend;
   var $timeout;
 
-  var formMarkup = '<outpatient-form page="page" on-submit="submit" record="record"></outpatient-form>';
+  var formMarkup = '<outpatient-form form="form" page="page" on-submit="submit" record="record"></outpatient-form>';
   var formTpl;
 
   beforeEach(function () {
@@ -43,31 +43,20 @@ describe('form', function () {
   it('should hide disabled fields', function () {
     scope.page = 1;
     scope.submit = function () {};
+    scope.form = {
+      name: 'demo',
+      fields: [
+        {
+          name: 'visitDate',
+          enabled: false
+        }
+      ]
+    };
 
-    $httpBackend.when('GET', '/resources/form?q=name:demo&size=1')
-      .respond({
-        results: [
-          {
-            _id: '1',
-            _score: null,
-            _version: 1,
-            _source: {
-              name: 'demo',
-              fields: [
-                {
-                  name: 'visitDate',
-                  enabled: false
-                }
-              ]
-            }
-          }
-        ]
-      });
 
     var element = formTpl(scope);
 
     scope.$digest();
-    $httpBackend.flush();
 
     // offsetParent == null is a good proxy for determining that an element is hidden
     var visitDateInput = element.find('#entry-visit-date');
@@ -88,36 +77,24 @@ describe('form', function () {
           }
         }
       };
-
-      $httpBackend.when('GET', '/resources/form?q=name:demo&size=1')
-        .respond({
-          results: [
-            {
-              _id: '1',
-              _score: null,
-              _version: 1,
-              _source: {
-                name: 'demo',
-                fields: [
-                  {
-                    name: 'medicalFacility',
-                    enabled: true,
-                    values: [
-                      scope.record._source.medicalFacility,
-                      {
-                        name: 'Baz'
-                      }
-                    ]
-                  }
-                ]
+      scope.form = {
+        name: 'demo',
+        fields: [
+          {
+            name: 'medicalFacility',
+            enabled: true,
+            values: [
+              scope.record._source.medicalFacility,
+              {
+                name: 'Baz'
               }
-            }
-          ]
-        });
+            ]
+          }
+        ]
+      };
 
       var element = formTpl(scope);
       scope.$digest();
-      $httpBackend.flush();
 
       var facilityEl = element.find('#entry-visit-facility').first();
       var optionEl = facilityEl.find('option[selected]').get(0);
@@ -139,31 +116,19 @@ describe('form', function () {
           }
         }
       };
-
-      $httpBackend.when('GET', '/resources/form?q=name:demo&size=1')
-        .respond({
-          results: [
-            {
-              _id: '1',
-              _score: null,
-              _version: 1,
-              _source: {
-                name: 'demo',
-                fields: [
-                  {
-                    name: 'medicalFacility',
-                    enabled: true,
-                    values: []
-                  }
-                ]
-              }
-            }
-          ]
-        });
+      scope.form = {
+        name: 'demo',
+        fields: [
+          {
+            name: 'medicalFacility',
+            enabled: true,
+            values: []
+          }
+        ]
+      };
 
       var element = formTpl(scope);
       scope.$digest();
-      $httpBackend.flush();
 
       var facilityEl = element.find('#entry-visit-facility').first();
       var optionEl = facilityEl.find('option[selected]').get(0);
@@ -175,33 +140,21 @@ describe('form', function () {
     it('should include blank option', function () {
       scope.page = 1;
       scope.submit = function () {};
-
-      $httpBackend.when('GET', '/resources/form?q=name:demo&size=1')
-        .respond({
-          results: [
-            {
-              _id: '1',
-              _score: null,
-              _version: 1,
-              _source: {
-                name: 'demo',
-                fields: [
-                  {
-                    name: 'medicalFacility',
-                    enabled: true,
-                    values: [
-                      {name: 'Facility1'}
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
-        });
+      scope.form = {
+        name: 'demo',
+        fields: [
+          {
+            name: 'medicalFacility',
+            enabled: true,
+            values: [
+              {name: 'Facility1'}
+            ]
+          }
+        ]
+      };
 
       var element = formTpl(scope);
       scope.$digest();
-      $httpBackend.flush();
 
       var facilityEl = element.find('#entry-visit-facility').first();
       var option = facilityEl.find(':first-child').get(0);
@@ -213,37 +166,25 @@ describe('form', function () {
     it('should include "Other" optgroup if medicalFacility.other enabled', function () {
       scope.page = 1;
       scope.submit = function () {};
-
-      $httpBackend.when('GET', '/resources/form?q=name:demo&size=1')
-        .respond({
-          results: [
-            {
-              _id: '1',
-              _score: null,
-              _version: 1,
-              _source: {
-                name: 'demo',
-                fields: [
-                  {
-                    name: 'medicalFacility',
-                    enabled: true,
-                    values: [
-                      {name: 'Facility1'}
-                    ]
-                  },
-                  {
-                    name: 'medicalFacility.other',
-                    enabled: true
-                  }
-                ]
-              }
-            }
-          ]
-        });
+      scope.form = {
+        name: 'demo',
+        fields: [
+          {
+            name: 'medicalFacility',
+            enabled: true,
+            values: [
+              {name: 'Facility1'}
+            ]
+          },
+          {
+            name: 'medicalFacility.other',
+            enabled: true
+          }
+        ]
+      };
 
       var element = formTpl(scope);
       scope.$digest();
-      $httpBackend.flush();
 
       var facilityEl = element.find('#entry-visit-facility').first();
       var option = facilityEl.find('optgroup > option[value="Other"]').get(0);
@@ -254,34 +195,22 @@ describe('form', function () {
     it('should not include "Other" optgroup if medicalFacility.other is not enabled', function () {
       scope.page = 1;
       scope.submit = function () {};
-
-      $httpBackend.when('GET', '/resources/form?q=name:demo&size=1')
-        .respond({
-          results: [
-            {
-              _id: '1',
-              _score: null,
-              _version: 1,
-              _source: {
-                name: 'demo',
-                fields: [
-                  {
-                    name: 'medicalFacility',
-                    enabled: true,
-                    values: [
-                      {name: 'Facility1'}
-                    ]
-                  }
-                  // no medicalFacility.other
-                ]
-              }
-            }
-          ]
-        });
+      scope.form = {
+        name: 'demo',
+        fields: [
+          {
+            name: 'medicalFacility',
+            enabled: true,
+            values: [
+              {name: 'Facility1'}
+            ]
+          }
+          // no medicalFacility.other
+        ]
+      };
 
       var element = formTpl(scope);
       scope.$digest();
-      $httpBackend.flush();
 
       var facilityEl = element.find('select[ng-model="visit.medicalFacility"]').first();
       var option = facilityEl.find('optgroup > option[value="Other"]').get(0);
