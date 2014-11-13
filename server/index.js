@@ -93,9 +93,13 @@ app.use(helmet.contentTypeOptions()); // X-Content-Type-Options: nosniff
 
 // Content Security Policy headers
 app.use(function (req, res, next) {
+  var ua = useragent.lookup(req.headers['user-agent']);
 
   // CSP breaks IE10 (and IE < 10 doesn't support CSP anyway). Not worth the headache.
-  if (useragent.lookup(req.headers['user-agent']).family === 'IE') {
+  if (ua.family === 'IE') {
+    return next();
+  } else if (ua.family === 'PhantomJS') {
+    // see https://github.com/ariya/phantomjs/issues/11337
     return next();
   }
 
