@@ -39,7 +39,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             return d3.time.format('%Y-%m-%d')(new Date(d));
           };
 
-          scope.interval = scope.interval || scope.options.interval || 'day'; // TODO auto-select based on date range
+          scope.options.interval = scope.options.interval || 'day'; // TODO auto-select based on date range
 
           scope.$on('editVizualizationSettings', function () {
             EditSettings.openSettingsModal('timeseries', scope.options.labels)
@@ -279,7 +279,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             var dateAgg = {
               'date_histogram': {
                 field: 'visitDate',
-                interval: scope.interval,
+                interval: scope.options.interval,
                 'min_doc_count': 0
               }
             };
@@ -775,8 +775,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               return;
             }
 
-            var xAxisType = getXAxisDetails(scope.interval).xAxisType,
-              domain = getXAxisDetails(scope.interval).domain;
+            var xAxisType = getXAxisDetails(scope.options.interval).xAxisType,
+              domain = getXAxisDetails(scope.options.interval).domain;
 
             var xmin = getAxisExtreme(data, 'x', 'min'),
               xmax = getAxisExtreme(data, 'x', 'max'),
@@ -1035,7 +1035,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             updateURL.updateVisualization(scope.options.id, {
               options: scope.options,
               series: scope.series || scope.options.series || [],
-              interval: scope.interval || scope.options.interval,
+              interval: scope.options.interval,
               visualization: {
                 name: 'line'
               },
@@ -1046,7 +1046,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             });
           };
 
-          scope.$watchCollection('[series, queryString, interval]', function () {
+          scope.$watchCollection('[series, queryString, options.interval]', function () {
             reload();
             updateVisualization();
           });

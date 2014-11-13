@@ -28,14 +28,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       label: gettextCatalog.getString('District')
     },
     {
-      value: 'diagnoses',
-      label: gettextCatalog.getString('Diagnoses')
-    },
-    {
-      value: 'sex',
-      label: gettextCatalog.getString('Sex')
-    },
-    {
       value: 'symptoms',
       label: gettextCatalog.getString('Symptoms')
     }
