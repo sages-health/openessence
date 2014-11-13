@@ -44,6 +44,10 @@ engine.on('phantomDied', function () {
   logger.info('Instance stopped');
 });
 
+var filenameToKey = function (filename) {
+  return 'snapshot:' + path.basename(filename);
+};
+
 engine.on('queueItemReady', function (options) {
   logger.info('Cluster received request for %s', options.url);
 
@@ -111,10 +115,24 @@ engine.on('queueItemReady', function (options) {
 
     setPageSize();
 
+    page.set('onError', function (msg, trace) {
+      logger.error('Error %s: %s', msg, trace);
+    });
+
+    page.set('onResourceError', function (rErr) {
+      logger.error('Resource error %d for URL %s: %s', rErr.errorCode, rErr.url, rErr.errorString);
+    });
+
     page.open(options.url, function (status) {
-      var finish = function () {
+      var finish = function (err) {
         page.close();
-        clusterClient.queueItemResponse(options);
+
+        if (err) {
+          logger.error({err: err});
+        }
+
+        // TODO nothing gets passed to caller
+        clusterClient.queueItemResponse(err, options);
       };
 
       if (status !== 'success') {
@@ -144,9 +162,32 @@ engine.on('queueItemReady', function (options) {
             return finish();
           }
 
+          // render snapshot to temporary storage
           page.render(options.filename, function () {
             logger.info('Done rendering %s', options.filename);
-            finish();
+
+            // it'd be nice if phantom could render to a buffer, but what can you do?
+            fs.readFile(options.filename, function (err, data) {
+              if (err) {
+                return finish(err);
+              }
+
+              // Save in Redis for 30 seconds, since the requesting process might not have access to our filesystem
+              conf.redis.client.set(filenameToKey(options.filename), data, 'EX', '30', function (err) {
+                // try to delete file no matter what
+                fs.unlink(options.filename, function () {
+                  // ignore any errors
+                });
+
+                if (err) {
+                  return finish(err);
+                }
+
+                logger.debug('Saved snapshot to %s', filenameToKey(options.filename));
+
+                finish();
+              });
+            });
           });
         });
 
@@ -223,19 +264,35 @@ if (cluster.isMaster) {
         selector: req.query.selector,
         size: size
       });
-      queueItem.on('response', function () {
-        // TODO sanitize file name
-        res.download(filename, req.params.name + '.' + extension, function (err) {
-          // try to delete file no matter what
-          fs.unlink(filename, function () {
-            // ignore any errors
+      queueItem.on('response', function (err) {
+        if (err) {
+          return next(err);
+        }
+
+        var key = filenameToKey(filename);
+
+        // using buffer as key tells node-redis to return a buffer to us
+        conf.redis.client.get(new Buffer(key), function (err, data) {
+          if (err) {
+            return next(err);
+          }
+
+          // Asynchronously delete key
+          conf.redis.client.del(key, function (err) {
+            if (err) {
+              logger.warn({err: err}, 'Error deleting snapshot %s from Redis', key);
+            }
           });
 
-          if (err && !res.headersSent) {
-            return next(err);
-          } else if (err) {
-            return logger.error({err: err}, 'Error sending rendered page to client');
+          if (!data) {
+            return next(new Error('Error generating snapshot'));
           }
+
+          // TODO sanitize file name
+          res.attachment(req.params.name + '.' + extension);
+
+          res.set('Content-Type', contentType);
+          res.send(data);
         });
       });
 

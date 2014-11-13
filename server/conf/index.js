@@ -85,7 +85,8 @@ if (!settings.redis.client) {
     get: function () { // lazily initialize redis connection so Redis doesn't have to be online unless we're using it
       if (!redisClient) {
         redisClient = redis.createClient(redisUrl.port, redisUrl.hostname, {
-          'auth_pass': redisPass
+          'auth_pass': redisPass,
+          'detect_buffers': true // so we can store binary data
         });
       }
       return redisClient;
