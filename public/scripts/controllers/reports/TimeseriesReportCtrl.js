@@ -4,12 +4,23 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, gettextCatalog, $window, visualization, user, FacilityResource) {
+module.exports = function ($scope, gettextCatalog, $location, visualization, user, FacilityResource, $document, //
+                           $window) {
+  $scope.export = function () {
+    var title = $scope.report.name.replace(/ /g, '_');
+    var lang = $document[0].documentElement.lang;
+    var params = angular.copy($scope.params);
+    params.print = false;
 
+    $window.location = '/reports/' + title + '?size=1100px*670px&name=' + title + '&url=/' + lang +
+      '/timeseries-report?params=' + btoa(JSON.stringify(params));
+  };
   $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
   $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
 
-  $scope.report = $window.opener.report;
+  $scope.params = JSON.parse(atob($location.search().params));
+  $scope.allowExport = $scope.params.print === false ? false : true;
+  $scope.report = angular.copy($scope.params);
   $scope.report.startDate = moment($scope.report.endDate).subtract('years', 1).toDate();
   $scope.report.week = moment($scope.report.endDate).format('W'); // ISO week
   $scope.report.year = moment($scope.report.endDate).format('GGGG'); // ISO year
