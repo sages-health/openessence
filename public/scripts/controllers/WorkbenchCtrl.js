@@ -81,6 +81,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     var state = updateURL.getState();
     $scope.nextVizId = 0;
     $scope.workbenchId = null;
+    var visualizationName = $location.search().visualization;
 
     if (workbenchId) { // if we are loading a saved workbench
       Workbench.get(workbenchId, function (response) {
@@ -98,6 +99,18 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
           });
         }
       });
+    } else if (visualizationName) {
+      var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
+      var options = {
+        pivot: viz.pivot
+      };
+      viz.filters.forEach(function(filter){
+        $scope.activeFilters.push(angular.extend({}, $scope.possibleFilters[filter.filterID], filter));
+      });
+
+//      $scope.activeFilters = viz.filters;
+      $scope.addVisualization(viz.visualization.name, options);
+      $scope.vizMenuOpen = false;
     } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
       $scope.activeFilters = state.filters || [];
       if (Array.isArray(state.visualizations)) {
@@ -197,32 +210,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       Workbench.save(state);
     }
   };
-
-  var visualizationName = $location.search().visualization;
-  if (visualizationName) {
-    var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
-    var options = {
-      pivot: viz.pivot
-    };
-
-    $scope.filters = viz.filters.map(function (filter) {
-      if (filter.value) {
-        return {
-          filterId: filter.filterId,
-          value: filter.value
-        };
-      } else {
-        return {
-          filterId: filter.filterId,
-          to: filter.to,
-          from: filter.from
-        };
-      }
-    });
-
-    $scope.addVisualization(viz.visualization.name, options);
-    $scope.vizMenuOpen = false;
-  }
 
   $scope.sortableOptions = {
     cursor: 'move',
