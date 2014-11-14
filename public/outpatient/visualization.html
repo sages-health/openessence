@@ -62,8 +62,8 @@
       </table>
     </div>
   </div>
-  <div class="animation-switch pivot" ng-switch-when="crosstab">
-    <crosstab records="crosstabData" options="pivot"></crosstab>
+  <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
+    <crosstab class="crosstab" records="crosstabData" options="options" pivot="pivot"></crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
     <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
