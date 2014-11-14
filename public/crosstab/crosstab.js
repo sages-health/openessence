@@ -14,13 +14,13 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function ($p
     restrict: 'E',
     compile: function (element, attrs) {
       var recordsExp = $parse(attrs.records);
-      var optionsExp = $parse(attrs.options);
+      var pivotExp = $parse(attrs.pivot);
 
       return function link (scope, element) {
         scope.records = recordsExp(scope);
-        scope.options = optionsExp(scope);
+        scope.pivot = pivotExp(scope);
 
-        var pivot = function (records, options) {
+        var pivotFn = function (records, pivot) {
           var countKey = 'count';
           var opts = angular.extend(
             {
@@ -34,8 +34,8 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function ($p
                   countStore: {},
                   count: 0,
                   push: function (record) {
-                    var col = scope.options.cols[0];
-                    var row = scope.options.rows[0];
+                    var col = scope.pivot.cols[0];
+                    var row = scope.pivot.rows[0];
 
                     if (record[col]) {
                       if (typeof record[col] !== 'string') {
@@ -65,24 +65,24 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function ($p
                 };
               }
             },
-            scope.options,
-            options
+            scope.pivot,
+            pivot
           );
           angular.element(element).pivot(records, opts);
         };
 
         scope.$watch(recordsExp, function (newValue) {
-          pivot(newValue, scope.options);
+          pivotFn(newValue, scope.pivot);
         }); // records array is always replaced by reference
 
-        scope.$watchCollection('[' + attrs.options + '.rows, ' + attrs.options + '.cols]', function (newValue) {
-          var options = angular.extend(
-            scope.options,
+        scope.$watchCollection('[' + attrs.pivot + '.rows, ' + attrs.pivot + '.cols]', function (newValue) {
+          var pivot = angular.extend(
+            scope.pivot,
             {
               rows: newValue[0] || [],
               cols: newValue[1] || []
             });
-          pivot(scope.records, options);
+          pivotFn(scope.records, pivot);
         });
       };
     }

@@ -788,6 +788,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             var ymargin = 30;
             var xmargin = 50;
 
+            width = width - xmargin;
             scope.titleXpx = (width / 2);
             scope.titleYpx = (ymargin / 2);
             scope.yLabelXpx = (xmargin / 3);
