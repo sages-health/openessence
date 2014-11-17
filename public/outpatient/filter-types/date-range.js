@@ -14,11 +14,6 @@ angular.module(directives.name).directive('outpatientDateRangeFilter', function 
     },
     link: {
       pre: function (scope) {
-        scope.strings = {
-          start: gettextCatalog.getString('Start'),
-          end: gettextCatalog.getString('End')
-        };
-
         if (scope.filter.value) {
           scope.filter.from = scope.filter.value;
           scope.filter.to = scope.filter.value;

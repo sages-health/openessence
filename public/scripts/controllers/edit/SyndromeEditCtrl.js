@@ -20,15 +20,6 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, SyndromeReso
     }
   ];
 
-  // strings that we can't translate in the view, usually because they're in attributes
-  $scope.strings = {
-    syndrome: gettextCatalog.getString('Syndrome'),
-    newSyndrome: gettextCatalog.getString('New syndrome'),
-    edit: gettextCatalog.getString('Edit'),
-    phoneId: gettextCatalog.getString('Phone ID'),
-    name: gettextCatalog.getString('Name')
-  };
-
   $scope.editTemplate = require('../../../partials/edit/forms/syndrome-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
   $scope.resource = SyndromeResource;

@@ -17,14 +17,6 @@ module.exports = function ($scope, $modal, crud, tableUtil, gettextCatalog, sort
     }
   ];
 
-  $scope.strings = {
-    diagnosis: gettextCatalog.getString('Diagnosis'),
-    newDiagnosis: gettextCatalog.getString('New diagnosis'),
-    enabled: gettextCatalog.getString('Enabled?'),
-    name: gettextCatalog.getString('Name'),
-    delete: gettextCatalog.getString('Delete')
-  };
-
   $scope.diagnoses = {};
   $scope.toggleEnabled = function (diagnosisName) {
     var diagnosis = $scope.diagnoses[diagnosisName];

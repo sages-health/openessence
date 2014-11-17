@@ -3,8 +3,8 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog, scopeToJson,//
-                           FormResource, possibleFilters, updateURL, Workbench) {
+module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog,
+                           scopeToJson, FormResource, possibleFilters, updateURL, Workbench) {
   $scope.gridsterOptions = {
     margins: [10, 10],
     columns: 12,

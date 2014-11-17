@@ -64,27 +64,6 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
     }
   ];
 
-  // strings that we can't translate in the view, usually because they're in attributes
-  $scope.strings = {
-    aggregateData: gettextCatalog.getString('Aggregate Data'),
-    newAggregateData: gettextCatalog.getString('New'),
-    import: gettextCatalog.getString('Import'),
-    upload: gettextCatalog.getString('Upload'),
-    edit: gettextCatalog.getString('Edit'),
-    visitDate: gettextCatalog.getString('Date'),
-    week: gettextCatalog.getString('Week'),
-    year: gettextCatalog.getString('Year'),
-    district: gettextCatalog.getString('District'),
-    sitesTotal: gettextCatalog.getString('Total Sites'),
-    sitesReporting: gettextCatalog.getString('Number of Sites Reporting'),
-    symptoms: gettextCatalog.getString('Symptoms'),
-    count: gettextCatalog.getString('Count'),
-    symptomName: gettextCatalog.getString('Symptom Name'),
-    acuteFeverAndRash: gettextCatalog.getString('Acute Fever and Rash'),
-    diarrhoea: gettextCatalog.getString('Diarrhoea'),
-    influenzaLikeIllness: gettextCatalog.getString('Influenza-like Illness'),
-    prolongedFever: gettextCatalog.getString('Prolonged Fever')
-  };
   $scope.editTemplate = require('../../../partials/edit/forms/aggregate-data-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
   $scope.resource = OutpatientVisitResource;

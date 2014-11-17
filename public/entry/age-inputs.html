@@ -39,17 +39,18 @@
         <span class="input-group-addon" translate>years</span>
       </div>
 
-      <span ng-show="warnings.years === 'old'" class="help-block" translate>
+      <span ng-show="warnings.years === 'old'" class="help-block" translate
+            translate-comment="{{visit.patient.age.years}} is a variable">
         {{visit.patient.age.years}} years is quite old. Are you sure?
       </span>
       <span ng-show="warnings.years === '999'" class="help-block" translate>
         Leave this field blank if you don't know the patient's age
       </span>
       <span ng-show="warnings.years === 'dateOfBirthMismatch'" class="help-block">
-        <span ng-show="expectedAge.years" translate>
+        <span ng-show="expectedAge.years" translate translate-comment="{{expectedAge.years}} is a variable">
           Are you sure? According to the patient's date of birth, they should be {{expectedAge.years}} years old.
         </span>
-        <span ng-show="!expectedAge.years" translate>
+        <span ng-show="!expectedAge.years" translate translate-comment="{{expectedAge.months}} is a variable">
           Are you sure? According to the patient's date of birth, they should be {{expectedAge.months}} months old.
         </span>
       </span>
@@ -66,7 +67,8 @@
         <span class="input-group-addon" translate>months</span>
       </div>
 
-      <span ng-show="warnings.months === 'dateOfBirthMismatch'" class="help-block" translate>
+      <span ng-show="warnings.months === 'dateOfBirthMismatch'" class="help-block" translate
+            translate-comment="{{expectedAge.months}} is a variable">
         Are you sure? According to the patient's date of birth, they should be {{expectedAge.months}} months old.
       </span>
     </div>

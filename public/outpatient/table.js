@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ function ($rootScope, gettextCatalog, orderByFilter,
+angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ function ($rootScope, orderByFilter,
                                                                        FrableParams, OutpatientVisitResource,
                                                                        sortString) {
   return {
@@ -20,18 +20,6 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
       return {
         pre: function (scope) {
           scope.condensed = condensed;
-          scope.strings = {
-            visitDate: gettextCatalog.getString('Visit'),
-            submissionDate: gettextCatalog.getString('Submitted'),
-            facility: gettextCatalog.getString('Facility'),
-            symptoms: gettextCatalog.getString('Symptoms'),
-            diagnoses: gettextCatalog.getString('Diagnoses'),
-            syndromes: gettextCatalog.getString('Syndromes'),
-            disposition: gettextCatalog.getString('Disposition'),
-            sex: gettextCatalog.getString('Sex'),
-            age: gettextCatalog.getString('Age'),
-            antiviral: gettextCatalog.getString('Antiviral')
-          };
 
           // index fields by name
           scope.$watch('form.fields', function (fields) {

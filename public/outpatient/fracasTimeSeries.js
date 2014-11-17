@@ -320,17 +320,42 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             } else if (interval === 'month') {
               xAxisType = 'month';
               domain = [
+                // triple slash is a comment to the translator, see https://angular-gettext.rocketeer.be/dev-guide/annotate-js/
+
+                /// Month of January
                 gettextCatalog.getString('Jan'),
+
+                /// Month of February
                 gettextCatalog.getString('Feb'),
+
+                /// Month of March
                 gettextCatalog.getString('Mar'),
+
+                /// Month of April
                 gettextCatalog.getString('Apr'),
+
+                /// Month of May
                 gettextCatalog.getString('May'),
+
+                /// Month of June
                 gettextCatalog.getString('Jun'),
+
+                /// Month of July
                 gettextCatalog.getString('Jul'),
+
+                /// Month of August
                 gettextCatalog.getString('Aug'),
+
+                /// Month of September
                 gettextCatalog.getString('Sep'),
+
+                /// Month of October
                 gettextCatalog.getString('Oct'),
+
+                /// Month of November
                 gettextCatalog.getString('Nov'),
+
+                /// Month of December
                 gettextCatalog.getString('Dec')
               ];
             } else if (interval === 'quarter') {

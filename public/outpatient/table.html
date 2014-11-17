@@ -2,50 +2,50 @@
   <table class="table table-striped table-hover table-condensed" frable="tableParams">
     <tr ng-repeat="visit in $data">
 
-      <td ng-show="fields.visitDate.enabled" data-title="strings.visitDate" data-sortable="'visitDate'">
+      <td ng-show="fields.visitDate.enabled" data-title="'Visit' | translate" data-sortable="'visitDate'">
         <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
       </td>
 
       <!-- Unlike other fields which can be seen via the form, this one can't be since it's non-editable -->
       <!-- TODO combine edit form and "record investigation" usecase into coherent UI -->
-      <td ng-show="fields.submissionDate.enabled" data-title="strings.submissionDate" data-sortable="'submissionDate'">
+      <td ng-show="fields.submissionDate.enabled" data-title="'Submitted' | translate" data-sortable="'submissionDate'">
         <a ng-click="tableFilter('submissionDate', visit._source.submissionDate)">
           {{visit._source.submissionDate | date}}
         </a>
       </td>
 
-      <td ng-show="fields['medicalFacility'].enabled" data-title="strings.facility"
+      <td ng-show="fields['medicalFacility'].enabled" data-title="'Facility' | translate"
           data-sortable="'medicalFacility'">
         <a ng-click="tableFilter('medicalFacility.name', visit._source.medicalFacility.name)">
           {{visit._source.medicalFacility.name | truncate:30}}
         </a>
       </td>
 
-      <td ng-show="fields['patient.sex'].enabled" data-title="strings.sex" data-sortable="'patient.sex'">
+      <td ng-show="fields['patient.sex'].enabled" data-title="'Sex' | translate" data-sortable="'patient.sex'">
         <a ng-click="tableFilter('patient.sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
       </td>
-      <td ng-show="fields['patient.age'].enabled" data-title="strings.age" data-sortable="'patient.age.years'">
+      <td ng-show="fields['patient.age'].enabled" data-title="'Age' | translate" data-sortable="'patient.age.years'">
         <a ng-click="tableFilter('patientAge', visit._source.patient.age.years)">{{visit._source.patient.age.years}}</a>
       </td>
 
-      <td ng-show="fields.symptoms.enabled" data-title="strings.symptoms">
+      <td ng-show="fields.symptoms.enabled" data-title="'Symptoms' | translate">
         <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
           {{visit._source.symptoms | pluck:'name' | join | truncate:30}}
         </a>
       </td>
-      <td ng-show="fields.diagnoses.enabled" data-title="strings.diagnoses">
+      <td ng-show="fields.diagnoses.enabled" data-title="'Diagnoses' | translate">
         <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">
           {{visit._source.diagnoses | pluck:'name' | join | truncate:30}}
         </a>
       </td>
 
-      <td ng-show="fields.disposition.enabled" data-title="strings.disposition">
+      <td ng-show="fields.disposition.enabled" data-title="'Disposition' | translate">
         <a ng-click="tableFilter('disposition', visit._source.disposition)">
           {{visit._source.disposition | pluck:'name' | join | truncate:30}}
         </a>
       </td>
 
-      <td ng-show="fields['antiviral.name'].enabled" data-title="strings.antiviral" data-sortable="'antiviral.name'">
+      <td ng-show="fields['antiviral.name'].enabled" data-title="'Antiviral' | translate" data-sortable="'antiviral.name'">
         <a ng-click="tableFilter('antiviral', visit._source.antiviral.name)">{{visit._source.antiviral.name}}</a>
       </td>
 

@@ -3,10 +3,10 @@
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, $window, gettextCatalog, user, visualization, OutpatientVisitResource) {
+module.exports = function ($scope, $window, user, visualization, OutpatientVisitResource) {
 
-  $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
-  $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
+  $scope.username = user.getUser().username;
+  $scope.dateString = moment().format('D MMMM YYYY');
 
   $scope.report = $window.opener.report;
   $scope.report.week = moment($scope.report.endDate).format('W'); // ISO week

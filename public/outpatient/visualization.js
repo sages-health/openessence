@@ -56,20 +56,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.crosstabData = [];
 
-        // strings that we can't translate in the view, usually because they're in attributes
-        scope.strings = {
-          visitDate: gettextCatalog.getString('Visit'),
-          facility: gettextCatalog.getString('Facility'),
-          sex: gettextCatalog.getString('Sex'),
-          age: gettextCatalog.getString('Age'),
-          symptoms: gettextCatalog.getString('Symptoms'),
-          diagnoses: gettextCatalog.getString('Diagnoses'),
-          syndromes: gettextCatalog.getString('Syndromes'),
-          visitType: gettextCatalog.getString('Visit type'),
-          disposition: gettextCatalog.getString('Disposition'),
-          antiviral: gettextCatalog.getString('Antiviral')
-        };
-
         // TODO make this a filter
         scope.printAggregate = function (field, includeCount) {
           var print = [];

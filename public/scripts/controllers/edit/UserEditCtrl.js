@@ -9,7 +9,7 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, User
       filterID: 'username',
       type: 'text',
       field: 'username',
-      name: gettextCatalog.getString('User Name')
+      name: gettextCatalog.getString('Username')
     }
   ];
   $scope.possibleFilters = [
@@ -17,7 +17,7 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, User
       filterID: 'username',
       type: 'text',
       field: 'username',
-      name: gettextCatalog.getString('User Name')
+      name: gettextCatalog.getString('Username')
     },
     {
       filterID: 'name',
@@ -41,22 +41,6 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, User
       filters[filter.filterID] = filter;
       return filters;
     }, {});
-
-  // strings that we can't translate in the view, usually because they're in attributes
-  $scope.strings = {
-    users: gettextCatalog.getString('Users'),
-    newUser: gettextCatalog.getString('New user'),
-    edit: gettextCatalog.getString('Edit'),
-    username: gettextCatalog.getString('User Name'),
-    email: gettextCatalog.getString('Email'),
-    name: gettextCatalog.getString('Name'),
-    disabled: gettextCatalog.getString('Disabled'),
-    roles: gettextCatalog.getString('Roles'),
-    changePasswordTitle: gettextCatalog.getString('Change Password'),
-    updateAccessTitle: gettextCatalog.getString('Update User Access'),
-    editUserTitle: gettextCatalog.getString('Edit User'),
-    deleteUserTitle: gettextCatalog.getString('Delete User')
-  };
 
   $scope.changePasswordTemplate = require('../../../partials/edit/forms/change-password-form.html');
   $scope.editTemplate = require('../../../partials/edit/forms/user-form.html');

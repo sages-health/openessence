@@ -3,7 +3,7 @@
     <div class="panel-heading">
       <h3>{{report.name}}</h3>
 
-      <div>Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}</div>
+      <div translate>Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}</div>
     </div>
 
     <div class="panel-body">
@@ -35,8 +35,8 @@
 
     <div class="panel-footer">
       <div class="clearfix">
-        <div class="pull-left">{{userString}}</div>
-        <div class="pull-right">{{todayString}}</div>
+        <div class="pull-left" translate>Created by: {{username}}</div>
+        <div class="pull-right" translate>Date of report: {{dateString}}</div>
       </div>
     </div>
   </div>

@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientSexFilter', /*@ngInject*/ function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientSexFilter', /*@ngInject*/ function () {
   return {
     restrict: 'E',
     template: require('./sex.html'),
@@ -13,10 +13,6 @@ angular.module(directives.name).directive('outpatientSexFilter', /*@ngInject*/ f
     },
     link: {
       pre: function (scope) {
-        scope.strings = {
-          any: gettextCatalog.getString('Any sex')
-        };
-
         scope.filter.value = scope.filter.value || '*';
 
         scope.$watch('filter.value', function (sex) {

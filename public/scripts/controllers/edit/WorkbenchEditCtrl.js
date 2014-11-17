@@ -26,10 +26,6 @@ module.exports = function ($scope, $modal, tableUtil, crud, $rootScope, gettextC
       name: gettextCatalog.getString('Description')
     }
   ];
-  $scope.strings = {
-    workbenches: gettextCatalog.getString('Workbenches'),
-    name: gettextCatalog.getString('Name')
-  };
 
   var editTemplate = require('../../../partials/edit/forms/workbench-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');

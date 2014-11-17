@@ -30,12 +30,6 @@ module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, Frable
 
   $scope.errorOnRecordSave = '';
 
-  $scope.strings = {
-    visualization: gettextCatalog.getString('Visualization'),
-    visualizationName: gettextCatalog.getString('Type'),
-    name: gettextCatalog.getString('Name')
-  };
-
   $scope.tableParams = new FrableParams({
     page: 1,
     count: 10,

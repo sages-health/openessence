@@ -4,10 +4,10 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, gettextCatalog, $window, visualization, user, DistrictResource) {
+module.exports = function ($scope, $window, visualization, user, DistrictResource) {
 
-  $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
-  $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
+  $scope.username = user.getUser().username;
+  $scope.dateString = moment().format('D MMMM YYYY');
 
   $scope.report = $window.opener.report;
   $scope.report.startDate = moment($scope.report.endDate).subtract('years', 1).toDate();
