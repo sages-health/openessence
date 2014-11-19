@@ -1,8 +1,15 @@
+# 
+# Translators:
 msgid ""
 msgstr ""
+"Project-Id-Version: fracas\n"
+"PO-Revision-Date: 2014-11-19 20:41+0000\n"
+"Last-Translator: Gabe Gorelick <gabriel.gorelick@jhuapl.edu>\n"
+"Language-Team: German (http://www.transifex.com/projects/p/fracas/language/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: \n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../public/partials/reports/weekly-report.html
 msgid "Acute Fever and Rash"
@@ -12,8 +19,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: ../public/dashboard/add-widget.html
-#: ../public/dashboard/dashboard.html
+#: ../public/dashboard/add-widget.html ../public/dashboard/dashboard.html
 #: ../public/workbench/workbench.html
 msgid "Add widget"
 msgstr ""
@@ -22,8 +28,7 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: ../public/entry/age-inputs.html
-#: ../public/outpatient/table.html
+#: ../public/entry/age-inputs.html ../public/outpatient/table.html
 #: ../public/outpatient/visualization.html
 #: ../public/partials/visualization-menu.html
 #: ../public/outpatient/possibleFilters.js
@@ -48,8 +53,7 @@ msgstr ""
 msgid "Amantadine (Symmetrel®)"
 msgstr ""
 
-#: ../public/outpatient/table.html
-#: ../public/outpatient/visualization.html
+#: ../public/outpatient/table.html ../public/outpatient/visualization.html
 #: ../public/outpatient/possibleFilters.js
 msgid "Antiviral"
 msgstr ""
@@ -82,16 +86,19 @@ msgstr ""
 
 #. {{expectedAge.months}} is a variable
 #: ../public/entry/age-inputs.html
-msgid "Are you sure? According to the patient's date of birth, they should be {{expectedAge.months}} months old."
+msgid ""
+"Are you sure? According to the patient's date of birth, they should be "
+"{{expectedAge.months}} months old."
 msgstr ""
 
 #. {{expectedAge.years}} is a variable
 #: ../public/entry/age-inputs.html
-msgid "Are you sure? According to the patient's date of birth, they should be {{expectedAge.years}} years old."
+msgid ""
+"Are you sure? According to the patient's date of birth, they should be "
+"{{expectedAge.years}} years old."
 msgstr ""
 
-#: ../public/entry/age-inputs.html
-#: ../public/outpatient/form.html
+#: ../public/entry/age-inputs.html ../public/outpatient/form.html
 msgid "Are you sure? This date is in the future."
 msgstr ""
 
@@ -129,8 +136,7 @@ msgstr ""
 msgid "CSV file"
 msgstr ""
 
-#: ../public/aggregate/modal-upload.html
-#: ../public/dashboard/add-widget.html
+#: ../public/aggregate/modal-upload.html ../public/dashboard/add-widget.html
 #: ../public/dashboard/open-dashboard-modal.html
 #: ../public/dashboard/widget-settings.html
 #: ../public/outpatient/modal-edit.html
@@ -273,10 +279,8 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/table.html
-#: ../public/outpatient/visualization.html
-#: ../public/partials/home.html
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html ../public/partials/home.html
 #: ../public/partials/edit/diagnosis.html
 #: ../public/outpatient/possibleFilters.js
 #: ../public/scripts/controllers/WorkbenchCtrl.js
@@ -297,8 +301,7 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/table.html
+#: ../public/outpatient/form.html ../public/outpatient/table.html
 #: ../public/partials/edit/disposition.html
 #: ../public/partials/edit/forms/disposition-form.html
 msgid "Disposition"
@@ -318,8 +321,7 @@ msgstr ""
 msgid "District"
 msgstr ""
 
-#: ../public/partials/home.html
-#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/home.html ../public/partials/edit/forms/user-form.html
 msgid "Districts"
 msgstr ""
 
@@ -373,8 +375,7 @@ msgstr ""
 msgid "Exposure to influenza antiviral drugs during the last 14 days?"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/table.html
+#: ../public/outpatient/form.html ../public/outpatient/table.html
 #: ../public/outpatient/visualization.html
 #: ../public/outpatient/possibleFilters.js
 msgid "Facility"
@@ -385,8 +386,7 @@ msgstr ""
 msgid "Feb"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/filter-types/sex.html
+#: ../public/outpatient/form.html ../public/outpatient/filter-types/sex.html
 msgid "Female"
 msgstr ""
 
@@ -461,8 +461,7 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/filter-types/sex.html
+#: ../public/outpatient/form.html ../public/outpatient/filter-types/sex.html
 msgid "Male"
 msgstr ""
 
@@ -504,10 +503,8 @@ msgstr ""
 #: ../public/partials/edit/dashboard.html
 #: ../public/partials/edit/diagnosis.html
 #: ../public/partials/edit/disposition.html
-#: ../public/partials/edit/district.html
-#: ../public/partials/edit/symptom.html
-#: ../public/partials/edit/syndrome.html
-#: ../public/partials/edit/user.html
+#: ../public/partials/edit/district.html ../public/partials/edit/symptom.html
+#: ../public/partials/edit/syndrome.html ../public/partials/edit/user.html
 #: ../public/partials/edit/visit-type.html
 #: ../public/partials/edit/visualization.html
 #: ../public/partials/edit/workbench.html
@@ -589,8 +586,7 @@ msgid ""
 "        trends over time within each country/area."
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/partials/visualization-export.html
+#: ../public/outpatient/form.html ../public/partials/visualization-export.html
 msgid "Notes"
 msgstr ""
 
@@ -693,8 +689,7 @@ msgstr ""
 msgid "Outpatient Visits Report"
 msgstr ""
 
-#: ../public/outpatient/edit.html
-#: ../public/partials/home.html
+#: ../public/outpatient/edit.html ../public/partials/home.html
 #: ../public/outpatient/fracasTimeSeries.js
 msgid "Outpatient visits"
 msgstr ""
@@ -928,8 +923,7 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: ../public/aggregate/modal-upload.html
-#: ../public/dashboard/dashboard.html
+#: ../public/aggregate/modal-upload.html ../public/dashboard/dashboard.html
 #: ../public/outpatient/modal-edit.html
 #: ../public/partials/save-report-dialog.html
 #: ../public/partials/save-visualization-modal.html
@@ -987,13 +981,11 @@ msgstr ""
 msgid "Separator"
 msgstr ""
 
-#: ../public/partials/edit-settings-modal.html
-#: ../public/partials/home.html
+#: ../public/partials/edit-settings-modal.html ../public/partials/home.html
 msgid "Settings"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/table.html
+#: ../public/outpatient/form.html ../public/outpatient/table.html
 #: ../public/outpatient/visualization.html
 #: ../public/partials/visualization-menu.html
 #: ../public/outpatient/possibleFilters.js
@@ -1076,10 +1068,8 @@ msgstr ""
 msgid "Symptom onset"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/table.html
-#: ../public/outpatient/visualization.html
-#: ../public/partials/home.html
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html ../public/partials/home.html
 #: ../public/partials/edit/aggregate-data.html
 #: ../public/partials/edit/symptom.html
 #: ../public/partials/edit/forms/aggregate-data-form.html
@@ -1092,8 +1082,7 @@ msgstr ""
 msgid "Syndrome"
 msgstr ""
 
-#: ../public/partials/home.html
-#: ../public/partials/edit/syndrome.html
+#: ../public/partials/home.html ../public/partials/edit/syndrome.html
 msgid "Syndromes"
 msgstr ""
 
@@ -1113,8 +1102,7 @@ msgstr ""
 msgid "The username or password you entered is incorrect."
 msgstr ""
 
-#: ../public/dashboard/add-widget.html
-#: ../public/outpatient/form.html
+#: ../public/dashboard/add-widget.html ../public/outpatient/form.html
 #: ../public/partials/reports/open-timeseries-report-dialog.html
 #: ../public/partials/reports/open-visits-report-dialog.html
 #: ../public/partials/reports/open-weekly-report-dialog.html
@@ -1167,8 +1155,7 @@ msgstr ""
 msgid "Umifenovir (Arbidol®)"
 msgstr ""
 
-#: ../public/entry/antiviral-inputs.html
-#: ../public/outpatient/form.html
+#: ../public/entry/antiviral-inputs.html ../public/outpatient/form.html
 msgid "Unknown"
 msgstr ""
 
@@ -1195,13 +1182,11 @@ msgstr ""
 msgid "Username or email"
 msgstr ""
 
-#: ../public/partials/home.html
-#: ../public/partials/edit/user.html
+#: ../public/partials/home.html ../public/partials/edit/user.html
 msgid "Users"
 msgstr ""
 
-#: ../public/outpatient/table.html
-#: ../public/outpatient/visualization.html
+#: ../public/outpatient/table.html ../public/outpatient/visualization.html
 msgid "Visit"
 msgstr ""
 
@@ -1213,8 +1198,7 @@ msgstr ""
 msgid "Visit Types"
 msgstr ""
 
-#: ../public/outpatient/form.html
-#: ../public/outpatient/possibleFilters.js
+#: ../public/outpatient/form.html ../public/outpatient/possibleFilters.js
 #: ../public/scripts/controllers/edit/AggregateDataEditCtrl.js
 msgid "Visit date"
 msgstr ""
@@ -1232,13 +1216,14 @@ msgstr ""
 msgid "Visualization"
 msgstr ""
 
-#: ../public/partials/home.html
-#: ../public/partials/edit/visualization.html
+#: ../public/partials/home.html ../public/partials/edit/visualization.html
 msgid "Visualizations"
 msgstr ""
 
 #: ../public/partials/conflict-message.html
-msgid "We're sorry, but the record you were trying to save has been updated by another user. Here's the updated record."
+msgid ""
+"We're sorry, but the record you were trying to save has been updated by "
+"another user. Here's the updated record."
 msgstr ""
 
 #: ../public/partials/edit/aggregate-data.html
@@ -1285,7 +1270,9 @@ msgid "Y-Axis Label"
 msgstr ""
 
 #: ../public/partials/reports/weekly-report.html
-msgid "Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}"
+msgid ""
+"Year: {{report.year}} | Week: {{report.week}} | Ending on: "
+"{{report.endDateString}}"
 msgstr ""
 
 #: ../public/entry/antiviral-inputs.html

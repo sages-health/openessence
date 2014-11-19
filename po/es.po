@@ -1,41 +1,1355 @@
+# 
+# Translators:
+# Gabe Gorelick <gabriel.gorelick@jhuapl.edu>, 2014
 msgid ""
 msgstr ""
+"Project-Id-Version: fracas\n"
+"PO-Revision-Date: 2014-11-19 20:41+0000\n"
+"Last-Translator: Gabe Gorelick <gabriel.gorelick@jhuapl.edu>\n"
+"Language-Team: Spanish (http://www.transifex.com/projects/p/fracas/language/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"MIME-Version: 1.0\n"
-"X-Generator: Poedit 1.6.4\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Acute Fever and Rash"
+msgstr ""
+
+#: ../public/dashboard/add-widget.html
+msgid "Add"
+msgstr ""
+
+#: ../public/dashboard/add-widget.html ../public/dashboard/dashboard.html
+#: ../public/workbench/workbench.html
+msgid "Add widget"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Address"
+msgstr ""
+
+#: ../public/entry/age-inputs.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html
+#: ../public/partials/visualization-menu.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+msgid "Age"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Age & Sex"
+msgstr ""
 
 #: ../public/partials/home.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Aggregate Data"
+msgstr ""
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Aggregate data"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Amantadine (Symmetrel®)"
+msgstr ""
+
+#: ../public/outpatient/table.html ../public/outpatient/visualization.html
+#: ../public/outpatient/possibleFilters.js
+msgid "Antiviral"
+msgstr ""
+
+#: ../public/outpatient/filter-types/multi-select.html
+#: ../public/outpatient/filter-types/text.html
+msgid "Any"
+msgstr ""
+
+#: ../public/outpatient/filter-types/sex.html
+msgid "Any sex"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Anything else you want to add"
+msgstr ""
+
+#. Month of April
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Apr"
+msgstr ""
+
+#: ../public/partials/delete-diagnosis-modal.html
+msgid "Are you sure you want to delete this diagnosis?"
+msgstr ""
+
+#: ../public/partials/delete-record.html
+msgid "Are you sure you want to delete this record?"
+msgstr ""
+
+#. {{expectedAge.months}} is a variable
+#: ../public/entry/age-inputs.html
+msgid ""
+"Are you sure? According to the patient's date of birth, they should be "
+"{{expectedAge.months}} months old."
+msgstr ""
+
+#. {{expectedAge.years}} is a variable
+#: ../public/entry/age-inputs.html
+msgid ""
+"Are you sure? According to the patient's date of birth, they should be "
+"{{expectedAge.years}} years old."
+msgstr ""
+
+#: ../public/entry/age-inputs.html ../public/outpatient/form.html
+msgid "Are you sure? This date is in the future."
+msgstr ""
+
+#. Month of August
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Aug"
+msgstr ""
+
+#. Beats per minute
+#: ../public/outpatient/form.html
+msgid "BPM"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Back"
+msgstr ""
+
+#: ../public/outpatient/fracasBarChart.js
+msgid "Bar Chart"
+msgstr ""
+
+#: ../public/partials/reports/visits-report.html
+msgid "Bar Chart - Sex"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Bar chart"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Blank"
+msgstr ""
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "CSV file"
+msgstr ""
+
+#: ../public/aggregate/modal-upload.html ../public/dashboard/add-widget.html
+#: ../public/dashboard/open-dashboard-modal.html
+#: ../public/dashboard/widget-settings.html
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/delete-diagnosis-modal.html
+#: ../public/partials/delete-record.html
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/export-visualization-modal.html
+#: ../public/partials/save-report-dialog.html
+#: ../public/partials/save-visualization-modal.html
+#: ../public/partials/visualization-export.html
+#: ../public/workbench/open-workbench-modal.html
+#: ../public/workbench/save-workbench-modal.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-visits-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Cancel"
+msgstr ""
+
+#: ../public/outpatient/fracasBarChart.js
+msgid "Category"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+msgid "Change Password"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+msgid "Change password"
+msgstr ""
+
+#: ../public/outpatient/modal-edit.html
+msgid "Close"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Confirm Password"
+msgstr ""
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Contains Header Row?"
+msgstr ""
+
+#: ../public/outpatient/fracasBarChart.js
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Count"
+msgstr ""
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Country / Area"
+msgstr ""
+
+#: ../public/partials/reports/timeseries-report.html
+#: ../public/partials/reports/weekly-report.html
+msgid "Created by: {{username}}"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Crosstab"
+msgstr ""
+
+#: ../public/partials/reports/visits-report.html
+msgid "Daily Time Series"
+msgstr ""
+
+#: ../public/dashboard/open-dashboard-modal.html
+#: ../public/partials/edit/forms/dashboard-form.html
 msgid "Dashboard"
+msgstr ""
+
+#: ../public/dashboard/dashboard-saved-modal.html
+msgid "Dashboard Updated"
+msgstr ""
+
+#: ../public/partials/edit/dashboard.html
+msgid "Dashboards"
+msgstr ""
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Data"
+msgstr ""
+
+#: ../public/partials/edit/aggregate-data.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Date"
+msgstr ""
+
+#: ../public/dashboard/widget-settings.html
+msgid "Date Interval"
+msgstr ""
+
+#: ../public/entry/age-inputs.html
+msgid "Date of birth"
+msgstr ""
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Date of report"
+msgstr ""
+
+#: ../public/partials/reports/timeseries-report.html
+#: ../public/partials/reports/weekly-report.html
+msgid "Date of report: {{dateString}}"
+msgstr ""
+
+#. Month of December
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Dec"
+msgstr ""
+
+#: ../public/partials/delete-diagnosis-modal.html
+#: ../public/partials/delete-record.html
+msgid "Delete"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+msgid "Delete user"
+msgstr ""
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Delimiter"
+msgstr ""
+
+#: ../public/partials/edit/dashboard.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/scripts/controllers/edit/DashboardEditCtrl.js
+#: ../public/scripts/controllers/edit/WorkbenchEditCtrl.js
+msgid "Description"
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html ../public/partials/home.html
+#: ../public/partials/edit/diagnosis.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+msgid "Diagnoses"
+msgstr ""
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Diarrhoea"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "Did your administrator give you a local account? Sign in below!"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+msgid "Disabled"
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/partials/edit/disposition.html
+#: ../public/partials/edit/forms/disposition-form.html
+msgid "Disposition"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Dispositions"
+msgstr ""
+
+#: ../public/partials/edit/aggregate-data.html
+#: ../public/partials/edit/district.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+#: ../public/scripts/controllers/edit/AggregateDataEditCtrl.js
+msgid "District"
+msgstr ""
+
+#: ../public/partials/home.html ../public/partials/edit/forms/user-form.html
+msgid "Districts"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Edit"
+msgstr ""
+
+#: ../public/outpatient/modal-edit.html
+msgid "Edit record"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+msgid "Edit user"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+msgid "Email"
+msgstr ""
+
+#: ../public/partials/edit/diagnosis.html
+msgid "Enabled"
+msgstr ""
+
+#: ../public/partials/edit/forms/diagnosis-form.html
+msgid "Enabled?"
+msgstr ""
+
+#: ../public/outpatient/filter-types/date-range.html
+msgid "End"
+msgstr ""
+
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+msgid "Ending On"
+msgstr ""
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Export"
+msgstr ""
+
+#: ../public/partials/visualization-export.html
+msgid "Export to PNG"
+msgstr ""
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Export visualization"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Exposure to influenza antiviral drugs during the last 14 days?"
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html
+#: ../public/outpatient/possibleFilters.js
+msgid "Facility"
+msgstr ""
+
+#. Month of February
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Feb"
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/outpatient/filter-types/sex.html
+msgid "Female"
+msgstr ""
+
+#: ../public/outpatient/possibleFilters.js
+msgid "Form submission date"
+msgstr ""
+
+#: ../public/partials/not-found.html
+msgid "Home"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Household contact"
+msgstr ""
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Import"
+msgstr ""
+
+#: ../public/partials/visualization-export.html
+msgid "Include Notes"
+msgstr ""
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Influenza-like Illness"
+msgstr ""
+
+#: ../public/scripts/services/errorInterceptor.js
+msgid "Insufficient permissions"
+msgstr ""
+
+#: ../public/outpatient/time-series.html
+msgid "Interval"
+msgstr ""
+
+#: ../public/partials/reports/open-visits-report-dialog.html
+msgid "Invalid date range"
+msgstr ""
+
+#. Month of January
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Jan"
+msgstr ""
+
+#. Month of July
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Jul"
+msgstr ""
+
+#. Month of June
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Jun"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Laninamivir"
+msgstr ""
+
+#: ../public/entry/age-inputs.html
+msgid "Leave this field blank if you don't know the patient's age"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "Local sign in"
+msgstr ""
+
+#: ../public/partials/relogin.html
+msgid "Login"
 msgstr ""
 
 #: ../public/partials/home.html
 msgid "Logout"
 msgstr ""
 
-#: ../public/partials/home.html
-msgid "Settings"
+#: ../public/outpatient/form.html ../public/outpatient/filter-types/sex.html
+msgid "Male"
 msgstr ""
 
 #: ../public/partials/home.html
-msgid "Submit"
+msgid "Manage dashboards"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Manage workbenches"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Map"
+msgstr ""
+
+#. Month of March
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Mar"
+msgstr ""
+
+#. Month of May
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "May"
+msgstr ""
+
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "More than one record found. First record will be imported."
+msgstr ""
+
+#: ../public/partials/delete-diagnosis-modal.html
+msgid ""
+"Most of the time, you should disable a diagnosis instead of deleting it, in case you want to collect it\n"
+"    at some later time."
+msgstr ""
+
+#: ../public/outpatient/form.html
+#: ../public/partials/save-visualization-modal.html
+#: ../public/workbench/save-workbench-modal.html
+#: ../public/partials/edit/dashboard.html
+#: ../public/partials/edit/diagnosis.html
+#: ../public/partials/edit/disposition.html
+#: ../public/partials/edit/district.html ../public/partials/edit/symptom.html
+#: ../public/partials/edit/syndrome.html ../public/partials/edit/user.html
+#: ../public/partials/edit/visit-type.html
+#: ../public/partials/edit/visualization.html
+#: ../public/partials/edit/workbench.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+#: ../public/scripts/controllers/edit/DashboardEditCtrl.js
+#: ../public/scripts/controllers/edit/DiagnosisEditCtrl.js
+#: ../public/scripts/controllers/edit/DispositionEditCtrl.js
+#: ../public/scripts/controllers/edit/DistrictEditCtrl.js
+#: ../public/scripts/controllers/edit/SymptomEditCtrl.js
+#: ../public/scripts/controllers/edit/SyndromeEditCtrl.js
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+#: ../public/scripts/controllers/edit/VisitTypeEditCtrl.js
+#: ../public/scripts/controllers/edit/VisualizationEditCtrl.js
+#: ../public/scripts/controllers/edit/WorkbenchEditCtrl.js
+msgid "Name"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Name of antiviral"
+msgstr ""
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "New"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "New dashboard"
+msgstr ""
+
+#: ../public/partials/edit/diagnosis.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+msgid "New diagnosis"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+msgid "New user"
+msgstr ""
+
+#: ../public/outpatient/edit.html
+msgid "New visit"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "New workbench"
+msgstr ""
+
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Next"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "No"
+msgstr ""
+
+#: ../public/aggregate/upload-aggregate.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "No data found"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "No registration required"
+msgstr ""
+
+#: ../public/partials/reports/timeseries-report.html
+msgid ""
+"Note: Number of reported cases are not comparable between countries. The purpose of the charts is to show\n"
+"        trends over time within each country/area."
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/partials/visualization-export.html
+msgid "Notes"
+msgstr ""
+
+#: ../public/partials/visualization-export.html
+msgid "Notes for this visualization."
+msgstr ""
+
+#. Month of November
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Nov"
+msgstr ""
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Number of <br>sites reporting"
+msgstr ""
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Number of sites reporting"
+msgstr ""
+
+#: ../public/dashboard/dashboard-saved-modal.html
+#: ../public/dashboard/widget-settings.html
+#: ../public/partials/edit-settings-modal.html
+#: ../public/workbench/workbench-saved-modal.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-visits-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+msgid "OK"
+msgstr ""
+
+#. Month of October
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Oct"
+msgstr ""
+
+#: ../public/partials/delete-diagnosis-modal.html
+msgid ""
+"Only delete this diagnosis if you're sure you will never collect it, for example, because it\n"
+"      was added in error."
+msgstr ""
+
+#: ../public/dashboard/open-dashboard-modal.html
+#: ../public/workbench/open-workbench-modal.html
+msgid "Open"
+msgstr ""
+
+#: ../public/dashboard/open-dashboard-modal.html
+msgid "Open Dashboard"
+msgstr ""
+
+#: ../public/partials/reports/open-visits-report-dialog.html
+msgid "Open Outpatient Visits Report"
+msgstr ""
+
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+msgid "Open Reported Cases by Country Report"
+msgstr ""
+
+#: ../public/partials/reports/open-weekly-report-dialog.html
+msgid "Open Weekly Report"
+msgstr ""
+
+#: ../public/workbench/open-workbench-modal.html
+msgid "Open Workbench"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Open dashboard"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Open workbench"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Oseltamivir (Tamiflu®)"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Other"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Other diagnoses"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Other facility not listed"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Other pre-existing conditions"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Other symptoms"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Outpatient Visits Report"
+msgstr ""
+
+#: ../public/outpatient/edit.html ../public/partials/home.html
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Outpatient visits"
+msgstr ""
+
+#: ../public/partials/login.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Password"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Password and Confirm Password must match"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Password must be at least"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Patient"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Patient ID"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Peramivir"
+msgstr ""
+
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/scripts/controllers/edit/DispositionEditCtrl.js
+#: ../public/scripts/controllers/edit/DistrictEditCtrl.js
+#: ../public/scripts/controllers/edit/SymptomEditCtrl.js
+#: ../public/scripts/controllers/edit/SyndromeEditCtrl.js
+#: ../public/scripts/controllers/edit/VisitTypeEditCtrl.js
+msgid "Phone ID"
+msgstr ""
+
+#: ../public/outpatient/fracasPieChart.js
+msgid "Pie Chart"
+msgstr ""
+
+#: ../public/partials/reports/visits-report.html
+msgid "Pie Chart - Symptoms"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Pie chart"
+msgstr ""
+
+#: ../public/hinge/hinge.js
+msgid "Pivot columns"
+msgstr ""
+
+#: ../public/hinge/hinge.js
+msgid "Pivot rows"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Please enter a password"
+msgstr ""
+
+#: ../public/partials/edit/forms/diagnosis-form.html
+msgid "Please enter a valid Diagnosis name"
+msgstr ""
+
+#: ../public/partials/edit/forms/district-form.html
+msgid "Please enter a valid District name"
+msgstr ""
+
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+msgid "Please enter a valid Phone ID"
+msgstr ""
+
+#: ../public/partials/edit/forms/symptom-form.html
+msgid "Please enter a valid Symptom name"
+msgstr ""
+
+#: ../public/partials/edit/forms/syndrome-form.html
+msgid "Please enter a valid Syndrome name"
+msgstr ""
+
+#: ../public/partials/edit/forms/visit-type-form.html
+msgid "Please enter a valid Visit Type name"
+msgstr ""
+
+#: ../public/partials/edit/forms/visualization-form.html
+msgid "Please enter a valid Visualization name"
+msgstr ""
+
+#: ../public/partials/edit/forms/dashboard-form.html
+msgid "Please enter a valid dashboard name"
+msgstr ""
+
+#: ../public/partials/edit/forms/dashboard-form.html
+msgid "Please enter a valid description"
+msgstr ""
+
+#: ../public/partials/edit/forms/disposition-form.html
+msgid "Please enter a valid disposition"
+msgstr ""
+
+#: ../public/partials/edit/forms/user-form.html
+msgid "Please enter a valid email address"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Please enter a valid user name"
+msgstr ""
+
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Please enter a valid workbench name"
+msgstr ""
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Please enter label for x-axis"
+msgstr ""
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Please enter label for y-axis"
+msgstr ""
+
+#: ../public/partials/visualization-export.html
+msgid "Please enter size for x-axis"
+msgstr ""
+
+#: ../public/partials/visualization-export.html
+msgid "Please enter size for y-axis"
+msgstr ""
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Please enter title"
+msgstr ""
+
+#: ../public/partials/relogin.html
+msgid "Please log back in first"
+msgstr ""
+
+#: ../public/partials/save-visualization-modal.html
+msgid "Please name this visualization"
+msgstr ""
+
+#: ../public/workbench/save-workbench-modal.html
+msgid "Please name this workbench"
+msgstr ""
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Please select a CSV file"
+msgstr ""
+
+#: ../public/dashboard/open-dashboard-modal.html
+msgid "Please select a dashboard"
+msgstr ""
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Please select a title for this visualization"
+msgstr ""
+
+#: ../public/workbench/open-workbench-modal.html
+msgid "Please select a workbench"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Pre-existing conditions"
+msgstr ""
+
+#: ../public/entry/pregnancy-inputs.html
+msgid "Pregnant"
+msgstr ""
+
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Previous"
+msgstr ""
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Prolonged Fever"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Pulse"
+msgstr ""
+
+#: ../public/outpatient/filtersGrid.html
+msgid "Query"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Recent dashboards"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Recent workbenches"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Reported Cases by Country - Table"
+msgstr ""
+
+#: ../public/partials/home.html
+#: ../public/scripts/services/reports/aggregateReportModal.js
+msgid "Reported Cases by Country - Time Series"
+msgstr ""
+
+#: ../public/scripts/services/reports/aggregateReportModal.js
+msgid "Reported Cases by Country - Weekly Report"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Rimantadine (Flumadine®)"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Roles"
+msgstr ""
+
+#: ../public/aggregate/modal-upload.html ../public/dashboard/dashboard.html
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/save-report-dialog.html
+#: ../public/partials/save-visualization-modal.html
+#: ../public/workbench/save-workbench-modal.html
+#: ../public/workbench/workbench.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Save"
+msgstr ""
+
+#: ../public/partials/save-report-dialog.html
+msgid "Save this page"
+msgstr ""
+
+#: ../public/partials/save-visualization-modal.html
+msgid "Save this visualization"
+msgstr ""
+
+#: ../public/workbench/save-workbench-modal.html
+msgid "Save this workbench"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Select a disposition type"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Select diagnoses"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Select symptom(s)"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Select visit type"
+msgstr ""
+
+#. Month of September
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Sep"
+msgstr ""
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Separator"
+msgstr ""
+
+#: ../public/partials/edit-settings-modal.html ../public/partials/home.html
+msgid "Settings"
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html
+#: ../public/partials/visualization-menu.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+msgid "Sex"
+msgstr ""
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Show Title"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "Sign in"
+msgstr "Entrar"
+
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Sites Reporting"
+msgstr ""
+
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Sites Total"
+msgstr ""
+
+#: ../public/scripts/services/errorInterceptor.js
+msgid "Something went wrong :("
+msgstr ""
+
+#: ../public/partials/not-found.html
+msgid "Sorry, but we couldn't find"
+msgstr ""
+
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Sorry, this name is already in use"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+msgid "Sorry, this user name is already in use"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Source of antiviral exposure"
+msgstr ""
+
+#: ../public/entry/specimen-inputs.html
+msgid "Specimen ID"
+msgstr ""
+
+#: ../public/entry/specimen-inputs.html
+msgid "Specimen collection"
+msgstr ""
+
+#: ../public/outpatient/filter-types/date-range.html
+msgid "Start"
+msgstr ""
+
+#: ../public/outpatient/table.html
+msgid "Submitted"
+msgstr ""
+
+#: ../public/dashboard/dashboard-saved-modal.html
+#: ../public/workbench/workbench-saved-modal.html
+msgid "Success"
+msgstr ""
+
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/outpatient/possibleFilters.js
+msgid "Symptom"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Symptom onset"
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html ../public/partials/home.html
+#: ../public/partials/edit/aggregate-data.html
+#: ../public/partials/edit/symptom.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+#: ../public/scripts/controllers/edit/AggregateDataEditCtrl.js
+msgid "Symptoms"
+msgstr ""
+
+#: ../public/partials/edit/forms/syndrome-form.html
+msgid "Syndrome"
+msgstr ""
+
+#: ../public/partials/home.html ../public/partials/edit/syndrome.html
+msgid "Syndromes"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Table"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Telephone number"
+msgstr ""
+
+#: ../public/entry/temperature-inputs.html
+msgid "Temperature"
+msgstr ""
+
+#: ../public/partials/login.html
+msgid "The username or password you entered is incorrect."
+msgstr ""
+
+#: ../public/dashboard/add-widget.html ../public/outpatient/form.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-visits-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "These fields are required"
+msgstr ""
+
+#: ../public/partials/visualization-menu.html
+msgid "Time series"
+msgstr ""
+
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Timeseries"
+msgstr ""
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Title"
 msgstr ""
 
 #: ../public/partials/home.html
 msgid "Toggle navigation"
 msgstr ""
 
-#: ../public/partials/login.html
-msgid "...for disease surveillance"
-msgstr "...para la vigilancia de las enfermedades"
+#: ../public/partials/edit/aggregate-data.html
+msgid "Total sites"
+msgstr ""
+
+#: ../public/entry/pregnancy-inputs.html
+msgid "Trimester"
+msgstr ""
+
+#: ../public/partials/edit/visualization.html
+#: ../public/scripts/controllers/edit/VisualizationEditCtrl.js
+msgid "Type"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Umifenovir (Arbidol®)"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html ../public/outpatient/form.html
+msgid "Unknown"
+msgstr ""
+
+#: ../public/aggregate/modal-upload.html
+#: ../public/partials/edit/aggregate-data.html
+msgid "Upload"
+msgstr ""
+
+#: ../public/partials/edit/forms/user-form.html
+msgid "User"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+msgid "User Name"
+msgstr ""
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+msgid "Username"
+msgstr ""
 
 #: ../public/partials/login.html
-msgid "Login"
+msgid "Username or email"
+msgstr ""
+
+#: ../public/partials/home.html ../public/partials/edit/user.html
+msgid "Users"
+msgstr ""
+
+#: ../public/outpatient/table.html ../public/outpatient/visualization.html
+msgid "Visit"
+msgstr ""
+
+#: ../public/partials/edit/forms/visit-type-form.html
+msgid "Visit Type"
+msgstr ""
+
+#: ../public/partials/home.html
+msgid "Visit Types"
+msgstr ""
+
+#: ../public/outpatient/form.html ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/edit/AggregateDataEditCtrl.js
+msgid "Visit date"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Visit type"
+msgstr ""
+
+#: ../public/partials/edit/visit-type.html
+msgid "Visit types"
+msgstr ""
+
+#: ../public/dashboard/add-widget.html
+#: ../public/partials/edit/forms/visualization-form.html
+msgid "Visualization"
+msgstr ""
+
+#: ../public/partials/home.html ../public/partials/edit/visualization.html
+msgid "Visualizations"
+msgstr ""
+
+#: ../public/partials/conflict-message.html
+msgid ""
+"We're sorry, but the record you were trying to save has been updated by "
+"another user. Here's the updated record."
+msgstr ""
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Week"
+msgstr ""
+
+#: ../public/partials/reports/open-weekly-report-dialog.html
+msgid "Week Ending Date"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "Weight"
+msgstr ""
+
+#: ../public/workbench/open-workbench-modal.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Workbench"
+msgstr ""
+
+#: ../public/workbench/workbench-saved-modal.html
+msgid "Workbench Updated"
+msgstr ""
+
+#: ../public/partials/edit/workbench.html
+msgid "Workbenches"
+msgstr ""
+
+#: ../public/partials/visualization-export.html
+msgid "X Size"
+msgstr ""
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "X-Axis Label"
+msgstr ""
+
+#: ../public/partials/visualization-export.html
+msgid "Y Size"
+msgstr ""
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Y-Axis Label"
+msgstr ""
+
+#: ../public/partials/reports/weekly-report.html
+msgid ""
+"Year: {{report.year}} | Week: {{report.week}} | Ending on: "
+"{{report.endDateString}}"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Yes"
+msgstr ""
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Zanamivir (Relenza®)"
+msgstr ""
+
+#: ../public/outpatient/time-series.html
+msgid "Zoom out"
+msgstr ""
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "characters"
+msgstr ""
+
+#: ../public/outpatient/time-series.html
+msgid "day"
+msgstr ""
+
+#: ../public/scripts/services/version.js
+msgid "deployed on"
+msgstr ""
+
+#: ../public/outpatient/form.html
+msgid "kg"
+msgstr ""
+
+#: ../public/outpatient/time-series.html
+msgid "month"
+msgstr ""
+
+#: ../public/entry/age-inputs.html
+msgid "months"
+msgstr ""
+
+#: ../public/outpatient/time-series.html
+msgid "quarter"
+msgstr ""
+
+#: ../public/partials/not-found.html
+msgid "the page you were looking for."
+msgstr ""
+
+#: ../public/outpatient/time-series.html
+msgid "week"
+msgstr ""
+
+#: ../public/outpatient/time-series.html
+msgid "year"
+msgstr ""
+
+#: ../public/entry/age-inputs.html
+msgid "years"
+msgstr ""
+
+#. {{visit.patient.age.years}} is a variable
+#: ../public/entry/age-inputs.html
+msgid "{{visit.patient.age.years}} years is quite old. Are you sure?"
+msgstr ""
+
+#: ../public/entry/temperature-inputs.html
+msgid "{{visit.patient.temperature}} °C is quite high. Are you sure?"
+msgstr ""
+
+#: ../public/entry/temperature-inputs.html
+msgid "{{visit.patient.temperature}} °C is quite low. Are you sure?"
+msgstr ""
+
+#: ../public/entry/temperature-inputs.html
+msgid "°C"
+msgstr ""
+
+#: ../public/dashboard/widget-settings.html
+msgid "—"
 msgstr ""

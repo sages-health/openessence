@@ -59,7 +59,7 @@
     "esprima": "^1.2.2",
     "function-bind": "^1.0.2",
     "gulp": "^3.8.1",
-    "gulp-angular-gettext": "~0.1.1",
+    "gulp-angular-gettext": "~0.3.1",
     "gulp-autoprefixer": "0.0.7",
     "gulp-buffer": "0.0.2",
     "gulp-footer": "~1.0.4",
