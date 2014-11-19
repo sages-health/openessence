@@ -161,6 +161,10 @@ app.use('/detectors', express()
     .use(auth.denyAnonymousAccess)
     .use(require('./detectors')()));
 
+app.use('/csv', express()
+  .use(auth.denyAnonymousAccess)
+  .use(require('./csv/export')()));
+
 app.use(require('./error').middleware);
 
 module.exports = express()

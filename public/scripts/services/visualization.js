@@ -13,7 +13,7 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
       ['data', 'crosstabData', 'strings'].forEach(function (k) {
         delete state[k];
       });
-      state.filters.map(function(v){
+      state.filters.map(function (v) {
         delete v.values;
         return v;
       });
@@ -77,11 +77,41 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
           return v;
         });
       }
+
       //var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
       var url = document.baseURI;
       url = url + 'visualization-export';
 
       $window.open(url, 'visualizationExport', 'width=1200,resizable=1,scrollbars=1,toolbar=0,location=0,menubar=0,titlebar=0');
+    },
+    csvExport: function (query) {
+      $modal.open({
+        template: require('../../partials/export-csv-modal.html'),
+        controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+          $scope.params = {
+            query: query,
+            filename: 'Table',
+            delimiter: ',',
+            format: 'flat'
+          };
+          $scope.export = function (form) {
+            if (form.$invalid) {
+              $scope.yellAtUser = true;
+              return;
+            }
+
+            $modalInstance.close($scope.params);
+          };
+
+          $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+          };
+        }]
+      })
+        .result
+        .then(function (params) {
+          $window.location = '/csv?params=' + btoa(JSON.stringify(params));
+        });
     }
   };
 };

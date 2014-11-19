@@ -1,0 +1,54 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Export to CSV</h4>
+</div>
+<div class="modal-body">
+  <form class="form" role="form" novalidate name="visualizationForm">
+    <fieldset>
+      <div class="form-group" ng-class="{'has-error': yellAtUser}">
+
+        <label for="export-filename" translate>File Name</label>
+        <input type="text" class="form-control" id="export-filename" name="filename" ng-model="params.filename">
+
+        <div class="help-block" ng-show="yellAtUser" translate>
+          Please select a file name
+        </div>
+      </div>
+
+      <div class="form-group" ng-class="{'has-error': yellAtUser}">
+        <label for="export-delimiter" translate>Delimiter</label>
+        <select class="form-control" id="export-delimiter" name="delimiter"
+                ng-model="params.delimiter">
+          <option value=",">Comma</option>
+          <option value="^">Caret</option>
+          <option value="|">Pipe</option>
+          <option value=";">Semi-colon</option>
+          <option value="\t">Tab</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label translate>Format</label>
+        <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
+        <label class="radio-inline">
+          <input type="radio" name="format" value="flat" ng-model="params.format">
+          <span translate>Flat</span>
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="format" value="expanded" ng-model="params.format">
+          <span translate>Expanded</span>
+        </label>
+
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="export(visualizationForm)">
+    <span class="icon-export"></span>
+    <span translate>Export</span>
+  </button>
+</div>
