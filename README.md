@@ -36,20 +36,12 @@ This will install all necessary dependencies, run a build, start the server, and
 
 ## Installation
 
-If you've already got [Docker](https://www.docker.com) and [Fig](http://www.fig.sh) then getting Fracas running is as
-easy as
-
-    fig up
-
-If you're using [`boot2docker`](http://boot2docker.io), you may have to pass the URL you plan to hit Fracas at:
-
-    URL=http://192.168.59.103:9000 fig up
-
-If you don't like fig, we also support [Vagrant](https://www.vagrantup.com). Just run
+After installing [Vagrant](https://www.vagrantup.com) and [VirtualBox](https://www.virtualbox.org/) (or any other
+virtualization platform that Vagrant supports), just run
 
     vagrant up
 
-to get started. This can be useful if you want a self-contained VM.
+to get started.
 
 ## Deploying to Heroku
 
