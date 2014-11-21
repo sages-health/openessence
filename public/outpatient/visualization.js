@@ -4,12 +4,12 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout,
-                                                                               orderByFilter, gettextCatalog,
-                                                                               sortString, FrableParams,
-                                                                               OutpatientVisitResource,
-                                                                               outpatientEditModal, updateURL,
-                                                                               outpatientDeleteModal, scopeToJson,
-                                                                               outpatientAggregation, visualization) {
+                                                                                             orderByFilter, gettextCatalog,
+                                                                                             sortString, FrableParams,
+                                                                                             OutpatientVisitResource,
+                                                                                             outpatientEditModal, updateURL,
+                                                                                             outpatientDeleteModal, scopeToJson,
+                                                                                             outpatientAggregation, visualization) {
 
   return {
     restrict: 'E',
@@ -20,7 +20,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',
-      options: '=' // settings as single object, useful for loading persisted state
+      options: '=', // settings as single object, useful for loading persisted state
+      source: '=?'
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
@@ -86,6 +87,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           if (state.tableParams) {
             delete state.tableParams.data;
           }
+
+          state.source = 'export';
 
           visualization.export(state);
         });
@@ -198,15 +201,19 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                   var subStr = outpatientAggregation.bucketToKey(sub);
                   var scount = sub.count ? sub.count.value : sub.doc_count;
                   missingCount -= scount;
-                  slice = {col: col, colName: entry.key, row: row, rowName: sub.key,
-                    key: (keyStr + '_' + subStr), value: scount};
+                  slice = {
+                    col: col, colName: entry.key, row: row, rowName: sub.key,
+                    key: (keyStr + '_' + subStr), value: scount
+                  };
                   data.push(slice);
                   pieData.push(slice);
                 });
                 //add missing fields count from total hits - aggs total doc count
                 if (missingCount > 0) {
-                  slice = {col: col, colName: entry.key, row: row, rowName: 'missing',
-                    key: ('missing_' + keyStr + '_' + rowLabel), value: missingCount};
+                  slice = {
+                    col: col, colName: entry.key, row: row, rowName: 'missing',
+                    key: ('missing_' + keyStr + '_' + rowLabel), value: missingCount
+                  };
                   data.push(slice);
                   pieData.push(slice);
                 }
@@ -340,7 +347,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }, function (data) {
               params.total(data.total);
               $defer.resolve(data.results);
-            }, function error (response) {
+            }, function error(response) {
               $rootScope.$broadcast('filterError', response);
             });
           }
@@ -351,7 +358,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           reload();
         });
 
-        var updateVisualization = function (){
+        var updateVisualization = function () {
           delete scope.options.options;
           updateURL.updateVisualization(scope.options.id, {
             options: scope.options,
@@ -364,21 +371,21 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         scope.$watch('pivot.cols', function (newValue, oldValue) {
-          if(newValue !== oldValue) {
+          if (newValue !== oldValue) {
             updateVisualization();
             reload();
           }
         });
 
         scope.$watch('pivot.rows', function (newValue, oldValue) {
-          if(newValue !== oldValue) {
+          if (newValue !== oldValue) {
             updateVisualization();
             reload();
           }
         });
 
         scope.$watch('visualization.name', function (newValue, oldValue) {
-          if(newValue !== oldValue) {
+          if (newValue !== oldValue) {
             updateVisualization();
             reload();
           }

@@ -38,6 +38,30 @@
 
 <div class="row">
   <div class="col-md-12">
-    <highchart config="chartConfig"></highchart>
+    <svg id="svg-id-{{options.id}}" class="custom-timeseries">
+      <!-- g's must stay in this order. the layering matters for functionality (mouseover detecting) -->
+      <g class="title">
+        <text class="title-label" text-anchor="middle">{{options.labels.title}}</text>
+      </g>
+      <g class="legend"></g>
+      <g class="chart">
+        <text class="y-label" text-anchor="middle">
+          {{options.labels.y}}
+        </text>
+        <text class="x-label" text-anchor="middle">
+          {{options.labels.x}}
+        </text>
+      </g>
+      <g class="highlight-display"></g>
+      <g class="ts-top-layer">
+        <rect class="mouse-detector" height="0" width="0"
+              ng-init="down=false;"
+              ng-mousemove="timeSeriesHover($event);"
+              ng-mouseleave="timeSeriesLeave()"
+              ng-mousedown="timeSeriesMouseDown($event)"
+              ng-mouseup="timeSeriesZoomIn($event);">
+        </rect>
+      </g>
+    </svg>
   </div>
 </div>

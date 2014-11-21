@@ -31,6 +31,10 @@ require('leaflet');
 require('ng-file-upload');
 require('ng-grid');
 
+require('highcharts');
+require('highcharts-ng');
+require('exporting');
+
 var frable = require('../frable');
 require('../select2');
 require('../hinge');
@@ -50,8 +54,8 @@ require('./filters');
 
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
-                    'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-                    'ngGrid', 'ngOrderObjectBy', frable.name]
+  'gettext', 'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+  'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -82,7 +86,7 @@ app.run(function ($rootScope, $state, $http, cfpLoadingBar, user, $injector) {
     cfpLoadingBar.start();
 
     if (!stateChanged) {
-      if(user.getUser()){
+      if (user.getUser()) {
         $injector.get('$http').defaults.transformRequest = function (data, headersGetter) {
           if ($rootScope.oauth) {
             /*jshint sub:true*/

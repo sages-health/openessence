@@ -61,24 +61,24 @@
   </div>
   <div class="animation-switch" ng-switch-when="line">
     <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
-                            options="options"></outpatient-time-series>
+                            options="options" source="source"></outpatient-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="pie">
     <outpatient-pie-chart
-        filters="filters"
-        query-string="queryString"
-        options="options"
-        pivot="pivot"
-        agg-data="aggData">
+      filters="filters"
+      query-string="queryString"
+      options="options"
+      pivot="pivot"
+      agg-data="aggData">
     </outpatient-pie-chart>
   </div>
   <div class="animation-switch" ng-switch-when="bar">
     <outpatient-bar-chart
-        filters="filters"
-        query-string="queryString"
-        options="options"
-        pivot="pivot"
-        agg-data="aggData">
+      filters="filters"
+      query-string="queryString"
+      options="options"
+      pivot="pivot"
+      agg-data="aggData">
     </outpatient-bar-chart>
   </div>
   <div class="animation-switch" ng-switch-when="map">

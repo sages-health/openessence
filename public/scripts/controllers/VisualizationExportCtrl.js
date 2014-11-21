@@ -6,6 +6,7 @@ var angular = require('angular');
 module.exports = function ($scope, $window, $timeout, $log, Report, visualization, $document, updateURL) {
 
   $scope.state = angular.copy($window.opener.state);
+  console.log($scope.state);
   $scope.state.options.labels = $scope.state.options.labels || {};
   $scope.state.options.showNotes = true;
 
@@ -28,7 +29,7 @@ module.exports = function ($scope, $window, $timeout, $log, Report, visualizatio
     updateURL.updateVisualization($scope.state.options.id, cstate);
 
     $window.location = '/reports/' + title + '?size=' + size + '&name=' + title + '&url=/' + lang +
-      '/visualization-report?state=' + updateURL.getStateString();
+    '/visualization-report?state=' + updateURL.getStateString();
   };
 
   // TODO these aren't needed anymore since we don't let the user specify the filename
