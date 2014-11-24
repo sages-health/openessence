@@ -16,7 +16,7 @@
               {{visit._source.medicalFacility.name | truncate:15}}
             </a>
           </td>
-          <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="strings.district" data-sortable="'medicalFacility.location.district'">
+          <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="'District' | translate" data-sortable="'medicalFacility.location.district'">
             <a ng-click="tableFilter('medicalFacility.location.district', visit._source.medicalFacility.location.district)">
               {{visit._source.medicalFacility.location.district | truncate:15}}
             </a>
