@@ -48,7 +48,8 @@ exports.static = function () {
 
     var libs = exports.libs();
     app.use('/public/scripts/libs.js', browserify(libs, {
-      noParse: exports.noParseLibs()
+      noParse: exports.noParseLibs(),
+      precompile: true
     }));
     app.use('/js/app.js', browserify(__dirname + '/../public/scripts/app.js', {
       // Make require('partial.html') work.
