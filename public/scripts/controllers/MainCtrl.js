@@ -4,6 +4,10 @@
 module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Workbench, Dashboard,
                            DashboardResource, WorkbenchResource) {
 
+  $scope.navbar = {
+    collapse: true
+  };
+
   $scope.visitsReport = function () {
     visitsReportModal.open();
   };
