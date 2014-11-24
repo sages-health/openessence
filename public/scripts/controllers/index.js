@@ -24,7 +24,6 @@ require('../modules').controllers
   .controller('LoginCtrl', require('./LoginCtrl'))
   .controller('MainCtrl', require('./MainCtrl'))
   .controller('NotFoundCtrl', require('./NotFoundCtrl'))
-  .controller('ReloginCtrl', require('./ReloginCtrl'))
   .controller('ReportCtrl', require('./ReportCtrl'))
   .controller('WorkbenchCtrl', require('./WorkbenchCtrl'))
   .controller('VisualizationExportCtrl', require('./VisualizationExportCtrl'));

@@ -174,11 +174,6 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/not-found.html'),
       controller: 'NotFoundCtrl'
     })
-    .state('relogin', {
-      url: '/relogin',
-      controller: 'ReloginCtrl',
-      parent: 'home'
-    })
     .state('report', {
       url: '/report/:url', // url param gives path to save
       controller: 'ReportCtrl',
