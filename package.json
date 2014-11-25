@@ -45,11 +45,10 @@
     "angular-loading-bar": "~0.4.2",
     "array.prototype.find": "^1.0.0",
     "bootstrap": "~3.3.0",
-    "browserify": "^4.1.11",
+    "browserify": "^6.3.3",
     "browserify-istanbul": "^0.1.2",
-    "browserify-middleware": "^3.0.0",
+    "browserify-middleware": "^4.1.0",
     "browserify-ngannotate": "^0.1.0",
-    "browserify-shim": "^3.8.0",
     "browserify-transform-tools": "~1.2.1",
     "chai": "~1.9.0",
     "cheerio": "^0.17.0",
@@ -114,11 +113,6 @@
     "jpegtran-bin": "~0.2.3",
     "pngquant-bin": "~0.1.5"
   },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
   "browser": {
     "angular": "./bower_components/angular/angular.js",
     "angular-animate": "./bower_components/angular-animate/angular-animate.js",
@@ -160,91 +154,6 @@
     },
     "moment": {
       "parse": false
-    }
-  },
-  "browserify-shim": {
-    "angular": {
-      "exports": "angular",
-      "depends": [
-        "jquery:jQuery"
-      ]
-    },
-    "angular-animate": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-mocks": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-resource": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-sanitize": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-bootstrap": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-ui-router": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-ui-select2": {
-      "depends": [
-        "angular:angular",
-        "jquery:jQuery",
-        "jquery-ui"
-      ]
-    },
-    "angular-ui-sortable": {
-      "depends": [
-        "angular:angular",
-        "jquery:jQuery",
-        "jquery-ui"
-      ]
-    },
-    "angular-gettext": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-gridster": {
-      "depends": [
-        "angular:angular",
-        "jquery-resize"
-      ]
-    },
-    "ng-debounce": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "text-angular": {
-      "depends": [
-        "angular:angular",
-        "text-angular-setup",
-        "text-angular-sanitize"
-      ]
-    },
-    "jquery-ui": {
-      "depends": [
-        "jquery:jQuery"
-      ]
-    },
-    "jquery-resize": {
-      "depends": [
-        "jquery:jQuery"
-      ]
     }
   },
   "engines": {

@@ -45,16 +45,18 @@ exports.static = function () {
     // We use these so that you don't have to do a build or watch in development.
     var browserify = require('browserify-middleware');
     var less = require('less-middleware');
+    var transform = require('./transform');
 
     var libs = exports.libs();
     app.use('/public/scripts/libs.js', browserify(libs, {
       noParse: exports.noParseLibs(),
+//      noParse: true, // TODO waiting on https://github.com/ForbesLindesay/browserify-middleware/issues/69
       precompile: true
     }));
     app.use('/js/app.js', browserify(__dirname + '/../public/scripts/app.js', {
       // Make require('partial.html') work.
       // In production, we use a custom version of this that also minifies the partials
-      transform: ['browserify-ngannotate', 'partialify'],
+      transform: ['browserify-ngannotate', 'partialify', transform.shim],
       external: libs
     }));
 

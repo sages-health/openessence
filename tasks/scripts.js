@@ -11,9 +11,8 @@ var replace = require('gulp-replace');
 var header = require('gulp-header');
 var footer = require('gulp-footer');
 var source = require('vinyl-source-stream');
-var path = require('path');
-var transformTools = require('browserify-transform-tools');
 var assets = require('../server/assets');
+var transform = require('../server/transform');
 var jsLibs = assets.libs();
 var noParseLibs = assets.noParseLibs();
 
@@ -51,7 +50,8 @@ gulp.task('partials', function () {
  */
 gulp.task('libs', function () {
   var bundle = browserify({
-    noParse: noParseLibs
+    noParse: noParseLibs,
+    fullPaths: false
   });
 
   jsLibs.forEach(function (lib) {
@@ -73,30 +73,10 @@ gulp.task('libs', function () {
  * Build 1st-party JavaScript libraries.
  */
 gulp.task('scripts', ['partials'], function () {
-  // transform that replaces references to `require`d partials with their minified versions in .tmp,
-  // e.g. a call to require('../partials/foo.html') in public/scripts would be replaced by
-  // require('../../.tmp/public/partials/foo.html')
-  var minifyPartials = transformTools.makeRequireTransform('partialTransform',
-    {evaluateArguments: true},
-    function (args, opts, cb) {
-      var file = args[0];
-      if (path.extname(file) !== '.html') {
-        return cb();
-      }
-
-      var root = path.resolve(__dirname, '..');
-
-      var referrerDir = path.dirname(opts.file); // directory of file that has the require() call
-      var tmp = path.resolve(root, '.tmp');
-      var tmpResource = path.resolve(referrerDir, file).replace(root, tmp); // path to required tmp resource
-      var relativePath = path.relative(referrerDir, tmpResource).replace(/\\/g, '/');
-
-      cb(null, 'require("' + relativePath + '")');
-    });
-
   var appBundle = browserify()
     .add(__dirname + '/../public/scripts/app.js')
-    .transform(minifyPartials);
+    .transform(transform.shim)
+    .transform(transform.partials);
 
   jsLibs.forEach(function (lib) {
     appBundle.external(lib);

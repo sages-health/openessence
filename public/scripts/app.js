@@ -1,21 +1,7 @@
 'use strict';
 
-var angular = require('angular');
-require('angular-animate');
-require('angular-resource');
-require('angular-sanitize');
-require('angular-bootstrap');
-require('angular-ui-router');
-require('angular-ui-select2');
-require('angular-ui-sortable');
-require('angular-gettext');
-require('angular-gridster');
-require('angular-loading-bar');
-require('angular-order-object-by');
-
-// explicitly require d3 and friends due to weird browserify issues,
-// see https://github.com/ForbesLindesay/browserify-middleware/issues/43
-require('d3');
+// jQuery doesn't write to window if you require() it
+window.jQuery = window.jQuery || require('jquery');
 
 // polyfills, try to require only what you need instead of entire es6 polyfills
 require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
@@ -25,11 +11,32 @@ if (!Function.prototype.bind) {
   Function.prototype.bind = require('function-bind');
 }
 
-require('ng-debounce');
-require('text-angular');
-require('leaflet');
+// Order matters! E.g. make sure you require('angular') before something that depends on angular, e.g. angular-animate.
+var angular = require('angular');
+require('angular-animate');
+require('angular-resource');
+require('angular-sanitize');
+
+// miscellaneous angular plugins, order these are loaded shouldn't matter (as long as they're after angular, and core
+// ng modules like angular-animate)
+require('angular-bootstrap');
+require('angular-ui-router');
+require('angular-ui-select2');
+require('angular-ui-sortable');
+require('angular-gettext');
+require('angular-gridster');
+require('angular-loading-bar');
+require('angular-order-object-by');
 require('ng-file-upload');
 require('ng-grid');
+require('ng-debounce');
+
+require('text-angular-setup');
+require('text-angular-sanitize');
+require('text-angular'); // must be after the other text-angular resources
+
+require('d3');
+require('leaflet');
 
 var frable = require('../frable');
 require('../select2');
