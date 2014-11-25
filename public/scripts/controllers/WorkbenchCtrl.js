@@ -20,12 +20,20 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
   // TODO make dependent on enabled form fields
   $scope.pivotOptions = [
     {
-      value: 'age',
+      value: 'patient.age',
       label: gettextCatalog.getString('Age')
     },
     {
       value: 'medicalFacility.location.district',
       label: gettextCatalog.getString('District')
+    },
+    {
+      value: 'diagnoses',
+      label: gettextCatalog.getString('Diagnoses')
+    },
+    {
+      value: 'patient.sex',
+      label: gettextCatalog.getString('Sex')
     },
     {
       value: 'symptoms',

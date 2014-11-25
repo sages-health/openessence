@@ -1,163 +1,331 @@
 [
   {
-    "name": "American Samoa",
+    "name": "Madison Hospital",
     "location": {
-      "district": "American Samoa",
-      "country": "American Samoa"
+      "district": "Madison",
+      "county": "Madison"
     }
   },
   {
-    "name": "Cook Islands",
+    "name": "Douglas Hospital",
     "location": {
-      "district": "Cook Islands",
-      "country": "Cook Islands"
+      "district": "Douglas",
+      "county": "Douglas"
     }
   },
   {
-    "name": "Federated States of Micronesia",
+    "name": "Wheeler Clinic",
     "location": {
-      "district": "Federated States of Micronesia",
-      "country": "Federated States of Micronesia"
+      "district": "Wheeler",
+      "county": "Wheeler"
     }
   },
   {
-    "name": "Fiji",
+    "name": "Richardson Clinic",
     "location": {
-      "district": "Fiji",
-      "country": "Fiji"
+      "district": "Richardson",
+      "county": "Richardson"
     }
   },
   {
-    "name": "French Polynesia",
+    "name": "Hall Hospital",
     "location": {
-      "district": "French Polynesia",
-      "country": "French Polynesia"
+      "district": "Hall",
+      "county": "Hall"
     }
   },
   {
-    "name": "Guam",
+    "name": "Nance Clinic",
     "location": {
-      "district": "Guam",
-      "country": "Guam"
+      "district": "Nance",
+      "county": "Nance"
     }
   },
   {
-    "name": "Kiribati",
+    "name": "Pierce Clinic",
     "location": {
-      "district": "Kiribati",
-      "country": "Kiribati"
+      "district": "Pierce",
+      "county": "Pierce"
     }
   },
   {
-    "name": "Marshall Islands",
+    "name": "Butler Clinic",
     "location": {
-      "district": "Marshall Islands",
-      "country": "Marshall Islands"
+      "district": "Butler",
+      "county": "Butler"
     }
   },
   {
-    "name": "Nauru",
+    "name": "Gage Hospital",
     "location": {
-      "district": "Nauru",
-      "country": "Nauru"
+      "district": "Gage",
+      "county": "Gage"
     }
   },
   {
-    "name": "New Caledonia",
+    "name": "Pawnee Clinic",
     "location": {
-      "district": "New Caledonia",
-      "country": "New Caledonia"
+      "district": "Pawnee",
+      "county": "Pawnee"
     }
   },
   {
-    "name": "New Zealand",
+    "name": "Saline Hospital",
     "location": {
-      "district": "New Zealand",
-      "country": "New Zealand"
+      "district": "Saline",
+      "county": "Saline"
     }
   },
   {
-    "name": "Niue",
+    "name": "Seward Hospital",
     "location": {
-      "district": "Niue",
-      "country": "Niue"
+      "district": "Seward",
+      "county": "Seward"
     }
   },
   {
-    "name": "Northern Mariana Islands",
+    "name": "Saunders Hospital",
     "location": {
-      "district": "Northern Mariana Islands",
-      "country": "Northern Mariana Islands"
+      "district": "Saunders",
+      "county": "Saunders"
     }
   },
   {
-    "name": "Palau",
+    "name": "Thayer Clinic",
     "location": {
-      "district": "Palau",
-      "country": "Palau"
+      "district": "Thayer",
+      "county": "Thayer"
     }
   },
   {
-    "name": "Papua New Guinea",
+    "name": "Burt Clinic",
     "location": {
-      "district": "Papua New Guinea",
-      "country": "Papua New Guinea"
+      "district": "Burt",
+      "county": "Burt"
     }
   },
   {
-    "name": "Pitcairn Islands",
+    "name": "Merrick Clinic",
     "location": {
-      "district": "Pitcairn Islands",
-      "country": "Pitcairn Islands"
+      "district": "Merrick",
+      "county": "Merrick"
     }
   },
   {
-    "name": "Samoa",
+    "name": "Hamilton Clinic",
     "location": {
-      "district": "Samoa",
-      "country": "Samoa"
+      "district": "Hamilton",
+      "county": "Hamilton"
     }
   },
   {
-    "name": "Solomon Islands",
+    "name": "Fillmore Clinic",
     "location": {
-      "district": "Solomon Islands",
-      "country": "Solomon Islands"
+      "district": "Fillmore",
+      "county": "Fillmore"
     }
   },
   {
-    "name": "Tokelau",
+    "name": "Howard Clinic",
     "location": {
-      "district": "Tokelau",
-      "country": "Tokelau"
+      "district": "Howard",
+      "county": "Howard"
     }
   },
   {
-    "name": "Tonga",
+    "name": "Adams Hospital",
     "location": {
-      "district": "Tonga",
-      "country": "Tonga"
+      "district": "Adams",
+      "county": "Adams"
     }
   },
   {
-    "name": "Tuvalu",
+    "name": "Stanton Clinic",
     "location": {
-      "district": "Tuvalu",
-      "country": "Tuvalu"
+      "district": "Stanton",
+      "county": "Stanton"
     }
   },
   {
-    "name": "Vanuatu",
+    "name": "Webster Clinic",
     "location": {
-      "district": "Vanuatu",
-      "country": "Vanuatu"
+      "district": "Webster",
+      "county": "Webster"
     }
   },
   {
-    "name": "Wallis & Futuna",
+    "name": "Polk Clinic",
     "location": {
-      "district": "Wallis & Futuna",
-      "country": "Wallis & Futuna"
+      "district": "Polk",
+      "county": "Polk"
+    }
+  },
+  {
+    "name": "Dodge Hospital",
+    "location": {
+      "district": "Dodge",
+      "county": "Dodge"
+    }
+  },
+  {
+    "name": "Dakota Hospital",
+    "location": {
+      "district": "Dakota",
+      "county": "Dakota"
+    }
+  },
+  {
+    "name": "York Hospital",
+    "location": {
+      "district": "York",
+      "county": "York"
+    }
+  },
+  {
+    "name": "Cass Hospital",
+    "location": {
+      "district": "Cass",
+      "county": "Cass"
+    }
+  },
+  {
+    "name": "Clay Clinic",
+    "location": {
+      "district": "Clay",
+      "county": "Clay"
+    }
+  },
+  {
+    "name": "Knox Clinic",
+    "location": {
+      "district": "Knox",
+      "county": "Knox"
+    }
+  },
+  {
+    "name": "Wayne Clinic",
+    "location": {
+      "district": "Wayne",
+      "county": "Wayne"
+    }
+  },
+  {
+    "name": "Jefferson Clinic",
+    "location": {
+      "district": "Jefferson",
+      "county": "Jefferson"
+    }
+  },
+  {
+    "name": "Antelope Clinic",
+    "location": {
+      "district": "Antelope",
+      "county": "Antelope"
+    }
+  },
+  {
+    "name": "Cuming Clinic",
+    "location": {
+      "district": "Cuming",
+      "county": "Cuming"
+    }
+  },
+  {
+    "name": "Lancaster Hospital",
+    "location": {
+      "district": "Lancaster",
+      "county": "Lancaster"
+    }
+  },
+  {
+    "name": "Nuckolls Clinic",
+    "location": {
+      "district": "Nuckolls",
+      "county": "Nuckolls"
+    }
+  },
+  {
+    "name": "Thurston Clinic",
+    "location": {
+      "district": "Thurston",
+      "county": "Thurston"
+    }
+  },
+  {
+    "name": "Dixon Clinic",
+    "location": {
+      "district": "Dixon",
+      "county": "Dixon"
+    }
+  },
+  {
+    "name": "Cedar Clinic",
+    "location": {
+      "district": "Cedar",
+      "county": "Cedar"
+    }
+  },
+  {
+    "name": "Platte Hospital",
+    "location": {
+      "district": "Platte",
+      "county": "Platte"
+    }
+  },
+  {
+    "name": "Greeley Clinic",
+    "location": {
+      "district": "Greeley",
+      "county": "Greeley"
+    }
+  },
+  {
+    "name": "Nemaha Clinic",
+    "location": {
+      "district": "Nemaha",
+      "county": "Nemaha"
+    }
+  },
+  {
+    "name": "Otoe Hospital",
+    "location": {
+      "district": "Otoe",
+      "county": "Otoe"
+    }
+  },
+  {
+    "name": "Washington Hospital",
+    "location": {
+      "district": "Washington",
+      "county": "Washington"
+    }
+  },
+  {
+    "name": "Colfax Clinic",
+    "location": {
+      "district": "Colfax",
+      "county": "Colfax"
+    }
+  },
+  {
+    "name": "Boone Clinic",
+    "location": {
+      "district": "Boone",
+      "county": "Boone"
+    }
+  },
+  {
+    "name": "Johnson Clinic",
+    "location": {
+      "district": "Johnson",
+      "county": "Johnson"
+    }
+  },
+  {
+    "name": "Sarpy Hospital",
+    "location": {
+      "district": "Sarpy",
+      "county": "Sarpy"
     }
   }
 ]

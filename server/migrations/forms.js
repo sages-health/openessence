@@ -2,7 +2,6 @@
 
 module.exports = [
   {
-    //TODO copy to create agg "demo"
     // everything enabled for demo
     name: 'demo',
     fields: [
@@ -19,7 +18,7 @@ module.exports = [
       // if this field is enabled
       {
         name: 'submissionDate',
-        enabled: false
+        enabled: true
       },
 
       {
@@ -29,7 +28,7 @@ module.exports = [
         name: 'medicalFacility',
         enabled: false,
         // can't do this with JSON
-        values: require('./facilities_agg.json')
+        values: require('./facilities.json')
       },
 
       // Allow user-supplied values for medical facility.
@@ -37,14 +36,14 @@ module.exports = [
       // the user submitted value to.
       {
         name: 'medicalFacility.other',
-        enabled: false
+        enabled: true
       },
 
       // geographic fields, these are collected via medical facility, so users don't have to input them separately
       {
         name: 'medicalFacility.location.district',
         enabled: true,
-        values: Object.keys(require('./facilities_agg.json').reduce(function (districts, facility) {
+        values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
           // construct set of districts
           if (facility.location && facility.location.district) {
             var district = facility.location.district;
@@ -63,7 +62,7 @@ module.exports = [
       {
         name: 'medicalFacility.location.country',
         enabled: false,
-        values: Object.keys(require('./facilities_agg.json').reduce(function (countries, facility) {
+        values: Object.keys(require('./facilities.json').reduce(function (countries, facility) {
           // construct set of country
           if (facility.location && facility.location.country) {
             var country = facility.location.country;
@@ -82,12 +81,12 @@ module.exports = [
 
       {
         name: 'medicalFacility.sites.total',
-        enabled: true
+        enabled: false
       },
 
       {
         name: 'medicalFacility.sites.reporting',
-        enabled: true
+        enabled: false
       },
 
       // patient info
@@ -101,7 +100,7 @@ module.exports = [
       },
       {
         name: 'patient.sex',
-        enabled: false
+        enabled: true
       },
 
       {
@@ -110,7 +109,7 @@ module.exports = [
       },
       {
         name: 'patient.age',
-        enabled: false
+        enabled: true
       },
 
       // pregnancy status
@@ -199,7 +198,7 @@ module.exports = [
       {
         name: 'symptoms',
         enabled: true,
-        values: require('./symptom_for_aggregates.json')
+        values: require('./symptom.json')
       },
       {
         name: 'symptoms.other',
@@ -208,12 +207,12 @@ module.exports = [
 
       {
         name: 'diagnoses',
-        enabled: false,
+        enabled: true,
         values: require('./diagnosis.json')
       },
       {
         name: 'diagnoses.other',
-        enabled: false
+        enabled: true
       },
 
       {

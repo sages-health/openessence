@@ -260,40 +260,14 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var source = r._source;
                 //currently we explode symptoms and diagnosis to make crosstab counts for them happy
                 var rec = {
-                  sex: source.patient ? source.patient.sex : null,
-                  age: (source.patient && source.patient.age) ? source.patient.age.years : null,
+                  'patient.sex': source.patient ? source.patient.sex : null,
+                  //age: (source.patient && source.patient.age) ? source.patient.age.years : null,
+                  'patient.age': outpatientAggregation.getAgeGroup((source.patient && source.patient.age) ? source.patient.age.years : null),
+                  symptoms: source.symptoms,
+                  diagnoses: source.diagnoses,
                   'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                 };
-
-                if (source.symptoms) {
-                  source.symptoms.forEach(function (v) {
-                    var r = angular.copy(rec);
-                    var count = 1;
-                    if (v.name) {
-                      count = v.count;
-                    }
-                    r.symptoms = [
-                      {name: v.name || v, count: count}
-                    ];
-                    flatRecs.push(r);
-                  });
-                }
-                if (source.diagnoses) {
-                  source.diagnoses.forEach(function (v) {
-                    var r = angular.copy(rec);
-                    var count = 1;
-                    if (v.name) {
-                      count = v.count;
-                    }
-                    r.diagnoses = [
-                      {name: v.name || v, count: count}
-                    ];
-                    flatRecs.push(r);
-                  });
-                }
-                if (!(source.symptoms) && !(source.diagnoses)) {
                   flatRecs.push(rec);
-                }
               });
               scope.crosstabData = flatRecs;
             });
