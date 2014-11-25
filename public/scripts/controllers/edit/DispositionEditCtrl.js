@@ -1,7 +1,7 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($scope, crud, tableUtil, DispositionResource) {
+module.exports = function ($scope, crud, tableUtil, gettextCatalog, DispositionResource) {
   $scope.filters = [
     {filterID: 'name'}
   ];

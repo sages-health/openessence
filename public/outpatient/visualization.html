@@ -9,10 +9,11 @@
           <td ng-show="fields.visitDate.enabled" data-title="'Visit' | translate" data-sortable="'visitDate'">
             <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
           </td>
-          <td data-title="strings.week">
+
+          <td ng-show="fields.week.enabled || false" data-title="'Week' | translate" data-sortable="'visitDate'">
             <a>{{getWeek(visit._source.reportDate)}}</a>
           </td>
-          <td data-title="strings.year">
+          <td ng-show="fields.year.enabled || false" data-title="'Year' | translate" data-sortable="'visitDate'">
             <a>{{getYear(visit._source.reportDate)}}</a>
           </td>
 
