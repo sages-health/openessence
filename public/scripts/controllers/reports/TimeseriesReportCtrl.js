@@ -4,12 +4,25 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, $window, visualization, user, FacilityResource) {
+module.exports = function ($scope, gettextCatalog, $location, visualization, user, FacilityResource, $document, //
+                           $window) {
+  $scope.export = function () {
+    var title = $scope.report.name.replace(/ /g, '_');
+    var lang = $document[0].documentElement.lang;
+    var params = angular.copy($scope.params);
+    params.print = false;
+
+    $window.location = '/reports/' + title + '?size=' + angular.element('body').width() + 'px*' + angular.element('body').height() +
+      'px&name=' + title + '&url=/' + lang +
+      '/timeseries-report?params=' + btoa(JSON.stringify(params));
+  };
 
   $scope.username = user.getUser().username;
   $scope.dateString = moment().format('D MMMM YYYY');
-
-  $scope.report = $window.opener.report;
+  
+  $scope.params = JSON.parse(atob($location.search().params));
+  $scope.allowExport = $scope.params.print === false ? false : true;
+  $scope.report = angular.copy($scope.params);
   $scope.report.startDate = moment($scope.report.endDate).subtract('years', 1).toDate();
   $scope.report.week = moment($scope.report.endDate).format('W'); // ISO week
   $scope.report.year = moment($scope.report.endDate).format('GGGG'); // ISO year
@@ -98,7 +111,7 @@ module.exports = function ($scope, $window, visualization, user, FacilityResourc
         v = fixCountry(v, district);
         v.name = district;
         rows[rows.length - 1].push(v);
-        if (i % 3 === 2) {
+        if ((i + 1) % 4 === 0) {
           rows.push([]);
         }
       });

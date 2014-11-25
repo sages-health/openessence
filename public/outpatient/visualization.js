@@ -131,8 +131,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         var parseAggQuery = function (aggregation, first, second) {
           /*jshint camelcase:false */
           var aggs = aggregation.aggregations;
-          var colLabel = scope.strings[first] || first;
-          var rowLabel = scope.strings[second] || second;
+          var colLabel = first;
+          var rowLabel = second;
 
           var fa = 'first';
           var sa = 'second';
