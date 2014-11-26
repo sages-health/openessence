@@ -65,6 +65,7 @@ if (env === 'development') {
         packageCache: {},
         fullPaths: true
       })
+        .external(exports.externalLibs)
         .transform('browserify-ngannotate')
         .transform('partialify')
         .transform(transform.shim)
@@ -75,10 +76,6 @@ if (env === 'development') {
 
           libs[lib] = true;
         }));
-
-      exports.externalLibs.forEach(function (lib) {
-        bundle.external(lib);
-      });
 
       return bundle;
     })());
@@ -97,7 +94,7 @@ if (env === 'development') {
         .pipe(fs.createWriteStream(__dirname + '/../.tmp/app.js'))
         .on('finish', function () {
           libsBundle = watchify((function () {
-            var bundle = browserify({
+            return browserify({
               detectGlobals: false,
               noParse: true,
               debug: true,
@@ -106,12 +103,8 @@ if (env === 'development') {
               cache: {},
               packageCache: {},
               fullPaths: true
-            });
-            Object.keys(libs).forEach(function (lib) {
-              bundle.require(lib);
-            });
-
-            return bundle;
+            })
+              .require(Object.keys(libs));
           })());
 
           var bundleLibs = function () {

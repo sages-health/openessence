@@ -21,10 +21,10 @@ gulp.task('scripts', function (done) {
 
   var libs = {};
 
-  var appBundle = browserify({
+  var appBundle = browserify(__dirname + '/../public/scripts/app.js', {
     detectGlobals: false
   })
-    .add(__dirname + '/../public/scripts/app.js')
+    .external(assets.externalLibs)
     .transform(transform.shim)
     .transform(transformTools.makeRequireTransform('minifyPartials', {}, function (args, opts, cb) {
       /*jshint quotmark:false */
@@ -63,10 +63,6 @@ gulp.task('scripts', function (done) {
       libs[lib] = true;
     }));
 
-  assets.externalLibs.forEach(function (lib) {
-    appBundle.external(lib);
-  });
-
   // we don't return a stream, instead we call the done callback after libs.js is written to disk
   appBundle
     .bundle()
@@ -86,15 +82,12 @@ gulp.task('scripts', function (done) {
       // Really, we could start on libs as soon as the libs hash is populated, i.e. right after app.js's .bundle()
       // finished. But that would require some fancy flow control that's probably not worth the slight perf gain.
 
-      var libsBundle = browserify({
+      browserify({
         detectGlobals: false,
         noParse: true
-      });
-      Object.keys(libs).forEach(function (lib) {
-        libsBundle.require(lib);
-      });
-
-      libsBundle.bundle() // TODO use pre-built bundles
+      })
+        .require(Object.keys(libs))
+        .bundle() // TODO use pre-built bundles
         .pipe(source('libs.js'))
         .pipe(buffer())
         .pipe(uglify({
