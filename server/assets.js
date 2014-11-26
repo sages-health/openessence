@@ -53,6 +53,10 @@ exports.static = function () {
       // Moral of the story: just restart the server if you're worried. It doesn't take that long, and if you're using
       // Redis for your session store (which you should be doing) you won't even have to sign back in.
 
+
+      // prevent ENOENT when .tmp doesn't exist
+      require('mkdirp').sync(__dirname + '/../.tmp');
+
       var libs = {};
       var appBundle = watchify((function () {
         var bundle = browserify(__dirname + '/../public/scripts/app.js', {
