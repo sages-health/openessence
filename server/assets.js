@@ -1,8 +1,12 @@
 'use strict';
 
 var express = require('express');
-var env = require('./conf').env;
+var conf = require('./conf');
+var logger = conf.logger;
+var env = conf.env;
 var packageJson = require('../package.json');
+var fs = require('fs');
+var cluster = require('cluster');
 
 // Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention.
 // We need to have this list up front so we know what to add to libs.js
@@ -43,22 +47,87 @@ exports.static = function () {
   if (env === 'development') {
     // Don't move these requires outside this conditional, they're dev dependencies only.
     // We use these so that you don't have to do a build or watch in development.
-    var browserify = require('browserify-middleware');
     var less = require('less-middleware');
+    var browserify = require('browserify');
+    var watchify = require('watchify');
     var transform = require('./transform');
 
+    // TODO calculate this dynamically
     var libs = exports.libs();
-    app.use('/public/scripts/libs.js', browserify(libs, {
-      noParse: exports.noParseLibs(),
-//      noParse: true, // TODO waiting on https://github.com/ForbesLindesay/browserify-middleware/issues/69
-      precompile: true
-    }));
-    app.use('/js/app.js', browserify(__dirname + '/../public/scripts/app.js', {
-      // Make require('partial.html') work.
-      // In production, we use a custom version of this that also minifies the partials
-      transform: ['browserify-ngannotate', 'partialify', transform.shim],
-      external: libs
-    }));
+
+    if (cluster.isMaster) { // make sure we only bundle once
+      var libsBundle = watchify((function () {
+        var bundle = browserify({
+          detectGlobals: false,
+          noParse: true,
+
+          // watchify needs these options
+          cache: {},
+          packageCache: {},
+          fullPaths: true
+        });
+        libs.forEach(function (lib) {
+          bundle.require(lib);
+        });
+
+        return bundle;
+      })());
+
+      var bundleLibs = function () {
+        logger.debug('Bundling libs.js...');
+        libsBundle.bundle()
+          .pipe(fs.createWriteStream(__dirname + '/../.tmp/libs.js'));
+      };
+
+      libsBundle.on('update', bundleLibs)
+        .on('time', function (millis) {
+          logger.debug('Finished bundling libs.js (took %ds)', millis / 1000);
+        })
+        .on('error', function (err) {
+          logger.error({err: err, msg: 'Error bundling libs.js'});
+        });
+      bundleLibs(); // build on startup
+
+      var appBundle = watchify((function () {
+        var bundle = browserify(__dirname + '/../public/scripts/app.js', {
+          // this speeds up the build but means we can't use node-isms like __filename
+          detectGlobals: false,
+
+          // watchify needs these options
+          cache: {},
+          packageCache: {},
+          fullPaths: true
+        })
+          .transform('browserify-ngannotate')
+          .transform('partialify')
+          .transform(transform.shim);
+
+        libs.forEach(function (lib) {
+          bundle.external(lib);
+        });
+
+        return bundle;
+      })());
+
+      var bundleApp = function () {
+        logger.debug('Bundling app.js...');
+        appBundle.bundle()
+          .pipe(fs.createWriteStream(__dirname + '/../.tmp/app.js'));
+      };
+
+      appBundle.on('update', bundleApp)
+        .on('time', function (millis) {
+          logger.debug('Finished bundling app.js (took %ds)', millis / 1000);
+        })
+        .on('error', function (err) {
+          logger.error({err: err, msg: 'Error bundling app.js'});
+        });
+
+      bundleApp(); // build on startup
+    }
+
+    app.use('/public/scripts/libs.js', express.static(__dirname + '/../.tmp/libs.js'));
+    app.use('/js/app.js', express.static(__dirname + '/../.tmp/app.js'));
 
     app.use('/public/styles', less(__dirname + '/../public/styles', {
         compiler: {
