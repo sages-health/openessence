@@ -58,6 +58,7 @@ if (env === 'development') {
       var bundle = browserify(__dirname + '/../public/scripts/app.js', {
         // this speeds up the build but means we can't use node-isms like __filename
         detectGlobals: false,
+        debug: true,
 
         // watchify needs these options
         cache: {},
@@ -99,6 +100,7 @@ if (env === 'development') {
             var bundle = browserify({
               detectGlobals: false,
               noParse: true,
+              debug: true,
 
               // watchify needs these options
               cache: {},
