@@ -3,48 +3,20 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var browserify = require('browserify');
-var htmlmin = require('gulp-htmlmin');
+var htmlmin = require('html-minifier').minify;
 var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var buffer = require('gulp-buffer');
 var rev = require('gulp-rev');
-var replace = require('gulp-replace');
-var header = require('gulp-header');
-var footer = require('gulp-footer');
 var source = require('vinyl-source-stream');
+var path = require('path');
+var fs = require('fs');
 var assets = require('../server/assets');
 var transform = require('../server/transform');
+var transformTools = require('browserify-transform-tools');
 
 
-/**
- * Minifies partials and converts them to a JS string that can be `require`d. Partials are included in the app.js
- * bundle.
- */
-gulp.task('partials', function () {
-  /*jshint quotmark:false */
-
-  return gulp.src('public/**/*.html')
-    .pipe(htmlmin({
-      collapseWhitespace: true,
-      collapseBooleanAttributes: true,
-      removeComments: true,
-      removeAttributeQuotes: false,
-      removeRedundantAttributes: true,
-      removeEmptyAttributes: true,
-      removeOptionalTags: false // removing is probably a bad idea with partial docs
-    }))
-    // inspired by https://github.com/visionmedia/node-string-to-js/blob/master/index.js
-    .pipe(replace(/'/g, "\\'"))
-    .pipe(replace(/\r\n|\r|\n/g, '\\n'))
-
-    // wrap HTML in module
-    .pipe(header("module.exports='"))
-    .pipe(footer("';"))
-
-    .pipe(gulp.dest('.tmp/public/')); // write to .tmp so they can be read by browserify
-});
-
-gulp.task('scripts', ['partials'], function (done) {
+gulp.task('scripts', function (done) {
   gutil.log('Building the scripts can take a few seconds. Please be patient.');
 
   var libs = {};
@@ -54,7 +26,35 @@ gulp.task('scripts', ['partials'], function (done) {
   })
     .add(__dirname + '/../public/scripts/app.js')
     .transform(transform.shim)
-    .transform(transform.partials)
+    .transform(transformTools.makeRequireTransform('minifyPartials', {}, function (args, opts, cb) {
+      /*jshint quotmark:false */
+
+      var file = args[0];
+      if (path.extname(file) !== '.html') {
+        return cb();
+      }
+
+      var fullPath = path.resolve(path.dirname(opts.file), file);
+      fs.readFile(fullPath, {encoding: 'utf8'}, function (err, data) {
+        if (err) {
+          return cb(err);
+        }
+
+        var html = htmlmin(data, {
+          collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          removeComments: true,
+          removeAttributeQuotes: false,
+          removeRedundantAttributes: true,
+          removeEmptyAttributes: true,
+          removeOptionalTags: false // removing is probably a bad idea with partial docs
+        })
+          .replace(/'/g, "\\'")
+          .replace(/\r\n|\r|\n/g, '\\n');
+
+        cb(null, "'" + html + "'");
+      });
+    }))
     .transform(transform.findLibs(function (err, lib) {
       if (err) {
         throw err; // whatever
