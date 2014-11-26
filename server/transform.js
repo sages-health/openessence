@@ -20,6 +20,8 @@ module.exports = {
         return cb();
       }
 
+      // TODO minify the HTML here instead of writing it to tmp
+
       var root = path.resolve(__dirname, '..');
 
       var referrerDir = path.dirname(opts.file); // directory of file that has the require() call
@@ -37,5 +39,15 @@ module.exports = {
     } else {
       return cb();
     }
-  })
+  }),
+
+  findLibs: function (callback) {
+    return transformTools.makeRequireTransform('findLibsTransform', {}, function (args, opts, cb) {
+      if (args[0].charAt(0) !== '.') {
+        callback(null, args[0]);
+      }
+
+      return cb();
+    });
+  }
 };

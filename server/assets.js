@@ -8,36 +8,11 @@ var packageJson = require('../package.json');
 var fs = require('fs');
 var cluster = require('cluster');
 
-// Libs that are resolved from npm, but still belong in external bundle. The browser-libs field is our own invention.
-// We need to have this list up front so we know what to add to libs.js
-// TODO dynamically generate this w/ a browserify transform
-var npmLibsForBrowser = packageJson['browser-libs'];
-
-/**
- * Returns a list of JavaScript packages that should be bundled together in libs.js.
- */
-exports.libs = function () {
-  var bowerLibs = Object.keys(packageJson.browser);
-  return bowerLibs.concat(Object.keys(npmLibsForBrowser));
-};
-
-/**
- * Libs that don't have to be parsed by browserify, typically because they do not use require() or node-style globals.
- * Not parsing such libs can shave a few seconds off the build.
- * Note that shimmed libs MUST be parsed by browserify, since browserify-shim inserts require() calls into them.
- * @returns Array of absolute filenames
- */
-exports.noParseLibs = function () {
-  return Object.keys(npmLibsForBrowser)
-    .filter(function (lib) {
-      // set `"parse": true` in package.json if the lib should be parsed, e.g. because it loads dependencies via
-      // require()
-      return !npmLibsForBrowser[lib].parse;
-    })
-    .map(function (lib) {
-      return require.resolve(lib);
-    });
-};
+// external is a NOOP for all the deps we don't actually use on the client, but it's easier and faster
+// than calculating the set of deps we actually use
+exports.externalLibs = Object.keys(packageJson.dependencies)
+    .concat(Object.keys(packageJson.devDependencies))
+    .concat(Object.keys(packageJson.browser));
 
 /**
  * Returns an express app that serves static resources that do not require authentication.
@@ -52,42 +27,33 @@ exports.static = function () {
     var watchify = require('watchify');
     var transform = require('./transform');
 
-    // TODO calculate this dynamically
-    var libs = exports.libs();
-
     if (cluster.isMaster) { // make sure we only bundle once
-      var libsBundle = watchify((function () {
-        var bundle = browserify({
-          detectGlobals: false,
-          noParse: true,
 
-          // watchify needs these options
-          cache: {},
-          packageCache: {},
-          fullPaths: true
-        });
-        libs.forEach(function (lib) {
-          bundle.require(lib);
-        });
+      // How this works:
+      //
+      // First, the app.js bundle is built. This contains our code, i.e. everything but third-party libraries (which
+      // end up in the libs.js bundle). We serve two JS bundles, rather than a single huge one, because huge files
+      // cause browser devtools to perform painfully slow (parsing gigantic source maps doesn't help). With two files,
+      // app.js can stay small enough that debugging it in the browser is still feasible. Libs.js can get too large
+      // for browsers to comfortably handle, but you shoudn't have to debug into libs nearly as much.
+      //
+      // As part of building app.js, we have a custom browserify transform that collects the libs that the app.js bundle
+      // uses. Thus, after app.js is built we know exactly what libs to bundle together into libs.js. Unfortunately,
+      // this means we can't build app.js and libs.js in parallel, but that's a small price to pay.
+      //
+      // This is all a little hacky, but it works. A better solution would be to split up the client into a separate
+      // project with its own package.json. This way, you know exactly what libs to include in libs.js, i.e. every
+      // dep listed in package.json. But splitting the client into a separate project brings its own issues.
+      //
+      // Known issues:
+      //
+      // When watching for changes, dependencies won't get removed from libs if you're not using them anymore. This is
+      // because the transform that finds the libs we're using only runs on the changed files, and not globally.
+      // Note that restarting the server will cause a full browserify rebuild and give you the correct deps.
+      // Moral of the story: just restart the server if you're worried. It doesn't take that long, and if you're using
+      // Redis for your session store (which you should be doing) you won't even have to sign back in.
 
-        return bundle;
-      })());
-
-      var bundleLibs = function () {
-        logger.debug('Bundling libs.js...');
-        libsBundle.bundle()
-          .pipe(fs.createWriteStream(__dirname + '/../.tmp/libs.js'));
-      };
-
-      libsBundle.on('update', bundleLibs)
-        .on('time', function (millis) {
-          logger.debug('Finished bundling libs.js (took %ds)', millis / 1000);
-        })
-        .on('error', function (err) {
-          logger.error({err: err, msg: 'Error bundling libs.js'});
-        });
-      bundleLibs(); // build on startup
-
+      var libs = {};
       var appBundle = watchify((function () {
         var bundle = browserify(__dirname + '/../public/scripts/app.js', {
           // this speeds up the build but means we can't use node-isms like __filename
@@ -100,19 +66,68 @@ exports.static = function () {
         })
           .transform('browserify-ngannotate')
           .transform('partialify')
-          .transform(transform.shim);
+          .transform(transform.shim)
+          .transform(transform.findLibs(function (err, lib) {
+            if (err) {
+              return logger.error(err);
+            }
 
-        libs.forEach(function (lib) {
+            libs[lib] = true;
+          }));
+
+        exports.externalLibs.forEach(function (lib) {
           bundle.external(lib);
         });
 
         return bundle;
       })());
 
+      var libsBundle;
+
       var bundleApp = function () {
+        if (libsBundle) {
+          // make sure libs doesn't build while we're building app
+          libsBundle.close();
+          libsBundle.removeAllListeners();
+        }
+
         logger.debug('Bundling app.js...');
         appBundle.bundle()
-          .pipe(fs.createWriteStream(__dirname + '/../.tmp/app.js'));
+          .pipe(fs.createWriteStream(__dirname + '/../.tmp/app.js'))
+          .on('finish', function () {
+            libsBundle = watchify((function () {
+              var bundle = browserify({
+                detectGlobals: false,
+                noParse: true,
+
+                // watchify needs these options
+                cache: {},
+                packageCache: {},
+                fullPaths: true
+              });
+              Object.keys(libs).forEach(function (lib) {
+                bundle.require(lib);
+              });
+
+              return bundle;
+            })());
+
+            var bundleLibs = function () {
+              logger.debug('Bundling libs.js...');
+              libsBundle.bundle()
+                .pipe(fs.createWriteStream(__dirname + '/../.tmp/libs.js'));
+            };
+
+            libsBundle.on('update', bundleLibs)
+              .on('time', function (millis) {
+                logger.debug('Finished bundling libs.js (took %ds)', millis / 1000);
+              })
+              .on('error', function (err) {
+                logger.error({err: err, msg: 'Error bundling libs.js'});
+              });
+
+            bundleLibs();
+          });
       };
 
       appBundle.on('update', bundleApp)

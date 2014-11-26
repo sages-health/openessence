@@ -6,7 +6,7 @@ var htmlmin = require('gulp-htmlmin');
 
 // Although we do a lot of processing in middleware, this task is still useful to replace references to resources
 // with references to revved versions.
-gulp.task('inject', ['styles', 'scripts', 'libs'], function () {
+gulp.task('inject', ['styles', 'scripts'], function () {
   var inject = require('gulp-inject');
   var glob = require('glob');
 

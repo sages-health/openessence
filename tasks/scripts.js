@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var browserify = require('browserify');
 var htmlmin = require('gulp-htmlmin');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -13,8 +14,6 @@ var footer = require('gulp-footer');
 var source = require('vinyl-source-stream');
 var assets = require('../server/assets');
 var transform = require('../server/transform');
-var jsLibs = assets.libs();
-var noParseLibs = assets.noParseLibs();
 
 
 /**
@@ -45,44 +44,31 @@ gulp.task('partials', function () {
     .pipe(gulp.dest('.tmp/public/')); // write to .tmp so they can be read by browserify
 });
 
-/**
- * Build 3rd-party JavaScript libraries.
- */
-gulp.task('libs', function () {
-  var bundle = browserify({
-    noParse: noParseLibs,
-    fullPaths: false
-  });
+gulp.task('scripts', ['partials'], function (done) {
+  gutil.log('Building the scripts can take a few seconds. Please be patient.');
 
-  jsLibs.forEach(function (lib) {
-    bundle.require(lib);
-  });
+  var libs = {};
 
-  return bundle
-    .bundle() // TODO use pre-built bundles
-    .pipe(source('libs.js'))
-    .pipe(buffer()) // gulp-rev doesn't like streams, so convert to buffer
-    .pipe(uglify({
-      preserveComments: 'some' // preserve license headers
-    }))
-    .pipe(rev())
-    .pipe(gulp.dest('dist/public/scripts/'));
-});
-
-/**
- * Build 1st-party JavaScript libraries.
- */
-gulp.task('scripts', ['partials'], function () {
-  var appBundle = browserify()
+  var appBundle = browserify({
+    detectGlobals: false
+  })
     .add(__dirname + '/../public/scripts/app.js')
     .transform(transform.shim)
-    .transform(transform.partials);
+    .transform(transform.partials)
+    .transform(transform.findLibs(function (err, lib) {
+      if (err) {
+        throw err; // whatever
+      }
 
-  jsLibs.forEach(function (lib) {
+      libs[lib] = true;
+    }));
+
+  assets.externalLibs.forEach(function (lib) {
     appBundle.external(lib);
   });
 
-  return appBundle
+  // we don't return a stream, instead we call the done callback after libs.js is written to disk
+  appBundle
     .bundle()
     .pipe(source('app.js')) // convert stream of text to stream of Vinyl objects for gulp
     .pipe(buffer()) // ngmin, et al. don't like streams, so convert to buffer
@@ -94,5 +80,29 @@ gulp.task('scripts', ['partials'], function () {
       preserveComments: 'some' // preserve license headers
     }))
     .pipe(rev())
-    .pipe(gulp.dest('dist/public/scripts'));
+    .pipe(gulp.dest('dist/public/scripts'))
+    .on('finish', function () {
+      // This is a little suboptimal since we wait for app.js to be written to disk before starting libs.
+      // Really, we could start on libs as soon as the libs hash is populated, i.e. right after app.js's .bundle()
+      // finished. But that would require some fancy flow control that's probably not worth the slight perf gain.
+
+      var libsBundle = browserify({
+        detectGlobals: false,
+        noParse: true
+      });
+      Object.keys(libs).forEach(function (lib) {
+        libsBundle.require(lib);
+      });
+
+      libsBundle.bundle() // TODO use pre-built bundles
+        .pipe(source('libs.js'))
+        .pipe(buffer())
+        .pipe(uglify({
+          preserveComments: 'some' // preserve license headers
+        }))
+        .pipe(rev())
+        .pipe(gulp.dest('dist/public/scripts'))
+        .on('error', done)
+        .on('finish', done);
+    });
 });

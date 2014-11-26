@@ -2,6 +2,7 @@
 
 // jQuery doesn't write to window if you require() it
 window.jQuery = window.jQuery || require('jquery');
+require('jquery-ui');
 
 // polyfills, try to require only what you need instead of entire es6 polyfills
 require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11

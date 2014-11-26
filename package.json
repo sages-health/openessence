@@ -136,26 +136,6 @@
     "ng-grid": "./bower_components/ng-grid/build/ng-grid.js",
     "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js"
   },
-  "browser-libs": {
-    "d3": {
-      "parse": false
-    },
-    "jquery": {
-      "parse": false
-    },
-    "humane-js": {
-      "parse": false
-    },
-    "angular-loading-bar": {
-      "parse": false
-    },
-    "leaflet": {
-      "parse": false
-    },
-    "moment": {
-      "parse": false
-    }
-  },
   "engines": {
     "node": "0.10.x"
   },
