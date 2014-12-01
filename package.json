@@ -42,7 +42,7 @@
   "devDependencies": {
     "angular-loading-bar": "~0.4.2",
     "array.prototype.find": "^1.0.0",
-    "bootstrap": "~3.3.0",
+    "bootstrap": "~3.2.0",
     "browserify": "^6.3.3",
     "browserify-istanbul": "^0.1.2",
     "browserify-ngannotate": "^0.1.0",
