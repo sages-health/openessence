@@ -10,6 +10,7 @@ gulp.task('inject', ['styles', 'scripts'], function () {
   var inject = require('gulp-inject');
   var glob = require('glob');
 
+  // could also use gulp-rev's manifest, but this is more robust (and written before gulp-rev supported that)
   var getLatestFile = function (path) {
     var maxFile = '';
     var maxTime = -1;

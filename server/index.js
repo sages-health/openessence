@@ -45,7 +45,7 @@ app.use((function () {
 
 // log requests
 if (conf.env === 'production') {
-  app.use(require('morgan')());
+  app.use(require('morgan')('combined'));
 }
 
 app.use(assets.static());
@@ -83,13 +83,16 @@ app.use((function () {
 })());
 app.use(require('connect-flash')());
 
-app.use(helmet.xframe('deny')); // change this if you want to embed Fracas in an iframe
+// Set X-Frame: DENY to prevent clickjacking.
+// Change this if you want to embed Fracas in an iframe
+app.use(helmet.frameguard('deny'));
+
 if (https) {
   app.use(helmet.hsts());
 }
-app.use(helmet.iexss()); // XSS protection for IE
-app.use(helmet.ienoopen()); // force users to save downloads in IE instead of open them, we might want to turn this off
-app.use(helmet.contentTypeOptions()); // X-Content-Type-Options: nosniff
+app.use(helmet.xssFilter()); // XSS protection for IE
+app.use(helmet.ieNoOpen()); // force users to save downloads in IE instead of open them, we might want to turn this off
+app.use(helmet.noSniff()); // X-Content-Type-Options: nosniff
 
 // Content Security Policy headers
 app.use(function (req, res, next) {
@@ -108,7 +111,7 @@ app.use(function (req, res, next) {
   var self = "'self'";
   var none = "'none'";
 
-  helmet.csp({
+  helmet.contentSecurityPolicy({
     'default-src': [self],
     'script-src': [self, 'https://login.persona.org'],
     // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
@@ -120,6 +123,7 @@ app.use(function (req, res, next) {
   })(req, res, next);
 });
 
+// CSRF tokens
 app.use(require('csurf')());
 
 app.use(locale(require('./locale').supportedLocales)); // adds req.locale based on best matching locale

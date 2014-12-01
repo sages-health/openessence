@@ -206,7 +206,7 @@ if (cluster.isMaster) {
   var app = express();
 
   // log all requests
-  app.use(require('morgan')());
+  app.use(require('morgan')('combined'));
 
   // compressing already compressed formats (PNG, JPG, PDF) is counterproductive
 //  app.use(require('compression')());
