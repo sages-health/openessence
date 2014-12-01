@@ -35,7 +35,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.series = scope.series || scope.options.series || [];
           scope.xAxisTickFormat = function (d) {
-            return d3.time.format('%Y-%m-%d')(new Date(d));
+            return d3.time.format.utc('%Y-%m-%d')(new Date(d));
           };
 
           scope.interval = scope.interval || scope.options.interval || 'day'; // TODO auto-select based on date range
@@ -650,15 +650,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 .tickFormat(function (d) {
                   // TODO: Use angular 3 beta's ISO time filters to make sure week numbers are accurate
                   if (xAxisType === 'timestamp') {
-                    return d3.time.format('%Y-%m-%d')(new Date(d));
+                    return d3.time.format.utc('%Y-%m-%d')(new Date(d));
                   } else if (xAxisType === 'week') {
-                    return ($window.parseInt(d3.time.format('%W')(new Date(d)))) + '-' + d3.time.format('%Y')(new Date(d));
+                    return ($window.parseInt(d3.time.format.utc('%W')(new Date(d)))) + '-' + d3.time.format.utc('%Y')(new Date(d));
                   } else if (xAxisType === 'month' && domain !== null) {
-                    return domain[$window.parseInt(d3.time.format('%m')(new Date(d))) - 1] + ' ' + d3.time.format('%Y')(new Date(d));
+                    return domain[$window.parseInt(d3.time.format.utc('%m')(new Date(d))) - 1] + ' ' + d3.time.format.utc('%Y')(new Date(d));
                   } else if (xAxisType === 'quarter') {
-                    return 'Q\'' + (Math.floor($window.parseInt(d3.time.format('%W')(new Date(d))) / 13) + 1) + '-' + d3.time.format('%Y')(new Date(d));
+                    return 'Q\'' + (Math.floor($window.parseInt(d3.time.format.utc('%W')(new Date(d))) / 13) + 1) + '-' + d3.time.format.utc('%Y')(new Date(d));
                   } else if (xAxisType === 'year') {
-                    return d3.time.format('%Y')(new Date(d));
+                    return d3.time.format.utc('%Y')(new Date(d));
                   }
                 })
                 .innerTickSize(0)
