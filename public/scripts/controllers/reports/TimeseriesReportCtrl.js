@@ -16,9 +16,10 @@ module.exports = function ($scope, gettextCatalog, $location, visualization, use
       'px&name=' + title + '&url=/' + lang +
       '/timeseries-report?params=' + btoa(JSON.stringify(params));
   };
-  $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
-  $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
 
+  $scope.username = user.getUser().username;
+  $scope.dateString = moment().format('D MMMM YYYY');
+  
   $scope.params = JSON.parse(atob($location.search().params));
   $scope.allowExport = $scope.params.print === false ? false : true;
   $scope.report = angular.copy($scope.params);
@@ -110,7 +111,7 @@ module.exports = function ($scope, gettextCatalog, $location, visualization, use
         v = fixCountry(v, district);
         v.name = district;
         rows[rows.length - 1].push(v);
-        if (i % 3 === 2) {
+        if ((i + 1) % 4 === 0) {
           rows.push([]);
         }
       });

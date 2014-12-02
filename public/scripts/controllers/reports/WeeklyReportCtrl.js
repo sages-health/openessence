@@ -16,9 +16,9 @@ module.exports = function ($scope, $window, $location, $document, gettextCatalog
       '/reports/' + title + '?size=' + angular.element('body').width() + 'px*' + angular.element('body').height() +
         'px&name=' + title + '&url=/' + lang + '/weekly-report?params=' + btoa(JSON.stringify(params));
   };
-  $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
-  $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
 
+  $scope.username = user.getUser().username;
+  $scope.dateString = moment().format('D MMMM YYYY');
   $scope.params = JSON.parse(atob($location.search().params));
   $scope.allowExport = $scope.params.print === false ? false : true;
   $scope.report = angular.copy($scope.params);
