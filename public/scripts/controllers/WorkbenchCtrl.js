@@ -4,12 +4,13 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog, scopeToJson,//
-                           FormResource, WorkbenchResource, possibleFilters, updateURL) {
+                           FormResource, possibleFilters, updateURL, Workbench) {
   $scope.gridsterOptions = {
     margins: [10, 10],
     columns: 12,
     draggable: {
-      enabled: true
+      enabled: true,
+      handle: '.viz-drag-handle'
     },
     resizable: {
       enabled: true
@@ -68,6 +69,18 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     return $scope.nextVizId;
   };
 
+  // Sort visualization using row numbers
+  // This function is called while loading saved workbench or
+  // using URL state variable
+  // If visualizations are not sorted using row number,
+  // gridster may change row number of widget
+  var sortVisualizations = function (a, b) {
+    if (a.row === b.row) {
+      return 0;
+    }
+    return (a.row < b.row) ? -1 : 1;
+  };
+
   FormResource.get({size: 1, q: 'name:demo'}, function (response) {
     if (response.results.length === 0) {
       throw new Error('No configured forms');
@@ -92,20 +105,29 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     var workbenchId = $stateParams.workbenchId;
     var state = updateURL.getState();
     $scope.nextVizId = 0;
+    $scope.workbenchId = null;
 
     if (workbenchId) { // if we are loading a saved workbench
-      var workbenches = JSON.parse($window.sessionStorage.getItem('workbenches'));
-      var workbench = workbenches[workbenchId]._source.state;
-      $scope.nextVizId = workbench.nextVizId;
-      $scope.activeFilters = workbench.activeFilters;
-      if (Array.isArray(workbench.visualizations)) {
-        workbench.visualizations.forEach(function (v) {
-          $scope.addVisualization(v.visualization.name, v);
-        });
-      }
+      Workbench.get(workbenchId, function (response) {
+        $scope.workbenchId = workbenchId;
+        $scope.workbenchName = response._source.name;
+        var workbench = response._source.state;
+        $scope.nextVizId = workbench.nextVizId;
+        $scope.activeFilters = workbench.activeFilters;
+
+        workbench.visualizations.sort(sortVisualizations);
+
+        if (Array.isArray(workbench.visualizations)) {
+          workbench.visualizations.forEach(function (v) {
+            $scope.addVisualization(v.visualization.name, v);
+          });
+        }
+      });
     } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
       $scope.activeFilters = state.filters || [];
       if (Array.isArray(state.visualizations)) {
+        state.visualizations.sort(sortVisualizations);
+
         state.visualizations.forEach(function (v) {
           var id = v.id ? parseInt(v.id.substring(4)) : 0;
           $scope.nextVizId = $scope.nextVizId >= id ? $scope.nextVizId : id;
@@ -154,7 +176,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
 
   $scope.addVisualization = function (name, options) {
     options = options || {};
-
     var id = options.id;
     if (!id) {
       id = 'viz-' + getNextVizId();
@@ -217,32 +238,15 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
   };
 
   $scope.saveWorkbench = function () {
-    $modal.open({
-      template: require('../../workbench/save-workbench-modal.html'),
-      controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
-        $scope.workbench = {};
-        $scope.save = function (form) {
-          if (form.$invalid) {
-            $scope.yellAtUser = true;
-            return;
-          }
-
-          $modalInstance.close($scope.workbench.name);
-        };
-
-        $scope.cancel = function () {
-          $modalInstance.dismiss('cancel');
-        };
-      }]
-    })
-      .result
-      .then(function (name) {
-        new WorkbenchResource({
-          name: name,
-          state: scopeToJson($scope)
-        })
-          .$save();
-      });
+    var state = {
+      name: $scope.workbenchName || '',
+      state: scopeToJson($scope)
+    };
+    if ($scope.workbenchId) {
+      Workbench.update(state, $scope.workbenchId);
+    } else {
+      Workbench.save(state);
+    }
   };
 
   var visualizationName = $location.search().visualization;

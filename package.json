@@ -44,7 +44,7 @@
   "devDependencies": {
     "angular-loading-bar": "~0.4.2",
     "array.prototype.find": "^1.0.0",
-    "bootstrap": "^3.2.0",
+    "bootstrap": "~3.3.0",
     "browserify": "^4.1.11",
     "browserify-istanbul": "^0.1.2",
     "browserify-middleware": "^3.0.0",
@@ -54,6 +54,8 @@
     "chai": "~1.9.0",
     "cheerio": "^0.17.0",
     "cookie": "^0.1.2",
+    "d3": "^3.4.13",
+    "del": "^0.1.3",
     "esprima": "^1.2.2",
     "function-bind": "^1.0.2",
     "gulp": "^3.8.1",
@@ -74,7 +76,6 @@
     "gulp-ng-annotate": "^0.3.0",
     "gulp-replace": "^0.3.0",
     "gulp-rev": "^0.4.1",
-    "gulp-rimraf": "^0.1.0",
     "gulp-svgmin": "~0.4.1",
     "gulp-uglify": "~0.2.0",
     "gulp-util": "^2.2.17",
@@ -131,7 +132,6 @@
     "angular-gettext": "./bower_components/angular-gettext/dist/angular-gettext.js",
     "angular-gridster": "./bower_components/angular-gridster/src/angular-gridster.js",
     "angular-order-object-by": "./bower_components/angular-order-object-by/src/ng-order-object-by.js",
-    "d3": "./bower_components/d3/d3.js",
     "ng-debounce": "./bower_components/ng-debounce/angular-debounce.js",
     "text-angular": "./bower_components/textAngular/src/textAngular.js",
     "text-angular-sanitize": "./bower_components/textAngular/src/textAngular-sanitize.js",
@@ -143,6 +143,9 @@
     "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js"
   },
   "browser-libs": {
+    "d3": {
+      "parse": false
+    },
     "jquery": {
       "parse": false
     },
@@ -220,9 +223,6 @@
         "angular:angular",
         "jquery-resize"
       ]
-    },
-    "d3": {
-      "exports": "d3"
     },
     "ng-debounce": {
       "depends": [

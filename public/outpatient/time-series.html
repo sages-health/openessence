@@ -41,15 +41,14 @@
     <svg id="svg-id-{{options.id}}" class="custom-timeseries">
       <!-- g's must stay in this order. the layering matters for functionality (mouseover detecting) -->
       <g class="title">
-        <text class="title-label" text-anchor="middle"
-              transform="translate({{titleXpx}}, {{titleYpx}})">{{options.labels.title}}</text>
+        <text class="title-label" text-anchor="middle">{{options.labels.title}}</text>
       </g>
       <g class="legend"></g>
       <g class="chart">
-        <text class="y-label" text-anchor="middle" transform="translate({{yLabelXpx}}, {{yLabelYpx}})rotate(-90)">
+        <text class="y-label" text-anchor="middle">
           {{options.labels.y}}
         </text>
-        <text class="x-label" text-anchor="middle" transform="translate({{xLabelXpx}}, {{xLabelYpx}})">
+        <text class="x-label" text-anchor="middle">
           {{options.labels.x}}
         </text>
       </g>

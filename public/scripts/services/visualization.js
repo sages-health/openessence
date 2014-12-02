@@ -49,8 +49,8 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
         delete v.values;
         return v;
       });
-      if($window.state.form){
-        $window.state.form.fields.map(function(v){
+      if ($window.state.form) {
+        $window.state.form.fields.map(function (v) {
           delete v.values;
           return v;
         });

@@ -343,6 +343,9 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             scope.titleXpx = (svgWidth / 2);
             scope.titleYpx = 30;
 
+            d3.select(element[0]).select('.pie-chart').select('text.title-label').attr('transform',
+              'translate(' + scope.titleXpx + ', ' + scope.titleYpx + ')');
+
             var arc = d3.svg.arc()
               .outerRadius(radius - 10)
               .innerRadius(0);
