@@ -16,12 +16,13 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
     template: require('./visualization.html'),
     scope: {
       filters: '=',
-      form: '=',
+      form: '=?',
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',
       options: '=', // settings as single object, useful for loading persisted state
-      source: '=?'
+      source: '=?',
+      widget: '=?'
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502

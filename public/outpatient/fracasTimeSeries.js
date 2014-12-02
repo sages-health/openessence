@@ -21,11 +21,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
       queryString: '=',
       filters: '=',
       series: '=?', // array of strings denoting series to graph
-      source: '=?'
+      source: '=?',
+      widget: '=?'
     },
     compile: function () {
       return {
-        pre: function (scope, timeout) {
+        pre: function (scope, element, attrs) {
 
           var defaultLabels = {
             title: gettextCatalog.getString('Timeseries'),
@@ -74,10 +75,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     }
                   }
                 },
-                column: {
+                line: {
                   events: {}
                 }
-              }
+              },
+              events: {}
             },
             xAxis: {
               ordinal: false,
@@ -123,12 +125,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
            }*/
 
           // Removing click functionality for clickthrough.
-          if (scope.source = 'dashboard') {
-            scope.chartConfig.options.plotOptions.column.events['legendItemClick'] =
-              function () {
-                return false;
-              }
+          if (scope.source == 'dashboard') {
             scope.chartConfig.options.chart.zoomType = null;
+            scope.chartConfig.options.chart.events.click =
+              function () {
+                var savedWidget = {};
+                savedWidget[scope.widget.name] = scope.widget.content;
+                sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
+                scope.$apply(function () {
+                  $location.path('/workbench/').search('visualization', scope.widget.name)
+                });
+              };
           }
 
           scope.$on('editVizualizationSettings', function () {
@@ -378,7 +385,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.$watchCollection('[series, queryString, interval]', function () {
             reload();
+            scope.redraw();
           });
+
+          scope.redraw = function () {
+            scope.$broadcast('highchartsng.reflow');
+          }
 
           scope.$watch('options.labels.title', function () {
             scope.chartConfig.title.text = scope.options.labels.title;
@@ -402,5 +414,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
         }
       };
     }
-  };
-});
+  }
+    ;
+})
+;

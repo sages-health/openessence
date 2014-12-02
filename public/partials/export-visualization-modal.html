@@ -1,35 +1,37 @@
 <div class="modal-header">
-    <h4 class="modal-title" translate>Export visualization</h4>
+  <h4 class="modal-title" translate>Export visualization</h4>
 </div>
 <div class="modal-body">
-    <div class="row">
-        <div class="col-md-8">
-            <outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString"
-                                      filters="filters" options="options"></outpatient-visualization>
-        </div>
-        <div class="col-md-4">
-            <form class="form" role="form" novalidate name="visualizationForm">
-                <div class="form-group" ng-class="{'has-error': yellAtUser}">
-                    <input type="checkbox" name="showTitle" ng-model="showTitle">
-                    <label for="export-viz-title" translate>Show Title</label>
-                    <div ng-show="showTitle">
-                        <input type="text" class="form-control" id="export-viz-title" name="title" ng-model="viz.title">
-                        <div class="help-block" ng-show="yellAtUser" translate>
-                            Please select a title for this visualization
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+  <div class="row">
+    <div class="col-md-8">
+      <outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString"
+                                filters="filters" options="options"></outpatient-visualization>
     </div>
+    <div class="col-md-4">
+      <form class="form" role="form" novalidate name="visualizationForm">
+        <div class="form-group" ng-class="{'has-error': yellAtUser}">
+          <input type="checkbox" name="showTitle" ng-model="showTitle">
+          <label for="export-viz-title" translate>Show Title</label>
+
+          <div ng-show="showTitle">
+            <input type="text" class="form-control" id="export-viz-title" name="title" ng-model="viz.title">
+
+            <div class="help-block" ng-show="yellAtUser" translate>
+              Please select a title for this visualization
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-default" ng-click="cancel()">
-        <span class="icon-cancel"></span>
-        <span translate>Cancel</span>
-    </button>
-    <button class="btn btn-primary" ng-click="export(visualizationForm)">
-        <span class="icon-export"></span>
-        <span translate>Export</span>
-    </button>
+  <button class="btn btn-default" ng-click="cancel()">
+    <span class="icon-cancel"></span>
+    <span translate>Cancel</span>
+  </button>
+  <button class="btn btn-primary" ng-click="export(visualizationForm)">
+    <span class="icon-export"></span>
+    <span translate>Export</span>
+  </button>
 </div>
