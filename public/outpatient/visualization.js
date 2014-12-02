@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var moment = require('moment');
 
-angular.module(directives.name).directive('outpatientVisualization', function ($modal, $rootScope, $timeout,
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout,
                                                                                orderByFilter, gettextCatalog,
                                                                                sortString, FrableParams,
                                                                                OutpatientVisitResource,
@@ -65,22 +65,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           syndromes: gettextCatalog.getString('Syndromes'),
           visitType: gettextCatalog.getString('Visit type'),
           discharge: gettextCatalog.getString('Discharge type'),
-          edit: gettextCatalog.getString('Edit'),
-          aggregateData: gettextCatalog.getString('Aggregate Data'),
-          newAggregateData: gettextCatalog.getString('New'),
-          import: gettextCatalog.getString('Import'),
-          upload: gettextCatalog.getString('Upload'),
-          reportDate: gettextCatalog.getString('Date'),
-          week: gettextCatalog.getString('Week'),
-          year: gettextCatalog.getString('Year'),
-          sitesTotal: gettextCatalog.getString('Total Sites'),
-          sitesReporting: gettextCatalog.getString('Number of Sites Reporting'),
-          count: gettextCatalog.getString('Count'),
-          symptomName: gettextCatalog.getString('Symptom Name'),
-          acuteFeverAndRash: gettextCatalog.getString('Acute Fever and Rash'),
-          diarrhoea: gettextCatalog.getString('Diarrhoea'),
-          influenzaLikeIllness: gettextCatalog.getString('Influenza-like Illness'),
-          prolongedFever: gettextCatalog.getString('Prolonged Fever')
+          edit: gettextCatalog.getString('Edit')
         };
 
         scope.printAggregate = function (field, includeCount) {
@@ -269,7 +254,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
                   age: source.patient ? source.patient.age : null,
-                  districts: source.medicalFacility.district
+                  districts: source.medicalFacility ? source.medicalFacility.district : null
                 };
 
                 if (source.symptoms) {
@@ -299,7 +284,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
           }
         };
 
-        scope.editRecord = function (record) {
+        scope.editVisit = function (record) {
           outpatientEditModal.open({
             record: record
           })
@@ -308,7 +293,7 @@ angular.module(directives.name).directive('outpatientVisualization', function ($
               reload(); // TODO highlight changed record
             });
         };
-        scope.deleteRecord = function (record) {
+        scope.deleteVisit = function (record) {
           outpatientDeleteModal.open({record: record})
             .result
             .then(function () {

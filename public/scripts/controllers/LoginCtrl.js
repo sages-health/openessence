@@ -1,11 +1,7 @@
 'use strict';
 
-var angular = require('angular');
-var controllers = require('../modules').controllers;
-
-// `controllers.controller` breaks ngmin, see https://github.com/btford/ngmin#references
-angular.module(controllers.name).controller('LoginCtrl', function ($scope, $location, $window, appName, user, persona,
-                                                                   version) {
+// @ngInject
+module.exports = function ($scope, $location, $window, appName, user, persona, version) {
   $scope.$on('login', function () {
     // We do this here, instead of in the user service, b/c we only want to redirect to the home page when the user's
     // coming from the login page. In the re-login case, we definitely don't want to redirect to the home page.
@@ -59,4 +55,4 @@ angular.module(controllers.name).controller('LoginCtrl', function ($scope, $loca
       user.login('local', $scope.credentials);
     }
   };
-});
+};

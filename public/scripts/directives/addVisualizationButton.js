@@ -1,10 +1,9 @@
 'use strict';
 
 var angular = require('angular');
-var directives = require('../modules').directives;
 
-angular.module(directives.name).directive('addVisualizationButton', function ($compile, $timeout, $window, $position,
-                                                                              debounce) {
+// @ngInject
+module.exports = function ($compile, $timeout, $window, $position, debounce) {
   return {
     template: require('../../partials/add-visualization-button.html'),
     restrict: 'E',
@@ -100,4 +99,4 @@ angular.module(directives.name).directive('addVisualizationButton', function ($c
       };
     }
   };
-});
+};

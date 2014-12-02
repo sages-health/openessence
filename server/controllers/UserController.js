@@ -61,7 +61,7 @@ module.exports = codex.controller(User, {
             return callback(err);
           }
           // set password
-          esRequest.body.password = esr.password;
+          esRequest.body.password = esr.doc.password;
           callback(null, esRequest);
         });
       } else {

@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientSexFilter', function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientSexFilter', /*@ngInject*/ function (gettextCatalog) {
   return {
     restrict: 'E',
     template: require('./sex.html'),

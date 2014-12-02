@@ -1,11 +1,12 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 var moment = require('moment');
-angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($scope, crud, tableUtil, gettextCatalog,//
-                                                                               OutpatientVisitResource, DistrictResource, //
-                                                                               outpatientUploadModal, outpatientImportModal) {
+
+// @ngInject
+module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVisitResource, DistrictResource,
+                           SymptomResource, outpatientUploadModal, outpatientImportModal) {
+
   $scope.getWeek = function (date) {
     return moment(date).format('W');
   };
@@ -50,6 +51,16 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
         field: 'name'
       },
       name: gettextCatalog.getString('District')
+    },
+    {
+      filterId: 'symptoms',
+      type: 'multi-select',
+      field: 'symptoms.name',
+      store: {
+        resource: SymptomResource,
+        field: 'name'
+      },
+      name: gettextCatalog.getString('Symptoms')
     }
   ];
 
@@ -115,14 +126,11 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
   var addDefaultSymptoms = function (symptoms, allSymptoms) {
     symptoms = symptoms ? symptoms : [];
     allSymptoms.forEach(function (el) {
-      var found = symptoms.find(function (a) {
-        if (a.name === el) {
-          return true;
-        }
-        return false;
+      var found = symptoms.filter(function (a) {
+        return a.name === el;
       });
 
-      if (found === undefined) {
+      if (found.length === 0) {
         symptoms.push({name: el});
       }
     });
@@ -133,6 +141,9 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
     // only store symptoms having count value
     data.symptoms = data.symptoms.filter(function (el) {
       return el.count !== '' && !isNaN(el.count);
+    });
+    data.symptoms.forEach(function (e) {
+      e.count = parseInt(e.count, 0);
     });
     return data;
   };
@@ -190,7 +201,5 @@ angular.module(controllers.name).controller('AggregateDataEditCtrl', function ($
       scopeOptions.districts = response.results.map(pluckName);
       outpatientImportModal.open(record, $scope.resource, $scope.editTemplate, scopeOptions).result.then(reload);
     });
-
   };
-
-});
+};

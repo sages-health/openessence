@@ -3,7 +3,7 @@
 var angular = require('angular');
 var controllers = require('../scripts/modules').controllers;
 
-angular.module(controllers.name).controller('WidgetSettingsCtrl', function ($scope, $timeout, $rootScope, $modalInstance, widget, dateFilter) {
+angular.module(controllers.name).controller('WidgetSettingsCtrl', /*@ngInject*/ function ($scope, $timeout, $rootScope, $modalInstance, widget, dateFilter) {
   $scope.widget = widget;
   $scope.filter = {};
   var dateFormat = 'yyyy-MM-dd';

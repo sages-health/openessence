@@ -1,17 +1,16 @@
 'use strict';
 
-var angular = require('angular');
-var services = require('../modules').services;
-
-[
+module.exports = [
   'Dashboard',
   'District',
   'User',
   'Visualization',
   'Workbench'
-].forEach(function (resourceName) {
+].reduce(function (resources, resourceName) {
     var resourceUrl = '/resources/' + resourceName.toLowerCase();
-    return angular.module(services.name).factory(resourceName + 'Resource', function ($resource) {
+
+    // @ngInject
+    resources[resourceName] = function ($resource) {
       return $resource(resourceUrl + '/:_id',
         {
           _id: '@_id', // TODO come up with a convention wrt _
@@ -32,5 +31,7 @@ var services = require('../modules').services;
             headers: { 'Accept': 'application/json' }
           }
         });
-    });
-  });
+    };
+
+    return resources;
+  }, {});

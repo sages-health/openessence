@@ -6,7 +6,7 @@ var directives = require('../scripts/modules').directives;
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientForm', function (gettextCatalog, OutpatientVisitResource,
+angular.module(directives.name).directive('outpatientForm', /*@ngInject*/ function (gettextCatalog, OutpatientVisitResource,
                                                                       DistrictResource, DiagnosisResource,
                                                                       SymptomResource) {
   return {

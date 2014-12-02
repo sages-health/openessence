@@ -150,35 +150,60 @@ module.exports = {
 
   redis: {
     url: process.env.REDIS_URL || (function () {
-      var redisPort = process.env.REDIS_PORT; // Docker sets the TCP port the linked redis container exports
-      if (!redisPort) {
-        return 'redis://localhost:6379';
+      if (process.env.REDISCLOUD_URL) {
+        // Heroku addons automatically add environment variables. We might as well use them to make installation
+        // easier. There are a number of Redis providers, but Redis Cloud offers 25MB free and Redis 2.8 instances.
+        // Redis To Go is the only other free Redis provider (as of Sept. 2014) but they put free customers on Redis
+        // 2.4 instances. We need 2.6.12+ for our locks.
+        return process.env.REDISCLOUD_URL;
       }
 
-      var parsedRedisPort = url.parse(redisPort);
-      if (parsedRedisPort.protocol === 'tcp:') {
-        parsedRedisPort.protocol = 'redis:';
+      if (process.env.REDIS_PORT) {
+        // If we're running in a Docker container that's linked against a container with alias `redis`, then Docker will
+        // set REDIS_PORT to be the tcp port of the linked container
+
+        var parsedRedisPort = url.parse(process.env.REDIS_PORT);
+        if (parsedRedisPort.protocol === 'tcp:') {
+          // Docker sets the protocol of the port to be tcp since it operates below the application layer. You can
+          // also tell Docker to use UDP instead, but Redis speaks TCP, so why would we ever do that?
+          parsedRedisPort.protocol = 'redis:';
+        }
+
+        return url.format(parsedRedisPort);
       }
 
-      return url.format(parsedRedisPort);
+      // Fallback to Redis's default
+      return 'redis://localhost:6379';
     })(),
     password: process.env.REDIS_PASSWORD // Redis doesn't use usernames, just tokens
   },
 
   // elasticsearch settings, duh
   elasticsearch: {
-    host: process.env.ELASTICSEARCH_HOST || (function () {
-      var elasticsearchPort = process.env.ELASTICSEARCH_PORT; // Docker sets this
-      if (!elasticsearchPort) {
-        return 'http://localhost:9200';
+    host: process.env.ELASTICSEARCH_URL || (function () {
+      if (process.env.FOUNDELASTICSEARCH_URL) {
+        // We use the Found.no Heroku addon since they tend to be the only ones that provide unlimited indices. Most
+        // other providers limit the number of indices you can create, which doesn't work great if you're using
+        // elasticsearch as a data store.
+        return process.env.FOUNDELASTICSEARCH_URL;
       }
 
-      var parsedElasticsearchPort = url.parse(elasticsearchPort);
-      if (parsedElasticsearchPort.protocol === 'tcp:') {
-        parsedElasticsearchPort.protocol = 'http:';
+      if (process.env.ELASTICSEARCH_PORT) {
+        // If we're running in a Docker container that's linked against a container with alias `elasticsearch`, then
+        // Docker will set ELASTICSEARCH_PORT to be the tcp port of the linked container
+
+        var parsedElasticsearchPort = url.parse(process.env.ELASTICSEARCH_PORT);
+        if (parsedElasticsearchPort.protocol === 'tcp:') {
+          // Docker sets the protocol of the port to be tcp since it operates below the application layer. You can
+          // also tell Docker to use UDP instead, but Elasticsearch speaks TCP (via HTTP), so why would we ever do that?
+          parsedElasticsearchPort.protocol = 'http:';
+        }
+
+        return url.format(parsedElasticsearchPort);
       }
 
-      return url.format(parsedElasticsearchPort);
+      // Fallback to Elasticsearch's default
+      return 'http://localhost:9200';
     })(),
     log: ElasticSearchLogger,
     apiVersion: '1.1'

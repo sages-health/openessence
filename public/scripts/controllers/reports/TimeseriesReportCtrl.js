@@ -2,10 +2,9 @@
 
 var angular = require('angular');
 var moment = require('moment');
-var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('TimeseriesReportCtrl', function ($scope, gettextCatalog, $window,//
-                                                                              visualization, user, DistrictResource) {
+// @ngInject
+module.exports = function ($scope, gettextCatalog, $window, visualization, user, DistrictResource) {
 
   $scope.userString = gettextCatalog.getString('Created by') + ': ' + user.getUser().username;
   $scope.todayString = gettextCatalog.getString('Date of Report') + ': ' + moment().format('D MMMM YYYY');
@@ -103,4 +102,4 @@ angular.module(controllers.name).controller('TimeseriesReportCtrl', function ($s
       $scope.rows = rows;
     });
   });
-});
+};

@@ -1,7 +1,15 @@
 'use strict';
 
 var gulp = require('gulp');
-var imagemin = require('gulp-imagemin');
+var imagemin;
+try {
+  imagemin = require('gulp-imagemin');
+} catch (e) {
+  // this can happen sometimes, e.g. https://github.com/npm/npm/issues/6043
+  console.warn('Error requiring gulp-imagmin. Not minifying images', e.stack);
+  imagemin = null;
+}
+
 var svgmin = require('gulp-svgmin');
 
 var paths = {
@@ -21,9 +29,9 @@ var loadLib = function (lib) {
 };
 
 var imageLibs = {
-  jpeg: loadLib('jpegtran-bin'),
-  png: loadLib('pngquant-bin'),
-  gif: loadLib('gifsicle')
+  jpeg: !!imagemin && loadLib('jpegtran-bin'),
+  png: !!imagemin && loadLib('pngquant-bin'),
+  gif: !!imagemin && loadLib('gifsicle')
 };
 
 var imageminTransform = function () {

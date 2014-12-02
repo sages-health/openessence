@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', function ($rootScope, gettextCatalog, orderByFilter,
+angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ function ($rootScope, gettextCatalog, orderByFilter,
                                                                        FrableParams, OutpatientVisitResource,
                                                                        sortString) {
   return {

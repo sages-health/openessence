@@ -1,8 +1,5 @@
 'use strict';
 
-var angular = require('angular');
-var services = require('../modules').services;
-
 /**
  * Service to convert search strings.
  *
@@ -10,7 +7,8 @@ var services = require('../modules').services;
  * See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-sort.html for
  * elasticsearch's search string syntax.
  */
-angular.module(services.name).factory('sortString', function () {
+// @ngInject
+module.exports = function () {
   return {
     toAngularString: function (elasticsearchString) {
       if (!elasticsearchString) {
@@ -35,4 +33,4 @@ angular.module(services.name).factory('sortString', function () {
       }
     }
   };
-});
+};

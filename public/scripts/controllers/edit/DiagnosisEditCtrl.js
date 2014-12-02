@@ -1,11 +1,10 @@
 'use strict';
 
 var angular = require('angular');
-var controllers = require('../../modules').controllers;
 
-angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scope, $modal, crud, tableUtil,
-                                                                           gettextCatalog, sortString, FrableParams,
-                                                                           DiagnosisResource) {
+// @ngInject
+module.exports = function ($scope, $modal, crud, tableUtil, gettextCatalog, sortString, FrableParams,
+                           DiagnosisResource) {
   $scope.filters = [
     {filterId: 'name'}
   ];
@@ -94,4 +93,4 @@ angular.module(controllers.name).controller('DiagnosisEditCtrl', function ($scop
       }]
     }).result.then(reload);
   };
-});
+};

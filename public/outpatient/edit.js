@@ -7,12 +7,12 @@ var services = require('../scripts/modules').services;
 /**
  * Wraps an outpatientForm in a modal window.
  */
-angular.module(services.name).factory('outpatientEditModal', function ($modal) {
+angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ function ($modal) {
   return {
     open: function (options) {
       options = angular.extend({
         template: require('./modal-edit.html'),
-        controller: ['$scope', '$modalInstance', 'record', function ($scope, $modalInstance, record) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, record) {
           $scope.record = record;
           $scope.page = 1;
 
@@ -40,7 +40,7 @@ angular.module(services.name).factory('outpatientEditModal', function ($modal) {
             $scope.$broadcast('previous-page');
           };
 
-        }],
+        },
         resolve: {
           record: function () {
             return options.record;
@@ -53,12 +53,12 @@ angular.module(services.name).factory('outpatientEditModal', function ($modal) {
   };
 });
 
-angular.module(services.name).factory('outpatientDeleteModal', function ($modal, OutpatientVisitResource) {
+angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ function ($modal, OutpatientVisitResource) {
   return {
     open: function (options) {
       options = angular.extend({
         template: require('../partials/delete-record.html'),
-        controller: ['$scope', '$modalInstance', 'record', function ($scope, $modalInstance, record) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, record) {
           $scope.record = record;
 
           $scope.delete = function () {
@@ -69,7 +69,7 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
           $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
           };
-        }],
+        },
         resolve: {
           record: function () {
             return options.record;
@@ -82,7 +82,7 @@ angular.module(services.name).factory('outpatientDeleteModal', function ($modal,
   };
 });
 
-angular.module(controllers.name).controller('OutpatientEditCtrl', function ($scope, $modal, outpatientEditModal,
+angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ function ($scope, $modal, outpatientEditModal,
                                                                             gettextCatalog, outpatientDeleteModal,
                                                                             DiagnosisResource, DistrictResource,
                                                                             SymptomResource) {

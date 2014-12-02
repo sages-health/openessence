@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientNumericRangeFilter', function () {
+angular.module(directives.name).directive('outpatientNumericRangeFilter', /*@ngInject*/ function () {
   return {
     restrict: 'E',
     template: require('./numeric-range.html'),

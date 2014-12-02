@@ -1,9 +1,7 @@
 'use strict';
 
-var angular = require('angular');
-var directives = require('../modules').directives;
-
-angular.module(directives.name).directive('editView', function () {
+// @ngInject
+module.exports = function () {
   return {
     restrict: 'E',
     template: require('../../partials/edit.html'),
@@ -15,4 +13,4 @@ angular.module(directives.name).directive('editView', function () {
       createRecord: '&onCreate'
     }
   };
-});
+};

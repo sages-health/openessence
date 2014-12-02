@@ -1,0 +1,61 @@
+{
+  "name": "Fracas",
+  "description": "A front-end for disease surveillance",
+  "addons": [
+    "foundelasticsearch:chihuahua-standard",
+    "rediscloud:25"
+  ],
+  "env": {
+    "APP_NAME": {
+      "description": "User-facing name of the application",
+      "value": "Fracas"
+    },
+    "BUILDPACK_URL": {
+      "description": "URL to Heroku buildpack. Don't change this unless you know what you're doing.",
+      "value": "https://github.com/gabegorelick/fracas-buildpack"
+    },
+    "ELASTICSEARCH_URL": {
+      "description": "Elasticsearch URL, e.g. http://example.com:9200. If not supplied, Fracas will try to use the URL provided by your Elasticsearch addon.",
+      "required": false
+    },
+    "NODE_ENV": {
+      "description": "Whether to run in production or development mode. production is almost always what you want.",
+      "value": "production"
+    },
+    "PHANTOM": {
+      "description": "Enable PhantomJS. Best to leave this disabled until all the kinks are worked out.",
+      "value": "false"
+    },
+    "PROXY": {
+      "description": "Are we running behind a reverse proxy? On Heroku the answer is yes, so you shouldn't change this.",
+      "value": "true"
+    },
+    "REDIS_URL": {
+      "description": "Redis URL, e.g. redis://example.com:6379. If not supplied, Fracas will try to use the URL provided by your Redis addon.",
+      "required": false
+    },
+    "SESSION_SECRET": {
+      "description": "Secret token to sign session cookies with. One will be auto-generated for you.",
+      "generator": "secret"
+    },
+    "SESSION_STORE": {
+      "description": "What to store sessions in. On Heroku, you almost always want redis.",
+      "value": "redis"
+    },
+    "URL": {
+      "description": "URL clients will use to access the site. For example, https://example.herokuapp.com"
+    },
+    "USERS": {
+      "description": "You can define users here instead of in the database. `false` disables pre-registration and makes all Persona users admins.",
+      "value": "false"
+    },
+    "WORKERS": {
+      "description": "Number of worker processes to spawn for servicing web requests. Unless you plan on having 1000s of simultaneous connections, 1 is fine.",
+      "value": "1"
+    },
+    "npm_config_production": {
+      "description": "Make sure Heroku installs devDependencies. Don't change this.",
+      "value": "false"
+    }
+  }
+}

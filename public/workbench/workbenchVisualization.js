@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('workbenchVisualization', function ($timeout) {
+angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*/ function ($timeout) {
   return {
     template: '<hinge visualization="visualization" pivot="pivot" pivot-options="pivotOptions" on-close="close()" on-settings="settings()">' +
       '<outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString" ' +

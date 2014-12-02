@@ -9,7 +9,7 @@ var directives = require('../scripts/modules').directives;
 var $ = require('jquery');
 require('./pivot');
 
-angular.module(directives.name).directive('crosstab', function ($parse) {
+angular.module(directives.name).directive('crosstab', /*@ngInject*/ function ($parse) {
   return {
     restrict: 'E',
     compile: function (element, attrs) {

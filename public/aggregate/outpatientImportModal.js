@@ -3,7 +3,7 @@
 var angular = require('angular');
 var services = require('../scripts/modules').services;
 
-angular.module(services.name).factory('outpatientImportModal', function ($modal, $rootScope, aggregateUtil) {
+angular.module(services.name).factory('outpatientImportModal', /*@ngInject*/ function ($modal, $rootScope, aggregateUtil) {
   return {
     // Create or edit a record. If record is null, a new record will be created
     open: function (record, resource, template, options) {

@@ -4,7 +4,7 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', function ($timeout, $window, gettextCatalog,
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, gettextCatalog,
                                                                             outpatientAggregation, visualization,
                                                                             OutpatientVisitResource, scopeToJson) {
   return {
