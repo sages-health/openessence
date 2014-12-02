@@ -26,6 +26,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
       pre: function (scope, element) {
+
         scope.options = scope.options || {};
         scope.form = scope.form || {};
 
@@ -347,7 +348,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }, function (data) {
               params.total(data.total);
               $defer.resolve(data.results);
-            }, function error(response) {
+            }, function error (response) {
               $rootScope.$broadcast('filterError', response);
             });
           }

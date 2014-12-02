@@ -46,9 +46,6 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
         source: state.source
       });
 
-      console.log(state.source);
-      console.log("exporting NOWWWW");
-
       //TODO quick fix for url length, need to handle state/URL/viz better
       $window.state.filters.map(function (v) {
         delete v.values;

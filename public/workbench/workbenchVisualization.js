@@ -6,8 +6,8 @@ var directives = require('../scripts/modules').directives;
 angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*/ function ($timeout, updateURL) {
   return {
     template: '<hinge visualization="visualization" pivot="pivot" pivot-options="pivotOptions" on-close="close()" on-settings="settings()">' +
-      '<outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString" ' +
-      'filters="filters" form="form" options="options"></outpatient-visualization></hinge>',
+    '<outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString" ' +
+    'filters="filters" form="form" options="options" source="source"></outpatient-visualization></hinge>',
     restrict: 'E',
     scope: {
       visualization: '=?',
@@ -22,7 +22,8 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
       sizeX: '=',
       sizeY: '=',
       row: '=',
-      col: '='
+      col: '=',
+      source: '='
     },
     compile: function () {
       return {

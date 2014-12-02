@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (gettextCatalog, $modal, visualization, Dashboard,
-                                                                 $location, dateFilter, updateURL) {
+                                                                               $location, dateFilter, updateURL) {
   return {
     restrict: 'E',
     template: require('./dashboard.html'),
@@ -14,6 +14,8 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
     compile: function () {
       return {
         pre: function (scope) {
+          scope.source = 'dashboard';
+
           scope.gridsterOptions = {
             margins: [10, 10],
             columns: 12,
@@ -48,7 +50,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
            * configuration of "x" number of days back from today depending on the the new date range that was selected.
            */
 
-          var getDaysDifference = function (start, end){
+          var getDaysDifference = function (start, end) {
             var date1 = new Date(start);
             var date2 = new Date(end);
             var timeDiff = Math.abs(date2.getTime() - date1.getTime());
@@ -74,8 +76,8 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
             var index = queryString.indexOf('visitDate');
             var returnQuery;
             var dateFormat = 'yyyy-MM-dd';
-            start = dateFilter(start, dateFormat)  || '*';
-            end = dateFilter(end, dateFormat)  || '*';
+            start = dateFilter(start, dateFormat) || '*';
+            end = dateFilter(end, dateFormat) || '*';
             if (index === -1) {
               if (queryString.length > 0) {
                 returnQuery = queryString + ' AND visitDate: [' + start + ' TO ' + end + ']';
@@ -191,8 +193,10 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
                   from.setDate(from.getDate() - interval);
                   widget.visualization.state.filters[x].from = from;
                   widget.visualization.state.filters[x].to = to;
-                  widget.visualization.state.filters[x].queryString = getQueryString(widget.visualization.state.queryString, from, to);
-                  widget.visualization.state.queryString = getQueryString(widget.visualization.state.queryString, from, to);
+                  widget.visualization.state.filters[x].queryString =
+                    getQueryString(widget.visualization.state.queryString, from, to);
+                  widget.visualization.state.queryString =
+                    getQueryString(widget.visualization.state.queryString, from, to);
                 }
                 angular.extend(widget.visualization.state, {
                   id: 'viz-' + getNextVizId()// assign element a new id on insert to match the Fracas grid

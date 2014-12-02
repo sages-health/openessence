@@ -6,17 +6,19 @@ var directives = require('../scripts/modules').directives;
 angular.module(directives.name).directive('dashboardWidget', /*@ngInject*/ function ($timeout, updateURL) {
   return {
     restrict: 'E',
-    template: '<outpatient-visualization options="options" height="height" width="width" filters="options.filters" query-string="options.queryString"></outpatient-visualization>',
+    template: '<outpatient-visualization options="options" height="height" width="width" filters="options.filters" query-string="options.queryString" source="source"></outpatient-visualization>',
     scope: {
       options: '=',
       sizeX: '=',
       sizeY: '=',
       row: '=',
-      col: '='
+      col: '=',
+      source: '='
     },
     compile: function () {
       return {
         pre: function (scope, element) {
+
           var parent;
           var lis = angular.element('li.dashboard-widget');
           angular.forEach(lis, function (value) {
