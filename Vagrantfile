@@ -5,14 +5,16 @@
 # Adapted from https://github.com/coreos/coreos-vagrant
 # See https://coreos.com/docs/running-coreos/platforms/vagrant for more information.
 
-# Alpha's pretty stable, and the docs are better. Continuous delivery FTW!
-$update_channel = "alpha"
+$vm_name = "corefracas"
+
+# See https://coreos.com/releases
+$update_channel = "alpha" # need Docker >= 1.3 for `docker create` TODO change to beta/stable when Docker 1.3 lands
 
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "coreos-%s" % $update_channel
-  config.vm.box_version = ">= 308.0.1"
+  config.vm.box_version = ">= 472.0.0" # 472.0.0 is first release with Docker 1.3
   config.vm.box_url = "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json" % $update_channel
 
   # This is copied from core-os-vagrant. It probably works, but is totally untested.
@@ -31,7 +33,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vbguest.auto_update = false
   end
 
-  config.vm.define vm_name = "corefracas" do |config|
+  config.vm.define vm_name = $vm_name do |config|
     config.vm.hostname = vm_name
 
     config.vm.provider :vmware_fusion do |vb|
@@ -45,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # Set VirtualBox machine name. This means Vagrant will not append a timestamp to the VM name. This is more
       # user friendly and easier to document, at the cost of potential name conflicts.
-      vb.name = "corefracas"
+      vb.name = $vm_name
     end
 
     # This would be great if it worked, but VirtualBox doesn't accurately export the network interface to OVF.
@@ -58,55 +60,88 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # a copy of Rails. If it becomes an issue, we can use more obscure port numbers.
     config.vm.network :forwarded_port, :guest => 9000, :host => 9000
 
-    # Expose elasticsearch to the host. Useful to seed data. TODO: this might be a security risk.
-    config.vm.network :forwarded_port, :guest => 9200, :host => 9200
+    # Expose elasticsearch to the host. Useful to seed data from outside the VM
+    #config.vm.network :forwarded_port, :guest => 9200, :host => 9200
 
     # Uncomment this to port forward to guest's Docker
     #config.vm.network "forwarded_port", guest: 2375, host: 2375, auto_correct: true
 
     # If we used something like NFS, it
     # 1. wouldn't work on every host and 2. wouldn't persist across guest restarts without Vagrant remounting it
-    config.vm.synced_folder ".", "/home/core/share", :type => "rsync",
-        :rsync__exclude => [".vagrant", ".git", "node_modules"]
+    config.vm.synced_folder ".", "/home/core/fracas", :type => "rsync",
+        :rsync__exclude => [".vagrant", ".git", "node_modules", "config/settings.js"]
 
-    CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "docker/user-data")
+    # Allow configuration of CoreOS via user-data. We don't currently use this, but it is useful to configure
+    # etcd and fleet on a multi-node system.
+    CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "vm/user-data")
     if File.exists?(CLOUD_CONFIG_PATH)
       config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
       config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/",
                           :privileged => true
     end
 
-    # We kill and remove the containers to make provisioning idempotent. Otherwise, `vagrant provision` would fail
-    # if you already created any of the containers. The `|| true` is so that provisioning doesn't fail the first time,
-    # when there's no containers and `docker kill` and `docker rm` return an error.
+    # Copy services from fracas-services container onto host
+    config.vm.provision :shell, :inline => "docker pull gabegorelick/fracas-services" # make sure image is up to date
+    config.vm.provision :shell, :inline => "docker run --rm -v /home/core/services:/out gabegorelick/fracas-services sh -c 'cp /services/* /out'"
+
+    # Uncomment this to override the settings in fracas-services.
+    # fracas_env = <<-END.gsub(/^\s+/, '')
+    #   URL=http://localhost:9000
+    #   USERS=false
+    #   SESSION_SECRET=$UPER_DUPER_$ECRET
     #
-    # Using fleetctl and service files means that our containers will start on boot, useful if the VM is ever stopped,
-    # e.g. when it's exported. We could have used systemd directly instead of fleet, especially since on 1 node they're
-    # basically equivalent, but the CoreOS docs tend to guide you towards using fleet. And with fleet we can be
-    # web scale.
+    #   # commented out b/c if you're using this you probably want to build fracas locally, rather than pull it down
+    #   #PULL_IMAGE=fracas
+    #
+    #   IMAGE_NAME=fracas
+    #   WORKERS=1
+    #   NODE_ENV=production
+    #   SESSION_STORE=redis
+    # END
+    # config.vm.provision :shell, :inline => "echo '#{fracas_env}' > /home/core/services/fracas.env"
 
-    # Data volume container for elasticsearch data. Otherwise, your data would get blown away every time you
-    # restarted the elasticsearch container
-    config.vm.provision :shell, :inline => "docker kill fracas-data || true"
-    config.vm.provision :shell, :inline => "docker rm fracas-data || true"
-    config.vm.provision :shell, :inline => "docker run --name fracas-data -v /data busybox true"
 
-    # Provision elasticsearch
-    config.vm.provision :shell, :inline => "docker kill elasticsearch || true"
-    config.vm.provision :shell, :inline => "docker rm elasticsearch || true"
-    config.vm.provision :shell, :inline => "docker build -t elasticsearch /home/core/share/docker/elasticsearch"
-    config.vm.provision :shell, :inline => "fleetctl start /home/core/share/docker/elasticsearch/elasticsearch.service"
+    # This is necessary if the service files have changed
+    config.vm.provision :shell, :inline => "systemctl daemon-reload"
 
-    # Provision redis
-    config.vm.provision :shell, :inline => "docker kill redis || true"
-    config.vm.provision :shell, :inline => "docker rm redis || true"
-    config.vm.provision :shell, :inline => "docker build -t redis /home/core/share/docker/redis"
-    config.vm.provision :shell, :inline => "fleetctl start /home/core/share/docker/redis/redis.service"
+    # Install the services
+    config.vm.provision :shell, :inline => "systemctl enable /home/core/services/*.service"
 
-    # Provision fracas
-    config.vm.provision :shell, :inline => "docker kill fracas || true"
-    config.vm.provision :shell, :inline => "docker rm fracas || true"
-    config.vm.provision :shell, :inline => "docker build -t fracas /home/core/share"
-    config.vm.provision :shell, :inline => "fleetctl start /home/core/share/docker/fracas.service"
+    # Build Fracas if we're not pulling it down
+    build_fracas = <<-END
+      source /home/core/services/fracas.env
+      if [ "$PULL_IMAGE" == "" ]; then
+        docker build -t $IMAGE_NAME /home/core/fracas
+      fi
+    END
+    config.vm.provision :shell, :inline => build_fracas
+
+    # systemd doesn't like it if you pass full paths to start (or restart), so we have to get fancy.
+    # We use restart (as opposed to start) in case old versions of the services are already running.
+    config.vm.provision :shell, :inline => "for f in /home/core/services/*.service; do systemctl restart $(basename $f .service); done"
+
+    # You may want to restart CoreOS so that any services that got removed are shut down.
+    # But that's best left as a manual process.
+
+    # Seed elasticsearch. This won't work if clean or reseed depends on devDeps on other stuff that's not in the fracas
+    # container. But the alternative is to have a separate fracas-tools container that would probably duplicate a lot
+    # of what's in the fracas container. That may be best long term, but this works for now. And you can always seed
+    # manually, e.g. from outside the VM.
+    migrations_dir = "/code/server/migrations"
+    reseed_command = "node #{migrations_dir}/clean && node #{migrations_dir}/reseed"
+    seed_es = <<-END
+      if [ $(systemctl show --property ActiveState elasticsearch) == 'ActiveState=failed' ]; then
+        echo 'Elasticsearch failed to start. Not seeding.'
+      else
+        echo 'Waiting for elasticsearch...'
+        until $(curl --output /dev/null --silent --head --fail http://localhost:9200); do
+          sleep 1
+        done
+        echo 'Elasticsearch up and running. Reseeding now.'
+        docker run --rm --link elasticsearch:elasticsearch gabegorelick/fracas /bin/bash -c '#{reseed_command}'
+      fi
+    END
+
+    config.vm.provision :shell, :inline => seed_es
   end
 end

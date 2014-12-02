@@ -53,15 +53,18 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
-          visitDate: gettextCatalog.getString('Date'),
+          visitDate: gettextCatalog.getString('Visit'),
           facility: gettextCatalog.getString('Facility'),
-          district: gettextCatalog.getString('District'),
           'medicalFacility.location.district': gettextCatalog.getString('District'),
+          district: gettextCatalog.getString('District'),
+          sex: gettextCatalog.getString('Sex'),
+          age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
-          week: gettextCatalog.getString('Week'),
-          year: gettextCatalog.getString('Year'),
-          sitesReporting: gettextCatalog.getString('Number of Sites Reporting'),
-          sitesTotal: gettextCatalog.getString('Total Sites')
+          diagnoses: gettextCatalog.getString('Diagnoses'),
+          syndromes: gettextCatalog.getString('Syndromes'),
+          visitType: gettextCatalog.getString('Visit type'),
+          disposition: gettextCatalog.getString('Disposition'),
+          antiviral: gettextCatalog.getString('Antiviral')
         };
 
         // TODO make this a filter
@@ -81,7 +84,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         });
 
         scope.$on('exportVizualization', function () {
-          if (scope.visualization.name === 'line' || scope.visualization.name === 'smallline') {
+          if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it
             return;
           }
@@ -103,7 +106,17 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             // let timeSeries directive handle it
             return;
           }
-          visualization.save(scopeToJson(scope));
+
+          // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
+          var state = scopeToJson(scope);
+          ['data', 'crosstabData'].forEach(function (k) {
+            delete state[k];
+          });
+          if (state.tableParams) {
+            delete state.tableParams.data;
+          }
+
+          visualization.save(state);
         });
 
         //assuming only two deep for now..
@@ -265,6 +278,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
                   age: (source.patient && source.patient.age) ? source.patient.age.years : null,
+                  //'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                   'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                 };
 

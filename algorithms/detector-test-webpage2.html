@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script type="text/javascript" src="GS.js"></script>
+    <script type="text/javascript" src="EWMASages.js"></script>
+    <script type="text/javascript" src="CusumSagesDetector.js"></script>
+    <script type="text/javascript" src="OpenMath.js"></script>
+    <script type="text/javascript" src="Ears.js"></script>
+    <script type="text/javascript" src="OpenMath.js"></script>
+    <script type="text/javascript" src="TDistribution.js"></script>
+    <script type="text/javascript" src="FilterBaselineZeros3.js"></script>
+    <script type="text/javascript" src="OpenMath.js"></script>
+
+    <script type="text/javascript">
+
+
+        dt =
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 2, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 2, 1, 2, 1, 1, 1, 1, 0, 0, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        var ts = [];
+        //ts=calculateCUSUM(dt,0.5,28,2,0.5,4,0.01,0.05);
+        //ts = calculateEWMA(dt,0.4,2,28,0.01,0.05,2,true,1E-6,1);
+        ts = calculateGs(dt, new Date(2007, 00, 10), true, [0.3, 0, 0.05], 56, 0, 0, 0.2, 0.5, 0.01, 0.05);
+        tstat = ts[0];
+        //alert(tstat)
+        pv = ts[1]
+        //alert(pv)
+        ts2 = [];
+        ts2 = transpose(ts);
+
+        var csvRows = [];
+
+        for (var i = 0, l = ts2.length; i < l; ++i) {
+            csvRows.push(ts2[i].join(','));
+        }
+
+        //alert(csvRows);
+
+        var csvString = csvRows.join("%0A");
+        var a = document.createElement('a');
+        a.href = 'data:attachment/csv,' + csvString;
+        a.target = '_blank';
+        a.download = 'myFile.csv';
+
+        document.body.appendChild(a);
+        a.click();
+
+    </script>
+
+    <meta charset="EUC-KR">
+    <title>Insert title here</title>
+</head>
+<body>
+
+</body>
+</html>

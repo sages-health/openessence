@@ -3,14 +3,10 @@
 .vagrant
 bower_components
 config
-docker
 logs
 node_modules
-po
-public
-tasks
 test
-views
+vm
 *.key
 *.cer
 *.crt

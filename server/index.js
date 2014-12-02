@@ -149,6 +149,10 @@ app.use('/reports', express()
   .use(auth.denyAnonymousAccess)
   .use(require('./reports')()));
 
+app.use('/detectors', express()
+    .use(auth.denyAnonymousAccess)
+    .use(require('./detectors')()));
+
 app.use(require('./error').middleware);
 
 module.exports = express()

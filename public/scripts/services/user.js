@@ -31,7 +31,7 @@ module.exports = function ($resource, $rootScope, $log, $window, appName, person
 
   var afterLogin = function (_user) {
 
-    console.log ('Logged in user is ' + _user);
+    //console.log ('Logged in user is ' + _user);
     user = _user;
     $rootScope.$broadcast('login');
   };

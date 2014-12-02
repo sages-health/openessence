@@ -17,40 +17,23 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
   };
 
-  $scope.filterTypes = [
-      {
-        filterId: 'date',
-        type: 'date-range',
-        field: 'reportDate',
-        name: gettextCatalog.getString('Date')
-      },
-      {
-        filterId: 'districts',
-        type: 'multi-select',
-        field: 'medicalFacility.district',
-        store: {
-          resource: DistrictResource,
-          field: 'name'
-        },
-        name: gettextCatalog.getString('District')
-      },
-      {
-        filterId: 'symptoms',
-        type: 'multi-select',
-        field: 'symptoms.name',
-        store: {
-          resource: SymptomResource,
-          field: 'name'
-        },
-        name: gettextCatalog.getString('Symptom')
-      }
-    ];
-
   // TODO make dependent on enabled form fields
   $scope.pivotOptions = [
     {
+      value: 'age',
+      label: gettextCatalog.getString('Age')
+    },
+    {
       value: 'medicalFacility.location.district',
       label: gettextCatalog.getString('District')
+    },
+    {
+      value: 'diagnoses',
+      label: gettextCatalog.getString('Diagnoses')
+    },
+    {
+      value: 'sex',
+      label: gettextCatalog.getString('Sex')
     },
     {
       value: 'symptoms',
@@ -204,32 +187,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     $scope.visualizations.push(viz);
     updateURL.updateVisualization(options.id, viz);
   };
-
-  var visualizationName = $location.search().visualization;
-  if (visualizationName) {
-    var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
-    var options = {
-      pivot: viz.pivot
-    };
-
-    $scope.filters = viz.filters.map(function (filter) {
-      if (filter.value) {
-        return {
-          filterId: filter.filterId,
-          value: filter.value
-        };
-      } else {
-        return {
-          filterId: filter.filterId,
-          to: filter.to,
-          from: filter.from
-        };
-      }
-    });
-
-    $scope.addVisualization(viz.visualization.name, options);
-    $scope.vizMenuOpen = false;
-  }
 
   $scope.removeVisualization = function (visualization) {
     updateURL.removeVisualization(visualization.options.id);
