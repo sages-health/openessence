@@ -62,9 +62,9 @@ gulp.task('libs', function () {
     .bundle() // TODO use pre-built bundles
     .pipe(source('libs.js'))
     .pipe(buffer()) // gulp-rev doesn't like streams, so convert to buffer
-    .pipe(uglify({
-      preserveComments: 'some' // preserve license headers
-    }))
+//    .pipe(uglify({
+//      preserveComments: 'some' // preserve license headers
+//    }))
     .pipe(rev())
     .pipe(gulp.dest('dist/public/scripts/'));
 });
@@ -110,9 +110,9 @@ gulp.task('scripts', ['partials'], function () {
       add: true,
       singleQuotes: true
     }))
-    .pipe(uglify({
-      preserveComments: 'some' // preserve license headers
-    }))
+//    .pipe(uglify({
+//      preserveComments: 'some' // preserve license headers
+//    }))
     .pipe(rev())
     .pipe(gulp.dest('dist/public/scripts'));
 });

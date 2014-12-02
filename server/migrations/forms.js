@@ -2,6 +2,7 @@
 
 module.exports = [
   {
+    //TODO copy to create agg "demo"
     // everything enabled for demo
     name: 'demo',
     fields: [
@@ -18,7 +19,7 @@ module.exports = [
       // if this field is enabled
       {
         name: 'submissionDate',
-        enabled: true
+        enabled: false
       },
 
       {
@@ -28,7 +29,7 @@ module.exports = [
         name: 'medicalFacility',
         enabled: false,
         // can't do this with JSON
-        values: require('./facilities.json')
+        values: require('./facilities_agg.json')
       },
 
       // Allow user-supplied values for medical facility.
@@ -36,14 +37,14 @@ module.exports = [
       // the user submitted value to.
       {
         name: 'medicalFacility.other',
-        enabled: true
+        enabled: false
       },
 
       // geographic fields, these are collected via medical facility, so users don't have to input them separately
       {
         name: 'medicalFacility.location.district',
         enabled: true,
-        values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
+        values: Object.keys(require('./facilities_agg.json').reduce(function (districts, facility) {
           // construct set of districts
           if (facility.location && facility.location.district) {
             var district = facility.location.district;
@@ -59,69 +60,96 @@ module.exports = [
             };
           })
       },
+      {
+        name: 'medicalFacility.location.country',
+        enabled: false,
+        values: Object.keys(require('./facilities_agg.json').reduce(function (countries, facility) {
+          // construct set of country
+          if (facility.location && facility.location.country) {
+            var country = facility.location.country;
+            countries[country] = true;
+          }
 
-      // more geographic fields as needed
+          return countries;
+        }, {}))
+          .sort()
+          .map(function (name) {
+            return {
+              name: name
+            };
+          })
+      },
+
+      {
+        name: 'medicalFacility.sites.total',
+        enabled: true
+      },
+
+      {
+        name: 'medicalFacility.sites.reporting',
+        enabled: true
+      },
 
       // patient info
       {
         name: 'patient.id',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.name',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.sex',
-        enabled: true
+        enabled: false
       },
 
       {
         name: 'patient.dateOfBirth',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.age',
-        enabled: true
+        enabled: false
       },
 
       // pregnancy status
       {
         name: 'patient.pregnant.is',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.pregnant.trimester',
-        enabled: true
+        enabled: false
       },
 
       // patient contact info
       {
         name: 'patient.phone',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.address',
-        enabled: true
+        enabled: false
       },
 
       // patient vitals
       {
         name: 'patient.temperature',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.pulse',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.weight',
-        enabled: true
+        enabled: false
       },
 
       {
         name: 'patient.preExistingConditions',
-        enabled: true,
+        enabled: false,
         values: [
           'Chronic cardiac disease',
           'Asthma',
@@ -141,7 +169,7 @@ module.exports = [
       },
       {
         name: 'patient.preExistingConditions.other',
-        enabled: true
+        enabled: false
       },
 
       // specimen collection, e.g. for flu culturing
@@ -171,7 +199,7 @@ module.exports = [
       {
         name: 'symptoms',
         enabled: true,
-        values: require('./symptom.json')
+        values: require('./symptom_for_aggregates.json')
       },
       {
         name: 'symptoms.other',
@@ -180,17 +208,17 @@ module.exports = [
 
       {
         name: 'diagnoses',
-        enabled: true,
+        enabled: false,
         values: require('./diagnosis.json')
       },
       {
         name: 'diagnoses.other',
-        enabled: true
+        enabled: false
       },
 
       {
         name: 'disposition',
-        enabled: true,
+        enabled: false,
         values: require('./disposition.json')
       },
       {
@@ -202,7 +230,7 @@ module.exports = [
       },
       {
         name: 'notes',
-        enabled: true
+        enabled: false
       }
     ]
   }

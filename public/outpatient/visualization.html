@@ -9,6 +9,12 @@
           <td ng-show="fields.visitDate.enabled" data-title="'Visit' | translate" data-sortable="'visitDate'">
             <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
           </td>
+          <td data-title="strings.week">
+            <a>{{getWeek(visit._source.reportDate)}}</a>
+          </td>
+          <td data-title="strings.year">
+            <a>{{getYear(visit._source.reportDate)}}</a>
+          </td>
 
           <!-- could also roll up to geographic area, but we usually deal with so few sites that that's not helpful -->
           <td ng-show="fields.medicalFacility.enabled" data-title="'Facility' | translate" data-sortable="'medicalFacility.name'">
@@ -68,6 +74,10 @@
   <div class="animation-switch" ng-switch-when="line">
     <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
                             options="options"></outpatient-time-series>
+  </div>
+  <div class="animation-switch" ng-switch-when="smallline">
+    <outpatient-small-time-series filters="filters" query-string="queryString" series="pivot.cols"
+                                  options="options"></outpatient-small-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="pie">
     <outpatient-pie-chart

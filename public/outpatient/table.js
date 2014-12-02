@@ -20,6 +20,16 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
       return {
         pre: function (scope) {
           scope.condensed = condensed;
+          scope.strings = {
+            visitDate: gettextCatalog.getString('Date'),
+            facility: gettextCatalog.getString('Facility'),
+            district: gettextCatalog.getString('District'),
+            symptoms: gettextCatalog.getString('Symptoms'),
+            week: gettextCatalog.getString('Week'),
+            year: gettextCatalog.getString('Year'),
+            sitesReporting: gettextCatalog.getString('Number of Sites Reporting'),
+            sitesTotal: gettextCatalog.getString('Total Sites')
+          };
 
           // index fields by name
           scope.$watch('form.fields', function (fields) {

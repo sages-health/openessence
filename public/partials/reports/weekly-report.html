@@ -20,7 +20,12 @@
       <div translate>Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}</div>
       <div class="clearfix">
         <div class="pull-left" style="font-size: 80%">
-          <h4>{{report.name}}</h4>
+          <h4>
+            {{report.name}}
+            <button ng-show="allowExport" class="btn btn-primary" ng-click="export()">
+              <span class="icon-export"></span>
+            </button>
+          </h4>
         </div>
         <div class="pull-right" style="font-size: 80%">Year: {{report.year}} | Week: {{report.week}} | Ending on:
           {{report.endDateString}}
