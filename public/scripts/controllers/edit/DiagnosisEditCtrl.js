@@ -28,7 +28,7 @@ module.exports = function ($scope, $modal, crud, tableUtil, gettextCatalog, sort
   $scope.diagnoses = {};
   $scope.toggleEnabled = function (diagnosisName) {
     var diagnosis = $scope.diagnoses[diagnosisName];
-    DiagnosisResource.update({_id: diagnosis._id, version: diagnosis._version}, diagnosis._source, function (response) {
+    DiagnosisResource.update({id: diagnosis._id, version: diagnosis._version}, diagnosis._source, function (response) {
       // update version so user can edit again
       diagnosis._version = response._version;
     });
@@ -83,7 +83,7 @@ module.exports = function ($scope, $modal, crud, tableUtil, gettextCatalog, sort
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.diagnosis  = record._source.name;
         $scope['delete'] = function () {
-          DiagnosisResource.remove({_id: record._id}, function () {
+          DiagnosisResource.remove({id: record._id}, function () {
             $modalInstance.close(record);
           });
         };

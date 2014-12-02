@@ -82,6 +82,11 @@ function codexMiddleware (controller) {
     }
   });
 
+  // give controller fine-grained control over the middleware, if it wants it
+  if (controller.middleware) {
+    return controller.middleware(app) || app;
+  }
+
   return app;
 }
 

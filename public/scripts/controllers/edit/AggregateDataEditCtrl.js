@@ -83,7 +83,8 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
     acuteFeverAndRash: gettextCatalog.getString('Acute Fever and Rash'),
     diarrhoea: gettextCatalog.getString('Diarrhoea'),
     influenzaLikeIllness: gettextCatalog.getString('Influenza-like Illness'),
-    prolongedFever: gettextCatalog.getString('Prolonged Fever')
+    prolongedFever: gettextCatalog.getString('Prolonged Fever'),
+    dengue: gettextCatalog.getString('Dengue-like Illness')
   };
   $scope.editTemplate = require('../../../partials/edit/forms/aggregate-data-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
@@ -118,7 +119,7 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
   };
 
   var allSymptoms = [$scope.strings.acuteFeverAndRash, $scope.strings.diarrhoea, $scope.strings.influenzaLikeIllness,
-                     $scope.strings.prolongedFever];
+                     $scope.strings.prolongedFever, $scope.strings.dengue];
   var defaultSymptoms = allSymptoms.map(function (el) {
     return {name: el};
   });

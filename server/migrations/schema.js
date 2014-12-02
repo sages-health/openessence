@@ -10,139 +10,22 @@ var logger = conf.logger;
 var addPaperTrail = require('../caper-trail').mapping;
 var client = conf.elasticsearch.newClient();
 
-// TODO timestamp indices and create aliases
-
 // List of requests to make to elasticsearch. Note to future maintainers: try to keep this sorted alphabetically
 var indexRequests = [
-  function dashboard (callback) {
-    client.indices.create({
-      index: 'dashboard',
-      body: {
-        mappings: {
-          dashboard: addPaperTrail({
-            properties: {
-              name: {
-                type: 'string',
-                index: 'not_analyzed'
-              },
-              description: {
-                type: 'string',
-                index: 'not_analyzed'
-              },
-              widgets: {
-                type: 'object',
-                index: 'no'
-              }
-            }
-          })
-        }
-      }
-    }, callback);
-  },
+  // We store everything in two indexes. One holds reference data (e.g. possible diagnoses, symptoms, etc.)
+  // and settings. All these are combined into one index since there's not too much data and the overhead of more
+  // indexes, including the increase in hosting costs, isn't worth it.
+  // The other index holds actual surveillance data. Since this index can have a lot of data, it's distinct from
+  // the other one to allow easier scaling.
 
-  /**
-   * Holds a single record containing the last time we date shifted. Necessary so date shifting doesn't compound.
-   */
-  function dateShift (callback) {
+  function fracasData (callback) {
     client.indices.create({
-      index: 'date-shift',
+      index: 'fracas_data_' + Date.now(),
       body: {
-        mappings: {
-          shift: { // no paper trail required
-            properties: {
-              date: {
-                type: 'date'
-              }
-            }
-          }
-        }
-      }
-    }, callback);
-  },
-
-  function diagnosis (callback) {
-    client.indices.create({
-      index: 'diagnosis', // don't use model b/c that's kind of a circular dependency (and not what Rails does)
-      body: {
-        mappings: {
-          diagnosis: addPaperTrail({
-            properties: {
-              name: {
-                type: 'string',
-                fields: {
-                  raw: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              },
-
-              /**
-               * True if this diagnosis is being collected.
-               */
-              enabled: {
-                type: 'boolean'
-              }
-            }
-          })
-        }
-      }
-    }, callback);
-  },
-
-  function dischargeType (callback) {
-    client.indices.create({
-      index: 'discharge_type',
-      body: {
-        mappings: {
-          'discharge_type': addPaperTrail({
-            properties: {
-              name: {
-                type: 'string',
-                fields: {
-                  raw: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              }
-            }
-          })
-        }
-      }
-    }, callback);
-  },
-
-  function district (callback) {
-    client.indices.create({
-      index: 'region', // not 'district' so that other geographic units can be tracked, hopefully we don't regret this
-      body: {
-        mappings: {
-          district: addPaperTrail({
-            properties: {
-              name: {
-                type: 'string',
-                fields: {
-                  raw: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              },
-              geometry: {
-                type: 'geo_shape'
-              }
-            }
-          })
-        }
-      }
-    }, callback);
-  },
-
-  function outpatient (callback) {
-    client.indices.create({
-      index: 'outpatient',
-      body: {
+        aliases: {
+          'fracas_data': {}, // alias that points to latest version of index
+          'outpatient_visit': {filter: {type: {value: 'outpatient_visit'}}}
+        },
         settings: {
           analysis: {
             analyzer: {
@@ -164,8 +47,9 @@ var indexRequests = [
           }
         },
         mappings: {
-          visit: addPaperTrail({
+          'outpatient_visit': addPaperTrail({
             properties: {
+              // TODO rename to visitDate
               reportDate: {
                 type: 'date'
               },
@@ -261,7 +145,7 @@ var indexRequests = [
 
               patient: {
                 properties: {
-                  _id: {
+                  id: {
                     type: 'integer',
                     index: 'not_analyzed'
                   },
@@ -338,11 +222,111 @@ var indexRequests = [
     }, callback);
   },
 
-  function symptom (callback) {
+  function fracasSettings (callback) {
     client.indices.create({
-      index: 'symptom',
+      index: 'fracas_settings_' + Date.now(),
       body: {
+        // Make aliases for each type in our index so that clients are abstracted from our storage topology
+        aliases: [
+          'dashboard',
+          'date-shift',
+          'diagnosis',
+          'discharge',
+          'location',
+          'symptom',
+          'syndrome',
+          'user',
+          'visit',
+          'visualization',
+          'workbench'
+        ].reduce(function (aliases, alias) {
+            aliases[alias] = {filter: {type: {value: alias}}};
+            return aliases;
+          }, {'fracas_settings': {}}),
+
         mappings: {
+          // Saved dashboards
+          dashboard: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              description: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              widgets: {
+                type: 'object',
+                index: 'no'
+              }
+            }
+          }),
+
+          // Holds a single record containing the last time we date shifted. Necessary so date shifting doesn't
+          // compound.
+          'date_shift': {
+            properties: {
+              date: {
+                type: 'date'
+              }
+            }
+          },
+
+          // Diagnosis reference data
+          diagnosis: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+
+              /**
+               * True if this diagnosis is being collected. TODO get rid of this
+               */
+              enabled: {
+                type: 'boolean'
+              }
+            }
+          }),
+
+          // Discharge types
+          discharge: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          }),
+
+          location: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              geometry: {
+                type: 'geo_shape'
+              }
+            }
+          }),
+
           symptom: addPaperTrail({
             properties: {
               name: {
@@ -356,23 +340,14 @@ var indexRequests = [
               },
 
               /**
-               * True if this symptom is being collected.
+               * True if this symptom is being collected. TODO get rid of this
                */
               enabled: {
                 type: 'boolean'
               }
             }
-          })
-        }
-      }
-    }, callback);
-  },
+          }),
 
-  function syndrome (callback) {
-    client.indices.create({
-      index: 'syndrome',
-      body: {
-        mappings: {
           syndrome: addPaperTrail({
             properties: {
               name: {
@@ -383,26 +358,10 @@ var indexRequests = [
                     index: 'not_analyzed'
                   }
                 }
-              },
-
-              /**
-               * True if this syndrome is being collected.
-               */
-              enabled: {
-                type: 'boolean'
               }
             }
-          })
-        }
-      }
-    }, callback);
-  },
+          }),
 
-  function user (callback) {
-    client.indices.create({
-      index: 'user',
-      body: {
-        mappings: {
           user: addPaperTrail({
             properties: {
               username: {
@@ -448,18 +407,10 @@ var indexRequests = [
                 }
               }
             }
-          })
-        }
-      }
-    }, callback);
-  },
+          }),
 
-  function visitType (callback) {
-    client.indices.create({
-      index: 'visit_type',
-      body: {
-        mappings: {
-          'visit_type': addPaperTrail({
+          // Types of visits
+          visit: addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -471,17 +422,9 @@ var indexRequests = [
                 }
               }
             }
-          })
-        }
-      }
-    }, callback);
-  },
+          }),
 
-  function visualization (callback) {
-    client.indices.create({
-      index: 'visualization',
-      body: {
-        mappings: {
+          // Saved visualizations
           visualization: addPaperTrail({
             properties: {
               name: {
@@ -498,17 +441,9 @@ var indexRequests = [
                 index: 'no'
               }
             }
-          })
-        }
-      }
-    }, callback);
-  },
+          }),
 
-  function workbench (callback) {
-    client.indices.create({
-      index: 'workbench',
-      body: {
-        mappings: {
+          // Saved workbenches
           workbench: addPaperTrail({
             properties: {
               name: {
@@ -550,6 +485,13 @@ bluebird.settle(indexRequests.map(function (ir) {
     logger.info('Successfully created %d out of %d indices (%d errors)', numSuccesses, indexRequests.length,
       errors.length);
   })
+
+  // Can't do this until alias of aliases works: https://github.com/elasticsearch/elasticsearch/issues/3138
+//  .then(bluebird.promisify(function (callback) {
+//    // create an alias to hold all our data
+//    client.indices.putAlias({name: 'fracas', index: ['fracas_data', 'fracas_settings']}, callback);
+//  })())
+
   .catch(function (e) {
     // this shouldn't ever happen, but in case it does we don't want to swallow errors
     logger.error({err: e}, 'Error creating indices');

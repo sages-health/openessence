@@ -138,8 +138,8 @@ var User = codex.model({
   preInsert: function (user, callback) {
     async.parallel({
       hash: function _hash (callback) {
-        if (!user.doc.password) {
-          return callback(new Error('Cannot create user without password'));
+        if (!user.doc.password) { // Persona users don't have passwords
+          return callback(null,  user.doc.password);
         }
 
         User.hashPassword(user.doc.password, function (err, password) {

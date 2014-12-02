@@ -43,7 +43,7 @@ async.parallel([
   function dateShift (callback) {
     client.index({
       index: 'date-shift',
-      type: 'shift',
+      type: 'date-shift',
       id: '1', // so it's easy to get
       body: {
         // this should be changed if the dates in outpatient-visits.json are ever changed
@@ -107,7 +107,7 @@ async.parallel([
   }
 
   client.indices.refresh({
-    index: '_all' // TODO limit to only codex-managed indices
+    index: '_all'
   }, function (err) {
     client.close();
 

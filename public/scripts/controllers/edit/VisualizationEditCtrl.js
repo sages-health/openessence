@@ -107,7 +107,7 @@ module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, Frable
           var showError = function (data) {
             if (data.status === 409) {
               // Get latest record data and update form
-              VisualizationResource.get({_id: $scope.record._id}, function (newData) {
+              VisualizationResource.get({id: $scope.record._id}, function (newData) {
                 $scope.conflictError = true;
                 $scope.record = newData;
                 $scope.visualization = newData._source;
@@ -119,8 +119,8 @@ module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, Frable
 
           if ($scope.record._id || $scope.record._id === 0) { // TODO move this logic to resource
             VisualizationResource.update(angular.extend({
-                _id: $scope.record._id,
-                _version: $scope.record._version
+                id: $scope.record._id,
+                version: $scope.record._version
               }, $scope.visualization), cleanup, showError);
           } else {
             VisualizationResource.save($scope.visualization, cleanup, showError);
@@ -153,7 +153,7 @@ module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, Frable
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.record = record;
         $scope.delete = function () {
-          VisualizationResource.remove({_id: record._id}, function () {
+          VisualizationResource.remove({id: record._id}, function () {
             $modalInstance.close(record);
           });
         };

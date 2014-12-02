@@ -65,7 +65,22 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           syndromes: gettextCatalog.getString('Syndromes'),
           visitType: gettextCatalog.getString('Visit type'),
           discharge: gettextCatalog.getString('Discharge type'),
-          edit: gettextCatalog.getString('Edit')
+          edit: gettextCatalog.getString('Edit'),
+          aggregateData: gettextCatalog.getString('Aggregate Data'),
+          newAggregateData: gettextCatalog.getString('New'),
+          import: gettextCatalog.getString('Import'),
+          upload: gettextCatalog.getString('Upload'),
+          reportDate: gettextCatalog.getString('Date'),
+          week: gettextCatalog.getString('Week'),
+          year: gettextCatalog.getString('Year'),
+          sitesTotal: gettextCatalog.getString('Total Sites'),
+          sitesReporting: gettextCatalog.getString('Number of Sites Reporting'),
+          count: gettextCatalog.getString('Count'),
+          symptomName: gettextCatalog.getString('Symptom Name'),
+          acuteFeverAndRash: gettextCatalog.getString('Acute Fever and Rash'),
+          diarrhoea: gettextCatalog.getString('Diarrhoea'),
+          influenzaLikeIllness: gettextCatalog.getString('Influenza-like Illness'),
+          prolongedFever: gettextCatalog.getString('Prolonged Fever')
         };
 
         scope.printAggregate = function (field, includeCount) {

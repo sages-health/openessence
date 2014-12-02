@@ -277,6 +277,7 @@ function model (modelOptions) {
         index: model.index,
         type: model.type,
         id: model.id,
+        version: model.version,
         refresh: model.refresh,
         body: model.doc
       }, params);

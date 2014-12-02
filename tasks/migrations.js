@@ -1,24 +1,55 @@
 'use strict';
 
+var bluebird = require('bluebird');
 var gulp = require('gulp');
 var path = require('path');
 var fork = require('child_process').fork;
-var url = require('url');
-var request = require('request');
 var conf = require('../server/conf');
+var logger = conf.logger;
+var client = conf.elasticsearch.newClient();
 
 gulp.task('es-clean', function (done) {
-  var reqUrl = url.parse(conf.elasticsearch.host);
-  reqUrl.pathname = '/_all';
+  // This will only delete the indexes that our aliases point to. If your cluster has other indexes, or older versions
+  // of fracas indexes, they will be left alone.
+  var requests = [
+    function (callback) {
+      client.indices.delete({index: 'fracas_data'}, callback);
+    },
+    function (callback) {
+      client.indices.delete({index: 'fracas_settings'}, callback);
+    }
+  ];
 
-  // equivalent to curl -XDELETE <URL>/_all
-  request.del(url.format(reqUrl), function (err) {
-    done(err);
-  });
+  // Use fancy promises so that parallel requests aren't killed if one encounters an error
+  bluebird.settle(requests.map(function (r) {
+    return bluebird.promisify(r)();
+  }))
+    .then(function (promiseInspections) {
+      var errors = promiseInspections.filter(function (pi) {
+        return pi.isRejected();
+      }).map(function (pi) {
+        return pi.error();
+      });
+
+      errors.forEach(function (e) {
+        logger.error({err: e}, 'Error deleting index');
+      });
+
+      var numSuccesses = requests.length - errors.length;
+      logger.info('Successfully deleted %d out of %d indices (%d errors)', numSuccesses, requests.length,
+        errors.length);
+    })
+    .catch(function (e) {
+      // this shouldn't ever happen, but in case it does we don't want to swallow errors
+      logger.error({err: e}, 'Error deleting indices');
+    })
+    .finally(function () {
+      client.close();
+      done();
+    });
 });
 
-// Delete everything in your elasticsearch cluster and reseed your data. Obviously, this should be run with extreme
-// caution.
+// Delete all your Fracas data and reseed. Obviously, this should be run with extreme caution.
 gulp.task('reseed', ['es-clean'], function (done) {
   var schema = fork(path.resolve(__dirname, '..', 'server/migrations/schema.js'));
   var childErr;

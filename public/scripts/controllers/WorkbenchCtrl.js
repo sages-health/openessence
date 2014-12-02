@@ -33,16 +33,16 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
       }
     ];
 
-    $scope.pivotOptions = [
-      {
-        value: 'districts',
-        label: gettextCatalog.getString('District')
-      },
-      {
-        value: 'symptoms',
-        label: gettextCatalog.getString('Symptoms')
-      }
-    ];
+  $scope.pivotOptions = [
+    {
+      value: 'districts',
+      label: gettextCatalog.getString('District')
+    },
+    {
+      value: 'symptoms',
+      label: gettextCatalog.getString('Symptoms')
+    }
+  ];
 
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];

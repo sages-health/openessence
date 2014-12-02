@@ -22,7 +22,7 @@ angular.module(directives.name).directive('aggregateUpload', /*@ngInject*/ funct
           scope.data = {};
           scope.data.tableData = [];
           scope.data.tableParams = {};
-
+          scope.uploading = false;
           $rootScope.$on('csvData', function () {
             scope.$apply(function () {
               scope.noData = !scope.data.tableData || scope.data.tableData.length === 0 ? true : null;
@@ -40,16 +40,30 @@ angular.module(directives.name).directive('aggregateUpload', /*@ngInject*/ funct
             }
             scope.noData = false;
 
-            var cleanup = function () {
-              scope.noData = false;
-              scope.onSubmit(scope.uploadAggregateForm);
+            var updateProgress = function(){
+              scope.done++;
+              scope.progress = parseInt((100 * scope.done/scope.total), 10);
+              if(scope.done === scope.total){
+                scope.onSubmit(scope.uploadAggregateForm);
+              }
             };
 
+            var success = function () {
+              updateProgress();
+            };
+
+            var failure = function () {
+              updateProgress();
+            };
+
+            scope.done = 0;
+            scope.total = scope.data.tableData.length;
+            scope.uploading = true;
             scope.data.tableData.forEach(function (data) {
               if (data.reportDate) {
                 var record = aggregateUtil.csvToAggregate(data);
                 //TODO: bulk insert
-                OutpatientVisitResource.save(record, cleanup);
+                OutpatientVisitResource.save(record, success, failure);
               }
             });
           };
