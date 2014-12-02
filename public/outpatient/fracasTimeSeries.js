@@ -4,9 +4,12 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, gettextCatalog,
-                                                                            outpatientAggregation, visualization,
-                                                                            OutpatientVisitResource, scopeToJson) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location,
+                                                                                          updateURL, gettextCatalog,
+                                                                                          outpatientAggregation,
+                                                                                          visualization,
+                                                                                          OutpatientVisitResource,
+                                                                                          scopeToJson, EditSettings) {
   return {
     restrict: 'E',
     template: require('./time-series.html'),
@@ -21,16 +24,43 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
     compile: function () {
       return {
         pre: function (scope, element) {
-          scope.options = scope.options || {};
-          scope.series = scope.series || scope.options.series || [];
+          scope.titleXpx = scope.titleYpx = scope.yLabelXpx = scope.yLabelYpx = scope.xLabelXpx = scope.xLabelYpx = 10;
 
+          var defaultLabels = {
+            title: gettextCatalog.getString('Timeseries'),
+            y: gettextCatalog.getString('Count'),
+            x: gettextCatalog.getString('Date')
+          };
+
+          scope.options = scope.options || {};
+          scope.options.labels = scope.options.labels || defaultLabels;
+
+          scope.series = scope.series || scope.options.series || [];
           scope.xAxisTickFormat = function (d) {
             return d3.time.format('%Y-%m-%d')(new Date(d));
           };
 
           scope.interval = scope.options.interval || 'day'; // TODO auto-select based on date range
 
-          scope.$on('export', function () {
+          scope.$on('editVizualizationSettings', function () {
+            EditSettings.openSettingsModal('timeseries', scope.options.labels)
+              .result.then(function (labels) {
+                scope.options.labels = labels;
+              });
+          });
+
+          scope.$on('exportVizualization', function () {
+            visualization.export(angular.extend({}, scopeToJson(scope), {
+              visualization: {
+                name: 'line'
+              },
+              pivot: {
+                cols: scope.series
+              }
+            }));
+          });
+
+          scope.$on('saveVizualization', function () {
             visualization.save(angular.extend({}, scopeToJson(scope), {
               visualization: {
                 name: 'line'
@@ -124,7 +154,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             if (!dateFilter) {
               dateFilter = {
-                filterId: 'date',
+                filterID: 'date',
                 from: new Date(from),
                 to: new Date(to)
               };
@@ -148,7 +178,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           var plotSeries = function (seriesName, seriesType) {
             if (scope.filters) {
               var filters = scope.filters.filter(function (filter) {
-                return filter.filterId === seriesType && filter.value.length > 0 &&
+                return filter.filterID === seriesType && filter.value.length > 0 &&
                   filter.value.indexOf(seriesName) === -1;
               });
               return filters.length === 0;
@@ -160,7 +190,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             var aggs = {};
             var dateAgg = {
               'date_histogram': {
-                field: 'reportDate',
+                field: 'visitDate',
                 interval: scope.interval,
                 'min_doc_count': 0
               }
@@ -573,8 +603,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             var height = scope.height || scope.options.height || scope.timeseries.height || 300;
             var width = scope.width || scope.options.width || scope.timeseries.width || element.find('.custom-timeseries').parent().width();
-            var ymargin = 20;
-            var xmargin = 40;
+            var ymargin = 30;
+            var xmargin = 50;
+
+            scope.titleXpx = (width / 2);
+            scope.titleYpx = (ymargin / 2);
+            scope.yLabelXpx = (xmargin / 3);
+            scope.yLabelYpx = (height / 2);
+            scope.xLabelXpx = (width / 2);
+            scope.xLabelYpx = (height - ymargin / 6);
 
             var x = d3.scale.linear()
                 .domain([xmin, xmax])
@@ -706,7 +743,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 currLegendWidth = wordWidth;
                 oldLegendWidth = 0;
               }
-              return 'translate(' + (xmargin + oldLegendWidth) + ',' + ((currLegendRow + 1) * 15) +')';
+              return 'translate(' + (xmargin + oldLegendWidth) + ',' + ((currLegendRow + 2) * 15) +')';
             });
             item.append('text')
                 .text(function (d) {
@@ -721,7 +758,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   return d3.scale.category20().range()[i % 20];
                 });
 
-            var legendHeight = (currLegendRow + 1) * 15;
+            var legendHeight = (currLegendRow + 2) * 15;
 
             timeseries.attr('width', width + xmargin)
                 .attr('height', height + legendHeight);
@@ -762,13 +799,35 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             };
           };
 
+          var updateVisualization = function () {
+            delete scope.options.options;
+            updateURL.updateVisualization(scope.options.id, {
+              options: scope.options,
+              series: scope.series || scope.options.series || [],
+              interval: scope.interval || scope.options.interval,
+              visualization: {
+                name: 'line'
+              },
+              pivot: {
+                cols: scope.series,
+                rows: []
+              }
+            });
+          };
+
           scope.$watchCollection('[series, queryString, interval]', function () {
             reload();
+            updateVisualization();
+          });
+
+          scope.$watchCollection('[options.labels.title, options.labels.x, options.labels.y]', function () {
+            updateVisualization();
           });
 
           // No need to reload data
           scope.$watchCollection('[options.height, options.width]', function () {
             scope.redraw();
+            updateVisualization();
           });
         }
       };

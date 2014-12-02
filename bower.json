@@ -2,10 +2,10 @@
   "name": "fracas",
   "version": "3.0.0",
   "dependencies": {
-    "angular": "1.2.20",
-    "angular-animate": "1.2.20",
-    "angular-resource": "1.2.20",
-    "angular-sanitize": "1.2.20",
+    "angular": "1.2.25",
+    "angular-animate": "1.2.25",
+    "angular-resource": "1.2.25",
+    "angular-sanitize": "1.2.25",
     "angular-bootstrap": "~0.10.0",
     "angular-ui-router": "0.2.8-bowratic-tedium",
     "angular-gettext": "~0.2.4",
@@ -18,15 +18,15 @@
     "angular-ui-sortable": "~0.12.8",
     "angular-gridster": "~0.9.11",
     "ng-debounce": "~0.1.4",
-    "moment": "~2.7.0",
     "ng-file-upload": "~1.6.1",
     "ng-grid": "~2.0.12",
-    "jquery-csv": "https://github.com/mirlord/jquery-csv/archive/78724d620cc5e4d151142a7954535d27758396e8.zip"
+    "jquery-csv": "https://github.com/mirlord/jquery-csv/archive/78724d620cc5e4d151142a7954535d27758396e8.zip",
+    "angular-order-object-by": "~1.1.0"
   },
   "devDependencies": {
-    "angular-mocks": "~1.2.13"
+    "angular-mocks": "1.2.25"
   },
   "resolutions": {
-    "angular": "1.2.20"
+    "angular": "1.2.25"
   }
 }

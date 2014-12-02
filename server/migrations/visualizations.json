@@ -3,7 +3,7 @@
     "name": "weeklyseries",
     "state": {
       "options": {},
-      "queryString": "reportDate: [2009-03-06 TO 2010-06-04]",
+      "queryString": "visitDate: [2009-03-06 TO 2010-06-04]",
       "filters": [
         {
           "id": 0,
@@ -12,7 +12,7 @@
           "type": "date-range",
           "from": "2009-03-07T00:00:00.000Z",
           "to": "2010-06-05T00:00:00.000Z",
-          "queryString": "reportDate: [2009-03-06 TO 2010-06-04]"
+          "queryString": "visitDate: [2009-03-06 TO 2010-06-04]"
         }
       ],
       "series": [],
@@ -43,16 +43,16 @@
     "state": {
       "filters": [
         {
-          "filterId": "date",
+          "filterID": "date",
           "type": "date-range",
-          "field": "reportDate",
+          "field": "visitDate",
           "name": "Date",
           "from": "2014-05-20T14:42:39.067Z",
           "to": "2014-08-18T14:42:39.067Z",
-          "queryString": "reportDate: [2014-05-20 TO 2014-08-18]"
+          "queryString": "visitDate: [2014-05-20 TO 2014-08-18]"
         }
       ],
-      "queryString": "reportDate: [2014-05-20 TO 2014-08-18]",
+      "queryString": "visitDate: [2014-05-20 TO 2014-08-18]",
       "visualization": {
         "name": "bar"
       },
@@ -90,16 +90,16 @@
     "state": {
       "filters": [
         {
-          "filterId": "date",
+          "filterID": "date",
           "type": "date-range",
-          "field": "reportDate",
+          "field": "visitDate",
           "name": "Date",
           "from": "2014-05-20T14:42:39.067Z",
           "to": "2014-08-18T14:42:39.067Z",
-          "queryString": "reportDate: [2014-05-20 TO 2014-08-18]"
+          "queryString": "visitDate: [2014-05-20 TO 2014-08-18]"
         }
       ],
-      "queryString": "reportDate: [2014-05-20 TO 2014-08-18]",
+      "queryString": "visitDate: [2014-05-20 TO 2014-08-18]",
       "visualization": {
         "name": "pie"
       },
@@ -139,19 +139,19 @@
         "height": 826,
         "width": 1470
       },
-      "queryString": "reportDate: [2011-05-23 TO 2011-08-21] AND symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\") AND medicalFacility.district:\"Country A\"",
+      "queryString": "visitDate: [2011-05-23 TO 2011-08-21] AND symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\") AND medicalFacility.district:\"Country A\"",
       "filters": [
         {
-          "filterId": "date",
+          "filterID": "date",
           "type": "date-range",
-          "field": "reportDate",
+          "field": "visitDate",
           "name": "Date",
           "from": "2011-05-24T00:00:00.000Z",
           "to": "2011-08-22T00:00:00.000Z",
-          "queryString": "reportDate: [2011-05-23 TO 2011-08-21]"
+          "queryString": "visitDate: [2011-05-23 TO 2011-08-21]"
         },
         {
-          "filterId": "symptoms",
+          "filterID": "symptoms",
           "type": "multi-select",
           "field": "symptoms.name",
           "store": {
@@ -166,7 +166,7 @@
           "queryString": "symptoms.name:(\"Diarrhoea\" OR \"Prolonged Fever\" OR \"Influenza-like Illness\")"
         },
         {
-          "filterId": "districts",
+          "filterID": "districts",
           "type": "multi-select",
           "field": "medicalFacility.district",
           "store": {

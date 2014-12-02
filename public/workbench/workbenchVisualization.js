@@ -3,20 +3,26 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*/ function ($timeout) {
+angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*/ function ($timeout, updateURL) {
   return {
     template: '<hinge visualization="visualization" pivot="pivot" pivot-options="pivotOptions" on-close="close()" on-settings="settings()">' +
       '<outpatient-visualization visualization="visualization" pivot="pivot" query-string="queryString" ' +
-      'filters="filters" options="options"></outpatient-visualization></hinge>',
+      'filters="filters" form="form" options="options"></outpatient-visualization></hinge>',
     restrict: 'E',
     scope: {
       visualization: '=?',
+      options: '=?',
       pivot: '=?',
       pivotOptions: '=',
       close: '&onClose',
       settings: '&onSettings',
       queryString: '=',
-      filters: '='
+      filters: '=',
+      form: '=',
+      sizeX: '=',
+      sizeY: '=',
+      row: '=',
+      col: '='
     },
     compile: function () {
       return {
@@ -34,6 +40,15 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
               header = parent.find('.panel-heading');
               footer = parent.find('.panel-footer');
             }
+          });
+
+          scope.$watchCollection('[sizeX, sizeY, row, col]', function () {
+            updateURL.updateVisualization(scope.options.id, {
+              sizeX: scope.sizeX,
+              sizeY: scope.sizeY,
+              row: scope.row,
+              col: scope.col
+            });
           });
 
           scope.$watchCollection(function () {

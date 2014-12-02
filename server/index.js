@@ -126,6 +126,17 @@ app.get('/', function (req, res) {
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
+app.use(function (req, res, next) {
+  //req check for bearer authorization
+  //grab token, look up user, set user
+  var reqAuth = req.get('Authorization');
+  if (reqAuth && reqAuth.indexOf('Bearer ') === 0 ) {
+    auth.bearer(req, res, next);
+  } else {
+    next();
+  }
+});
+
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));
 

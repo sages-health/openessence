@@ -6,12 +6,12 @@
     <h4 class="modal-title" translate>Edit record</h4>
   </div>
   <div class="modal-body">
-    <outpatient-form record="record" page="page" on-submit="onSubmit()"></outpatient-form>
+    <outpatient-form form="form" record="record" page="page" on-submit="onSubmit()"></outpatient-form>
   </div>
-  <div class="modal-footer" ng-if="page == 1">
+  <div class="modal-footer" ng-if="page !== 'last'">
     <ul class="pager">
-      <li class="previous disabled">
-        <a>
+      <li class="previous" ng-class="{disabled: page === 1}">
+        <a ng-click="previous()">
           <span class="icon-left-big"></span>
           <span translate>Previous</span>
         </a>
@@ -24,7 +24,7 @@
       </li>
     </ul>
   </div>
-  <div class="modal-footer" ng-if="page == 2">
+  <div class="modal-footer" ng-if="page === 'last'">
     <ul class="pager">
       <li class="previous">
         <a ng-click="previous()">

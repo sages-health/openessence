@@ -8,7 +8,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                                                                                orderByFilter, gettextCatalog,
                                                                                sortString, FrableParams,
                                                                                OutpatientVisitResource,
-                                                                               outpatientEditModal,
+                                                                               outpatientEditModal, updateURL,
                                                                                outpatientDeleteModal, scopeToJson,
                                                                                outpatientAggregation, visualization) {
 
@@ -17,15 +17,29 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
     template: require('./visualization.html'),
     scope: {
       filters: '=',
+      form: '=',
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',
-      options: '=?' // settings as single object, useful for loading persisted state
+      options: '=' // settings as single object, useful for loading persisted state
     },
     link: {
       // runs before nested directives, see http://stackoverflow.com/a/18491502
       pre: function (scope, element) {
         scope.options = scope.options || {};
+        scope.form = scope.form || {};
+
+        // index fields by name
+        scope.$watch('form.fields', function (fields) {
+          if (!fields) {
+            return;
+          }
+
+          scope.fields = fields.reduce(function (fields, field) {
+            fields[field.name] = field;
+            return fields;
+          }, {});
+        });
 
         scope.visualization = scope.visualization || scope.options.visualization || {
           name: 'table'
@@ -43,21 +57,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.crosstabData = [];
 
-        scope.xFunction = function () {
-          return function (d) {
-            return d.key;
-          };
-        };
-        scope.yFunction = function () {
-          return function (d) {
-            return d.value;
-          };
-        };
-
         // strings that we can't translate in the view, usually because they're in attributes
         scope.strings = {
-          date: gettextCatalog.getString('Date'),
-          district: gettextCatalog.getString('District'),
+          visitDate: gettextCatalog.getString('Visit'),
+          facility: gettextCatalog.getString('Facility'),
           sex: gettextCatalog.getString('Sex'),
           age: gettextCatalog.getString('Age'),
           symptoms: gettextCatalog.getString('Symptoms'),
@@ -65,24 +68,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           syndromes: gettextCatalog.getString('Syndromes'),
           visitType: gettextCatalog.getString('Visit type'),
           discharge: gettextCatalog.getString('Discharge type'),
-          edit: gettextCatalog.getString('Edit'),
-          aggregateData: gettextCatalog.getString('Aggregate Data'),
-          newAggregateData: gettextCatalog.getString('New'),
-          import: gettextCatalog.getString('Import'),
-          upload: gettextCatalog.getString('Upload'),
-          reportDate: gettextCatalog.getString('Date'),
-          week: gettextCatalog.getString('Week'),
-          year: gettextCatalog.getString('Year'),
-          sitesTotal: gettextCatalog.getString('Total Sites'),
-          sitesReporting: gettextCatalog.getString('Number of Sites Reporting'),
-          count: gettextCatalog.getString('Count'),
-          symptomName: gettextCatalog.getString('Symptom Name'),
-          acuteFeverAndRash: gettextCatalog.getString('Acute Fever and Rash'),
-          diarrhoea: gettextCatalog.getString('Diarrhoea'),
-          influenzaLikeIllness: gettextCatalog.getString('Influenza-like Illness'),
-          prolongedFever: gettextCatalog.getString('Prolonged Fever')
+          edit: gettextCatalog.getString('Edit')
         };
 
+        // TODO make this a filter
         scope.printAggregate = function (field, includeCount) {
           var print = [];
           if (field) {
@@ -93,7 +82,30 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return print.join(',');
         };
 
-        scope.$on('export', function () {
+        scope.$on('vizualizationNameChanged', function () {
+          delete scope.options.labels;
+          updateVisualization();
+        });
+
+        scope.$on('exportVizualization', function () {
+          if (scope.visualization.name === 'line') {
+            // let timeSeries directive handle it
+            return;
+          }
+
+          // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
+          var state = scopeToJson(scope);
+          ['data', 'crosstabData'].forEach(function (k) {
+            delete state[k];
+          });
+          if (state.tableParams) {
+            delete state.tableParams.data;
+          }
+
+          visualization.export(state);
+        });
+
+        scope.$on('saveVizualization', function () {
           if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it
             return;
@@ -268,8 +280,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 //currently we explode symptoms and diagnosis to make crosstab counts for them happy
                 var rec = {
                   sex: source.patient ? source.patient.sex : null,
-                  age: source.patient ? source.patient.age : null,
-                  districts: source.medicalFacility ? source.medicalFacility.district : null
+                  age: (source.patient && source.patient.age) ? source.patient.age.years : null,
+                  districts: source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
                 };
 
                 if (source.symptoms) {
@@ -300,9 +312,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         scope.editVisit = function (record) {
-          outpatientEditModal.open({
-            record: record
-          })
+          outpatientEditModal.open({record: record, form: scope.form})
             .result
             .then(function () {
               reload(); // TODO highlight changed record
@@ -327,7 +337,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           page: 1,
           count: 10,
           sorting: {
-            reportDate: 'desc'
+            visitDate: 'desc'
           }
         }, {
           total: 0,
@@ -359,16 +369,41 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         });
 
         scope.$watch('queryString', function () {
+          updateURL.updateFilters(scope.filters);
           reload();
         });
-        scope.$watch('pivot.cols', function () {
-          reload();
+
+        var updateVisualization = function (){
+          delete scope.options.options;
+          updateURL.updateVisualization(scope.options.id, {
+            options: scope.options,
+            pivot: scope.pivot,
+            rows: scope.pivot.rows || [],
+            series: scope.pivot.cols || [],
+            visualization: scope.visualization
+          });
+
+        };
+
+        scope.$watch('pivot.cols', function (newValue, oldValue) {
+          if(newValue !== oldValue) {
+            updateVisualization();
+            reload();
+          }
         });
-        scope.$watch('pivot.rows', function () {
-          reload();
+
+        scope.$watch('pivot.rows', function (newValue, oldValue) {
+          if(newValue !== oldValue) {
+            updateVisualization();
+            reload();
+          }
         });
-        scope.$watch('visualization.name', function () {
-          reload();
+
+        scope.$watch('visualization.name', function (newValue, oldValue) {
+          if(newValue !== oldValue) {
+            updateVisualization();
+            reload();
+          }
         });
 
         scope.$watchCollection('[options.height, options.width, visualization.name]', function () {
@@ -403,14 +438,14 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           var filter;
           if (event.point.col && event.point.colName.indexOf('missing') !== 0) {
             filter = {
-              filterId: event.point.col,
+              filterID: event.point.col,
               value: event.point.colName
             };
             $rootScope.$emit('filterChange', filter, true, true);
           }
           if (event.point.row && event.point.rowName.indexOf('missing') !== 0) {
             filter = {
-              filterId: event.point.row,
+              filterID: event.point.row,
               value: event.point.rowName
             };
             $rootScope.$emit('filterChange', filter, true, true);
@@ -423,7 +458,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             var a = [].concat(value);
             a.forEach(function (v) {
               var filter = {
-                filterId: field,
+                filterID: field,
                 value: ((typeof v) === 'object' ? v.name : v)
               };
               $rootScope.$emit('filterChange', filter, true, false);

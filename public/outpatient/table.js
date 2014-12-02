@@ -11,7 +11,8 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
     template: require('./table.html'),
     scope: {
       records: '=?',
-      queryString: '='
+      queryString: '=',
+      form: '='
     },
     compile: function (element, attrs) {
       var condensed = angular.isDefined(attrs.condensed) && attrs.condensed !== 'false';
@@ -20,20 +21,29 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
         pre: function (scope) {
           scope.condensed = condensed;
           scope.strings = {
-            date: gettextCatalog.getString('Date'),
-            district: gettextCatalog.getString('District'),
+            visitDate: gettextCatalog.getString('Visit'),
+            submissionDate: gettextCatalog.getString('Submitted'),
+            facility: gettextCatalog.getString('Facility'),
             symptoms: gettextCatalog.getString('Symptoms'),
             diagnoses: gettextCatalog.getString('Diagnoses'),
             syndromes: gettextCatalog.getString('Syndromes'),
-            visitType: gettextCatalog.getString('Visit type'),
-            discharge: gettextCatalog.getString('Discharge type'),
+            disposition: gettextCatalog.getString('Disposition'),
             sex: gettextCatalog.getString('Sex'),
             age: gettextCatalog.getString('Age'),
-            returnVisit: gettextCatalog.getString('Return visit?'),
-            patientId: gettextCatalog.getString('Patient ID'),
-            oeId: gettextCatalog.getString('OE ID'),
-            edit: gettextCatalog.getString('Edit')
+            antiviral: gettextCatalog.getString('Antiviral')
           };
+
+          // index fields by name
+          scope.$watch('form.fields', function (fields) {
+            if (!fields) {
+              return;
+            }
+
+            scope.fields = fields.reduce(function (fields, field) {
+              fields[field.name] = field;
+              return fields;
+            }, {});
+          });
 
           scope.editVisit = function (visit) {
             scope.$emit('outpatientEdit', visit);
@@ -47,7 +57,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             page: 1, // page is 1-based
             count: 10,
             sorting: {
-              reportDate: 'desc'
+              visitDate: 'desc'
             }
           }, {
             total: scope.records ? scope.records.length : 0,
@@ -106,7 +116,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
               var a = [].concat(value);
               a.forEach(function (v) {
                 var filter = {
-                  filterId: field,
+                  filterID: field,
                   value: ((typeof v) === 'object' ? v.name : v)
                 };
                 $rootScope.$emit('filterChange', filter, true, false);

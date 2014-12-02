@@ -4,18 +4,23 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, DashboardResource) {
-  $scope.filters = [
-    {filterId: 'name'}
-  ];
-  $scope.filterTypes = [
+  $scope.activeFilters = [
     {
-      filterId: 'name',
+      filterID: 'name',
+      type: 'text',
+      field: 'name',
+      name: gettextCatalog.getString('Name')
+    }
+  ];
+  $scope.possibleFilters = [
+    {
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'description',
+      filterID: 'description',
       type: 'text',
       field: 'description',
       name: gettextCatalog.getString('Description')

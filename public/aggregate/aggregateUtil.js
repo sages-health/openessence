@@ -7,7 +7,7 @@ angular.module(services.name).factory('aggregateUtil', function () {
   return {
     csvToAggregate: function (csvRec) {
       var aggregateRec = angular.copy(csvRec);
-      if (aggregateRec.reportDate) {
+      if (aggregateRec.visitDate) {
         delete aggregateRec.rowId;
         delete aggregateRec.week;
         delete aggregateRec.year;

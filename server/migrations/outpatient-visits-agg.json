@@ -7,11 +7,17 @@
       }
     ],
     "medicalFacility": {
-      "district": "Adams"
+      "name": "Adams Hospital",
+      "location": {
+        "district": "Adams",
+        "county": "Adams"
+      }
     },
     "patient": {
       "sex": "female",
-      "age": 54
+      "age": {
+        "years": 54
+      }
     },
     "diagnoses": [
       {
@@ -19,7 +25,7 @@
         "count": 11
       }
     ],
-    "reportDate": "2014-08-12T00:00:00.000Z"
+    "visitDate": "2014-08-12T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -33,11 +39,17 @@
       }
     ],
     "medicalFacility": {
-      "district": "Thayer"
+      "name": "Thayer Clinic",
+      "location": {
+        "district": "Thayer",
+        "county": "Thayer"
+      }
     },
     "patient": {
       "sex": "male",
-      "age": 8
+      "age": {
+        "years": 8
+      }
     },
     "diagnoses": [
       {
@@ -45,7 +57,7 @@
         "count": 14
       }
     ],
-    "reportDate": "2014-05-03T00:00:00.000Z"
+    "visitDate": "2014-05-03T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -55,14 +67,20 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "male",
-      "age": 1
+      "age": {
+        "years": 1
+      }
     },
     "diagnoses": null,
-    "reportDate": "2014-03-17T00:00:00.000Z"
+    "visitDate": "2014-03-17T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -76,11 +94,17 @@
       }
     ],
     "medicalFacility": {
-      "district": "Merrick"
+      "name": "Merrick Clinic",
+      "location": {
+        "district": "Merrick",
+        "county": "Merrick"
+      }
     },
     "patient": {
       "sex": "female",
-      "age": 0
+      "age": {
+        "years": 0
+      }
     },
     "diagnoses": [
       {
@@ -88,7 +112,7 @@
         "count": 18
       }
     ],
-    "reportDate": "2014-03-16T00:00:00.000Z"
+    "visitDate": "2014-03-16T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -98,14 +122,20 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "male",
-      "age": 17
+      "age": {
+        "years": 17
+      }
     },
     "diagnoses": null,
-    "reportDate": "2014-03-16T00:00:00.000Z"
+    "visitDate": "2014-03-16T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -115,14 +145,20 @@
       }
     ],
     "medicalFacility": {
-      "district": "Lancaster"
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
     },
     "patient": {
       "sex": "female",
-      "age": 0
+      "age": {
+        "years": 0
+      }
     },
     "diagnoses": null,
-    "reportDate": "2014-03-15T00:00:00.000Z"
+    "visitDate": "2014-03-15T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -132,14 +168,20 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "female",
-      "age": 7
+      "age": {
+        "years": 7
+      }
     },
     "diagnoses": null,
-    "reportDate": "2014-03-15T00:00:00.000Z"
+    "visitDate": "2014-03-15T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -149,14 +191,20 @@
       }
     ],
     "medicalFacility": {
-      "district": "Cass"
+      "name": "Cass Hospital",
+      "location": {
+        "district": "Cass",
+        "county": "Cass"
+      }
     },
     "patient": {
       "sex": "female",
-      "age": 3
+      "age": {
+        "years": 3
+      }
     },
     "diagnoses": null,
-    "reportDate": "2014-03-15T00:00:00.000Z"
+    "visitDate": "2014-03-15T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -166,14 +214,20 @@
       }
     ],
     "medicalFacility": {
-      "district": "Lancaster"
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
     },
     "patient": {
       "sex": null,
-      "age": 1
+      "age": {
+        "years": 1
+      }
     },
     "diagnoses": null,
-    "reportDate": "2014-03-14T00:00:00.000Z"
+    "visitDate": "2014-03-14T00:00:00.000Z"
   },
   {
     "symptoms": [
@@ -183,11 +237,17 @@
       }
     ],
     "medicalFacility": {
-      "district": "Lancaster"
+      "name": "Lancaster Hospital",
+      "location": {
+        "district": "Lancaster",
+        "county": "Lancaster"
+      }
     },
     "patient": {
       "sex": "male",
-      "age": 2
+      "age": {
+        "years": 2
+      }
     },
     "diagnoses": [
       {
@@ -195,6 +255,6 @@
         "count": 15
       }
     ],
-    "reportDate": "2014-03-14T00:00:00.000Z"
+    "visitDate": "2014-03-14T00:00:00.000Z"
   }
 ]

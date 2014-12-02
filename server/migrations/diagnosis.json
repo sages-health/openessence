@@ -1,1122 +1,842 @@
 [
   {
-    "name": "Acquired Immune Deficiency Syndrome (AIDS)",
-    "enabled": true
+    "name": "Acquired Immune Deficiency Syndrome (AIDS)"
   },
   {
-    "name": "Acquired Immune Deficiency Syndrome (AIDS) Suspected",
-    "enabled": true
+    "name": "Acquired Immune Deficiency Syndrome (AIDS) Suspected"
   },
   {
-    "name": "Acquired Immune Deficiency Syndrome (AIDS) Confirmed",
-    "enabled": true
+    "name": "Acquired Immune Deficiency Syndrome (AIDS) Confirmed"
   },
   {
-    "name": "Acute Flaccid Paralysis (AFP)",
-    "enabled": true
+    "name": "Acute Flaccid Paralysis (AFP)"
   },
   {
-    "name": "Adverse Event Following Immunization (AEFI)",
-    "enabled": true
+    "name": "Adverse Event Following Immunization (AEFI)"
   },
   {
-    "name": "Adverse Event Following Immunization (AEFI) Suspected",
-    "enabled": true
+    "name": "Adverse Event Following Immunization (AEFI) Suspected"
   },
   {
-    "name": "Adverse Event Following Immunization (AEFI) Confirmed",
-    "enabled": true
+    "name": "Adverse Event Following Immunization (AEFI) Confirmed"
   },
   {
-    "name": "Anemia",
-    "enabled": true
+    "name": "Anemia"
   },
   {
-    "name": "Anemia Suspected",
-    "enabled": true
+    "name": "Anemia Suspected"
   },
   {
-    "name": "Anemia Confirmed",
-    "enabled": true
+    "name": "Anemia Confirmed"
   },
   {
-    "name": "Arrhythmia",
-    "enabled": true
+    "name": "Arrhythmia"
   },
   {
-    "name": "Buruli Ulcer",
-    "enabled": true
+    "name": "Buruli Ulcer"
   },
   {
-    "name": "Buruli Ulcer Suspected",
-    "enabled": true
+    "name": "Buruli Ulcer Suspected"
   },
   {
-    "name": "Buruli Ulcer Confirmed",
-    "enabled": true
+    "name": "Buruli Ulcer Confirmed"
   },
   {
-    "name": "Cardiac Illness",
-    "enabled": true
+    "name": "Cardiac Illness"
   },
   {
-    "name": "Cardiac Illness Confirmed",
-    "enabled": true
+    "name": "Cardiac Illness Confirmed"
   },
   {
-    "name": "Chikungunya",
-    "enabled": true
+    "name": "Chikungunya"
   },
   {
-    "name": "Chikungunya Suspected",
-    "enabled": true
+    "name": "Chikungunya Suspected"
   },
   {
-    "name": "Chikungunya Confirmed",
-    "enabled": true
+    "name": "Chikungunya Confirmed"
   },
   {
-    "name": "Chlamydia",
-    "enabled": true
+    "name": "Chlamydia"
   },
   {
-    "name": "Chlamydia Suspected",
-    "enabled": true
+    "name": "Chlamydia Suspected"
   },
   {
-    "name": "Chlamydia Confirmed",
-    "enabled": true
+    "name": "Chlamydia Confirmed"
   },
   {
-    "name": "Cholera",
-    "enabled": true
+    "name": "Cholera"
   },
   {
-    "name": "Cholera Suspected",
-    "enabled": true
+    "name": "Cholera Suspected"
   },
   {
-    "name": "Cholera Confirmed",
-    "enabled": true
+    "name": "Cholera Confirmed"
   },
   {
-    "name": "Congestive Heart Failure (CHF)",
-    "enabled": true
+    "name": "Congestive Heart Failure (CHF)"
   },
   {
-    "name": "Congestive Heart Failure (CHF) Suspected",
-    "enabled": true
+    "name": "Congestive Heart Failure (CHF) Suspected"
   },
   {
-    "name": "Congestive Heart Failure (CHF) Confirmed",
-    "enabled": true
+    "name": "Congestive Heart Failure (CHF) Confirmed"
   },
   {
-    "name": "Death",
-    "enabled": true
+    "name": "Death"
   },
   {
-    "name": "Dengue",
-    "enabled": true
+    "name": "Dengue"
   },
   {
-    "name": "Dengue Suspected",
-    "enabled": true
+    "name": "Dengue Suspected"
   },
   {
-    "name": "Dengue Confirmed",
-    "enabled": true
+    "name": "Dengue Confirmed"
   },
   {
-    "name": "Dengue/DHF",
-    "enabled": true
+    "name": "Dengue/DHF"
   },
   {
-    "name": "Dengue/DHF Suspected",
-    "enabled": true
+    "name": "Dengue/DHF Suspected"
   },
   {
-    "name": "Dengue/DHF Confirmed",
-    "enabled": true
+    "name": "Dengue/DHF Confirmed"
   },
   {
-    "name": "Diabetes mellitus (DM)",
-    "enabled": true
+    "name": "Diabetes mellitus (DM)"
   },
   {
-    "name": "Diabetes mellitus (DM) Suspected",
-    "enabled": true
+    "name": "Diabetes mellitus (DM) Suspected"
   },
   {
-    "name": "Diabetes mellitus (DM) Confirmed",
-    "enabled": true
+    "name": "Diabetes mellitus (DM) Confirmed"
   },
   {
-    "name": "Diarrhea, Profuse Watery",
-    "enabled": true
+    "name": "Diarrhea, Profuse Watery"
   },
   {
-    "name": "Diphtheria",
-    "enabled": true
+    "name": "Diphtheria"
   },
   {
-    "name": "Diphtheria Suspected",
-    "enabled": true
+    "name": "Diphtheria Suspected"
   },
   {
-    "name": "Diphtheria Confirmed",
-    "enabled": true
+    "name": "Diphtheria Confirmed"
   },
   {
-    "name": "Dysentery",
-    "enabled": true
+    "name": "Dysentery"
   },
   {
-    "name": "Dysentery, Amoebic",
-    "enabled": true
+    "name": "Dysentery, Amoebic"
   },
   {
-    "name": "Dysentery, Amoebic Suspected",
-    "enabled": true
+    "name": "Dysentery, Amoebic Suspected"
   },
   {
-    "name": "Dysentery, Amoebic Confirmed",
-    "enabled": true
+    "name": "Dysentery, Amoebic Confirmed"
   },
   {
-    "name": "Dysentery, Bacillary",
-    "enabled": true
+    "name": "Dysentery, Bacillary"
   },
   {
-    "name": "Dysentery, Bacillary Suspected",
-    "enabled": true
+    "name": "Dysentery, Bacillary Suspected"
   },
   {
-    "name": "Dysentery, Bacillary Confirmed",
-    "enabled": true
+    "name": "Dysentery, Bacillary Confirmed"
   },
   {
-    "name": "Encephalitis",
-    "enabled": true
+    "name": "Encephalitis"
   },
   {
-    "name": "Encephalitis Suspected",
-    "enabled": true
+    "name": "Encephalitis Suspected"
   },
   {
-    "name": "Encephalitis Confirmed",
-    "enabled": true
+    "name": "Encephalitis Confirmed"
   },
   {
-    "name": "Eye Disease, Conjunctivitis",
-    "enabled": true
+    "name": "Eye Disease, Conjunctivitis"
   },
   {
-    "name": "Eye Disease  Inflamed (Red-Eye)",
-    "enabled": true
+    "name": "Eye Disease  Inflamed (Red-Eye)"
   },
   {
-    "name": "Fever/Febrile Illness",
-    "enabled": true
+    "name": "Fever/Febrile Illness"
   },
   {
-    "name": "Gastrointestinal Illness, Gastroenteritis, Acute (AGE)",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Gastroenteritis, Acute (AGE)"
   },
   {
-    "name": "Gastrointestinal Illness, Acute",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Acute"
   },
   {
-    "name": "Gastrointestinal Illness, Chronic",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Chronic"
   },
   {
-    "name": "Gastrointestinal Illness, Lower, Not Diarrhea",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Lower, Not Diarrhea"
   },
   {
-    "name": "Gastrointestinal Illness, Malignancy, Colorectal",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Malignancy, Colorectal"
   },
   {
-    "name": "Gastrointestinal Illness, Malignancy, Colorectal Suspected",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Malignancy, Colorectal Suspected"
   },
   {
-    "name": "Gastrointestinal Illness, Malignancy, Colorectal Confirmed",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Malignancy, Colorectal Confirmed"
   },
   {
-    "name": "Gastrointestinal Illness, Malignancy, Hepatic",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Malignancy, Hepatic"
   },
   {
-    "name": "Gastrointestinal Illness, Malignancy, Hepatic Suspected",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Malignancy, Hepatic Suspected"
   },
   {
-    "name": "Gastrointestinal Illness, Malignancy, Hepatic Confirmed",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Malignancy, Hepatic Confirmed"
   },
   {
-    "name": "Gastrointestinal Illness, Nausea",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Nausea"
   },
   {
-    "name": "Gastrointestinal Illness, Nausea and Vomiting (Emesis)",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Nausea and Vomiting (Emesis)"
   },
   {
-    "name": "Gastrointestinal Illness, Ulcer",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Ulcer"
   },
   {
-    "name": "Gastrointestinal Illness, Upper, Not Nausea",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Upper, Not Nausea"
   },
   {
-    "name": "Gastrointestinal Illness, Vomiting (Emesis)",
-    "enabled": true
+    "name": "Gastrointestinal Illness, Vomiting (Emesis)"
   },
   {
-    "name": "Genital Warts",
-    "enabled": true
+    "name": "Genital Warts"
   },
   {
-    "name": "Gonorrhea",
-    "enabled": true
+    "name": "Gonorrhea"
   },
   {
-    "name": "Gonorrhea Suspected",
-    "enabled": true
+    "name": "Gonorrhea Suspected"
   },
   {
-    "name": "Gonorrhea Confirmed",
-    "enabled": true
+    "name": "Gonorrhea Confirmed"
   },
   {
-    "name": "Guinea Worm (Dracunculiasis)",
-    "enabled": true
+    "name": "Guinea Worm (Dracunculiasis)"
   },
   {
-    "name": "Guinea Worm (Dracunculiasis) Suspected",
-    "enabled": true
+    "name": "Guinea Worm (Dracunculiasis) Suspected"
   },
   {
-    "name": "Guinea Worm (Dracunculiasis) Confirmed",
-    "enabled": true
+    "name": "Guinea Worm (Dracunculiasis) Confirmed"
   },
   {
-    "name": "Gynecologic Illness, dysfunctional uterine bleeding",
-    "enabled": true
+    "name": "Gynecologic Illness, dysfunctional uterine bleeding"
   },
   {
-    "name": "Gynecologic Illness, infection",
-    "enabled": true
+    "name": "Gynecologic Illness, infection"
   },
   {
-    "name": "Gynecologic Illness, malignancy",
-    "enabled": true
+    "name": "Gynecologic Illness, malignancy"
   },
   {
-    "name": "Gynecologic Illness, malignancy Suspected",
-    "enabled": true
+    "name": "Gynecologic Illness, malignancy Suspected"
   },
   {
-    "name": "Gynecologic Illness, malignancy Confirmed",
-    "enabled": true
+    "name": "Gynecologic Illness, malignancy Confirmed"
   },
   {
-    "name": "Head & Neck Malignancy",
-    "enabled": true
+    "name": "Head & Neck Malignancy"
   },
   {
-    "name": "Head & Neck Malignancy Suspected",
-    "enabled": true
+    "name": "Head & Neck Malignancy Suspected"
   },
   {
-    "name": "Head & Neck Malignancy Confirmed",
-    "enabled": true
+    "name": "Head & Neck Malignancy Confirmed"
   },
   {
-    "name": "Heat Exhaustion",
-    "enabled": true
+    "name": "Heat Exhaustion"
   },
   {
-    "name": "Heat Stroke",
-    "enabled": true
+    "name": "Heat Stroke"
   },
   {
-    "name": "Hematopoietic Malignancy",
-    "enabled": true
+    "name": "Hematopoietic Malignancy"
   },
   {
-    "name": "Hematopoietic Malignancy Suspected",
-    "enabled": true
+    "name": "Hematopoietic Malignancy Suspected"
   },
   {
-    "name": "Hematopoietic Malignancy Confirmed",
-    "enabled": true
+    "name": "Hematopoietic Malignancy Confirmed"
   },
   {
-    "name": "Hemorrhagic Fever",
-    "enabled": true
+    "name": "Hemorrhagic Fever"
   },
   {
-    "name": "Hemorrhagic Fever Confirmed",
-    "enabled": true
+    "name": "Hemorrhagic Fever Confirmed"
   },
   {
-    "name": "Hemorrhagic Illness",
-    "enabled": true
+    "name": "Hemorrhagic Illness"
   },
   {
-    "name": "Hepatitis",
-    "enabled": true
+    "name": "Hepatitis"
   },
   {
-    "name": "Hepatitis, Viral",
-    "enabled": true
+    "name": "Hepatitis, Viral"
   },
   {
-    "name": "Hepatitis, Viral Suspected",
-    "enabled": true
+    "name": "Hepatitis, Viral Suspected"
   },
   {
-    "name": "Hepatitis, Viral Confirmed",
-    "enabled": true
+    "name": "Hepatitis, Viral Confirmed"
   },
   {
-    "name": "Hypertension",
-    "enabled": true
+    "name": "Hypertension"
   },
   {
-    "name": "Hypertension Suspected",
-    "enabled": true
+    "name": "Hypertension Suspected"
   },
   {
-    "name": "Hypertension Confirmed",
-    "enabled": true
+    "name": "Hypertension Confirmed"
   },
   {
-    "name": "Influenza, Novel Strain",
-    "enabled": true
+    "name": "Influenza, Novel Strain"
   },
   {
-    "name": "Influenza, Novel Strain Suspected",
-    "enabled": true
+    "name": "Influenza, Novel Strain Suspected"
   },
   {
-    "name": "Influenza, Novel Strain Confirmed",
-    "enabled": true
+    "name": "Influenza, Novel Strain Confirmed"
   },
   {
-    "name": "Influenza",
-    "enabled": true
+    "name": "Influenza"
   },
   {
-    "name": "Influenza Suspected",
-    "enabled": true
+    "name": "Influenza Suspected"
   },
   {
-    "name": "Influenza Confirmed",
-    "enabled": true
+    "name": "Influenza Confirmed"
   },
   {
-    "name": "Influenza-Like Illness (ILI)",
-    "enabled": true
+    "name": "Influenza-Like Illness (ILI)"
   },
   {
-    "name": "Injury, Bicycle",
-    "enabled": true
+    "name": "Injury, Bicycle"
   },
   {
-    "name": "Injury, Burn",
-    "enabled": true
+    "name": "Injury, Burn"
   },
   {
-    "name": "Injury, Chemical",
-    "enabled": true
+    "name": "Injury, Chemical"
   },
   {
-    "name": "Injury, Cold Injury",
-    "enabled": true
+    "name": "Injury, Cold Injury"
   },
   {
-    "name": "Injury, Combat",
-    "enabled": true
+    "name": "Injury, Combat"
   },
   {
-    "name": "Injury, Fracture",
-    "enabled": true
+    "name": "Injury, Fracture"
   },
   {
-    "name": "Injury, Heat Injury",
-    "enabled": true
+    "name": "Injury, Heat Injury"
   },
   {
-    "name": "Injury, Hostilities",
-    "enabled": true
+    "name": "Injury, Hostilities"
   },
   {
-    "name": "Injury, Hypothermia",
-    "enabled": true
+    "name": "Injury, Hypothermia"
   },
   {
-    "name": "Injury, Intentional",
-    "enabled": true
+    "name": "Injury, Intentional"
   },
   {
-    "name": "Injury, Laceration",
-    "enabled": true
+    "name": "Injury, Laceration"
   },
   {
-    "name": "Injury, Motor Vehicle Accident",
-    "enabled": true
+    "name": "Injury, Motor Vehicle Accident"
   },
   {
-    "name": "Injury, Natural disaster",
-    "enabled": true
+    "name": "Injury, Natural disaster"
   },
   {
-    "name": "Injury, Pedestrian",
-    "enabled": true
+    "name": "Injury, Pedestrian"
   },
   {
-    "name": "Injury, Polytrauma",
-    "enabled": true
+    "name": "Injury, Polytrauma"
   },
   {
-    "name": "Injury, Radiation",
-    "enabled": true
+    "name": "Injury, Radiation"
   },
   {
-    "name": "Injury, Recreational",
-    "enabled": true
+    "name": "Injury, Recreational"
   },
   {
-    "name": "Left Against Medical Advice (AMA)",
-    "enabled": true
+    "name": "Left Against Medical Advice (AMA)"
   },
   {
-    "name": "Leprosy",
-    "enabled": true
+    "name": "Leprosy"
   },
   {
-    "name": "Leprosy Suspected",
-    "enabled": true
+    "name": "Leprosy Suspected"
   },
   {
-    "name": "Leprosy Confirmed",
-    "enabled": true
+    "name": "Leprosy Confirmed"
   },
   {
-    "name": "Lycanthropy",
-    "enabled": true
+    "name": "Lycanthropy"
   },
   {
-    "name": "Lymphoma",
-    "enabled": true
+    "name": "Lymphoma"
   },
   {
-    "name": "Lymphoma Suspected",
-    "enabled": true
+    "name": "Lymphoma Suspected"
   },
   {
-    "name": "Lymphoma Confirmed",
-    "enabled": true
+    "name": "Lymphoma Confirmed"
   },
   {
-    "name": "Malaria",
-    "enabled": true
+    "name": "Malaria"
   },
   {
-    "name": "Malaria Suspected",
-    "enabled": true
+    "name": "Malaria Suspected"
   },
   {
-    "name": "Malaria Confirmed",
-    "enabled": true
+    "name": "Malaria Confirmed"
   },
   {
-    "name": "Malnutrition",
-    "enabled": true
+    "name": "Malnutrition"
   },
   {
-    "name": "Malnutrition, other",
-    "enabled": true
+    "name": "Malnutrition, other"
   },
   {
-    "name": "Malnutrition, protein / energy",
-    "enabled": true
+    "name": "Malnutrition, protein / energy"
   },
   {
-    "name": "Malnutrition, protein / energy Suspected",
-    "enabled": true
+    "name": "Malnutrition, protein / energy Suspected"
   },
   {
-    "name": "Malnutrition, protein / energy Confirmed",
-    "enabled": true
+    "name": "Malnutrition, protein / energy Confirmed"
   },
   {
-    "name": "Maternal Death",
-    "enabled": true
+    "name": "Maternal Death"
   },
   {
-    "name": "Measles",
-    "enabled": true
+    "name": "Measles"
   },
   {
-    "name": "Measles Suspected",
-    "enabled": true
+    "name": "Measles Suspected"
   },
   {
-    "name": "Measles Confirmed",
-    "enabled": true
+    "name": "Measles Confirmed"
   },
   {
-    "name": "Meningitis",
-    "enabled": true
+    "name": "Meningitis"
   },
   {
-    "name": "Meningitis Suspected",
-    "enabled": true
+    "name": "Meningitis Suspected"
   },
   {
-    "name": "Meningitis Confirmed",
-    "enabled": true
+    "name": "Meningitis Confirmed"
   },
   {
-    "name": "Meningitis, Bacterial",
-    "enabled": true
+    "name": "Meningitis, Bacterial"
   },
   {
-    "name": "Meningitis, Bacterial Suspected",
-    "enabled": true
+    "name": "Meningitis, Bacterial Suspected"
   },
   {
-    "name": "Meningitis, Bacterial Confirmed",
-    "enabled": true
+    "name": "Meningitis, Bacterial Confirmed"
   },
   {
-    "name": "Meningitis, Meningococcal",
-    "enabled": true
+    "name": "Meningitis, Meningococcal"
   },
   {
-    "name": "Meningitis, Meningococcal Suspected",
-    "enabled": true
+    "name": "Meningitis, Meningococcal Suspected"
   },
   {
-    "name": "Meningitis, Meningococcal Confirmed",
-    "enabled": true
+    "name": "Meningitis, Meningococcal Confirmed"
   },
   {
-    "name": "Meningitis, Viral",
-    "enabled": true
+    "name": "Meningitis, Viral"
   },
   {
-    "name": "Meningitis, Viral Suspected",
-    "enabled": true
+    "name": "Meningitis, Viral Suspected"
   },
   {
-    "name": "Meningitis, Viral Confirmed",
-    "enabled": true
+    "name": "Meningitis, Viral Confirmed"
   },
   {
-    "name": "Myocardial infarction, Acute (AMI)",
-    "enabled": true
+    "name": "Myocardial infarction, Acute (AMI)"
   },
   {
-    "name": "Myocardial infarction, Acute (AMI) Suspected",
-    "enabled": true
+    "name": "Myocardial infarction, Acute (AMI) Suspected"
   },
   {
-    "name": "Myocardial infarction, Acute (AMI) Confirmed",
-    "enabled": true
+    "name": "Myocardial infarction, Acute (AMI) Confirmed"
   },
   {
-    "name": "Neonatal Death",
-    "enabled": true
+    "name": "Neonatal Death"
   },
   {
-    "name": "Neonatal tetanus",
-    "enabled": true
+    "name": "Neonatal tetanus"
   },
   {
-    "name": "Neonatal tetanus Suspected",
-    "enabled": true
+    "name": "Neonatal tetanus Suspected"
   },
   {
-    "name": "Neonatal tetanus Confirmed",
-    "enabled": true
+    "name": "Neonatal tetanus Confirmed"
   },
   {
-    "name": "Neurologic Illness, Cerebrovascular Disease",
-    "enabled": true
+    "name": "Neurologic Illness, Cerebrovascular Disease"
   },
   {
-    "name": "Neurologic Illness, Cerebrovascular Disease Suspected",
-    "enabled": true
+    "name": "Neurologic Illness, Cerebrovascular Disease Suspected"
   },
   {
-    "name": "Neurologic Illness, Cerebrovascular Disease Confirmed",
-    "enabled": true
+    "name": "Neurologic Illness, Cerebrovascular Disease Confirmed"
   },
   {
-    "name": "Neurologic Illness, Chronic",
-    "enabled": true
+    "name": "Neurologic Illness, Chronic"
   },
   {
-    "name": "Neurologic Illness, Chronic Suspected",
-    "enabled": true
+    "name": "Neurologic Illness, Chronic Suspected"
   },
   {
-    "name": "Neurologic Illness, Chronic Confirmed",
-    "enabled": true
+    "name": "Neurologic Illness, Chronic Confirmed"
   },
   {
-    "name": "Neurologic Illness, Dementia",
-    "enabled": true
+    "name": "Neurologic Illness, Dementia"
   },
   {
-    "name": "Neurologic Illness, Dementia Suspected",
-    "enabled": true
+    "name": "Neurologic Illness, Dementia Suspected"
   },
   {
-    "name": "Neurologic Illness, Dementia Confirmed",
-    "enabled": true
+    "name": "Neurologic Illness, Dementia Confirmed"
   },
   {
-    "name": "Neurologic Illness, Infectious",
-    "enabled": true
+    "name": "Neurologic Illness, Infectious"
   },
   {
-    "name": "Neurologic Illness, Infectious Suspected",
-    "enabled": true
+    "name": "Neurologic Illness, Infectious Suspected"
   },
   {
-    "name": "Neurologic Illness, Infectious Confirmed",
-    "enabled": true
+    "name": "Neurologic Illness, Infectious Confirmed"
   },
   {
-    "name": "Neurologic Illness, Prion Disease",
-    "enabled": true
+    "name": "Neurologic Illness, Prion Disease"
   },
   {
-    "name": "Neurologic Illness, Prion Disease Suspected",
-    "enabled": true
+    "name": "Neurologic Illness, Prion Disease Suspected"
   },
   {
-    "name": "Neurologic Illness, Prion Disease Confirmed",
-    "enabled": true
+    "name": "Neurologic Illness, Prion Disease Confirmed"
   },
   {
-    "name": "Neurologic Illness, Seizure",
-    "enabled": true
+    "name": "Neurologic Illness, Seizure"
   },
   {
-    "name": "Neurologic Illness, Seizure Suspected",
-    "enabled": true
+    "name": "Neurologic Illness, Seizure Suspected"
   },
   {
-    "name": "Neurologic Illness, Seizure Confirmed",
-    "enabled": true
+    "name": "Neurologic Illness, Seizure Confirmed"
   },
   {
-    "name": "None (No Diagnosis Given)",
-    "enabled": true
+    "name": "None (No Diagnosis Given)"
   },
   {
-    "name": "Obstetric, Voluntary Termination of Pregnancy",
-    "enabled": true
+    "name": "Obstetric, Voluntary Termination of Pregnancy"
   },
   {
-    "name": "Obstetric, Miscarriage",
-    "enabled": true
+    "name": "Obstetric, Miscarriage"
   },
   {
-    "name": "Obstetric, Miscarriage Suspected",
-    "enabled": true
+    "name": "Obstetric, Miscarriage Suspected"
   },
   {
-    "name": "Obstetric, Miscarriage Confirmed",
-    "enabled": true
+    "name": "Obstetric, Miscarriage Confirmed"
   },
   {
-    "name": "Obstetric, Pregnancy",
-    "enabled": true
+    "name": "Obstetric, Pregnancy"
   },
   {
-    "name": "Obstetric, Pregnancy Suspected",
-    "enabled": true
+    "name": "Obstetric, Pregnancy Suspected"
   },
   {
-    "name": "Obstetric, Pregnancy Confirmed",
-    "enabled": true
+    "name": "Obstetric, Pregnancy Confirmed"
   },
   {
-    "name": "Obstetric, Pregnancy Complication",
-    "enabled": true
+    "name": "Obstetric, Pregnancy Complication"
   },
   {
-    "name": "Obstetric, Pregnancy Complication Suspected",
-    "enabled": true
+    "name": "Obstetric, Pregnancy Complication Suspected"
   },
   {
-    "name": "Obstetric, Pregnancy Complication Confirmed",
-    "enabled": true
+    "name": "Obstetric, Pregnancy Complication Confirmed"
   },
   {
-    "name": "Obstetric, Pre-Term Labor",
-    "enabled": true
+    "name": "Obstetric, Pre-Term Labor"
   },
   {
-    "name": "Obstetric, Pre-Term Labor Suspected",
-    "enabled": true
+    "name": "Obstetric, Pre-Term Labor Suspected"
   },
   {
-    "name": "Obstetric, Pre-Term Labor Confirmed",
-    "enabled": true
+    "name": "Obstetric, Pre-Term Labor Confirmed"
   },
   {
-    "name": "Obstetric, Still Birth",
-    "enabled": true
+    "name": "Obstetric, Still Birth"
   },
   {
-    "name": "Obstetric, Term Labor",
-    "enabled": true
+    "name": "Obstetric, Term Labor"
   },
   {
-    "name": "Onchoerciasis",
-    "enabled": true
+    "name": "Onchoerciasis"
   },
   {
-    "name": "Onchoerciasis Suspected",
-    "enabled": true
+    "name": "Onchoerciasis Suspected"
   },
   {
-    "name": "Onchoerciasis Confirmed",
-    "enabled": true
+    "name": "Onchoerciasis Confirmed"
   },
   {
-    "name": "Other Diagnosis, Yes/No",
-    "enabled": true
+    "name": "Other Diagnosis, Yes/No"
   },
   {
-    "name": "Pneumonia (Acute Lower Respiratory Infection)",
-    "enabled": true
+    "name": "Pneumonia (Acute Lower Respiratory Infection)"
   },
   {
-    "name": "Pneumonia (Acute Lower Respiratory Infection) Suspected",
-    "enabled": true
+    "name": "Pneumonia (Acute Lower Respiratory Infection) Suspected"
   },
   {
-    "name": "Pneumonia (Acute Lower Respiratory Infection) Confirmed",
-    "enabled": true
+    "name": "Pneumonia (Acute Lower Respiratory Infection) Confirmed"
   },
   {
-    "name": "Poisoning, drugs and/or biologicals",
-    "enabled": true
+    "name": "Poisoning, drugs and/or biologicals"
   },
   {
-    "name": "Prematurity",
-    "enabled": true
+    "name": "Prematurity"
   },
   {
-    "name": "Psychiatric Illness, Alcohol Abuse",
-    "enabled": true
+    "name": "Psychiatric Illness, Alcohol Abuse"
   },
   {
-    "name": "Psychiatric Illness, Anxiety",
-    "enabled": true
+    "name": "Psychiatric Illness, Anxiety"
   },
   {
-    "name": "Psychiatric Illness, Combat Stress",
-    "enabled": true
+    "name": "Psychiatric Illness, Combat Stress"
   },
   {
-    "name": "Psychiatric Illness, Depression",
-    "enabled": true
+    "name": "Psychiatric Illness, Depression"
   },
   {
-    "name": "Psychiatric Illness, Personality Disorder",
-    "enabled": true
+    "name": "Psychiatric Illness, Personality Disorder"
   },
   {
-    "name": "Psychiatric Illness, Substance Abuse",
-    "enabled": true
+    "name": "Psychiatric Illness, Substance Abuse"
   },
   {
-    "name": "Psychiatric Illness, Suicide Attempt",
-    "enabled": true
+    "name": "Psychiatric Illness, Suicide Attempt"
   },
   {
-    "name": "Psychiatric Illness, Suicide Ideation",
-    "enabled": true
+    "name": "Psychiatric Illness, Suicide Ideation"
   },
   {
-    "name": "Psychiatric Illness, Thought Disorder",
-    "enabled": true
+    "name": "Psychiatric Illness, Thought Disorder"
   },
   {
-    "name": "Rabies",
-    "enabled": true
+    "name": "Rabies"
   },
   {
-    "name": "Rabies Suspected",
-    "enabled": true
+    "name": "Rabies Suspected"
   },
   {
-    "name": "Rabies Confirmed",
-    "enabled": true
+    "name": "Rabies Confirmed"
   },
   {
-    "name": "Rash",
-    "enabled": true
+    "name": "Rash"
   },
   {
-    "name": "Reproductive Malignancy",
-    "enabled": true
+    "name": "Reproductive Malignancy"
   },
   {
-    "name": "Reproductive Malignancy Suspected",
-    "enabled": true
+    "name": "Reproductive Malignancy Suspected"
   },
   {
-    "name": "Reproductive Malignancy Confirmed",
-    "enabled": true
+    "name": "Reproductive Malignancy Confirmed"
   },
   {
-    "name": "Respiratory iIllness, Lower (LRI)",
-    "enabled": true
+    "name": "Respiratory iIllness, Lower (LRI)"
   },
   {
-    "name": "Respiratory Illness Upper (URI)",
-    "enabled": true
+    "name": "Respiratory Illness Upper (URI)"
   },
   {
-    "name": "Respiratory Illness, acute",
-    "enabled": true
+    "name": "Respiratory Illness, acute"
   },
   {
-    "name": "Respiratory Illness, chronic",
-    "enabled": true
+    "name": "Respiratory Illness, chronic"
   },
   {
-    "name": "Respiratory Illness, Chronic Obstructive Pulmonary Disease (COPD)",
-    "enabled": true
+    "name": "Respiratory Illness, Chronic Obstructive Pulmonary Disease (COPD)"
   },
   {
-    "name": "Respiratory Illness, Chronic Obstructive Pulmonary Disease (COPD) Suspected",
-    "enabled": true
+    "name": "Respiratory Illness, Chronic Obstructive Pulmonary Disease (COPD) Suspected"
   },
   {
-    "name": "Respiratory Illness, Chronic Obstructive Pulmonary Disease (COPD) Confirmed",
-    "enabled": true
+    "name": "Respiratory Illness, Chronic Obstructive Pulmonary Disease (COPD) Confirmed"
   },
   {
-    "name": "Respiratory Illness, Malignancy",
-    "enabled": true
+    "name": "Respiratory Illness, Malignancy"
   },
   {
-    "name": "Skin Lesion, Ringworm (Dermatologic Lesion, Dermatophytosis)",
-    "enabled": true
+    "name": "Skin Lesion, Ringworm (Dermatologic Lesion, Dermatophytosis)"
   },
   {
-    "name": "Scrub typhus",
-    "enabled": true
+    "name": "Scrub typhus"
   },
   {
-    "name": "Scrub typhus Suspected",
-    "enabled": true
+    "name": "Scrub typhus Suspected"
   },
   {
-    "name": "Scrub typhus Confirmed",
-    "enabled": true
+    "name": "Scrub typhus Confirmed"
   },
   {
-    "name": "Severe Acute Respiratory Infection (SARI)",
-    "enabled": true
+    "name": "Severe Acute Respiratory Infection (SARI)"
   },
   {
-    "name": "Shock",
-    "enabled": true
+    "name": "Shock"
   },
   {
-    "name": "Shock,  septic",
-    "enabled": true
+    "name": "Shock,  septic"
   },
   {
-    "name": "Shock, anaphylactic",
-    "enabled": true
+    "name": "Shock, anaphylactic"
   },
   {
-    "name": "Shock, hypovolemic",
-    "enabled": true
+    "name": "Shock, hypovolemic"
   },
   {
-    "name": "Skin Lesion, Blister(s) (Dermatologic Lesion, Bulla (Bullae))",
-    "enabled": true
+    "name": "Skin Lesion, Blister(s) (Dermatologic Lesion, Bulla (Bullae))"
   },
   {
-    "name": "Skin Lesion, Bubo (Dermatologic Lesion, Bubo)",
-    "enabled": true
+    "name": "Skin Lesion, Bubo (Dermatologic Lesion, Bubo)"
   },
   {
-    "name": "Skin Lesion, Genital Ulcer/Lesion (Dermatologic Lesion, Genital Ulcer/Lesion)",
-    "enabled": true
+    "name": "Skin Lesion, Genital Ulcer/Lesion (Dermatologic Lesion, Genital Ulcer/Lesion)"
   },
   {
-    "name": "Skin Lesion, Malignancy (Dermatologic Lesion, Malignancy)",
-    "enabled": true
+    "name": "Skin Lesion, Malignancy (Dermatologic Lesion, Malignancy)"
   },
   {
-    "name": "Skin Lesion, Ulcer (Dermatologic Lesion, Ulcer)",
-    "enabled": true
+    "name": "Skin Lesion, Ulcer (Dermatologic Lesion, Ulcer)"
   },
   {
-    "name": "Skin Lesion, Vesicle(s) Dermatologic Lesion, Vesicle(s)",
-    "enabled": true
+    "name": "Skin Lesion, Vesicle(s) Dermatologic Lesion, Vesicle(s)"
   },
   {
-    "name": "Skin Lesion, With Loss Of Sensation, (Dermatologic Lesion, With Analgesia)",
-    "enabled": true
+    "name": "Skin Lesion, With Loss Of Sensation, (Dermatologic Lesion, With Analgesia)"
   },
   {
-    "name": "Skin Lesion, With Visible Worm (Dermatologic Lesion, With Visible Worm)",
-    "enabled": true
+    "name": "Skin Lesion, With Visible Worm (Dermatologic Lesion, With Visible Worm)"
   },
   {
-    "name": "Stroke (Cerebrovascular Accident (CVA))",
-    "enabled": true
+    "name": "Stroke (Cerebrovascular Accident (CVA))"
   },
   {
-    "name": "Stroke (Cerebrovascular Accident (CVA)) Suspected",
-    "enabled": true
+    "name": "Stroke (Cerebrovascular Accident (CVA)) Suspected"
   },
   {
-    "name": "Stroke (Cerebrovascular Accident (CVA)) Confirmed",
-    "enabled": true
+    "name": "Stroke (Cerebrovascular Accident (CVA)) Confirmed"
   },
   {
-    "name": "Syphilis",
-    "enabled": true
+    "name": "Syphilis"
   },
   {
-    "name": "Syphilis Suspected",
-    "enabled": true
+    "name": "Syphilis Suspected"
   },
   {
-    "name": "Syphilis Confirmed",
-    "enabled": true
+    "name": "Syphilis Confirmed"
   },
   {
-    "name": "Dental, Abscess",
-    "enabled": true
+    "name": "Dental, Abscess"
   },
   {
-    "name": "Dental, Toothache",
-    "enabled": true
+    "name": "Dental, Toothache"
   },
   {
-    "name": "Trypanosomiasis",
-    "enabled": true
+    "name": "Trypanosomiasis"
   },
   {
-    "name": "Trypanosomiasis Suspected",
-    "enabled": true
+    "name": "Trypanosomiasis Suspected"
   },
   {
-    "name": "Trypanosomiasis Confirmed",
-    "enabled": true
+    "name": "Trypanosomiasis Confirmed"
   },
   {
-    "name": "Tuberculosis (TB)",
-    "enabled": true
+    "name": "Tuberculosis (TB)"
   },
   {
-    "name": "Tuberculosis (TB) Suspected",
-    "enabled": true
+    "name": "Tuberculosis (TB) Suspected"
   },
   {
-    "name": "Tuberculosis (TB) Confirmed",
-    "enabled": true
+    "name": "Tuberculosis (TB) Confirmed"
   },
   {
-    "name": "Typhoid fever",
-    "enabled": true
+    "name": "Typhoid fever"
   },
   {
-    "name": "Typhoid fever Suspected",
-    "enabled": true
+    "name": "Typhoid fever Suspected"
   },
   {
-    "name": "Typhoid fever Confirmed",
-    "enabled": true
+    "name": "Typhoid fever Confirmed"
   },
   {
-    "name": "Urinary Illness, Urethritis",
-    "enabled": true
+    "name": "Urinary Illness, Urethritis"
   },
   {
-    "name": "Urinary Illness, Infection (UTI)",
-    "enabled": true
+    "name": "Urinary Illness, Infection (UTI)"
   },
   {
-    "name": "Urinary Illness, Infection (UTI) Suspected",
-    "enabled": true
+    "name": "Urinary Illness, Infection (UTI) Suspected"
   },
   {
-    "name": "Urinary Illness, Infection (UTI) Confirmed",
-    "enabled": true
+    "name": "Urinary Illness, Infection (UTI) Confirmed"
   },
   {
-    "name": "Urinary Illness, Malignancy",
-    "enabled": true
+    "name": "Urinary Illness, Malignancy"
   },
   {
-    "name": "Urinary Illness, Malignancy Suspected",
-    "enabled": true
+    "name": "Urinary Illness, Malignancy Suspected"
   },
   {
-    "name": "Urinary Illness, Malignancy Confirmed",
-    "enabled": true
+    "name": "Urinary Illness, Malignancy Confirmed"
   },
   {
-    "name": "Urinary Illness, Obstruction",
-    "enabled": true
+    "name": "Urinary Illness, Obstruction"
   },
   {
-    "name": "Urinary Illness, Obstruction Suspected",
-    "enabled": true
+    "name": "Urinary Illness, Obstruction Suspected"
   },
   {
-    "name": "Urinary Illness, Obstruction Confirmed",
-    "enabled": true
+    "name": "Urinary Illness, Obstruction Confirmed"
   },
   {
-    "name": "Urinary Illness, Stones /Calculi",
-    "enabled": true
+    "name": "Urinary Illness, Stones /Calculi"
   },
   {
-    "name": "Urinary Illness, Stones /Calculi Suspected",
-    "enabled": true
+    "name": "Urinary Illness, Stones /Calculi Suspected"
   },
   {
-    "name": "Urinary Illness, Stones /Calculi Confirmed",
-    "enabled": true
+    "name": "Urinary Illness, Stones /Calculi Confirmed"
   },
   {
-    "name": "Yellow fever",
-    "enabled": true
+    "name": "Yellow fever"
   },
   {
-    "name": "Yellow fever Suspected",
-    "enabled": true
+    "name": "Yellow fever Suspected"
   },
   {
-    "name": "Yellow fever Confirmed",
-    "enabled": true
+    "name": "Yellow fever Confirmed"
   }
 ]

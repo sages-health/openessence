@@ -4,35 +4,43 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, DistrictResource) {
-  $scope.filters = [
-    {filterId: 'username'}
-  ];
-  $scope.filterTypes = [
+  $scope.activeFilters = [
     {
-      filterId: 'username',
+      filterID: 'username',
+      type: 'text',
+      field: 'username',
+      name: gettextCatalog.getString('User Name')
+    }
+  ];
+  $scope.possibleFilters = [
+    {
+      filterID: 'username',
       type: 'text',
       field: 'username',
       name: gettextCatalog.getString('User Name')
     },
     {
-      filterId: 'name',
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'email',
+      filterID: 'email',
       type: 'text',
       field: 'email',
       name: gettextCatalog.getString('Email')
     },
     {
-      filterId: 'disabled',
+      filterID: 'disabled',
       type: 'check-box',
       field: 'disabled',
       name: gettextCatalog.getString('Disabled')
     }
-  ];
+  ].reduce(function (filters, filter) {
+      filters[filter.filterID] = filter;
+      return filters;
+    }, {});
 
   // strings that we can't translate in the view, usually because they're in attributes
   $scope.strings = {

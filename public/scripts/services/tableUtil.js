@@ -49,7 +49,7 @@ module.exports = function (FrableParams, sortString, $rootScope) {
         var a = [].concat(value);
         a.forEach(function (v) {
           var filter = {
-            filterId: field,
+            filterID: field,
             value: ((typeof v) === 'object' ? v.name : v)
           };
           $rootScope.$emit('filterChange', filter, true, false);

@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <outpatient-filters-grid filters="filters" filter-types="filterTypes"
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters"
                            query-string="queryString"></outpatient-filters-grid>
 </div>
 
@@ -13,7 +13,7 @@
             New visit
           </button>
         </div>
-        <outpatient-table query-string="queryString"></outpatient-table>
+        <outpatient-table query-string="queryString" form="form"></outpatient-table>
       </div>
     </div>
   </div>

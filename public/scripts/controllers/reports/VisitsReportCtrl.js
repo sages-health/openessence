@@ -9,16 +9,16 @@ module.exports = function ($scope, $window, visualization, user, dateFilter) {
   var dateFormat = 'yyyy-MM-dd';
   var startDate = dateFilter($scope.report.startDate, dateFormat);
   var endDate = dateFilter($scope.report.endDate, dateFormat);
-  $scope.report.dateString = 'reportDate: [' + startDate + ' TO ' + endDate + ']';
+  $scope.report.dateString = 'visitDate: [' + startDate + ' TO ' + endDate + ']';
 
-  var fixReportDate = function (query) {
+  var fixVisitDate = function (query) {
     var result = query;
     var startPosition = 0;
     var i = -1;
 
     // Search the string and counts the number of e's
     while (startPosition !== -1) {
-      startPosition = result.indexOf('reportDate:', i + 1);
+      startPosition = result.indexOf('visitDate:', i + 1);
       if (startPosition === -1) {
         break;
       }
@@ -32,7 +32,7 @@ module.exports = function ($scope, $window, visualization, user, dateFilter) {
   var fixVisualization = function (viz) {
 
     // fix queryString
-    viz.queryString = fixReportDate(viz.queryString);
+    viz.queryString = fixVisitDate(viz.queryString);
 
     // fix date filters
     for (var ix = 0; ix < viz.filters.length; ix++) {
@@ -47,14 +47,20 @@ module.exports = function ($scope, $window, visualization, user, dateFilter) {
 
   //TODO: hardcoded saved query names: weeklyseries, sexbarchart, and symptomspie
   visualization.resource.get({q: 'name:"weeklyseries"'}, function (data) {
-    $scope.viz = fixVisualization(data.results[0]._source.state);
+    var viz = fixVisualization(data.results[0]._source.state);
+    viz.options.id = 1;
+    $scope.viz = viz;
   });
 
   visualization.resource.get({q: 'name:"sexbarchart"'}, function (data) {
-    $scope.viz1 = fixVisualization(data.results[0]._source.state);
+    var viz = fixVisualization(data.results[0]._source.state);
+    viz.options.id = 2;
+    $scope.viz1 = viz;
   });
 
   visualization.resource.get({q: 'name:"symptomspie"'}, function (data) {
-    $scope.viz2 = fixVisualization(data.results[0]._source.state);
+    var viz = fixVisualization(data.results[0]._source.state);
+    viz.options.id = 3;
+    $scope.viz2 = viz;
   });
 };

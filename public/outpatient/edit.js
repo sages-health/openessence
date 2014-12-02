@@ -9,12 +9,13 @@ var services = require('../scripts/modules').services;
  */
 angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ function ($modal) {
   return {
-    open: function (options) {
-      options = angular.extend({
+    open: function (scope, modalOptions) { // TODO fix all usages of this
+      modalOptions = angular.extend({
         template: require('./modal-edit.html'),
-        controller: /*@ngInject*/ function ($scope, $modalInstance, record) {
-          $scope.record = record;
-          $scope.page = 1;
+        controller: /*@ngInject*/ function ($scope, $modalInstance) {
+          angular.extend($scope, {
+            page: 1
+          }, scope);
 
           // the save button on the modal
           $scope.save = function () {
@@ -40,15 +41,10 @@ angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ funct
             $scope.$broadcast('previous-page');
           };
 
-        },
-        resolve: {
-          record: function () {
-            return options.record;
-          }
         }
-      }, options);
+      }, modalOptions);
 
-      return $modal.open(options);
+      return $modal.open(modalOptions);
     }
   };
 });
@@ -84,61 +80,16 @@ angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ fun
 
 angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ function ($scope, $modal, outpatientEditModal,
                                                                             gettextCatalog, outpatientDeleteModal,
-                                                                            DiagnosisResource, DistrictResource,
-                                                                            SymptomResource) {
-  $scope.filters = [
-    {
-      filterId: 'date'
-    }
+                                                                            possibleFilters, FormResource) {
+  $scope.activeFilters = [
+    angular.extend({
+      filterID: 'visitDate'
+      // no to/from window, we page the results anyway
+    }, possibleFilters.visitDate)
   ];
-  $scope.filterTypes = [
-
-    {
-      filterId: 'date',
-      type: 'date-range',
-      field: 'reportDate',
-      name: gettextCatalog.getString('Date')
-    },
-    {
-      filterId: 'districts',
-      type: 'multi-select',
-      field: 'medicalFacility.district',
-      store: {
-        resource: DistrictResource,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('District')
-    },
-    {
-      filterId: 'symptoms',
-      type: 'multi-select',
-      field: 'symptoms.name',
-      store: {
-        resource: SymptomResource,
-        field: 'name'
-      },
-      name: gettextCatalog.getString('Symptom')
-    }
-  ];
-
-  $scope.createVisit = function () {
-    outpatientEditModal.open().result
-      .then(function () {
-        reload();
-        // TODO highlight record that was created
-      });
-  };
 
   var reload = function () {
     $scope.$broadcast('outpatientReload');
-  };
-
-  $scope.editVisit = function (visit) {
-    outpatientEditModal.open({record: visit}).result
-      .then(function () {
-        reload();
-        // TODO highlight record that was modified
-      });
   };
 
   $scope.deleteVisit = function (visit) {
@@ -154,5 +105,48 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
 
   $scope.$on('outpatientDelete', function (event, visit) {
     $scope.deleteVisit(visit);
+  });
+
+  // TODO form can be quite large (>20KB for demo) since it includes every possible value for dropdowns
+  // that's probably not an issue for most sites collecting a handful of diagnoses at a few sites,
+  // but could be an issue for sites collecting a lot of symptoms, diagnoses, etc.
+  // "Correct" solution would involve linking to other resources and then fetching them on demand, e.g.
+  // returning JSON HAL and then querying for dropdown values as needed. In the meantime, at least it's cached.
+  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+    if (response.results.length === 0) {
+      throw new Error('No configured forms');
+    }
+
+    var form = response.results[0]._source;
+    $scope.form = form; // need to pass to visualizations
+
+    $scope.possibleFilters = form.fields.reduce(function (filters, field) {
+      if (!field.enabled) {
+        return filters;
+      }
+
+      var possibleFilter = possibleFilters[field.name];
+      if (possibleFilter) {
+        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
+      }
+
+      return filters;
+    }, {});
+
+    $scope.editVisit = function (visit) {
+      outpatientEditModal.open({record: visit, form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was modified
+        });
+    };
+
+    $scope.createVisit = function () {
+      outpatientEditModal.open({form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was created
+        });
+    };
   });
 });

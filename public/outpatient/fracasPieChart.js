@@ -4,12 +4,13 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope) {
+angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope, updateURL, //
+                                                                                        gettextCatalog, EditSettings) {
   return {
     restrict: 'E',
     template: require('./pie-chart.html'),
     scope: {
-      options: '=?',
+      options: '=',
       width: '=?',
       height: '=?',
       queryString: '=',
@@ -21,6 +22,14 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
       return {
         pre: function (scope, element) {
           scope.options = scope.options || {};
+          scope.options.labels = scope.options.labels || {title: gettextCatalog.getString('Pie Chart')};
+
+          scope.$on('editVizualizationSettings', function () {
+            EditSettings.openSettingsModal('pie', scope.options.labels)
+              .result.then(function (labels) {
+                scope.options.labels = labels;
+              });
+          });
 
           var color = d3.scale.category20();
 
@@ -130,14 +139,14 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             var filter;
             if (data.col) {
               filter = {
-                filterId: data.col,
+                filterID: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                filterId: data.row,
+                filterID: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);
@@ -316,6 +325,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             });
           };
 
+
           /**
            * Reload and redraw the Pie Chart
            */
@@ -329,6 +339,9 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             var chartWidth = Math.max(svgWidth - 100, 150),
               chartHeight = Math.max(svgHeight - 100, 150),
               radius = Math.min(chartWidth, chartHeight) / 2;
+
+            scope.titleXpx = (svgWidth / 2);
+            scope.titleYpx = 30;
 
             var arc = d3.svg.arc()
               .outerRadius(radius - 10)
@@ -420,12 +433,27 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             setupLabels(g.append('text'), locationHashTable, radius);
           };
 
+          var updateVisualization = function () {
+            delete scope.options.options;
+            updateURL.updateVisualization(scope.options.id, {
+              options: scope.options,
+              pivot: scope.pivot,
+              aggData: scope.aggData
+            });
+          };
+
           scope.$watchCollection('[aggData]', function () {
             reload();
+            updateVisualization();
+          });
+
+          scope.$watchCollection('[options.labels.title]', function () {
+            updateVisualization();
           });
 
           scope.$watchCollection('[options.width, options.height]', function () {
             reload();
+            updateVisualization();
           });
         }
       };

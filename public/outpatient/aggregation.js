@@ -53,7 +53,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     },
     age: {
       range: { // age is actually an age group, b/c that's almost always what you actually want
-        field: 'patient.age',
+        field: 'patient.age.years',
         ranges: [
           {key: '[0 TO 1]', to: 1},
           {key: '[1 TO 5]', from: 1, to: 5},

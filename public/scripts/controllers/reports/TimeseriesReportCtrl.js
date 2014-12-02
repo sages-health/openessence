@@ -17,15 +17,15 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
   var dateFormat = 'YYYY-MM-DD';
   var startDate = moment($scope.report.startDate).format(dateFormat);
   var endDate = moment($scope.report.endDate).format(dateFormat);
-  $scope.report.dateString = 'reportDate: [' + startDate + ' TO ' + endDate + ']';
+  $scope.report.dateString = 'visitDate: [' + startDate + ' TO ' + endDate + ']';
 
-  var fixReportDate = function (query) {
+  var fixVisitDate = function (query) {
     var result = query;
     var startPosition = 0;
     var i = -1;
 
     while (startPosition !== -1) {
-      startPosition = result.indexOf('reportDate:', i + 1);
+      startPosition = result.indexOf('visitDate:', i + 1);
       if (startPosition === -1) {
         break;
       }
@@ -39,7 +39,7 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
   var fixVisualization = function (viz) {
 
     // fix date in queryString
-    viz.state.queryString = fixReportDate(viz.state.queryString);
+    viz.state.queryString = fixVisitDate(viz.state.queryString);
 
     // fix date filters
     if (viz.state.filters) {
@@ -62,7 +62,7 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
     if (viz.state.filters) {
       for (var ix = 0; ix < viz.state.filters.length; ix++) {
         // Update date filters
-        if (viz.state.filters[ix].filterId === 'districts') {
+        if (viz.state.filters[ix].filterID === 'districts') {
           viz.state.filters[ix].value[0] = country;
           viz.state.filters[ix].queryString = viz.state.filters[ix].queryString.replace('"Country A"', '"' + country + '"');
         }
@@ -88,9 +88,9 @@ module.exports = function ($scope, gettextCatalog, $window, visualization, user,
       var rows = [
         []
       ];
-
       districts.forEach(function (district, i) {
         var v = angular.copy(vizTemplate);
+        v.state.options.id = i;
         v = fixCountry(v, district);
         v.name = district;
         rows[rows.length - 1].push(v);

@@ -2,13 +2,9 @@
 
 // @ngInject
 module.exports = function ($resource) {
-  return $resource('/reports/:name',
+  return $resource('/reports/:name', // TODO ReportResource
     {
       name: '@name'
-    },
-    {
-      update: {
-        method: 'PUT'
-      }
-    });
+    }
+  );
 };

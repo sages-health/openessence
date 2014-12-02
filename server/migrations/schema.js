@@ -49,8 +49,12 @@ var indexRequests = [
         mappings: {
           'outpatient_visit': addPaperTrail({
             properties: {
-              // TODO rename to visitDate
-              reportDate: {
+              // date of first presentation to healthcare system
+              visitDate: {
+                type: 'date'
+              },
+
+              symptomOnsetDate: {
                 type: 'date'
               },
 
@@ -85,13 +89,21 @@ var indexRequests = [
               },
 
               visitType: {
-                type: 'string',
-                index: 'not_analyzed'
+                properties: {
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
 
-              discharge: {
-                type: 'string',
-                index: 'not_analyzed'
+              disposition: {
+                properties: {
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
 
               // Array of well-known diagnoses. Usually used with symptoms.
@@ -145,14 +157,56 @@ var indexRequests = [
 
               patient: {
                 properties: {
+                  // Some kind of unique patient identifier, e.g. SSN
                   id: {
-                    type: 'integer',
+                    type: 'string',
                     index: 'not_analyzed'
                   },
-                  age: {
-                    // we don't need that much precision, but we do want to support fractional ages, e.g. 0.5
-                    type: 'double'
+
+                  // The only way to support names across cultures is with a single "name" field
+                  name: {
+                    type: 'string'
                   },
+
+                  // Addresses are way too complicated to do anything but a single "address" field. This is more for
+                  // manual followup of a patient than analysis anyway.
+                  address: {
+                    type: 'string'
+                  },
+
+                  phone: {
+                    // phone numbers are not numbers!
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+
+                  dateOfBirth: {
+                    type: 'date'
+                  },
+
+                  // This should be populated even if dateOfBirth is set to make querying easier. It can also be used
+                  // as an alternative to dateOfBirth if date of birth is not known but a more general age is known,
+                  // e.g. "I don't know this patient's date of birth, but I know they're about 65."
+                  age: {
+                    properties: {
+                      // We could store a single age decimal, but then we'd need to use floating point approximations
+                      // of rationals.
+                      // Note that this is not designed to store facts like "patient is 15-and-a-half,"
+                      // since epis don't really care about that. Instead, this is more of a union type:
+                      // if years is >= 1, then months is 0 or null, and if months is >0 then years is 0 or null.
+                      years: {
+                        type: 'integer'
+                      },
+
+                      // 1-12, more than that and you're in years
+                      months: {
+                        type: 'integer'
+                      }
+
+                      // per Brian, 0-1 month is typically binned together, so no need for more precision right now
+                    }
+                  },
+
                   sex: {
                     type: 'string',
                     analyzer: 'sex'
@@ -179,6 +233,35 @@ var indexRequests = [
                         type: 'double'
                       }
                     }
+                  },
+
+                  // These are usually diagnoses
+                  preExistingConditions: {
+                    properties: {
+                      name: {
+                        type: 'string'
+                      }
+                      // room for other data
+                    }
+                  },
+
+                  pregnant: {
+                    properties: {
+                      // True if patient is pregnant
+                      is: {
+                        type: 'boolean'
+                      },
+
+                      // Number of weeks pregnant. Not currently used.
+                      weeks: {
+                        type: 'double'
+                      },
+
+                      // What trimester patient is in. Less granularity than weeks, but often collected instead.
+                      trimester: {
+                        type: 'double'
+                      }
+                    }
                   }
                 }
               },
@@ -186,23 +269,27 @@ var indexRequests = [
               // AKA the clinic, hospital, military treatment center, etc. where the patient was processed.
               // Why medicalFacility? Because that's what http://en.wikipedia.org/wiki/Medical_facility says.
               medicalFacility: {
-                properties: {
+                properties: { // same as facility type
 
                   // The name of this facility
                   name: {
                     type: 'string'
                   },
 
-                  // The administrative subdivision of this facility. Could be state, county, school district, etc.
-                  district: {
-                    type: 'string',
-                    fields: {
-                      raw: {
+                  location: {
+                    properties: {
+                      district: {
                         type: 'string',
-                        index: 'not_analyzed'
+                        fields: {
+                          raw: {
+                            type: 'string',
+                            index: 'not_analyzed'
+                          }
+                        }
                       }
                     }
                   },
+
                   sites: {
                     properties: {
                       total: {
@@ -231,8 +318,10 @@ var indexRequests = [
           'dashboard',
           'date-shift',
           'diagnosis',
-          'discharge',
-          'location',
+          'disposition',
+          'district',
+          'facility',
+          'form',
           'symptom',
           'syndrome',
           'user',
@@ -295,8 +384,7 @@ var indexRequests = [
             }
           }),
 
-          // Discharge types
-          discharge: addPaperTrail({
+          disposition: addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -310,7 +398,21 @@ var indexRequests = [
             }
           }),
 
-          location: addPaperTrail({
+          // Right now, this is the only thing that's mapped. In the future, we'll have the capability to map more
+          // things.
+          district: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string'
+              },
+              geometry: {
+                type: 'geo_shape'
+              }
+            }
+          }),
+
+          // medical facilities
+          facility: addPaperTrail({
             properties: {
               name: {
                 type: 'string',
@@ -321,8 +423,78 @@ var indexRequests = [
                   }
                 }
               },
-              geometry: {
-                type: 'geo_shape'
+              location: {
+                properties: {
+                  // Stick whatever info you have on the facility's location here. Obviously, not all of these fields
+                  // will be used.
+                  district: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  region: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  province: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  postalCode: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  county: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  state: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  country: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              }
+            }
+          }),
+
+          // Collection forms
+          form: addPaperTrail({
+            properties: {
+              name: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+
+              // Array of fields
+              fields: {
+                properties: {
+                  name: {
+                    type: 'string'
+                  },
+                  enabled: {
+                    type: 'boolean'
+                  },
+
+                  // Array of possible values for this field. For example, a symptoms field might have "Cough", "Fever",
+                  // etc.
+                  values: {
+                    properties: {
+                      // Only store values. Labels are locale-dependent and belong in the views, not in the DB
+                      name: {
+                        type: 'string'
+                      }
+                      // other properties depend on the field, e.g. facility stores location info
+                    }
+                  }
+                }
               }
             }
           }),
@@ -382,6 +554,10 @@ var indexRequests = [
                 index: 'not_analyzed'
               },
               name: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              tokens: {
                 type: 'string',
                 index: 'not_analyzed'
               },

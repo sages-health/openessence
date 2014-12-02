@@ -72,7 +72,7 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
                     rowId: ix,
                     year: row[0],
                     week: row[1],
-                    reportDate: parseDate(row[2]),
+                    visitDate: parseDate(row[2]),
                     medicalFacility: {
                       district: row[3],
                       sites: {
@@ -107,7 +107,7 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
               {field: 'rowId', displayName: 'Row #', width: 40},
               {field: 'year', displayName: 'Year'},
               {field: 'week', displayName: 'Week'},
-              {field: 'reportDate', displayName: 'Date', width: 100,
+              {field: 'visitDate', displayName: 'Visit date', width: 100,
                 cellTemplate: '<div class="ngCellText">{{formatDate(row.getProperty(col.field))}}</div>'},
               {field: 'medicalFacility.district', displayName: 'District', width: 100},
               {field: 'medicalFacility.sites.total', displayName: 'Total Sites'},

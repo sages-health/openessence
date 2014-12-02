@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Discharge</h4>
+  <h4 class="modal-title" translate>Disposition</h4>
 </div>
 
 <div class="modal-body">
@@ -11,14 +11,14 @@
       <conflict-message ng-show="conflictError"></conflict-message>
 
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.name) || uniqueConstraintViolation}">
-        <label class="col-md-4 control-label" for="entry-discharge-name" translate>Name</label>
+        <label class="col-md-4 control-label" for="entry-disposition-name" translate>Name</label>
 
         <div class="col-md-6">
           <div class="input-group">
-            <input class="form-control" id="entry-discharge-name" name="name" ng-model="data.name" required>
+            <input class="form-control" id="entry-disposition-name" name="name" ng-model="data.name" required>
           </div>
           <span ng-show="isInvalid(recordForm.name)" class="help-block" translate>
-            Please enter a valid Discharge name
+            Please enter a valid disposition
           </span>
           <span class="help-block" ng-show="uniqueConstraintViolation">
             <span translate>Sorry, this name is already in use</span>
@@ -26,11 +26,11 @@
         </div>
       </div>
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.phoneId)}">
-        <label class="col-md-4 control-label" for="entry-discharge-phoneId" translate>Phone ID</label>
+        <label class="col-md-4 control-label" for="entry-disposition-phoneId" translate>Phone ID</label>
 
         <div class="col-md-6">
           <div class="input-group">
-            <input class="form-control" id="entry-discharge-phoneId" name="phoneId" ng-model="data.phoneId">
+            <input class="form-control" id="entry-disposition-phoneId" name="phoneId" ng-model="data.phoneId">
           </div>
           <span ng-show="isInvalid(recordForm.phoneId)" class="help-block" translate>
             Please enter a valid Phone ID

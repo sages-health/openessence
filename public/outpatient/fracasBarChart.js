@@ -4,7 +4,8 @@ var angular = require('angular');
 var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope) {
+angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, updateURL, //
+                                                                                        gettextCatalog, EditSettings) {
   return {
     restrict: 'E',
     template: require('./bar-chart.html'),
@@ -18,7 +19,24 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
     compile: function () {
       return {
         pre: function (scope, element) {
+
+          scope.titleXpx = scope.titleYpx = scope.yLabelXpx = scope.yLabelYpx = scope.xLabelXpx = scope.xLabelYpx = 10;
+
           scope.options = scope.options || {};
+
+          scope.options.labels = scope.options.labels ||
+          {
+            title: gettextCatalog.getString('Bar Chart'),
+            y: gettextCatalog.getString('Count'),
+            x: gettextCatalog.getString('Category')
+          };
+
+          scope.$on('editVizualizationSettings', function () {
+            EditSettings.openSettingsModal('bar', scope.options.labels)
+              .result.then(function (labels) {
+                scope.options.labels = labels;
+              });
+          });
 
           /**
            * Return a 'g' element in the SVG for drawing the Bar
@@ -113,14 +131,14 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             var filter;
             if (data.col) {
               filter = {
-                filterId: data.col,
+                filterID: data.col,
                 value: data.colName
               };
               $rootScope.$emit('filterChange', filter, true, true);
             }
             if (data.row) {
               filter = {
-                filterId: data.row,
+                filterID: data.row,
                 value: data.rowName
               };
               $rootScope.$emit('filterChange', filter, true, true);
@@ -129,14 +147,23 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
           // http://bl.ocks.org/mbostock/3887051
           var redraw = function () {
-            var svgWidth = scope.options.width || element.find('svg.bar-chart')[0].parentNode.offsetWidth,
+            var svgWidth = scope.options.width || element.find('svg.bar-chart')[0].parentNode.offsetWidth || 500,
               svgHeight = scope.options.height || 400;
 
             var chartWidth = svgWidth - 125,
               chartHeight = svgHeight - 100;
 
-            var svg = getSVG(svgWidth, svgHeight);
+            var ymargin = 100;
+            var xmargin = 50;
 
+            scope.titleXpx = (svgWidth / 2);
+            scope.titleYpx = 20;
+            scope.yLabelXpx = (xmargin / 3);
+            scope.yLabelYpx = (svgHeight / 2);
+            scope.xLabelXpx = (svgWidth / 2);
+            scope.xLabelYpx = (svgHeight - ymargin / 6);
+
+            var svg = getSVG(svgWidth, svgHeight);
             var data = scope.aggData;
 
             if (data.length === 0) {
@@ -372,12 +399,30 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               });
           };
 
+          var updateVisualization = function () {
+            delete scope.options.options;
+            updateURL.updateVisualization(scope.options.id, {
+              options: scope.options,
+              pivot: scope.pivot
+            });
+          };
+
           scope.$watchCollection('[aggData]', function () {
             redraw();
+            updateVisualization();
+          });
+
+          scope.$watchCollection('[pivot.cols, pivot.rows]', function () {
+            updateVisualization();
+          });
+
+          scope.$watchCollection('[options.labels.title, options.labels.x, options.labels.y]', function () {
+            updateVisualization();
           });
 
           scope.$watchCollection('[options.width, options.height]', function () {
             redraw();
+            updateVisualization();
           });
         }
       };

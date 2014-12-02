@@ -1,32 +1,21 @@
 'use strict';
 
-if (module.parent) {
-  // This is the parent process, just like Unix fork()
-  module.exports = {
-    // this should be set to true by the parent process after they receive notice from the child process that the
-    // engine has started
-    started: false,
-
-    // the child process phantom-cluster is running in
-    childProcess: null,
-
-    // enqueue a phantom-cluster request
-    enqueue: function (request) {
-      module.exports.childProcess.send({
-        request: request
-      });
-    }
-  };
-  return;
-}
-
-// This is the child process. phantom-cluster must be run in a separate process
-
 var phantomCluster = require('phantom-cluster');
 var cluster = require('cluster');
 var path = require('path');
+var express = require('express');
+var fs = require('fs');
+var mime = require('mime-types');
+var http = require('http');
+var url = require('url');
+var tmp = require('tmp');
+var passport = require('passport');
+var BearerStrategy = require('passport-http-bearer').Strategy;
+var Boom = require('boom');
+
 var conf = require('./conf');
 var logger = conf.logger;
+var User = require('./models/User');
 
 var engine = phantomCluster.createQueued({
   workers: 2,
@@ -48,126 +37,201 @@ engine.on('stopped', function () {
 });
 
 engine.on('phantomStarted', function () {
-  logger.info('PhantomJS instance started');
+  logger.debug('PhantomJS instance started');
 });
 
 engine.on('phantomDied', function () {
   logger.info('PhantomJS instance stopped');
 });
 
-var setPageSize = function (request, page) {
-  // inspired by https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js
-  page.set('viewportSize', {
-    width: 600,
-    height: 600
-  });
-  if (path.extname(request.output) === '.pdf') {
-    page.set('paperSize', (function () {
-      var size = request.size.split('*');
-      if (size.length === 2) { // e.g. '5in*7.5in', '10cm*20cm'
-        return {
-          width: size[0],
-          height: size[1],
-          margin: '0px'
-        };
-      } else { // e.g. 'Letter', 'A4'
-        return {
-          format: request.size,
-          orientation: 'portrait',
-          margin: '1cm'
-        };
-      }
-    })());
-  } else if (request.size.substr(-2) === 'px') {
-    // '1920px' would render the entire page, with a window width of 1920px
-    // '800px*600px' would clip the image to 800*600
-    // ...at least I think that's what happens
-    var size = request.size.split('*');
-    if (size.length === 2) { // e.g. '800px*600px'
-      var pageWidth = parseInt(size[0], 10);
-      var pageHeight = parseInt(size[1], 10);
-      page.set('viewportSize', {
-        width: pageWidth,
-        height: pageHeight
-      });
-      page.set('clipRect', {
-        top: 0,
-        left: 0,
-        width: pageWidth,
-        height: pageHeight
-      });
-    } else {
-      page.set('viewportSize', (function () {
-        var pageWidth = parseInt(request.size, 10); // yes, parseInt works even with 'px' in the string
-        var pageHeight = parseInt(pageWidth * 3/4, 10);
-        return {
-          width: pageWidth,
-          height: pageHeight
-        };
-      })());
-    }
-  } else if (request.size) {
-    logger.warn('Unknown size %s', request.size);
-  }
+engine.on('queueItemReady', function (options) {
+  logger.info('PhantomJS cluster received request for %s', options.url);
 
-  if (request.zoom) {
-    page.set('zoomFactor', request.zoom);
-  }
-};
-
-engine.on('queueItemReady', function (request) {
-  logger.info('PhantomJS cluster received request for %s', request.url);
   var clusterClient = this;
   this.ph.createPage(function (page) {
-    page.set('customHeaders', { // FIXME server is still throwing 403
-      Authorization: 'Bearer ' + request.token
+    page.set('customHeaders', {
+      Authorization: 'Bearer ' + options.user.doc.tokens[0]
     });
 
-    setPageSize(request, page);
-
-    page.open(request.url, function (status) {
-      if (status === 'fail') {
-        logger.error('PhantomJS failed to open %s', request.url);
-        clusterClient.queueItemResponse(request);
-        return;
-      }
-
-      page.get('content', function (content) {
-        logger.debug('PhantomJS requested %s and got\n%s', request.url, content);
+    var setPageSize = function () {
+      // inspired by https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js
+      page.set('viewportSize', {
+        width: 600,
+        height: 600
       });
+      if (path.extname(options.filename) === '.pdf') {
+        page.set('paperSize', (function () {
+          var size = options.size.split('*');
+          if (size.length === 2) { // e.g. '5in*7.5in', '10cm*20cm'
+            return {
+              width: size[0],
+              height: size[1],
+              margin: '0px'
+            };
+          } else { // e.g. 'Letter', 'A4'
+            return {
+              format: options.size,
+              orientation: 'portrait',
+              margin: '1cm'
+            };
+          }
+        })());
+      } else if (options.size.substr(-2) === 'px') {
+        // '1920px' would render the entire page, with a window width of 1920px
+        // '800px*600px' would clip the image to 800*600
+        // ...at least I think that's what happens
+        var size = options.size.split('*');
+        if (size.length === 2) { // e.g. '800px*600px'
+          var pageWidth = parseInt(size[0], 10);
+          var pageHeight = parseInt(size[1], 10);
+          page.set('viewportSize', {
+            width: pageWidth,
+            height: pageHeight
+          });
+          page.set('clipRect', {
+            top: 0,
+            left: 0,
+            width: pageWidth,
+            height: pageHeight
+          });
+        } else {
+          page.set('viewportSize', (function () {
+            var pageWidth = parseInt(options.size, 10); // yes, parseInt works even with 'px' in the string
+            var pageHeight = parseInt(pageWidth * 3/4, 10);
+            return {
+              width: pageWidth,
+              height: pageHeight
+            };
+          })());
+        }
+      } else if (options.size) {
+        logger.warn('Unknown size %s', options.size);
+      }
+    };
 
-      logger.info('PhantomJS rendering URL %s to file %s', request.url, request.output);
+    setPageSize();
+
+    page.open(options.url, function () {
+      logger.info('PhantomJS rendering %s to %s', options.url, options.filename);
       setTimeout(function () {
-        page.render(request.output, function () {
-          logger.info('PhantomJS done rendering %s', request.output);
-          clusterClient.queueItemResponse(request);
+        if (options.selector) {
+          page.evaluate((function () {
+            var func = function (s) {
+              /* global document*/
+              return document.querySelector('#' + s).getBoundingClientRect();
+            };
+            return 'function() { return (' + func.toString() + ').apply(this, ' + JSON.stringify([options.selector]) + ');}';
+          }()), function (value) {
+            page.clipRect = value;
+            page.set('clipRect', value);
+          });
+        }
+
+        page.render(options.filename, function () {
+          logger.info('PhantomJS done rendering %s', options.filename);
+          clusterClient.queueItemResponse(options);
         });
-      }, 200); // not sure if this helps, but it's what the examples use
+
+      }, 1000);
     });
   });
 });
 
-engine.on('started', function () {
-  if (process.send) {
-    // let parent know we started
-    process.send({
-      // we can't set module.exports.started = true ourselves because that's in our process space (not our parent's)
-      // and it's only really useful to our parent
-      started: true
-    });
-  }
-});
-
-// when parent process sends us a request, pass it along to cluster
-process.on('message', function (message) {
-  if (message.request) {
-    if (cluster.isMaster) {
-      // there's some funky node-cluster stuff going on, but checking for isMaster is what the example code does
-      // before enqueuing, otherwise we get an error because engine is a client instance
-      // https://github.com/dailymuse/phantom-cluster/blob/master/example.coffee
-      engine.enqueue(message.request);
-    }
-  }
-});
 
 engine.start();
+
+if (cluster.isMaster) {
+  // expose HTTP API for submitting requests to Phantom
+  var app = express();
+
+  // log all requests
+  app.use(require('morgan')());
+
+  // compressing already compressed formats (PNG, JPG, PDF) is counterproductive
+//  app.use(require('compression')());
+
+  passport.use(new BearerStrategy({}, function (token, done) {
+    // This means every request hits the DB, but these requests are pretty rare.
+    // If they become more frequent we can cache users in Redis, or somehow leverage our existing session store
+    User.findByToken(token, function (err, user) {
+      if (err) {
+        return done(err);
+      }
+
+      if (!user) {
+        return done(null, false);
+      }
+
+      return done(null, user);
+    });
+  }));
+
+  // all requests have to have bearer tokens on them
+  app.use(passport.initialize());
+  app.use(passport.authenticate('bearer', {session: false}));
+  app.use(require('./auth').denyAnonymousAccess);
+
+  app.get('/:name', function (req, res, next) {
+    // PDFs are often blank where PNGs work fine, so for now default to PNG
+    // see https://github.com/ariya/phantomjs/issues/11968
+    var contentType = req.accepts(['image/png', 'image/jpeg', 'image/gif', 'application/pdf']);
+    if (!contentType) {
+      return next();
+    }
+
+    var extension = mime.extension(contentType);
+
+    // A4 is ISO standard, even if USA uses Letter
+    var size = extension === 'pdf' ? 'A4' : '1240px';
+
+    tmp.tmpName({postfix: '.' + extension}, function (err, filename) {
+      if (err) {
+        return next(err);
+      }
+
+      var urlToRender = url.parse(req.query.url);
+      var fracasUrl = url.parse(conf.url);
+
+      // Don't allow client to specify these parts of the URL. Otherwise we could end up running an open proxy.
+      urlToRender.protocol = fracasUrl.protocol;
+      urlToRender.hostname = fracasUrl.hostname;
+      urlToRender.port = fracasUrl.port;
+
+      var queueItem = engine.enqueue({
+        url: url.format(urlToRender),
+        name: req.params.name,
+        user: req.user,
+        filename: filename,
+        selector: req.query.selector,
+        size: size
+      });
+      queueItem.on('response', function () {
+        // TODO sanitize file name
+        res.download(filename, req.params.name + '.' + extension, function (err) {
+          // try to delete file no matter what
+          fs.unlink(filename, function () {
+            // ignore any errors
+          });
+
+          if (err && !res.headersSent) {
+            return next(err);
+          } else if (err) {
+            return logger.error({err: err}, 'Error sending rendered page to client');
+          }
+        });
+      });
+
+      queueItem.on('timeout', function () {
+        next(Boom.serverTimeout('PhantomJS timed out rendering page'));
+      });
+
+    });
+
+  });
+
+  app.use(require('./error').middleware)
+    .use(require('./error').notFound); // this must be the last route
+
+  var phantomUrl = url.parse(conf.phantom.url);
+  http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname);
+}

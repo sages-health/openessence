@@ -4,18 +4,23 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($scope, $modal, tableUtil, crud, $rootScope, gettextCatalog, WorkbenchResource) {
-  $scope.filters = [
-    {filterId: 'name'}
-  ];
-  $scope.filterTypes = [
+  $scope.activeFilters = [
     {
-      filterId: 'name',
+      filterID: 'name',
+      type: 'text',
+      field: 'name',
+      name: gettextCatalog.getString('Name')
+    }
+  ];
+  $scope.possibleFilters = [
+    {
+      filterID: 'name',
       type: 'text',
       field: 'name',
       name: gettextCatalog.getString('Name')
     },
     {
-      filterId: 'description',
+      filterID: 'description',
       type: 'text',
       field: 'description',
       name: gettextCatalog.getString('Description')
@@ -53,7 +58,7 @@ module.exports = function ($scope, $modal, tableUtil, crud, $rootScope, gettextC
 
   $scope.deleteRecord = function (record) {
     var deleteRecord = angular.copy(record);
-    delete deleteRecord._source.widgets;
+    delete deleteRecord._source.state;
     crud.delete(deleteRecord, $scope.resource, $scope.deleteTemplate).result.then(reload).then(workbenchChanged);
   };
 };

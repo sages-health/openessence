@@ -1,15 +1,43 @@
 'use strict';
 
+var angular = require('angular');
+
 // @ngInject
-module.exports = function ($scope, $location, $timeout, $modal, $window, $stateParams, gettextCatalog, scopeToJson,
-                           DiagnosisResource, DistrictResource, SymptomResource, WorkbenchResource) {
+module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog, scopeToJson,//
+                           FormResource, WorkbenchResource, possibleFilters, updateURL) {
+  $scope.gridsterOptions = {
+    margins: [10, 10],
+    columns: 12,
+    draggable: {
+      enabled: true
+    },
+    resizable: {
+      enabled: true
+    }
+  };
 
   $scope.filterTypes = [
+      {
+        filterId: 'age',
+        type: 'numeric-range',
+        field: 'patient.age',
+        name: gettextCatalog.getString('Age')
+      },
       {
         filterId: 'date',
         type: 'date-range',
         field: 'reportDate',
         name: gettextCatalog.getString('Date')
+      },
+      {
+        filterId: 'diagnoses',
+        type: 'multi-select',
+        field: 'diagnoses.name',
+        store: {
+          resource: DiagnosisResource,
+          field: 'name'
+        },
+        name: gettextCatalog.getString('Diagnoses')
       },
       {
         filterId: 'districts',
@@ -20,6 +48,12 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
           field: 'name'
         },
         name: gettextCatalog.getString('District')
+      },
+      {
+        filterId: 'sex',
+        type: 'sex',
+        field: 'patient.sex',
+        name: gettextCatalog.getString('Sex')
       },
       {
         filterId: 'symptoms',
@@ -47,6 +81,76 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];
 
+  var getNextVizId = function () {
+    if (!$scope.nextVizId) {
+      $scope.nextVizId= 0;
+    }
+    $scope.nextVizId++;
+    return $scope.nextVizId;
+  };
+
+  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+    if (response.results.length === 0) {
+      throw new Error('No configured forms');
+    }
+
+    var form = response.results[0]._source;
+    $scope.form = form; // need to pass to visualizations
+
+    $scope.possibleFilters = form.fields.reduce(function (filters, field) {
+      if (!field.enabled) {
+        return filters;
+      }
+
+      var possibleFilter = possibleFilters[field.name];
+      if (possibleFilter) {
+        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
+      }
+
+      return filters;
+    }, {});
+
+    var workbenchId = $stateParams.workbenchId;
+    var state = updateURL.getState();
+    $scope.nextVizId = 0;
+
+    if (workbenchId) { // if we are loading a saved workbench
+      var workbenches = JSON.parse($window.sessionStorage.getItem('workbenches'));
+      var workbench = workbenches[workbenchId]._source.state;
+      $scope.nextVizId = workbench.nextVizId;
+      $scope.activeFilters = workbench.activeFilters;
+      if (Array.isArray(workbench.visualizations)) {
+        workbench.visualizations.forEach(function (v) {
+          $scope.addVisualization(v.visualization.name, v);
+        });
+      }
+    } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
+      $scope.activeFilters = state.filters || [];
+      if (Array.isArray(state.visualizations)) {
+        state.visualizations.forEach(function (v) {
+          var id = v.id ? parseInt(v.id.substring(4)) : 0;
+          $scope.nextVizId = $scope.nextVizId >= id ? $scope.nextVizId : id;
+        });
+        state.visualizations.forEach(function (v) {
+          $scope.addVisualization(v.visualization.name, v);
+        });
+      }
+    } else {
+      var from = new Date();
+      from.setDate(from.getDate() - 90); // 90 days back
+
+      $scope.activeFilters = [
+        angular.extend({
+          from: from,
+          to: new Date()
+        }, possibleFilters.visitDate)
+      ];
+
+      // TODO don't do this
+      $scope.addVisualization();
+    }
+  });
+
   $scope.$watch('visualizations.length', function (numVizes) {
     if (numVizes % 2 === 0) { // plus is on its own row
       $scope.showButtonText = true; // plenty of space for text
@@ -72,10 +176,22 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
   $scope.addVisualization = function (name, options) {
     options = options || {};
 
-    $scope.visualizations.push({
-      sizeX: 3,
-      sizeY: 4,
+    var id = options.id;
+    if (!id) {
+      id = 'viz-' + getNextVizId();
+
+      angular.extend(options, {
+        id: id // assign element a new id on insert to match the Fracas grid
+      });
+    }
+
+    var viz = {
+      sizeX: options.sizeX || 6,
+      sizeY: options.sizeY || 4,
+      row: options.row,
+      col: options.col,
       type: 'outpatient-visit',
+      options: options,
       visualization: {
         name: name || 'table'
       },
@@ -84,7 +200,9 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
         rows: [],
         cols: []
       }
-    });
+    };
+    $scope.visualizations.push(viz);
+    updateURL.updateVisualization(options.id, viz);
   };
 
   var visualizationName = $location.search().visualization;
@@ -114,6 +232,7 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
   }
 
   $scope.removeVisualization = function (visualization) {
+    updateURL.removeVisualization(visualization.options.id);
     var index = $scope.visualizations.indexOf(visualization);
     $scope.visualizations.splice(index, 1);
   };
@@ -147,6 +266,32 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
       });
   };
 
+  var visualizationName = $location.search().visualization;
+  if (visualizationName) {
+    var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
+    var options = {
+      pivot: viz.pivot
+    };
+
+    $scope.filters = viz.filters.map(function (filter) {
+      if (filter.value) {
+        return {
+          filterId: filter.filterId,
+          value: filter.value
+        };
+      } else {
+        return {
+          filterId: filter.filterId,
+          to: filter.to,
+          from: filter.from
+        };
+      }
+    });
+
+    $scope.addVisualization(viz.visualization.name, options);
+    $scope.vizMenuOpen = false;
+  }
+
   $scope.sortableOptions = {
     cursor: 'move',
     opacity: 0.9,
@@ -155,31 +300,4 @@ module.exports = function ($scope, $location, $timeout, $modal, $window, $stateP
   $scope.$on('visualizationSelect', function (event, name, options) {
     $scope.addVisualization(name, options);
   });
-
-  var workbenchId = $stateParams.workbenchId;
-  if (workbenchId) {
-    var workbenches = JSON.parse($window.sessionStorage.getItem('workbenches'));
-    var workbench = workbenches[workbenchId]._source.state;
-
-    $scope.filters = workbench.filters;
-    if (Array.isArray(workbench.visualizations)) {
-      workbench.visualizations.forEach(function (v) {
-        $scope.addVisualization(v.visualization.name, v);
-      });
-    }
-  } else {
-    // default to a single 90 day date filter
-    var from = new Date();
-    from.setDate(from.getDate() - 90); // 90 days back
-    $scope.filters = [
-      {
-        filterId: 'date',
-        from: from,
-        to: new Date()
-      }
-    ];
-
-    // TODO don't do this
-    $scope.addVisualization();
-  }
 };
