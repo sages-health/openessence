@@ -130,7 +130,9 @@
     "jquery-resize": "./bower_components/javascript-detect-element-resize/jquery.resize.js",
     "ng-file-upload": "./bower_components/ng-file-upload/angular-file-upload.js",
     "ng-grid": "./bower_components/ng-grid/build/ng-grid.js",
-    "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js"
+    "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js",
+    "highcharts-ng": "./bower_components/highcharts-ng/dist/highcharts-ng.js",
+    "highcharts": "./bower_components/highcharts/highcharts.js"
   },
   "engines": {
     "node": "0.10.x"

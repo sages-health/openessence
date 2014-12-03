@@ -1,33 +1,68 @@
-<div class="container">
+
+
+<div class="container" style="width:100%">
+  <style>
+    * {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    @media print {
+      @page {
+        size: landscape;
+      }
+    }
+  </style>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h3>{{report.name}}</h3>
 
       <div translate>Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}</div>
+      <div class="clearfix">
+        <div class="pull-left" style="font-size: 80%">
+          <h4>
+            {{report.name}}
+            <button ng-show="allowExport" class="btn btn-primary" ng-click="export()">
+              <span class="icon-export"></span>
+            </button>
+          </h4>
+        </div>
+        <div class="pull-right" style="font-size: 80%">Year: {{report.year}} | Week: {{report.week}} | Ending on:
+          {{report.endDateString}}
+        </div>
+      </div>
     </div>
 
     <div class="panel-body">
       <table class="table table-striped table-hover table-condensed">
         <thead>
         <tr>
-          <th translate>Country / Area</th>
-          <th translate>Date of report</th>
-          <th translate>Number of <br>sites reporting</th>
-          <th translate>Acute Fever and Rash</th>
-          <th translate>Diarrhoea</th>
-          <th translate>Influenza-like Illness</th>
+          <th style="border-right: 1px solid #000000;" translate>Country / Area</th>
+          <th style="border-right: 1px solid #000000;" translate>Date of report</th>
+          <th style="border-right: 1px solid #000000;" translate>Number of <br>sites reporting</th>
+          <th style="border-right: 1px solid #000000;" translate>Acute Fever and Rash</th>
+          <th style="border-right: 1px solid #000000;" translate>Diarrhoea</th>
+          <th style="border-right: 1px solid #000000;" translate>Influenza-like Illness</th>
           <th translate>Prolonged Fever</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody style="border:2px solid #000000;">
         <tr ng-repeat="rec in $data">
-          <td>{{rec._source.medicalFacility.district}}</td>
-          <td>{{rec._source.visitDate | date}}</td>
-          <td>{{rec._source.medicalFacility.sites.reporting}}</td>
-          <td>{{getSymptomCount(rec._source.symptoms, 'Acute Fever and Rash')}}</td>
-          <td>{{getSymptomCount(rec._source.symptoms, 'Diarrhoea')}}</td>
-          <td>{{getSymptomCount(rec._source.symptoms, 'Influenza-like Illness')}}</td>
-          <td>{{getSymptomCount(rec._source.symptoms, 'Prolonged Fever')}}</td>
+          <td style="border-right: 1px solid #000000;">{{rec._source.medicalFacility.location.district}}</td>
+          <td style="border-right: 1px solid #000000;text-align: center;">{{rec._source.visitDate | date}}</td>
+          <td style="border-right: 1px solid #000000;text-align: center;">
+            {{rec._source.medicalFacility.sites.reporting}}
+          </td>
+          <td style="border-right: 1px solid #000000;text-align: center;">{{getSymptomCount(rec._source.symptoms,
+            'Acute Fever and Rash')}}
+          </td>
+          <td style="border-right: 1px solid #000000;text-align: center;">{{getSymptomCount(rec._source.symptoms,
+            'Diarrhoea')}}
+          </td>
+          <td style="border-right: 1px solid #000000;text-align: center;">{{getSymptomCount(rec._source.symptoms,
+            'Influenza-like Illness')}}
+          </td>
+          <td style="text-align: center;">{{getSymptomCount(rec._source.symptoms, 'Prolonged Fever')}}</td>
         </tr>
         </tbody>
       </table>
@@ -35,8 +70,8 @@
 
     <div class="panel-footer">
       <div class="clearfix">
-        <div class="pull-left" translate>Created by: {{username}}</div>
-        <div class="pull-right" translate>Date of report: {{dateString}}</div>
+        <div class="pull-left" style="font-size: 80%" translate>Created by: {{username}}</div>
+        <div class="pull-right" style="font-size: 80%" translate>Date of report: {{dateString}}</div>
       </div>
     </div>
   </div>

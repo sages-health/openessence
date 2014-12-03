@@ -88,9 +88,9 @@ async.parallel([
     bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits.json'), callback);
   },
 
-  function outpatientVisitsAgg (callback) {
-    bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits-agg.json'), callback);
-  },
+  //function outpatientVisitsAgg (callback) {
+  //  bulkInsert(require('../models/OutpatientVisit'), require('./outpatient-visits-agg.json'), callback);
+  //},
 
   function symptoms (callback) {
     bulkInsert(require('../models/Symptom'), require('./symptom.json'), callback);

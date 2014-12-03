@@ -2,8 +2,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 10
+        "name": "Wound",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -21,8 +21,8 @@
     },
     "diagnoses": [
       {
-        "name": "Malaria",
-        "count": 11
+        "name": "Shock",
+        "count": 5
       }
     ],
     "visitDate": "2014-08-12T00:00:00.000Z"
@@ -30,12 +30,12 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 12
+        "name": "Wound",
+        "count": 5
       },
       {
-        "name": "Rash",
-        "count": 13
+        "name": "Dizzy",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -53,8 +53,8 @@
     },
     "diagnoses": [
       {
-        "name": "Ear Infection",
-        "count": 14
+        "name": "Shock",
+        "count": 5
       }
     ],
     "visitDate": "2014-05-03T00:00:00.000Z"
@@ -62,8 +62,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 15
+        "name": "Wound",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -85,12 +85,12 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 16
+        "name": "Wound",
+        "count": 5
       },
       {
-        "name": "Rash",
-        "count": 17
+        "name": "Dizzy",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -108,8 +108,8 @@
     },
     "diagnoses": [
       {
-        "name": "Malaria",
-        "count": 18
+        "name": "Shock",
+        "count": 5
       }
     ],
     "visitDate": "2014-03-16T00:00:00.000Z"
@@ -117,8 +117,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 19
+        "name": "Wound",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -140,8 +140,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 10
+        "name": "Dizzy",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -163,8 +163,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 11
+        "name": "Dizzy",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -186,8 +186,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 12
+        "name": "Wound",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -209,8 +209,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 13
+        "name": "Wound",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -232,8 +232,8 @@
   {
     "symptoms": [
       {
-        "name": "Fever",
-        "count": 14
+        "name": "Dizzy",
+        "count": 5
       }
     ],
     "medicalFacility": {
@@ -251,8 +251,8 @@
     },
     "diagnoses": [
       {
-        "name": "Ear Infection",
-        "count": 15
+        "name": "Shock",
+        "count": 5
       }
     ],
     "visitDate": "2014-03-14T00:00:00.000Z"

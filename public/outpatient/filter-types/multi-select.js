@@ -26,12 +26,21 @@ angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngIn
 
         // If filter's value isn't in list of possible values, add it. Otherwise, it looks like nothing is selected
         if (scope.filter.values && scope.filter.value !== '*') {
-          if (!scope.filter.values.find(function (v) { return v.value === scope.filter.value; })) {
-            scope.filter.values.push({
-              name: gettextCatalog.getString(scope.filter.value),
-              value: scope.filter.value
-            });
+          // if data value is string, make an array
+          if (typeof(scope.filter.value) === 'string') {
+            scope.filter.value = [scope.filter.value];
           }
+          // Add val to values if it does not exist
+          scope.filter.value.forEach(function (val) {
+            if (!scope.filter.values.find(function (v) {
+              return v.value === val;
+            })) {
+              scope.filter.values.push({
+                name: gettextCatalog.getString(val),
+                value: val
+              });
+            }
+          });
         }
 
         scope.$watch('filter.value', function (selectedValue) {

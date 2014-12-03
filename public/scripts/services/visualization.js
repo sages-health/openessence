@@ -7,7 +7,27 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
   return {
     // TODO make clients use this directly
     resource: VisualizationResource,
-    save: function (state) {
+    save: function (state1) {
+      var state = angular.copy(state1);
+      // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
+      ['data', 'crosstabData', 'strings'].forEach(function (k) {
+        delete state[k];
+      });
+      state.filters.map(function(v){
+        delete v.values;
+        return v;
+      });
+      if (state.form) {
+        state.form.fields.map(function (v) {
+          delete v.values;
+          return v;
+        });
+      }
+
+      if (state.tableParams) {
+        delete state.tableParams.data;
+      }
+
       $modal.open({
         template: require('../../partials/save-visualization-modal.html'),
         controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {

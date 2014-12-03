@@ -207,7 +207,10 @@ module.exports = function ($parse, OutpatientVisitResource) {
             // replace strings with the object they represent, need to do this b/c ng-model is dumb
             Object.keys(scope.fields).forEach(function (fieldName) {
               var field = scope.fields[fieldName];
-              if (!field.values) {
+              //TODO currently we write "new" data to district {name: value} even if it is disabled and
+              // that does not match the mapping in outpatient.  For now do not write data if the field is disabled
+              // from the form. This WILL DELETE, we need to handle this better so the form mapping matches the data.
+              if (!field.values || !field.enabled) {
                 return;
               }
 

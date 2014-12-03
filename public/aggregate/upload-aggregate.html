@@ -4,6 +4,11 @@
     <csv-file-selector table-data="data.tableData" file-params="data.fileParams">
     </csv-file-selector>
   </fieldset>
+  <div ng-show="uploading" class="col-sm-12">
+    <progressbar class="progress-striped" value="progress">
+      {{done}}/{{total}}
+    </progressbar>
+  </div>
   <div ng-transclude></div>
 </form>
 

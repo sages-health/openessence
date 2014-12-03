@@ -31,7 +31,7 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
 
           scope.onFileSelect = function ($files) {
             // Check if file is CSV type
-            if ($files[0].type !== 'application/vnd.ms-excel') {
+            if ($files[0].type !== 'application/vnd.ms-excel' && $files[0].type !== 'text/csv') {
               scope.badFile = true;
               scope.$apply(function () {
                 scope.tableData = [];
@@ -66,15 +66,19 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
               var tableData = [];
 
               $.csv.toArrays(csv, scope.fileParams).forEach(function (row, ix) {
-                // ensure we have 11 columns (Initial version of aggregate data csv file has 11 columns)
-                if ((!scope.fileParams.headerRow || ix !== 0) && row.length >= 11) {
+                // ensure we have 11 columns (Initial version of aggregate data csv file has 12 columns)
+                if ((!scope.fileParams.headerRow || ix !== 0) && row.length >= 12) {
                   tableData.push({
                     rowId: ix,
                     year: row[0],
                     week: row[1],
                     visitDate: parseDate(row[2]),
                     medicalFacility: {
-                      district: row[3],
+                      name: row[3],
+                      location: {
+                        district: row[3],
+                        country: row[3]
+                      },
                       sites: {
                         total: !isNaN(row[5]) ? row[5] : undefined,
                         reporting: !isNaN(row[6]) ? row[6] : undefined
@@ -84,7 +88,8 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
                     acuteFever: !isNaN(row[7]) ? row[7] : undefined,
                     diarrhoea: !isNaN(row[8]) ? row[8] : undefined,
                     influenza: !isNaN(row[9]) ? row[9] : undefined,
-                    prolongedFever: !isNaN(row[10]) ? row[10] : undefined
+                    prolongedFever: !isNaN(row[10]) ? row[10] : undefined,
+                    dengue: !isNaN(row[11]) ? row[11] : undefined
                   });
                 }
               });
@@ -108,13 +113,14 @@ angular.module(directives.name).directive('csvFileSelector', /*@ngInject*/ funct
               {field: 'week', displayName: 'Week'},
               {field: 'visitDate', displayName: 'Visit date', width: 100,
                 cellTemplate: '<div class="ngCellText">{{formatDate(row.getProperty(col.field))}}</div>'},
-              {field: 'medicalFacility.district', displayName: 'District', width: 100},
+              {field: 'medicalFacility.location.country', displayName: 'Country', width: 100},
               {field: 'medicalFacility.sites.total', displayName: 'Total Sites'},
               {field: 'medicalFacility.sites.reporting', displayName: 'Sites Reporting'},
               {field: 'acuteFever', displayName: 'Acute Fever and Rashes', width: 80},
               {field: 'diarrhoea', displayName: 'Diarrhoea', width: 80},
               {field: 'influenza', displayName: 'Influenza-like Illness', width: 80},
-              {field: 'prolongedFever', displayName: 'Prolonged Fever', width: 80}
+              {field: 'prolongedFever', displayName: 'Prolonged Fever', width: 80},
+              {field: 'dengue', displayName: 'Dengue-like Illness', width: 80}
             ]
           };
 

@@ -42,7 +42,7 @@ module.exports = [
       // geographic fields, these are collected via medical facility, so users don't have to input them separately
       {
         name: 'medicalFacility.location.district',
-        enabled: true,
+        enabled: false,
         values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
           // construct set of districts
           if (facility.location && facility.location.district) {
@@ -60,16 +60,24 @@ module.exports = [
           })
       },
 
-      // more geographic fields as needed
+      {
+        name: 'medicalFacility.sites.total',
+        enabled: false
+      },
+
+      {
+        name: 'medicalFacility.sites.reporting',
+        enabled: false
+      },
 
       // patient info
       {
         name: 'patient.id',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.name',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.sex',
@@ -78,7 +86,7 @@ module.exports = [
 
       {
         name: 'patient.dateOfBirth',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.age',
@@ -88,40 +96,40 @@ module.exports = [
       // pregnancy status
       {
         name: 'patient.pregnant.is',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.pregnant.trimester',
-        enabled: true
+        enabled: false
       },
 
       // patient contact info
       {
         name: 'patient.phone',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.address',
-        enabled: true
+        enabled: false
       },
 
       // patient vitals
       {
         name: 'patient.temperature',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.pulse',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.weight',
-        enabled: true
+        enabled: false
       },
 
       {
         name: 'patient.preExistingConditions',
-        enabled: true,
+        enabled: false,
         values: [
           'Chronic cardiac disease',
           'Asthma',
@@ -141,7 +149,7 @@ module.exports = [
       },
       {
         name: 'patient.preExistingConditions.other',
-        enabled: true
+        enabled: false
       },
 
       // specimen collection, e.g. for flu culturing
@@ -190,7 +198,7 @@ module.exports = [
 
       {
         name: 'disposition',
-        enabled: true,
+        enabled: false,
         values: require('./disposition.json')
       },
       {
@@ -202,7 +210,7 @@ module.exports = [
       },
       {
         name: 'notes',
-        enabled: true
+        enabled: false
       }
     ]
   }

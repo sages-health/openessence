@@ -38,6 +38,8 @@ require('text-angular'); // must be after the other text-angular resources
 
 require('d3');
 require('leaflet');
+require('highcharts');
+require('highcharts-ng');
 
 var frable = require('../frable');
 require('../select2');
@@ -59,7 +61,7 @@ require('./filters');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
                     'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-                    'ngGrid', 'ngOrderObjectBy', frable.name]
+                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));

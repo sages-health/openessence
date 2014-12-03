@@ -60,12 +60,13 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
               apply(filter, add);
             }
           });
+       
 
           scope.$watch('queryString', function () {
             scope.queryForm.queryStrings.$setValidity('syntaxError', true);
           });
 
-          $rootScope.$on('filterError', function(event, response){
+          $rootScope.$on('filterError', function (event, response) {
             var requestNum = response.status;
             if (requestNum === 400) {
               scope.queryForm.queryStrings.$setValidity('syntaxError', false);
@@ -75,6 +76,10 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
           scope.isInvalid = function (field) {
             return field.$invalid;
           };
+
+          angular.forEach(scope.filters, function(value) {
+            scope.addFilter(value);
+          });
         }
       };
     }
