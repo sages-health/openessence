@@ -239,6 +239,25 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           });
         };
 
+        var crosstabifyRecord = function (source) {
+          var record = {};
+          var ref = {
+            'patient.sex': source.patient ? source.patient.sex : null || null,
+            'patient.age': outpatientAggregation.getAgeGroup((source.patient && source.patient.age) ? source.patient.age.years : null) || null,
+            symptoms: source.symptoms || null,
+            diagnoses: source.diagnoses || null,
+            'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null,
+            medicalFacility: source.medicalFacility ? source.medicalFacility.name : null
+          };
+
+          angular.forEach(scope.fields, function (value, key) {
+            if (value.enabled) {
+              this[key] = ref[key];
+            }
+          }, record);
+          return record;
+        };
+
         var reload = function () {
           if (scope.visualization.name === 'table') {
             scope.tableParams.reload();
@@ -256,18 +275,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }, function (data) {
               var flatRecs = [];
               data.results.forEach(function (r) {
-
-                var source = r._source;
-                //currently we explode symptoms and diagnosis to make crosstab counts for them happy
-                var rec = {
-                  'patient.sex': source.patient ? source.patient.sex : null,
-                  //age: (source.patient && source.patient.age) ? source.patient.age.years : null,
-                  'patient.age': outpatientAggregation.getAgeGroup((source.patient && source.patient.age) ? source.patient.age.years : null),
-                  symptoms: source.symptoms,
-                  diagnoses: source.diagnoses,
-                  'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null
-                };
-                  flatRecs.push(rec);
+                flatRecs.push(crosstabifyRecord(r._source));
               });
               scope.crosstabData = flatRecs;
             });

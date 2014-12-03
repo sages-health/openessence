@@ -17,11 +17,15 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
   };
 
-  // TODO make dependent on enabled form fields
+  // operates similar to possibleFilters, move out of here?
   $scope.pivotOptions = [
     {
       value: 'patient.age',
       label: gettextCatalog.getString('Age')
+    },
+    {
+      value: 'medicalFacility',
+      label: gettextCatalog.getString('Facility')
     },
     {
       value: 'medicalFacility.location.district',
@@ -86,6 +90,14 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
 
       return filters;
     }, {});
+
+    $scope.pivotOptions = angular.copy($scope.pivotOptions).filter(function (value) {
+      var formField = form.fields.filter(function (fValue) {
+        return value.value === fValue.name;
+      });
+      var enabled = formField[0] && formField[0].enabled;
+      return enabled;
+    });
 
     var workbenchId = $stateParams.workbenchId;
     var state = updateURL.getState();
