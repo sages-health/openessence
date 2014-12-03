@@ -1,0 +1,150 @@
+<div class="container-fluid">
+  <div class="panel panel-default">
+    <div class="panel-heading clearfix">
+      <h4 class="panel-title" translate>Site Configuration</h4>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="form-group">
+                <label translate>Data Type</label>
+                <br>
+                <label class="radio-inline">
+                  <input type="radio" name="data-type" value="individual" ng-model="siteTemplate.dataType">
+                  Individual
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="data-type" value="aggregate" ng-model="siteTemplate.dataType">
+                  Aggregate
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label translate>Template</label>
+                <br>
+
+                <div class="radio" ng-repeat="key in templateKeys">
+                  <label>
+                    <input type="radio" name="template" value="{{key}}" ng-model="siteTemplate.templates">
+                    {{key}}
+                  </label>
+                </div>
+
+                <!--<label class="checkbox-inline" ng-repeat="(key, val) in templates">-->
+                <!--<input type="checkbox" name="template" checklist-value="key" checklist-model="siteTemplate.templates"-->
+                <!--ng-disabled="key !== 'Custom'">-->
+                <!--{{key}}-->
+                <!--</label>-->
+              </div>
+            </div>
+          </div>
+          <div ng-show="siteTemplate.fields" class="panel panel-default">
+
+            <div class="panel-heading clearfix">
+              <label translate>Fields</label>
+
+              <div class="pull-right">
+                <button class="btn btn-primary" ng-click="setEnabled(true)">
+                  <span translate>Select All</span>
+                </button>
+                <button class="btn btn-primary" ng-click="setEnabled(false)">
+                  <span translate>Deselect All</span>
+                </button>
+              </div>
+            </div>
+            <div class="panel-body">
+
+              <div class="form-group">
+
+                <table class="table table-striped">
+                  <tr ng-repeat="field in siteTemplate.fields">
+                    <td>
+                      <div class="checkbox"><label>
+                        <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
+                               ng-checked="field.enabled">
+                        {{field.name}}
+                      </label>
+                      </div>
+                    </td>
+                    <td>
+                      <div ng-if="field.enabled && field.values !== undefined">
+
+                        <div class="row">
+                          <select class="form-control select2-multiple" name="{{field.name}}-select" multiple ui-select2
+                                  ng-model="field.values" ng-disabled="!field.enabled">
+                            <option ng-repeat="val in field.possibleValues" ng-value="val.name">{{val.name}}</option>
+                          </select>
+                        </div>
+                        <div class="row">
+                          <div class="btn-group pull-right">
+                            <button class="btn btn-default btn-sm"
+                                    ng-click="addNewValue(field)" title="Add New Possible Value">
+                              <span class="icon-plus"></span>
+                            </button>
+                            <button class="btn btn-warning btn-sm"
+                                    ng-click="removeAll(field)" title="Remove All">
+                              <span class="icon-cancel"></span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer clearfix">
+      <div class="pull-right">
+        <!-- include i18n-friendly images -->
+        <button class="btn btn-warning" ng-click="cancel()">
+          <span class="icon-cancel"></span>
+          <span translate>Cancel</span>
+        </button>
+        <button class="btn btn-primary" ng-click="save()">
+          <span class="icon-ok"></span>
+          <span translate>Save</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/ng-template" id="message.html">
+    <div class="modal-header">
+      <h3 class="modal-title">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+      {{message}}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="closeModal()">OK</button>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="newValue.html">
+    <div class="modal-header">
+      <h3 class="modal-title" translate>Enter a new {{field.name}}</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form" role="form" novalidate name="newValForm">
+        <div class="form-group" ng-class="{'has-error': yellAtUser}">
+          <input class="form-control" type="text" name="value" ng-model="data.value" required>
+
+          <div class="help-block" ng-show="yellAtUser" translate>
+            Please enter a value
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
+      <button class="btn btn-primary" ng-click="save(newValForm)">Save</button>
+    </div>
+  </script>
+</div>

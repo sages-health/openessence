@@ -64,9 +64,11 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     return (a.row < b.row) ? -1 : 1;
   };
 
-  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+  FormResource.get({size: 1, q: 'name:site'}, function (response) {
     if (response.results.length === 0) {
-      throw new Error('No configured forms');
+      console.error('No configured forms');
+      $location.path('/edit/config');
+      return;
     }
 
     var form = response.results[0]._source;

@@ -31,6 +31,7 @@ require('angular-order-object-by');
 require('ng-file-upload');
 require('ng-grid');
 require('ng-debounce');
+require('checklist-model');
 
 require('text-angular-setup');
 require('text-angular-sanitize');
@@ -61,7 +62,7 @@ require('./filters');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
                     'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', frable.name]
+                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -283,6 +284,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/workbench',
       template: require('../partials/edit/workbench.html'),
       controller: 'WorkbenchEditCtrl'
+    })
+    .state('edit.config', {
+      url: '/config',
+      template: require('../partials/config-editor.html'),
+      controller: 'ConfigEditCtrl'
     });
 });
 

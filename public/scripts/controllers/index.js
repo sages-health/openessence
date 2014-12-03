@@ -3,6 +3,7 @@
 require('../modules').controllers
   // edit controllers
   .controller('AggregateDataEditCtrl', require('./edit/AggregateDataEditCtrl'))
+  .controller('ConfigEditCtrl', require('./edit/ConfigEditCtrl'))
   .controller('DashboardEditCtrl', require('./edit/DashboardEditCtrl'))
   .controller('DispositionEditCtrl', require('./edit/DispositionEditCtrl'))
   .controller('DistrictEditCtrl', require('./edit/DistrictEditCtrl'))

@@ -12,7 +12,7 @@
     </div>
 
     <div class="collapse navbar-collapse" collapse="navbar.collapse">
-      <ul class="nav navbar-nav">
+      <ul ng-show="isSiteConfig" class="nav navbar-nav">
 
         <!-- Dashboard -->
         <li class="dropdown"> <!-- TODO active -->
@@ -84,6 +84,8 @@
             <!--<li><a ng-show="user.isAdmin()" ui-sref="edit.discharge" translate>Discharges</a></li>-->
             <!--<li><a ng-show="user.isAdmin()" ui-sref="edit.visitType" translate>Visit Types</a></li>-->
             <!--<li role="presentation" class="divider" ng-show="user.isAdmin()"></li>-->
+            <li role="presentation" class="divider" ng-show="user.isAdmin()"></li>
+            <li><a ng-show="user.isAdmin()" ui-sref="edit.config" translate>Configuration</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.user" translate>Users</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.visualization" translate>Visualizations</a></li>
           </ul>
