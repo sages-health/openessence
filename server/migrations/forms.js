@@ -26,7 +26,7 @@ module.exports = [
         // It's not `medicalFacility.name` because the user is selecting the entire medical facility, not just the name
         // (even though the name is what's displayed and queried on).
         name: 'medicalFacility',
-        enabled: false,
+        enabled: true,
         // can't do this with JSON
         values: require('./facilities.json')
       },
@@ -42,7 +42,7 @@ module.exports = [
       // geographic fields, these are collected via medical facility, so users don't have to input them separately
       {
         name: 'medicalFacility.location.district',
-        enabled: true,
+        enabled: false,
         values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
           // construct set of districts
           if (facility.location && facility.location.district) {
@@ -51,25 +51,6 @@ module.exports = [
           }
 
           return districts;
-        }, {}))
-          .sort()
-          .map(function (name) {
-            return {
-              name: name
-            };
-          })
-      },
-      {
-        name: 'medicalFacility.location.country',
-        enabled: false,
-        values: Object.keys(require('./facilities.json').reduce(function (countries, facility) {
-          // construct set of country
-          if (facility.location && facility.location.country) {
-            var country = facility.location.country;
-            countries[country] = true;
-          }
-
-          return countries;
         }, {}))
           .sort()
           .map(function (name) {
