@@ -1,5 +1,5 @@
 'use strict';
-var cuSum = require('../../algorithms/CusumSagesDetector');
+var cuSum = require('.././CusumSagesDetector');
 var chai = require('chai');
 var expect = chai.expect;
 

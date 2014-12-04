@@ -2,7 +2,7 @@
 
 var express = require('express');
 //var hidalgo = require('hidalgo');
-var cuSum = require('../algorithms/CusumSagesDetector');
+var cuSum = require('./algorithms/CusumSagesDetector');
 
 module.exports = function () {
     var app = express();

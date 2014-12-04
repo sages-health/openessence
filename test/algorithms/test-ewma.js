@@ -1,5 +1,5 @@
 'use strict';
-var ewma = require('../../algorithms/EWMASages');
+var ewma = require('.././EWMASages');
 var chai = require('chai');
 var expect = chai.expect;
 
