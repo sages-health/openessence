@@ -5,9 +5,15 @@ var angular = require('angular');
 // @ngInject
 module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog,
                            scopeToJson, FormResource, possibleFilters, updateURL, Workbench) {
+  var NUM_COLUMNS = 24,
+    DEFAULT_SIZE_X = 12,
+    DEFAULT_SIZE_Y = 8;
+
   $scope.gridsterOptions = {
     margins: [10, 10],
-    columns: 12,
+    columns: NUM_COLUMNS,
+    minRows: 5,
+    //minColumns: 11,
     draggable: {
       enabled: true,
       handle: '.viz-drag-handle'
@@ -196,8 +202,8 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
 
     var viz = {
-      sizeX: options.sizeX || 6,
-      sizeY: options.sizeY || 4,
+      sizeX: options.sizeX || DEFAULT_SIZE_X,
+      sizeY: options.sizeY || DEFAULT_SIZE_Y,
       row: options.row,
       col: options.col,
       type: 'outpatient-visit',

@@ -1,4 +1,3 @@
-
 <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
   <div id="svg-id-{{options.id}}" class="animation-switch" ng-switch-when="table">
     <div class="table-responsive">
@@ -70,7 +69,11 @@
     </div>
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
-    <crosstab class="crosstab" records="crosstabData" options="options" pivot="pivot"></crosstab>
+    <crosstab
+            options="options"
+            pivot="pivot"
+            records="crosstabData">
+    </crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
     <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"

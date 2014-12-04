@@ -13,6 +13,9 @@ angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngIn
     },
     link: {
       pre: function (scope) {
+        scope.strings = {
+          any: gettextCatalog.getString('Any')
+        };
         scope.filter.value = scope.filter.value || '*';
         if (scope.filter.values) {
           scope.filter.values = scope.filter.values.map(function (v) {

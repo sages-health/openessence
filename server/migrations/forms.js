@@ -216,7 +216,7 @@ module.exports = [
   },
   {
     // everything enabled for demo
-    name: 'ILI',
+    name: 'DemoData',
     fields: [
       {
         name: 'visitDate',
@@ -286,7 +286,7 @@ module.exports = [
       // patient info
       {
         name: 'patient.id',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.name',
@@ -303,7 +303,7 @@ module.exports = [
       },
       {
         name: 'patient.age',
-        enabled: false
+        enabled: true
       },
 
       // pregnancy status
