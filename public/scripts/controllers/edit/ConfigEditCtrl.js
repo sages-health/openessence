@@ -196,18 +196,19 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
       }]
     });
   };
+
   $scope.removeAll = function (field) {
     field.values = [];
   };
+
   $scope.addNewValue = function (field) {
     // open a modal to enter a new value
     openAddNewValueModal(field).result
-      .then(function (name) {
-        field.possibleValues.push({name: name});
-//        field.values.push(name);
+      .then(function (newValue) {
+        field.possibleValues.push({name: newValue});
+        field.values.push(newValue);
       });
   };
 
   init();
-
 };

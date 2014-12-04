@@ -22,6 +22,7 @@ require('angular-sanitize');
 // ng modules like angular-animate)
 require('angular-bootstrap');
 require('angular-ui-router');
+require('angular-ui-select');
 require('angular-ui-select2');
 require('angular-ui-sortable');
 require('angular-gettext');
@@ -60,8 +61,7 @@ require('./services');
 require('./directives');
 require('./filters');
 
-
-var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
+var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.select2', 'ui.sortable',
                     'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
                     'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', frable.name]
   .concat(Object.keys(modules).map(function (m) {
