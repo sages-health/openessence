@@ -3,9 +3,21 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, visualization, user, dateFilter, $location) {
+module.exports = function ($scope, visualization, user, dateFilter, $location, $window, $document) {
+
+  $scope.export = function () {
+    var title = $scope.report.name.replace(/ /g, '_');
+    var lang = $document[0].documentElement.lang;
+    var params = angular.copy($scope.params);
+    params.print = false;
+
+    $window.location =
+      '/reports/' + title + '?size=' + angular.element('body').width() + 'px*' + angular.element('body').height() +
+        'px&name=' + title + '&url=/' + lang + '/visits-report?params=' + btoa(JSON.stringify(params));
+  };
 
   $scope.params = JSON.parse(atob($location.search().params));
+  $scope.allowExport = $scope.params.print === false ? false : true;
   $scope.report = angular.copy($scope.params);
 
   $scope.someText = '';
