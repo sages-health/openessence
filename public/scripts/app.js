@@ -297,16 +297,9 @@ app.config(function ($httpProvider) {
 });
 
 app.run(function ($rootScope, $http, gettextCatalog, lang) {
-  $http.get('/public/translations/' + lang + '.json')
-    .success(function (strings) {
-      Object.keys(strings).forEach(function (lang) {
-        // angular-gettext's JSON format allows for multiple locales in a single bundle
-        // we don't use that now, but we may in the future
-        gettextCatalog.setStrings(lang, strings[lang]);
-      });
-      gettextCatalog.currentLanguage = lang;
-      gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
-    });
+  gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
+  gettextCatalog.setCurrentLanguage(lang);
+  gettextCatalog.loadRemote('/public/translations/' + lang + '.json');
 });
 
 module.exports = app;
