@@ -1,11 +1,16 @@
 'use strict';
 
+var angular = require('angular');
+
 // @ngInject
-module.exports = function ($scope, $window, visualization, user, dateFilter) {
+module.exports = function ($scope, visualization, user, dateFilter, $location) {
+
+  $scope.params = JSON.parse(atob($location.search().params));
+  $scope.report = angular.copy($scope.params);
+
   $scope.someText = '';
   $scope.user = user.getUser();
   $scope.today = (new Date()).toString();
-  $scope.report = $window.opener.report;
   var dateFormat = 'yyyy-MM-dd';
   var startDate = dateFilter($scope.report.startDate, dateFormat);
   var endDate = dateFilter($scope.report.endDate, dateFormat);
