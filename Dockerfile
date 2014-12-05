@@ -49,6 +49,7 @@ RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev lib
     && npm cache clear \
     && apt-get purge -y $buildDeps \
     && apt-get autoremove -y \
+    && rm -rf /code/bower_components \
     && rm -rf /code/po \
     && rm -rf /code/public \
     && rm -rf /code/tasks \
