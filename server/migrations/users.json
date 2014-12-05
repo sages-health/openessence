@@ -1,0 +1,10 @@
+[
+    {
+        "username": "admin",
+        "password": "736372797074000a00000008000000017e045f9bc463d8d451e8c427b879120e5444f5efd644e4f73e4bb8c918354aa8ac9cc82fad6d5981ff7e290b57cc3495ff73959bcc87bd18c02916b4d4a73f4bdfbf9bce95970b41cc900d22b7468b9d",
+        "email": "contactSAGES@jhuapl.edu",
+        "name": "Admin",
+        "roles": ["admin"],
+        "tokens": ["admin"]
+    }
+]
