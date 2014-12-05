@@ -286,14 +286,16 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           outpatientEditModal.open({record: record, form: scope.form})
             .result
             .then(function () {
-              reload(); // TODO highlight changed record
+              //reload(); // TODO highlight changed record
+              $rootScope.$broadcast('outpatientVisit.edit');
             });
         };
         scope.deleteVisit = function (record) {
           outpatientDeleteModal.open({record: record})
             .result
             .then(function () {
-              reload();
+              //reload();
+              $rootScope.$broadcast('outpatientVisit.edit');
             });
         };
 
@@ -403,6 +405,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               scope.tableParams.parameters({count: numRows});
             }
           }, 25);
+        });
+
+        scope.$on('outpatientVisit.edit', function (angularEvent, event) {
+          reload();
         });
 
         scope.$on('elementClick.directive', function (angularEvent, event) {
