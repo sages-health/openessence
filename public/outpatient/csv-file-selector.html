@@ -1,0 +1,41 @@
+<!-- File -->
+<div class="col-md-12 form-group">
+  <label translate>CSV file</label>
+
+  <div style="position:relative;">
+    <a class='btn btn-primary' href='javascript:;'>
+      Choose File...
+      <input type="file"
+             style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;'
+             name="csvFile" size="40" ng-model="fileParams.file" ng-file-select="onFileSelect($files)" accept=".csv"
+             required>
+    </a>
+    &nbsp;
+    <!-- place holder for selected file name -->
+    <span id="upload-file-info"></span>
+  </div>
+
+  <span class="help-block" ng-show="badFile" translate>Please select a CSV file</span>
+</div>
+
+<div class="col-md-4 form-group">
+  <label translate>Separator</label>
+  <input class="form-control csv-field" id="separator" name="separator" type="text" ng-model="fileParams.separator">
+</div>
+
+<div class="col-md-4 form-group">
+  <label translate>Delimiter</label>
+  <input class="form-control csv-field" id="delimiter" name="delimiter" type="text" ng-model="fileParams.delimiter">
+</div>
+
+<div class="col-md-4 form-group">
+  <label translate>Contains Header Row?</label>
+  <input class="checkbox csv-field" id="headerRow" name="headerRow" type="checkbox" ng-model="fileParams.headerRow"
+         disabled>
+</div>
+
+<div class="col-md-12 form-group preview-grid-wrapper" ng-if="fileParams.showPreview && tableData.length > 0">
+  <label translate>Data</label>
+
+  <div class="preview-grid" ng-grid="gridOptions"></div>
+</div>

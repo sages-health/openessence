@@ -10,6 +10,11 @@ var fs = require('fs');
 var os = require('os');
 var crypto = require('crypto');
 
+var flatten = require('flat');
+
+var fs = require('fs');
+var path = require('path');
+
 var config = require('./config');
 var dataFormatter = require('./formatter');
 
@@ -35,16 +40,24 @@ module.exports = function reportsMiddleware () {
   var getFields = function (fields, formFields, format) {
     var fldsEnabled = ['id'];
     var fieldIds = Object.keys(fields);
+    if (format === 'expanded') {
+      fieldIds.push('symptoms.name');
+      fieldIds.push('symptoms.count');
+      fieldIds.push('diagnoses.name');
+      fieldIds.push('diagnoses.count');
+      fieldIds.push('disposition.name');
+      fieldIds.push('disposition.count');
+    }
     formFields.forEach(function (fld) {
       if (fld.enabled) {
         if (format === 'expanded' && ['symptoms', 'diagnoses', 'disposition'].indexOf(fld.name) > -1) {
           fldsEnabled.push(fld.name + '.name');
           fldsEnabled.push(fld.name + '.count');
-        } else if (fld.name === 'medicalFacility'){
+        } else if (fld.name === 'medicalFacility') {
           fldsEnabled.push(fld.name + '.name');
-        } else if (fld.name === 'patient.age'){
+        } else if (fld.name === 'patient.age') {
           fldsEnabled.push(fld.name + '.years');
-        } else{
+        } else {
           fldsEnabled.push(fld.name);
         }
       }
@@ -103,11 +116,9 @@ module.exports = function reportsMiddleware () {
           }
 
           var formFields = formData[0].doc.fields;
-          var fields = config.results.fields;
+          var fields = flatten(config.template);
           var fieldIds = getFields(fields, formFields, requestParams.format);
-          var fieldNames = fieldIds.map(function (id) {
-            return fields[id];
-          });
+          var fieldNames = fieldIds;
 
           var converterParams = {
             data: recs,
@@ -118,8 +129,7 @@ module.exports = function reportsMiddleware () {
 
           converter(converterParams, callback);
         });
-      }
-      else {
+      } else {
         callback(null, '');
       }
 

@@ -1,0 +1,49 @@
+<div id="first" class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">
+    <span class="icon-cancel" aria-hidden="true"></span>
+    <span class="sr-only" translate>Close</span>
+  </button>
+  <h4 class="modal-title" translate>Import CSV File</h4>
+</div>
+
+<div class="modal-body">
+  <form name="importForm" class="form" novalidate ng-submit="submit(importForm)" ng-cloak>
+    <fieldset>
+      <div class="alert alert-danger alert-show-hide" ng-show="noData" translate>No data found</div>
+      <outpatient-csv-file-selector table-data="data.tableData" file-params="data.fileParams">
+      </outpatient-csv-file-selector>
+    </fieldset>
+  </form>
+
+  <div ng-show="uploading && !importCompleted">
+    <progressbar class="progress-striped" value="progress">
+      {{done}}/{{total}}
+    </progressbar>
+  </div>
+
+  <div ng-show="importCompleted">
+    <div ng-show="goodRecCount > 0" translate>Imported: {{goodRecCount}}/{{total}}</div>
+  </div>
+
+  <div ng-if="badRecCount > 0">
+    <label translate>Records not imported</label>
+    <div class="preview-grid" ng-grid="badRecGridOptions"></div>
+  </div>
+</div>
+
+<div class="modal-footer" ng-show="data.tableData.length > 0">
+  <div>
+    <button ng-show="!importCompleted" class="btn btn-default" ng-click="cancel()">
+      <span class="icon-cancel"></span>
+      <span translate>Cancel</span>
+    </button>
+    <button ng-show="!importCompleted" type="button" class="btn btn-primary" ng-click="save()">
+      <span class="icon-ok"></span>
+      <span translate>Save</span>
+    </button>
+    <button ng-show="importCompleted" type="button" class="btn btn-primary" ng-click="submit()">
+      <span class="icon-cancel"></span>
+      <span translate>Close</span>
+    </button>
+  </div>
+</div>

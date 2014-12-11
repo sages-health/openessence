@@ -5,8 +5,8 @@ var extendify = require('extendify');
 var moment = require('moment');
 var flatten = require('flat');
 
-var config = require('./config');
 var utils = require('./utils');
+var config = require('./config');
 
 // extendify is used to overwrite default value recursively
 _.extend = extendify({
@@ -14,30 +14,38 @@ _.extend = extendify({
   arrays: 'replace'
 });
 
+var inputDateFormat = config.inputDateFormat || 'YYYY-MM-DDThh:mm:ss.SSSZ';
+var outputDateFormat = config.outputDateFormat || 'YYYY-MM-DD';
+
+var flattenRecord = function (rec) {
+  rec = flatten(rec);
+  _.each(rec, function (val, key) {
+    if (val === null) {
+      rec[key] = val = undefined;
+    }
+    if (config.dataTypes.date.fields.indexOf(key) > -1) {
+      rec[key] = moment(val, inputDateFormat).format(outputDateFormat);
+    }
+  });
+  return rec;
+};
+
 var formatRecords = function (record, exportFormat) {
   // Delete paperTrail and any other props that we do not want to export
   delete record.paperTrail;
-  var inputDateFormat = config.inputDateFormat || 'YYYY-MM-DDThh:mm:ss.SSSZ';
-  var outputDateFormat = config.outputDateFormat || 'YYYY-MM-DD';
 
   // (exportFormat === flat ) one row per record
   if (exportFormat === 'flat') {
     // TODO: assumed all arrays are at top/first level (record.symptoms, record.diagnoses, record.syndromes)
     // before we make a record flat, make all array elements flat
     _.each(record, function (value, key) {
-      if (_.isArray(value)) {
+      if (config.dataTypes.arrayOfObjects.fields.indexOf(key) > -1) {
         record[key] = utils.flattenArray(value);
       }
     });
-
-    var res = flatten(record);
-    _.each(res, function (value, key) {
-      if (moment(value, inputDateFormat, true).isValid()) { //TODO: need better check for a date (elasticsearch date format)
-        res[key] = moment(value, inputDateFormat).format(outputDateFormat);
-      }
-    });
-    return res;
+    return flattenRecord(record);
   }
+
   // (exportFormat === expanded ) 1 to n rows per record
   else if (exportFormat === 'expanded') {
 
@@ -46,14 +54,14 @@ var formatRecords = function (record, exportFormat) {
     var arrayKeys = [];
     // TODO: assumed all arrays are at top/first level (record.symptoms, record.diagnoses, record.syndromes)
     _.each(record, function (value, key) {
-      if (_.isArray(value)) {
+      if (config.dataTypes.arrayOfObjects.fields.indexOf(key) > -1) {
         arrayKeys.push(key);
       }
     });
     if (arrayKeys.length > 0) {
       _.each(arrayKeys, function (prop) {
         var list = clonedRec[prop];
-        if (list.length > 0) {
+        if (list && list.length > 0) {
           _.each(list, function (val) {
             // Add a placeholder record else we may lose this rec
             var obj = {};
@@ -65,23 +73,13 @@ var formatRecords = function (record, exportFormat) {
       });
     }
 
-    var applyFlatValue = function (recordClone, value) {
-      value = _.extend(recordClone, value);
-      value = flatten(value);
-      _.each(value, function (val, key) {
-        if (moment(val, inputDateFormat, true).isValid()) { //TODO: need better check for a date (elasticsearch date format)
-          value[key] = moment(val, inputDateFormat).format(outputDateFormat);
-        }
-      });
-      return value;
-    };
-
     if (result.length > 0) {
       _.each(result, function (value, ix) {
-        result[ix] = applyFlatValue(clonedRec, value);
+        var tmp = _.extend(clonedRec, value);
+        result[ix] = flattenRecord(tmp);
       });
     } else {
-      result = [applyFlatValue(clonedRec, {})];
+      result = [flattenRecord(clonedRec)];
     }
     return result;
   }

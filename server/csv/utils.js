@@ -12,7 +12,9 @@ var arrayToString = function (arr) {
 
 };
 var flattenArray = function (value) {
-  if (value.length > 0 && value[0].name !== undefined && value[0].count !== undefined) {
+  if(value === undefined || value === null){
+    return undefined;
+  } else if (value.length > 0 && value[0].name !== undefined && value[0].count !== undefined) {
     return arrayToString(value);
   } else if (value.length === 0) {
     return '';
