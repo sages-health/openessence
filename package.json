@@ -8,13 +8,12 @@
     "bluebird": "^2.1.3",
     "body-parser": "^1.4.3",
     "boom": "^2.4.2",
-    "bunyan": "^0.23.1",
+    "bunyan": "^1.2.3",
     "bunyan-prettystream": "~0.1.3",
     "change-case": "^2.1.1",
-    "compression": "~1.0.1",
+    "compression": "^1.2.1",
     "connect-flash": "~0.1.1",
     "connect-redis": "^2.0.0",
-    "connect-restreamer": "~1.0.0",
     "cookie-parser": "^1.3.1",
     "csurf": "^1.2.2",
     "ejs": "^1.0.0",
@@ -22,12 +21,11 @@
     "express": "^4.10.0",
     "express-session": "^1.5.0",
     "glob": "^4.0.2",
-    "helmet": "~0.2.1",
-    "locale": "0.0.15",
+    "helmet": "~0.5.2",
+    "locale": "0.0.20",
     "lodash": "~2.4.1",
     "mime-types": "^2.0.2",
-    "morgan": "~1.0.0",
-    "mv": "~2.0.0",
+    "morgan": "^1.5.0",
     "passport": "^0.2.0",
     "passport-http-bearer": "~1.0.1",
     "passport-local": "^1.0.0",
@@ -38,50 +36,47 @@
     "scrypt": "~3.0.1",
     "serve-favicon": "^2.0.1",
     "tmp": "0.0.24",
-    "useragent": "~2.0.8",
-    "yarnl": "0.0.1"
+    "useragent": "^2.1.3",
+    "yarnl": "0.0.2"
   },
   "devDependencies": {
-    "angular-loading-bar": "~0.4.2",
+    "angular-gettext": "^1.1.4",
+    "angular-loading-bar": "~0.6.0",
     "array.prototype.find": "^1.0.0",
-    "bootstrap": "~3.3.0",
-    "browserify": "^4.1.11",
+    "bootstrap": "~3.2.0",
+    "browserify": "^6.3.3",
     "browserify-istanbul": "^0.1.2",
-    "browserify-middleware": "^3.0.0",
-    "browserify-ngannotate": "^0.1.0",
-    "browserify-shim": "^3.8.0",
+    "browserify-ngannotate": "^0.4.0",
     "browserify-transform-tools": "~1.2.1",
     "chai": "~1.9.0",
     "cheerio": "^0.17.0",
     "cookie": "^0.1.2",
     "d3": "^3.4.13",
-    "del": "^0.1.3",
+    "del": "^1.0.0",
     "esprima": "^1.2.2",
     "function-bind": "^1.0.2",
     "gulp": "^3.8.1",
     "gulp-angular-gettext": "~0.3.1",
-    "gulp-autoprefixer": "0.0.7",
+    "gulp-autoprefixer": "^2.0.0",
     "gulp-buffer": "0.0.2",
-    "gulp-footer": "~1.0.4",
-    "gulp-header": "~1.0.2",
-    "gulp-htmlmin": "^0.1.3",
-    "gulp-imagemin": "^0.6.1",
-    "gulp-inject": "^0.4.1",
+    "gulp-htmlmin": "^0.2.0",
+    "gulp-imagemin": "^2.0.0",
+    "gulp-inject": "^1.0.2",
     "gulp-istanbul": "^0.2.0",
     "gulp-jshint": "^1.6.4",
     "gulp-less": "^1.2.3",
     "gulp-livereload": "^2.1.0",
     "gulp-minify-css": "^0.3.4",
-    "gulp-mocha": "^0.4.1",
-    "gulp-ng-annotate": "^0.3.0",
-    "gulp-replace": "^0.3.0",
-    "gulp-rev": "^0.4.1",
+    "gulp-mocha": "^2.0.0",
+    "gulp-ng-annotate": "^0.4.0",
+    "gulp-rev": "^2.0.1",
     "gulp-svgmin": "~0.4.1",
-    "gulp-uglify": "~0.2.0",
-    "gulp-util": "^2.2.17",
-    "humane-js": "~3.1.0",
+    "gulp-uglify": "^1.0.1",
+    "gulp-util": "^3.0.1",
+    "html-minifier": "^0.6.9",
+    "humane-js": "~3.2.1",
     "jquery": "~2.1.0",
-    "jshint-stylish": "~0.1.5",
+    "jshint-stylish": "^1.0.0",
     "karma": "^0.12.16",
     "karma-browserify": "^0.2.1",
     "karma-chrome-launcher": "^0.1.4",
@@ -91,10 +86,10 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-sourcemap-loader": "^0.2.0",
     "leaflet": "^0.7.3",
-    "less": "~1.7.0",
     "less-middleware": "^1.0.3",
     "lesshat": "^3.0.2",
-    "mocha": "^1.20.1",
+    "mkdirp": "^0.5.0",
+    "mocha": "^2.0.1",
     "mock-fs": "~2.2.0",
     "moment": "^2.8.3",
     "nock": "~0.31.0",
@@ -107,17 +102,13 @@
     "source-map": "~0.1.33",
     "string.prototype.endswith": "^0.2.0",
     "supertest": "~0.12.0",
-    "vinyl-source-stream": "~0.1.1"
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.1.1"
   },
   "optionalDependencies": {
-    "gifsicle": "~0.1.4",
-    "jpegtran-bin": "~0.2.3",
-    "pngquant-bin": "~0.1.5"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
+    "gifsicle": "~2.0.1",
+    "jpegtran-bin": "~2.0.1",
+    "pngquant-bin": "~2.0.2"
   },
   "browser": {
     "angular": "./bower_components/angular/angular.js",
@@ -129,7 +120,6 @@
     "angular-ui-router": "./bower_components/angular-ui-router/release/angular-ui-router.js",
     "angular-ui-select2": "./bower_components/angular-ui-select2/src/select2.js",
     "angular-ui-sortable": "./bower_components/angular-ui-sortable/sortable.js",
-    "angular-gettext": "./bower_components/angular-gettext/dist/angular-gettext.js",
     "angular-gridster": "./bower_components/angular-gridster/src/angular-gridster.js",
     "angular-order-object-by": "./bower_components/angular-order-object-by/src/ng-order-object-by.js",
     "ng-debounce": "./bower_components/ng-debounce/angular-debounce.js",
@@ -143,112 +133,8 @@
     "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js",
     "highcharts-ng": "./bower_components/highcharts-ng/dist/highcharts-ng.js",
     "highcharts": "./bower_components/highcharts/highcharts.js",
+    "checklist-model": "./bower_components/checklist-model/checklist-model.js",
     "exporting": "./server/exporting.js"
-  },
-  "browser-libs": {
-    "d3": {
-      "parse": false
-    },
-    "jquery": {
-      "parse": false
-    },
-    "humane-js": {
-      "parse": false
-    },
-    "angular-loading-bar": {
-      "parse": false
-    },
-    "leaflet": {
-      "parse": false
-    },
-    "moment": {
-      "parse": false
-    }
-  },
-  "browserify-shim": {
-    "angular": {
-      "exports": "angular",
-      "depends": [
-        "jquery:jQuery"
-      ]
-    },
-    "angular-animate": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-mocks": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-resource": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-sanitize": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-bootstrap": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-ui-router": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-ui-select2": {
-      "depends": [
-        "angular:angular",
-        "jquery:jQuery",
-        "jquery-ui"
-      ]
-    },
-    "angular-ui-sortable": {
-      "depends": [
-        "angular:angular",
-        "jquery:jQuery",
-        "jquery-ui"
-      ]
-    },
-    "angular-gettext": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "angular-gridster": {
-      "depends": [
-        "angular:angular",
-        "jquery-resize"
-      ]
-    },
-    "ng-debounce": {
-      "depends": [
-        "angular:angular"
-      ]
-    },
-    "text-angular": {
-      "depends": [
-        "angular:angular",
-        "text-angular-setup",
-        "text-angular-sanitize"
-      ]
-    },
-    "jquery-ui": {
-      "depends": [
-        "jquery:jQuery"
-      ]
-    },
-    "jquery-resize": {
-      "depends": [
-        "jquery:jQuery"
-      ]
-    }
   },
   "engines": {
     "node": "0.10.x"

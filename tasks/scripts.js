@@ -1,108 +1,70 @@
 'use strict';
 
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var browserify = require('browserify');
-var htmlmin = require('gulp-htmlmin');
+var htmlmin = require('html-minifier').minify;
 var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var buffer = require('gulp-buffer');
 var rev = require('gulp-rev');
-var replace = require('gulp-replace');
-var header = require('gulp-header');
-var footer = require('gulp-footer');
 var source = require('vinyl-source-stream');
 var path = require('path');
-var transformTools = require('browserify-transform-tools');
+var fs = require('fs');
 var assets = require('../server/assets');
-var jsLibs = assets.libs();
-var noParseLibs = assets.noParseLibs();
+var transform = require('../server/transform');
+var transformTools = require('browserify-transform-tools');
 
 
-/**
- * Minifies partials and converts them to a JS string that can be `require`d. Partials are included in the app.js
- * bundle.
- */
-gulp.task('partials', function () {
-  /*jshint quotmark:false */
+gulp.task('scripts', function (done) {
+  gutil.log('Building the scripts can take a few seconds. Please be patient.');
 
-  return gulp.src('public/**/*.html')
-    .pipe(htmlmin({
-      collapseWhitespace: true,
-      collapseBooleanAttributes: true,
-      removeComments: true,
-      removeAttributeQuotes: false,
-      removeRedundantAttributes: true,
-      removeEmptyAttributes: true,
-      removeOptionalTags: false // removing is probably a bad idea with partial docs
-    }))
-    // inspired by https://github.com/visionmedia/node-string-to-js/blob/master/index.js
-    .pipe(replace(/'/g, "\\'"))
-    .pipe(replace(/\r\n|\r|\n/g, '\\n'))
+  var libs = {};
 
-    // wrap HTML in module
-    .pipe(header("module.exports='"))
-    .pipe(footer("';"))
+  var appBundle = browserify(__dirname + '/../public/scripts/app.js', {
+    detectGlobals: false
+  })
+    .external(assets.externalLibs)
+    .transform(transform.shim)
+    .transform(transformTools.makeRequireTransform('minifyPartials', {}, function (args, opts, cb) {
+      /*jshint quotmark:false */
 
-    .pipe(gulp.dest('.tmp/public/')); // write to .tmp so they can be read by browserify
-});
-
-/**
- * Build 3rd-party JavaScript libraries.
- */
-gulp.task('libs', function () {
-  var bundle = browserify({
-    noParse: noParseLibs
-  });
-
-  jsLibs.forEach(function (lib) {
-    bundle.require(lib);
-  });
-
-  return bundle
-    .bundle() // TODO use pre-built bundles
-    .pipe(source('libs.js'))
-    .pipe(buffer()) // gulp-rev doesn't like streams, so convert to buffer
-    .pipe(uglify({
-      preserveComments: 'some' // preserve license headers
-    }))
-    .pipe(rev())
-    .pipe(gulp.dest('dist/public/scripts/'));
-});
-
-/**
- * Build 1st-party JavaScript libraries.
- */
-gulp.task('scripts', ['partials'], function () {
-  // transform that replaces references to `require`d partials with their minified versions in .tmp,
-  // e.g. a call to require('../partials/foo.html') in public/scripts would be replaced by
-  // require('../../.tmp/public/partials/foo.html')
-  var minifyPartials = transformTools.makeRequireTransform('partialTransform',
-    {evaluateArguments: true},
-    function (args, opts, cb) {
       var file = args[0];
       if (path.extname(file) !== '.html') {
         return cb();
       }
 
-      var root = path.resolve(__dirname, '..');
+      var fullPath = path.resolve(path.dirname(opts.file), file);
+      fs.readFile(fullPath, {encoding: 'utf8'}, function (err, data) {
+        if (err) {
+          return cb(err);
+        }
 
-      var referrerDir = path.dirname(opts.file); // directory of file that has the require() call
-      var tmp = path.resolve(root, '.tmp');
-      var tmpResource = path.resolve(referrerDir, file).replace(root, tmp); // path to required tmp resource
-      var relativePath = path.relative(referrerDir, tmpResource).replace(/\\/g, '/');
+        var html = htmlmin(data, {
+          collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          removeComments: true,
+          removeAttributeQuotes: false,
+          removeRedundantAttributes: true,
+          removeEmptyAttributes: true,
+          removeOptionalTags: false // removing is probably a bad idea with partial docs
+        })
+          .replace(/'/g, "\\'")
+          .replace(/\r\n|\r|\n/g, '\\n');
 
-      cb(null, 'require("' + relativePath + '")');
-    });
+        cb(null, "'" + html + "'");
+      });
+    }))
+    .transform(transform.findLibs(function (err, lib) {
+      if (err) {
+        throw err; // whatever
+      }
 
-  var appBundle = browserify()
-    .add(__dirname + '/../public/scripts/app.js')
-    .transform(minifyPartials);
+      libs[lib] = true;
+    }));
 
-  jsLibs.forEach(function (lib) {
-    appBundle.external(lib);
-  });
-
-  return appBundle
+  // we don't return a stream, instead we call the done callback after libs.js is written to disk
+  appBundle
     .bundle()
     .pipe(source('app.js')) // convert stream of text to stream of Vinyl objects for gulp
     .pipe(buffer()) // ngmin, et al. don't like streams, so convert to buffer
@@ -114,5 +76,26 @@ gulp.task('scripts', ['partials'], function () {
       preserveComments: 'some' // preserve license headers
     }))
     .pipe(rev())
-    .pipe(gulp.dest('dist/public/scripts'));
+    .pipe(gulp.dest('dist/public/scripts'))
+    .on('finish', function () {
+      // This is a little suboptimal since we wait for app.js to be written to disk before starting libs.
+      // Really, we could start on libs as soon as the libs hash is populated, i.e. right after app.js's .bundle()
+      // finished. But that would require some fancy flow control that's probably not worth the slight perf gain.
+
+      browserify({
+        detectGlobals: false,
+        noParse: true
+      })
+        .require(Object.keys(libs))
+        .bundle() // TODO use pre-built bundles
+        .pipe(source('libs.js'))
+        .pipe(buffer())
+        .pipe(uglify({
+          preserveComments: 'some' // preserve license headers
+        }))
+        .pipe(rev())
+        .pipe(gulp.dest('dist/public/scripts'))
+        .on('error', done)
+        .on('finish', done);
+    });
 });

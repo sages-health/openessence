@@ -3,6 +3,7 @@
 require('../modules').controllers
   // edit controllers
   .controller('AggregateDataEditCtrl', require('./edit/AggregateDataEditCtrl'))
+  .controller('ConfigEditCtrl', require('./edit/ConfigEditCtrl'))
   .controller('DashboardEditCtrl', require('./edit/DashboardEditCtrl'))
   .controller('DispositionEditCtrl', require('./edit/DispositionEditCtrl'))
   .controller('DistrictEditCtrl', require('./edit/DistrictEditCtrl'))
@@ -24,7 +25,6 @@ require('../modules').controllers
   .controller('LoginCtrl', require('./LoginCtrl'))
   .controller('MainCtrl', require('./MainCtrl'))
   .controller('NotFoundCtrl', require('./NotFoundCtrl'))
-  .controller('ReloginCtrl', require('./ReloginCtrl'))
   .controller('ReportCtrl', require('./ReportCtrl'))
   .controller('WorkbenchCtrl', require('./WorkbenchCtrl'))
   .controller('VisualizationExportCtrl', require('./VisualizationExportCtrl'));

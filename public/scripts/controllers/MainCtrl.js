@@ -1,8 +1,26 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Workbench, Dashboard,
-                           DashboardResource, WorkbenchResource) {
+module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Workbench,//
+                           Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope) {
+
+  $scope.navbar = {
+    collapse: true
+  };
+
+  var loadConfig = function () {
+    FormResource.get({size: 1, q: 'name:site'}, function (response) {
+      if (response.results.length === 0) {
+        console.error('No configured forms');
+        $scope.isSiteConfig = false;
+      } else {
+        $scope.isSiteConfig = true;
+      }
+    });
+  };
+
+  loadConfig();
+  $rootScope.$on('configChange', loadConfig);
 
   $scope.visitsReport = function () {
     visitsReportModal.open();

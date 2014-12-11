@@ -1,21 +1,8 @@
 'use strict';
 
-var angular = require('angular');
-require('angular-animate');
-require('angular-resource');
-require('angular-sanitize');
-require('angular-bootstrap');
-require('angular-ui-router');
-require('angular-ui-select2');
-require('angular-ui-sortable');
-require('angular-gettext');
-require('angular-gridster');
-require('angular-loading-bar');
-require('angular-order-object-by');
-
-// explicitly require d3 and friends due to weird browserify issues,
-// see https://github.com/ForbesLindesay/browserify-middleware/issues/43
-require('d3');
+// jQuery doesn't write to window if you require() it
+window.jQuery = window.jQuery || require('jquery');
+require('jquery-ui');
 
 // polyfills, try to require only what you need instead of entire es6 polyfills
 require('array.prototype.find'); // behind "experimental JS" flag in Chrome < 39, not in IE <= 11
@@ -25,12 +12,33 @@ if (!Function.prototype.bind) {
   Function.prototype.bind = require('function-bind');
 }
 
-require('ng-debounce');
-require('text-angular');
-require('leaflet');
+// Order matters! E.g. make sure you require('angular') before something that depends on angular, e.g. angular-animate.
+var angular = require('angular');
+require('angular-animate');
+require('angular-resource');
+require('angular-sanitize');
+
+// miscellaneous angular plugins, order these are loaded shouldn't matter (as long as they're after angular, and core
+// ng modules like angular-animate)
+require('angular-bootstrap');
+require('angular-ui-router');
+require('angular-ui-select2');
+require('angular-ui-sortable');
+require('angular-gettext');
+require('angular-gridster');
+require('angular-loading-bar');
+require('angular-order-object-by');
 require('ng-file-upload');
 require('ng-grid');
+require('ng-debounce');
+require('checklist-model');
 
+require('text-angular-setup');
+require('text-angular-sanitize');
+require('text-angular'); // must be after the other text-angular resources
+
+require('d3');
+require('leaflet');
 require('highcharts');
 require('highcharts-ng');
 require('exporting');
@@ -54,8 +62,8 @@ require('./filters');
 
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select2', 'ui.sortable',
-  'gettext', 'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-  'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', frable.name]
+                    'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -178,11 +186,6 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../partials/not-found.html'),
       controller: 'NotFoundCtrl'
     })
-    .state('relogin', {
-      url: '/relogin',
-      controller: 'ReloginCtrl',
-      parent: 'home'
-    })
     .state('report', {
       url: '/report/:url', // url param gives path to save
       controller: 'ReportCtrl',
@@ -282,6 +285,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       url: '/workbench',
       template: require('../partials/edit/workbench.html'),
       controller: 'WorkbenchEditCtrl'
+    })
+    .state('edit.config', {
+      url: '/config',
+      template: require('../partials/config-editor.html'),
+      controller: 'ConfigEditCtrl'
     });
 });
 
@@ -290,16 +298,9 @@ app.config(function ($httpProvider) {
 });
 
 app.run(function ($rootScope, $http, gettextCatalog, lang) {
-  $http.get('/public/translations/' + lang + '.json')
-    .success(function (strings) {
-      Object.keys(strings).forEach(function (lang) {
-        // angular-gettext's JSON format allows for multiple locales in a single bundle
-        // we don't use that now, but we may in the future
-        gettextCatalog.setStrings(lang, strings[lang]);
-      });
-      gettextCatalog.currentLanguage = lang;
-      gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
-    });
+  gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
+  gettextCatalog.setCurrentLanguage(lang);
+  gettextCatalog.loadRemote('/public/translations/' + lang + '.json');
 });
 
 module.exports = app;

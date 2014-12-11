@@ -16,8 +16,14 @@
 
       <td ng-show="fields['medicalFacility'].enabled" data-title="'Facility' | translate"
           data-sortable="'medicalFacility'">
-        <a ng-click="tableFilter('medicalFacility.name', visit._source.medicalFacility.name)">
+        <a ng-click="tableFilter('medicalFacility', visit._source.medicalFacility.name)">
           {{visit._source.medicalFacility.name | truncate:30}}
+        </a>
+      </td>
+
+      <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="'District' | translate" data-sortable="'medicalFacility.location.district'">
+        <a ng-click="tableFilter('medicalFacility.location.district', visit._source.medicalFacility.location.district)">
+          {{visit._source.medicalFacility.location.district | truncate:15}}
         </a>
       </td>
 
@@ -25,7 +31,7 @@
         <a ng-click="tableFilter('patient.sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
       </td>
       <td ng-show="fields['patient.age'].enabled" data-title="'Age' | translate" data-sortable="'patient.age.years'">
-        <a ng-click="tableFilter('patientAge', visit._source.patient.age.years)">{{visit._source.patient.age.years}}</a>
+       <a ng-click="tableFilter('patient.age', visit._source.patient.age.years)">{{visit._source.patient.age.years}}</a>
       </td>
 
       <td ng-show="fields.symptoms.enabled" data-title="'Symptoms' | translate">

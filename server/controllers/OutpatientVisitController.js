@@ -22,20 +22,7 @@ module.exports = codex.controller(OutpatientVisit, {
 
     var filter = {
       terms: {
-        'medicalFacility.district.raw': {
-          index: 'user',
-          type: 'user',
-          id: req.user.id,
-          path: 'districts.raw',
-          // don't cache the terms lookup since it doesn't get updated on writes,
-          // see https://github.com/elasticsearch/elasticsearch/issues/3219
-          cache: false
-        },
-
-        // There's no need to manually clear the cache on writes (Lucene's immutable segments are good for something).
-        // See https://groups.google.com/forum/#!topic/elasticsearch/WgtgrG3mKCg.
-        // That being said, setting _cache_key is good practice in case you ever do need to clear it.
-        '_cache_key': 'outpatient_visit_user_user_' + req.user.id
+        'medicalFacility.location.district.raw': req.user.doc.medicalFacility ? req.user.doc.medicalFacility.location.districts : []
       }
     };
 

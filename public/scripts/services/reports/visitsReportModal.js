@@ -8,7 +8,7 @@ module.exports = function ($modal) {
     open: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-visits-report-dialog.html'),
-        controller: /*ngInject*/ function ($scope, $modalInstance, $window) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, $window) {
           $scope.report = {};
 
           $scope.isInvalid = function (field) {

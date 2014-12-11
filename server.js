@@ -39,6 +39,10 @@ var startServer = function (callback) {
 if (cluster.isMaster) {
   logger.info('Running in %s mode', conf.env);
 
+  if (conf.env === 'development') {
+    require('./server/assets').bundle();
+  }
+
   var onServerListening = function () {
     // This message isn't just to be friendly. We really only support running Fracas at one URL, since it makes
     // a lot of things, e.g. redirects, a lot easier. This log statement helps nudge the admin into using the preferred

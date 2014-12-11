@@ -273,7 +273,13 @@ var indexRequests = [
 
                   // The name of this facility
                   name: {
-                    type: 'string'
+                    type: 'string',
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
                   },
 
                   location: {

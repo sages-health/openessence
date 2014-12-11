@@ -17,14 +17,18 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
   };
 
-  // TODO make dependent on enabled form fields
+  // operates similar to possibleFilters, move out of here?
   $scope.pivotOptions = [
     {
-      value: 'age',
+      value: 'patient.age',
       label: gettextCatalog.getString('Age')
     },
     {
-      value: 'districts',
+      value: 'medicalFacility',
+      label: gettextCatalog.getString('Facility')
+    },
+    {
+      value: 'medicalFacility.location.district',
       label: gettextCatalog.getString('District')
     },
     {
@@ -32,7 +36,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       label: gettextCatalog.getString('Diagnoses')
     },
     {
-      value: 'sex',
+      value: 'patient.sex',
       label: gettextCatalog.getString('Sex')
     },
     {
@@ -64,9 +68,11 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     return (a.row < b.row) ? -1 : 1;
   };
 
-  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+  FormResource.get({size: 1, q: 'name:site'}, function (response) {
     if (response.results.length === 0) {
-      throw new Error('No configured forms');
+      console.error('No configured forms');
+      $location.path('/edit/config');
+      return;
     }
 
     var form = response.results[0]._source;
@@ -85,10 +91,19 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       return filters;
     }, {});
 
+    $scope.pivotOptions = angular.copy($scope.pivotOptions).filter(function (value) {
+      var formField = form.fields.filter(function (fValue) {
+        return value.value === fValue.name;
+      });
+      var enabled = formField[0] && formField[0].enabled;
+      return enabled;
+    });
+
     var workbenchId = $stateParams.workbenchId;
     var state = updateURL.getState();
     $scope.nextVizId = 0;
     $scope.workbenchId = null;
+    var visualizationName = $location.search().visualization;
 
     if (workbenchId) { // if we are loading a saved workbench
       Workbench.get(workbenchId, function (response) {
@@ -106,6 +121,18 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
           });
         }
       });
+    } else if (visualizationName) {
+      var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
+      var options = {
+        pivot: viz.pivot
+      };
+      viz.filters.forEach(function(filter){
+        $scope.activeFilters.push(angular.extend({}, $scope.possibleFilters[filter.filterID], filter));
+      });
+
+//      $scope.activeFilters = viz.filters;
+      $scope.addVisualization(viz.visualization.name, options);
+      $scope.vizMenuOpen = false;
     } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
       $scope.activeFilters = state.filters || [];
       if (Array.isArray(state.visualizations)) {
@@ -205,32 +232,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       Workbench.save(state);
     }
   };
-
-  var visualizationName = $location.search().visualization;
-  if (visualizationName) {
-    var viz = JSON.parse(sessionStorage.getItem('visualization'))[visualizationName];
-    var options = {
-      pivot: viz.pivot
-    };
-
-    $scope.filters = viz.filters.map(function (filter) {
-      if (filter.value) {
-        return {
-          filterId: filter.filterId,
-          value: filter.value
-        };
-      } else {
-        return {
-          filterId: filter.filterId,
-          to: filter.to,
-          from: filter.from
-        };
-      }
-    });
-
-    $scope.addVisualization(viz.visualization.name, options);
-    $scope.vizMenuOpen = false;
-  }
 
   $scope.sortableOptions = {
     cursor: 'move',

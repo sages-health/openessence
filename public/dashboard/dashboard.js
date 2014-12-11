@@ -144,8 +144,8 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (g
             $modal.open({
               template: require('./add-widget.html'),
               controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
-                // TODO this will only bring back 10 visualizations, we need paging
-                visualization.resource.get(function (visualizations) {
+                // TODO this will only bring back 100 visualizations, we need paging
+                visualization.resource.get({size: 100, sort: 'name.raw'}, function (visualizations) {
                   $scope.visualizations = visualizations.results;
                 });
                 $scope.widget = {};

@@ -112,7 +112,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
   // but could be an issue for sites collecting a lot of symptoms, diagnoses, etc.
   // "Correct" solution would involve linking to other resources and then fetching them on demand, e.g.
   // returning JSON HAL and then querying for dropdown values as needed. In the meantime, at least it's cached.
-  FormResource.get({size: 1, q: 'name:demo'}, function (response) {
+  FormResource.get({size: 1, q: 'name:site'}, function (response) {
     if (response.results.length === 0) {
       throw new Error('No configured forms');
     }

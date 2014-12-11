@@ -4,12 +4,25 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, $window, visualization, user, DistrictResource) {
+module.exports = function ($scope, gettextCatalog, $location, visualization, user, FacilityResource, $document, //
+                           $window) {
+  $scope.export = function () {
+    var title = $scope.report.name.replace(/ /g, '_');
+    var lang = $document[0].documentElement.lang;
+    var params = angular.copy($scope.params);
+    params.print = false;
+
+    $window.location = '/reports/' + title + '?size=' + angular.element('body').width() + 'px*' + angular.element('body').height() +
+      'px&name=' + title + '&url=/' + lang +
+      '/timeseries-report?params=' + btoa(JSON.stringify(params));
+  };
 
   $scope.username = user.getUser().username;
   $scope.dateString = moment().format('D MMMM YYYY');
-
-  $scope.report = $window.opener.report;
+  
+  $scope.params = JSON.parse(atob($location.search().params));
+  $scope.allowExport = $scope.params.print === false ? false : true;
+  $scope.report = angular.copy($scope.params);
   $scope.report.startDate = moment($scope.report.endDate).subtract('years', 1).toDate();
   $scope.report.week = moment($scope.report.endDate).format('W'); // ISO week
   $scope.report.year = moment($scope.report.endDate).format('GGGG'); // ISO year
@@ -45,7 +58,7 @@ module.exports = function ($scope, $window, visualization, user, DistrictResourc
     if (viz.state.filters) {
       for (var ix = 0; ix < viz.state.filters.length; ix++) {
         // Update date filters
-        if (viz.state.filters[ix].type === 'date') {
+        if (viz.state.filters[ix].type === 'date-range') {
           viz.state.filters[ix].from = $scope.report.startDate; //new Date(viz.filters[ix].from);
           viz.state.filters[ix].to = $scope.report.endDate; // new Date(viz.filters[ix].to);
         }
@@ -64,7 +77,8 @@ module.exports = function ($scope, $window, visualization, user, DistrictResourc
         // Update date filters
         if (viz.state.filters[ix].filterID === 'districts') {
           viz.state.filters[ix].value[0] = country;
-          viz.state.filters[ix].queryString = viz.state.filters[ix].queryString.replace('"Country A"', '"' + country + '"');
+          viz.state.filters[ix].queryString =
+            viz.state.filters[ix].queryString.replace('"Country A"', '"' + country + '"');
         }
       }
     }
@@ -79,22 +93,25 @@ module.exports = function ($scope, $window, visualization, user, DistrictResourc
     var vizTemplate = fixVisualization(data.results[0]._source);
 
     var searchParams = {
-      size: 30,  //TODO: get data for all district/country
+      size: 999,  //TODO: get data for all district/country
       sort: 'name'
     };
 
-    DistrictResource.get(searchParams, function (response) {
+    FacilityResource.get(searchParams, function (response) {
       var districts = response.results.map(pluckName);
       var rows = [
         []
       ];
+
+      districts.sort();
+      districts.push('LEGEND');
       districts.forEach(function (district, i) {
         var v = angular.copy(vizTemplate);
         v.state.options.id = i;
         v = fixCountry(v, district);
         v.name = district;
         rows[rows.length - 1].push(v);
-        if (i % 3 === 2) {
+        if ((i + 1) % 4 === 0) {
           rows.push([]);
         }
       });

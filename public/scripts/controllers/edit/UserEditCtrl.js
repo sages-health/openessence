@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, DistrictResource) {
+module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, FacilityResource) {
   $scope.activeFilters = [
     {
       filterID: 'username',
@@ -76,12 +76,17 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, User
   };
   var searchParams = {
     size: 100, // TODO search on demand if response indicates there are more records
-    sort: 'name'
+    sort: 'name.raw'
   };
-  DistrictResource.get(searchParams, function (response) {
-    editOptions.districts = response.results.map(function (r) {
-      return r._source.name;
+  FacilityResource.get(searchParams, function (response) {
+    var districts = response.results.map(function (r) {
+      return r._source.location.district;
     });
+    editOptions.medicalFacility = {
+      location: {
+        districts: districts
+      }
+    };
   });
 
   $scope.$watchCollection('queryString', reload);

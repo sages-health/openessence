@@ -6,7 +6,6 @@ var angular = require('angular');
 module.exports = function ($scope, $window, $timeout, $log, Report, visualization, $document, updateURL) {
 
   $scope.state = angular.copy($window.opener.state);
-  console.log($scope.state);
   $scope.state.options.labels = $scope.state.options.labels || {};
   $scope.state.options.showNotes = true;
 
