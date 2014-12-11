@@ -2,6 +2,8 @@
 
 var express = require('express');
 var OutpatientVisit = require('./../models/OutpatientVisit');
+var Form = require('./../models/Form');
+
 var converter = require('json2csv');
 var path = require('path');
 var fs = require('fs');
@@ -26,6 +28,30 @@ module.exports = function reportsMiddleware () {
           fs.unlink(filepath);
         }
       });
+    });
+  };
+
+  // TODO: remove hardcoded field names
+  var getFields = function (fields, formFields, format) {
+    var fldsEnabled = ['id'];
+    var fieldIds = Object.keys(fields);
+    formFields.forEach(function (fld) {
+      if (fld.enabled) {
+        if (format === 'expanded' && ['symptoms', 'diagnoses', 'disposition'].indexOf(fld.name) > -1) {
+          fldsEnabled.push(fld.name + '.name');
+          fldsEnabled.push(fld.name + '.count');
+        } else if (fld.name === 'medicalFacility'){
+          fldsEnabled.push(fld.name + '.name');
+        } else if (fld.name === 'patient.age'){
+          fldsEnabled.push(fld.name + '.years');
+        } else{
+          fldsEnabled.push(fld.name);
+        }
+      }
+    });
+
+    return fieldIds.filter(function (v) {
+      return fldsEnabled.indexOf(v) > -1;
     });
   };
 
@@ -65,15 +91,33 @@ module.exports = function reportsMiddleware () {
         });
       };
       var recs = dataFormatter.format(data, requestParams.format);
-      console.log('requestParams.delimiter: '+ requestParams.delimiter);
+      console.log('requestParams.delimiter: ' + requestParams.delimiter);
       if (recs.length > 0) {
-        var converterParams = {
-          data: recs,
-          fields: config.results[requestParams.format].fields,
-          fieldNames: config.results[requestParams.format].fieldNames,
-          del: requestParams.delimiter
-        };
-        converter(converterParams, callback);
+
+        Form.search({q: 'name:site'}, function (formErr, formData) {
+
+          if (formErr) {
+            throw formErr;
+          } else if (formData.length === 0) {
+            throw new Error('No form config found!');
+          }
+
+          var formFields = formData[0].doc.fields;
+          var fields = config.results.fields;
+          var fieldIds = getFields(fields, formFields, requestParams.format);
+          var fieldNames = fieldIds.map(function (id) {
+            return fields[id];
+          });
+
+          var converterParams = {
+            data: recs,
+            fields: fieldIds,
+            fieldNames: fieldNames,
+            del: requestParams.delimiter
+          };
+
+          converter(converterParams, callback);
+        });
       }
       else {
         callback(null, '');

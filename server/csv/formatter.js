@@ -41,7 +41,7 @@ var formatRecords = function (record, exportFormat) {
   // (exportFormat === expanded ) 1 to n rows per record
   else if (exportFormat === 'expanded') {
 
-    var recordClone = _.clone(record, true);
+    var clonedRec = _.clone(record, true);
     var result = [];
     var arrayKeys = [];
     // TODO: assumed all arrays are at top/first level (record.symptoms, record.diagnoses, record.syndromes)
@@ -52,7 +52,7 @@ var formatRecords = function (record, exportFormat) {
     });
     if (arrayKeys.length > 0) {
       _.each(arrayKeys, function (prop) {
-        var list = recordClone[prop];
+        var list = clonedRec[prop];
         if (list.length > 0) {
           _.each(list, function (val) {
             // Add a placeholder record else we may lose this rec
@@ -60,16 +60,12 @@ var formatRecords = function (record, exportFormat) {
             obj[prop] = val;
             result.push(obj);
           });
-        } else {
-          // Add a placeholder record else we may lose this rec
-          var obj = {};
-          obj[prop] = undefined;
-          result.push(obj);
         }
-        delete recordClone[prop];
+        delete clonedRec[prop];
       });
     }
-    _.each(result, function (value, ix) {
+
+    var applyFlatValue = function (recordClone, value) {
       value = _.extend(recordClone, value);
       value = flatten(value);
       _.each(value, function (val, key) {
@@ -77,8 +73,16 @@ var formatRecords = function (record, exportFormat) {
           value[key] = moment(val, inputDateFormat).format(outputDateFormat);
         }
       });
-      result[ix] = value;
-    });
+      return value;
+    };
+
+    if (result.length > 0) {
+      _.each(result, function (value, ix) {
+        result[ix] = applyFlatValue(clonedRec, value);
+      });
+    } else {
+      result = [applyFlatValue(clonedRec, {})];
+    }
     return result;
   }
   else {
