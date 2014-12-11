@@ -36,11 +36,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || defaultLabels;
-
           scope.series = scope.series || scope.options.series || [];
-
-          scope.interval = scope.options.interval || 'day';
-
+          if (scope.options.interval) {
+            scope.interval = scope.options.interval
+          }
+          else {
+            scope.interval = 'day';
+            scope.options.interval = 'day';
+          }
           scope.refresh = false;
 
           scope.chartConfig = {
@@ -173,7 +176,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           var reload = function () {
 
-            //if (scope.options.filters[2].value[0] != "LEGEND") {
             var aggs = {};
             var dateAgg = {
               'date_histogram': {
@@ -383,14 +385,19 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             return true;
           };
 
-          scope.$watchCollection('[series, queryString, interval]', function () {
+          scope.$watchCollection('[series, queryString]', function () {
             reload();
-            scope.redraw();
+            //scope.redraw();
           });
 
-          scope.redraw = function () {
-            scope.$broadcast('highchartsng.reflow');
-          }
+          scope.$watch('options.interval', function () {
+            scope.interval = scope.options.interval;
+            reload();
+          });
+
+          /*scope.redraw = function () {
+           scope.$broadcast('highchartsng.reflow');
+           }*/
 
           scope.$watch('options.labels.title', function () {
             scope.chartConfig.title.text = scope.options.labels.title;
