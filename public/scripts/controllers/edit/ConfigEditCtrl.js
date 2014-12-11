@@ -61,13 +61,13 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
   };
 
   var openSaveTemplateModal = function (title, message) {
-    $modal.open({
+    return $modal.open({
       templateUrl: 'message.html',
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.title = title;
         $scope.message = message;
         $scope.closeModal = function () {
-          $modalInstance.dismiss('cancel');
+          $modalInstance.close();
         };
       }]
     });
@@ -75,8 +75,13 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
 
   $scope.save = function () {
     var onSuccess = function () {
-      openSaveTemplateModal('Success', 'Configuration Saved');
-      $rootScope.$broadcast('configChange');
+      openSaveTemplateModal('Success', 'Configuration Saved').result
+        .then(function () {
+          $rootScope.$broadcast('configChange');
+          // reload page once we save template
+          // if we are saving this template first time, we want to get newly generated template ID
+          $window.location.reload();
+        });
     };
 
     $scope.siteTemplate.name = 'site';
