@@ -45,13 +45,13 @@
           <td ng-show="fields.symptoms.enabled" data-title="'Symptoms' | translate">
             <a ng-click="tableFilter('symptoms', visit._source.symptoms)"
                popover="{{printAggregate(visit._source.symptoms, true) | truncate:500}}" popover-trigger="mouseenter">
-              {{printAggregate(visit._source.symptoms, true) | truncate:30}}
+              {{printAggregate(visit._source.symptoms) | truncate:30}}
             </a>
           </td>
           <td ng-show="fields.diagnoses.enabled" data-title="'Diagnoses' | translate">
             <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)"
                popover="{{printAggregate(visit._source.diagnoses, true) | truncate:500}}" popover-trigger="mouseenter">
-              {{printAggregate(visit._source.diagnoses, true) | truncate:30}}
+              {{printAggregate(visit._source.diagnoses) | truncate:30}}
             </a>
           </td>
 
