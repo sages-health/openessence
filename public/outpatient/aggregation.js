@@ -4,78 +4,110 @@ var angular = require('angular');
 var services = require('../scripts/modules').services;
 
 angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function (gettextCatalog) {
-  //backend will wrap with "aggs : {"
-  var aggregations = {
+
+  var aggregables = {  //backend will wrap with "aggs : {"
     'patient.sex': {
-      terms: {
-        field: 'patient.sex',
-        order: { '_term': 'asc' }
+      label: gettextCatalog.getString('Sex'),
+      aggregation: {
+        terms: {
+          field: 'patient.sex',
+          order: { '_term': 'asc' }
+        }
       }
     },
-    symptoms: {
-      nested: {
-        path: 'symptoms'
-      },
-      aggs: {
-        _name: { //double check that using an underscore is kosher
-          terms: {
-            field: 'symptoms.name.raw',
-            order: { '_term': 'asc' }
-          },
-          aggs: {
-            count: { //calling this doc_count may be cheating a little..
-              sum: {
-                field: 'symptoms.count'
+    'symptoms': {
+      label: gettextCatalog.getString('Symptoms'),
+      aggregation: {
+        nested: {
+          path: 'symptoms'
+        },
+        aggs: {
+          _name: { //double check that using an underscore is kosher
+            terms: {
+              field: 'symptoms.name.raw',
+              order: { '_term': 'asc' }
+            },
+            aggs: {
+              count: {
+                sum: {
+                  field: 'symptoms.count'
+                }
               }
             }
           }
         }
       }
     },
-    diagnoses: {
-      terms: {
-        field: 'diagnoses.name.raw',
-        order: { '_term': 'asc' }
-      },
-      aggs: {
-        count: {
-          sum: {
-            field: 'diagnoses.count'
+    'diagnoses': {
+      label: gettextCatalog.getString('Diagnoses'),
+      aggregation: {
+        nested: {
+          path: 'diagnoses'
+        },
+        aggs: {
+          _name: { //double check that using an underscore is kosher
+            terms: {
+              field: 'diagnoses.name.raw',
+              order: { '_term': 'asc' }
+            },
+            aggs: {
+              count: {
+                sum: {
+                  field: 'diagnoses.count'
+                }
+              }
+            }
           }
         }
       }
     },
-    'medicalFacility': {
-      terms: {
-        field: 'medicalFacility.name.raw',
-        order: { '_term': 'asc' }
+    'medicalFacility.name': {
+      label: gettextCatalog.getString('Facility'),
+      aggregation: {
+        terms: {
+          field: 'medicalFacility.name.raw',
+          order: { '_term': 'asc' }
+        }
       }
     },
     'medicalFacility.location.district': {
-      terms: {
-        field: 'medicalFacility.location.district.raw',
-        order: { '_term': 'asc' }
+      label: gettextCatalog.getString('District'),
+      aggregation: {
+        terms: {
+          field: 'medicalFacility.location.district.raw',
+          order: { '_term': 'asc' }
+        }
       }
     },
     'patient.age': {
-      range: { // age is actually an age group, b/c that's almost always what you actually want
-        field: 'patient.age.years',
-        ranges: [
-          {key: '[0 TO 1}', to: 1},
-          {key: '[1 TO 5}', from: 1, to: 5},
-          {key: '[5 TO 12}', from: 5, to: 12},
-          {key: '[12 TO 18}', from: 12, to: 18},
-          {key: '[18 TO 45}', from: 18, to: 45},
-          {key: '[45 TO 65}', from: 45, to: 65},
-          {key: '[65 TO *]', from: 65}
-        ]
+      label: gettextCatalog.getString('Age'),
+      aggregation: {
+        range: { // age is actually an age group, b/c that's almost always what you actually want
+          field: 'patient.age.years',
+          ranges: [
+            {key: '[0 TO 1}', to: 1},
+            {key: '[1 TO 5}', from: 1, to: 5},
+            {key: '[5 TO 12}', from: 5, to: 12},
+            {key: '[12 TO 18}', from: 12, to: 18},
+            {key: '[18 TO 45}', from: 18, to: 45},
+            {key: '[45 TO 65}', from: 45, to: 65},
+            {key: '[65 TO *]', from: 65}
+          ]
+        }
       }
     }
   };
+  var pivotArray = [];
+  for (var agg in aggregables) {
+    pivotArray.push({value: agg, label: aggregables[agg].label});
+  }
 
   return {
+    getAggregables: function () {
+      return angular.copy(pivotArray);
+    },
     getAggregation: function (name, limit) {
-      var copy = angular.copy(aggregations[name]);
+      var copy = angular.copy(aggregables[name].aggregation);
       if (limit && copy.terms) {
         copy.terms.size = limit;
       }
@@ -102,6 +134,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }
     },
     getAgeGroup: function (age) {
+      //TODO make this use the aggregation json "getAggregation('patient.age').. to limit potential inconsistencies.
       if (age !== undefined) {
         if (age < 1) {
           return '[0 TO 1}';

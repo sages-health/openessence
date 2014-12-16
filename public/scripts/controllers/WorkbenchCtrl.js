@@ -4,7 +4,7 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog,
-                           scopeToJson, FormResource, possibleFilters, updateURL, Workbench) {
+                           scopeToJson, FormResource, possibleFilters, outpatientAggregation, updateURL, Workbench) {
   var NUM_COLUMNS = 24,
     DEFAULT_SIZE_X = 12,
     DEFAULT_SIZE_Y = 8;
@@ -23,36 +23,9 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
   };
 
-  // operates similar to possibleFilters, move out of here?
-  $scope.pivotOptions = [
-    {
-      value: 'patient.age',
-      label: gettextCatalog.getString('Age')
-    },
-    {
-      value: 'medicalFacility',
-      label: gettextCatalog.getString('Facility')
-    },
-    {
-      value: 'medicalFacility.location.district',
-      label: gettextCatalog.getString('District')
-    },
-    {
-      value: 'diagnoses',
-      label: gettextCatalog.getString('Diagnoses')
-    },
-    {
-      value: 'patient.sex',
-      label: gettextCatalog.getString('Sex')
-    },
-    {
-      value: 'symptoms',
-      label: gettextCatalog.getString('Symptoms')
-    }
-  ];
-
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];
+  $scope.pivotOptions = [];
 
   var getNextVizId = function () {
     if (!$scope.nextVizId) {
@@ -93,11 +66,10 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       if (possibleFilter) {
         filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
       }
-
       return filters;
     }, {});
 
-    $scope.pivotOptions = angular.copy($scope.pivotOptions).filter(function (value) {
+    $scope.pivotOptions = outpatientAggregation.getAggregables().filter(function (value) {
       var formField = form.fields.filter(function (fValue) {
         return value.value === fValue.name;
       });
