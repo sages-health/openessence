@@ -139,8 +139,8 @@ module.exports = function ($parse, OutpatientVisitResource) {
           };
 
           if (scope.form.dataType === 'aggregate') {
-            addDefaultFieldsToDataField(scope.visit.symptoms, scope.allSymptoms);
-            addDefaultFieldsToDataField(scope.visit.diagnoses, scope.allDiagnoses);
+            scope.visit.symptoms = addDefaultFieldsToDataField(scope.visit.symptoms, scope.allSymptoms);
+            scope.visit.diagnoses = addDefaultFieldsToDataField(scope.visit.diagnoses, scope.allDiagnoses);
           }
 
           scope.symptomsGridOptions = {
