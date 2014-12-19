@@ -71,24 +71,26 @@
                     <td>
                       <div ng-if="field.enabled && field.values !== undefined">
 
-                        <div class="row">
-                          <select class="form-control select2-multiple" name="{{field.name}}-select" multiple ui-select2
-                                  ng-model="field.values" ng-disabled="!field.enabled">
-                            <option ng-repeat="val in field.possibleValues" ng-value="val.name">{{val.name}}</option>
-                          </select>
+                        <ui-select class="form-control" multiple ng-model="field.values" theam="select2"
+                                   ng-disabled="disabled">
+                          <ui-select-match placeholder="Select {{field.name}}...">{{$item.name}}</ui-select-match>
+                          <ui-select-choices ng-value="val.name"
+                                             repeat="val.name as val in field.possibleValues  | filter:$select.search">
+                            <div ng-bind-html="val.name | highlight: $select.search"></div>
+                          </ui-select-choices>
+                        </ui-select>
+
+                        <div class="btn-group pull-right">
+                          <button class="btn btn-default btn-sm"
+                                  ng-click="addNewValue(field)" title="Add New Possible Value">
+                            <span class="icon-plus"></span>
+                          </button>
+                          <button class="btn btn-warning btn-sm"
+                                  ng-click="removeAll(field)" title="Remove All">
+                            <span class="icon-cancel"></span>
+                          </button>
                         </div>
-                        <div class="row">
-                          <div class="btn-group pull-right">
-                            <button class="btn btn-default btn-sm"
-                                    ng-click="addNewValue(field)" title="Add New Possible Value">
-                              <span class="icon-plus"></span>
-                            </button>
-                            <button class="btn btn-warning btn-sm"
-                                    ng-click="removeAll(field)" title="Remove All">
-                              <span class="icon-cancel"></span>
-                            </button>
-                          </div>
-                        </div>
+
                       </div>
                     </td>
                   </tr>
