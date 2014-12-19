@@ -41,6 +41,7 @@ require('d3');
 require('leaflet');
 require('highcharts');
 require('highcharts-ng');
+require('exporting');
 
 var frable = require('../frable');
 require('../select2');
@@ -93,7 +94,7 @@ app.run(function ($rootScope, $state, $http, cfpLoadingBar, user, $injector) {
     cfpLoadingBar.start();
 
     if (!stateChanged) {
-      if(user.getUser()){
+      if (user.getUser()) {
         $injector.get('$http').defaults.transformRequest = function (data, headersGetter) {
           if ($rootScope.oauth) {
             /*jshint sub:true*/

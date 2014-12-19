@@ -133,7 +133,8 @@
     "jquery-csv": "./bower_components/jquery-csv/src/jquery.csv.js",
     "highcharts-ng": "./bower_components/highcharts-ng/dist/highcharts-ng.js",
     "highcharts": "./bower_components/highcharts/highcharts.js",
-    "checklist-model": "./bower_components/checklist-model/checklist-model.js"
+    "checklist-model": "./bower_components/checklist-model/checklist-model.js",
+    "exporting": "./server/exporting.js"
   },
   "engines": {
     "node": "0.10.x"

@@ -8,35 +8,47 @@
         <form class="form" role="form" novalidate name="exportForm">
           <div class="form-group" ng-class="{'has-error': yellAtUser}">
             <label for="edit-title" translate>Title</label>
-            <input type="text" class="form-control" id="edit-title" name="title" ng-model="state.options.labels.title" required>
+            <input type="text" class="form-control" id="edit-title" name="title" ng-model="state.options.labels.title"
+                   required>
+
             <div class="help-block" ng-show="yellAtUser" translate>
               Please enter title
             </div>
           </div>
-          <div class="form-group" ng-if="state.visualization.name === 'line' || state.visualization.name === 'bar'" ng-class="{'has-error': yellAtUser}">
+          <div class="form-group" ng-if="state.visualization.name === 'line' || state.visualization.name === 'bar'"
+               ng-class="{'has-error': yellAtUser}">
             <label for="edit-x-label" translate>X-Axis Label</label>
-            <input type="text" class="form-control" id="edit-x-label" name="xLabel" ng-model="state.options.labels.x" required>
+            <input type="text" class="form-control" id="edit-x-label" name="xLabel" ng-model="state.options.labels.x"
+                   required>
+
             <div class="help-block" ng-show="yellAtUser" translate>
               Please enter label for x-axis
             </div>
           </div>
-          <div class="form-group" ng-if="state.visualization.name === 'line' || state.visualization.name === 'bar'" ng-class="{'has-error': yellAtUser}">
+          <div class="form-group" ng-if="state.visualization.name === 'line' || state.visualization.name === 'bar'"
+               ng-class="{'has-error': yellAtUser}">
             <label for="edit-y-label" translate>Y-Axis Label</label>
-            <input type="text" class="form-control" id="edit-y-label" name="yLabel" ng-model="state.options.labels.y" required>
+            <input type="text" class="form-control" id="edit-y-label" name="yLabel" ng-model="state.options.labels.y"
+                   required>
+
             <div class="help-block" ng-show="yellAtUser" translate>
               Please enter label for y-axis
             </div>
           </div>
           <div class="form-group" ng-class="{'has-error': yellAtUser}">
             <label for="edit-x-size" translate>X Size</label>
-            <input type="number" class="form-control" id="edit-x-size" name="xSize" ng-model="state.options.width" required>
+            <input type="number" class="form-control" id="edit-x-size" name="xSize" ng-model="state.options.width"
+                   required>
+
             <div class="help-block" ng-show="yellAtUser" translate>
               Please enter size for x-axis
             </div>
           </div>
           <div class="form-group" ng-class="{'has-error': yellAtUser}">
             <label for="edit-y-size" translate>Y Size</label>
-            <input type="number" class="form-control" id="edit-y-size" name="ySize" ng-model="state.options.height" required>
+            <input type="number" class="form-control" id="edit-y-size" name="ySize" ng-model="state.options.height"
+                   required>
+
             <div class="help-block" ng-show="yellAtUser" translate>
               Please enter size for y-axis
             </div>
@@ -48,7 +60,8 @@
               <label ng-hide="state.options.showNotes" translate>Include Notes</label>
             </div>
             <div class="row" ng-show="state.options.showNotes">
-              <div class="export-viz-white" id="export-viz-notes" text-angular ta-toolbar="[['h4','h5','p','bold','italics','underline','ul']]"
+              <div class="export-viz-white" id="export-viz-notes" text-angular
+                   ta-toolbar="[['h4','h5','p','bold','italics','underline','ul']]"
                    ta-text-editor-class="form-content" ta-html-editor-class="form-content" ta-focussed-class="focussed"
                    name="notes" ng-model="state.options.labels.notes"></div>
               <div class="help-block" ng-show="yellAtUser" translate>
@@ -58,7 +71,8 @@
           </div>
         </form>
         <div class="panel-footer">
-          <button class="btn btn-primary" ng-click="export(exportForm)" ng-disabled="filenameInvalid(state.options.labels.title)">
+          <button class="btn btn-primary" ng-click="export(exportForm)"
+                  ng-disabled="filenameInvalid(state.options.labels.title)">
             <span class="icon-ok"></span>
             <span translate>Export to PNG</span>
           </button>
@@ -72,7 +86,8 @@
     <div class="col-md-8 export-viz-panel">
       <div id="export-div">
         <outpatient-visualization visualization="state.visualization" query-string="state.queryString"
-                                  filters="state.filters" pivot="state.pivot" options="state.options" form="state.form">
+                                  filters="state.filters" pivot="state.pivot" options="state.options" form="state.form"
+                                  source="state.source">
         </outpatient-visualization>
         <div ng-show="state.options.showNotes">
           <div class="panel panel-default" style="width:{{state.options.width}}px;">
