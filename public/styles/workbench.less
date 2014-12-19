@@ -8,6 +8,7 @@ li.workbench-visualization div.panel-heading {
   width: 100%;
   height: 100%;
   padding: 0px 0px 3px 0px;
+  background-color: #ecf0f1;
 }
 
 .workbench-well {
@@ -20,3 +21,80 @@ li.workbench-visualization div.panel-heading {
   font-weight: bold;
 }
 
+span.top-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+span.top-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+span.bottom-left {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+span.bottom-right {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+
+.caret-bottom-left {
+  cursor: sw-resize;
+  border-bottom: 4px solid;
+  border-top: 4px solid transparent;
+  border-left: 4px solid;
+  border-right: 4px solid transparent;
+  display: inline-block;
+  height: 0;
+  opacity: 0.3;
+  vertical-align: top;
+  width: 0;
+}
+
+.caret-bottom-right {
+  cursor: se-resize;
+  border-bottom: 4px solid;
+  border-top: 4px solid transparent;
+  border-left: 4px solid transparent;
+  border-right: 4px solid;
+  display: inline-block;
+  height: 0;
+  opacity: 0.3;
+  vertical-align: top;
+  width: 0;
+}
+
+
+.caret-top-right {
+  cursor: ne-resize;
+  border-bottom: 4px solid transparent;
+  border-top: 4px solid;
+  border-left: 4px solid transparent;
+  border-right: 4px solid;
+  display: inline-block;
+  height: 0;
+  opacity: 0.3;
+  vertical-align: top;
+  width: 0;
+}
+
+.caret-top-left {
+  cursor: nw-resize;
+  border-bottom: 4px solid transparent;
+  border-top: 4px solid;
+  border-left: 4px solid;
+  border-right: 4px solid transparent;
+  display: inline-block;
+  height: 0;
+  opacity: 0.3;
+  vertical-align: top;
+  width: 0;
+}

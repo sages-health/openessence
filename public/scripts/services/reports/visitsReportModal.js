@@ -33,11 +33,9 @@ module.exports = function ($modal) {
               $scope.invalidDateRange = true;
               return;
             }
-            $window.report = $scope.report;
 
-            var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
-            url = url + 'visits-report';
-
+            var url = document.baseURI;
+            url = url + 'visits-report?params=' + btoa(JSON.stringify($scope.report));
             $window.open(url, 'report-visits', 'width=1280,resizable=1,scrollbars=1,toolbar=1');
 
             $modalInstance.close();

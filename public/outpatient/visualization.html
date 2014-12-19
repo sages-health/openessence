@@ -1,4 +1,3 @@
-
 <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
   <div id="svg-id-{{options.id}}" class="animation-switch" ng-switch-when="table">
     <div class="table-responsive">
@@ -18,13 +17,17 @@
           </td>
 
           <!-- could also roll up to geographic area, but we usually deal with so few sites that that's not helpful -->
-          <td ng-show="fields.medicalFacility.enabled" data-title="'Facility' | translate" data-sortable="'medicalFacility.name'">
-            <a ng-click="tableFilter('medicalFacility', visit._source.medicalFacility.name)">
+          <td ng-show="fields.medicalFacility.enabled" data-title="'Facility' | translate"
+              data-sortable="'medicalFacility.name'">
+            <a ng-click="tableFilter('medicalFacility', visit._source.medicalFacility.name)"
+               popover="{{visit._source.medicalFacility.name}}" popover-trigger="mouseenter">
               {{visit._source.medicalFacility.name | truncate:15}}
             </a>
           </td>
-          <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="'District' | translate" data-sortable="'medicalFacility.location.district'">
-            <a ng-click="tableFilter('medicalFacility.location.district', visit._source.medicalFacility.location.district)">
+          <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="'District' | translate"
+              data-sortable="'medicalFacility.location.district'">
+            <a ng-click="tableFilter('medicalFacility.location.district', visit._source.medicalFacility.location.district)"
+               popover="{{visit._source.medicalFacility.location.district}}" popover-trigger="mouseenter">>
               {{visit._source.medicalFacility.location.district | truncate:15}}
             </a>
           </td>
@@ -32,24 +35,28 @@
           <td ng-show="fields['patient.sex'].enabled" data-title="'Sex' | translate" data-sortable="'patient.sex'">
             <a ng-click="tableFilter('patient.sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
           </td>
-          <td ng-show="fields['patient.age'].enabled" data-title="'Age' | translate" data-sortable="'patient.age.years'">
+          <td ng-show="fields['patient.age'].enabled" data-title="'Age' | translate"
+              data-sortable="'patient.age.years'">
             <a ng-click="tableFilter('patient.age', visit._source.patient.age.years)">
               {{visit._source.patient.age.years}}
             </a>
           </td>
 
           <td ng-show="fields.symptoms.enabled" data-title="'Symptoms' | translate">
-            <a ng-click="tableFilter('symptoms', visit._source.symptoms)">
-              {{visit._source.symptoms | pluck:'name' | join | truncate:30}}
+            <a ng-click="tableFilter('symptoms', visit._source.symptoms)"
+               popover="{{printAggregate(visit._source.symptoms, true) | truncate:500}}" popover-trigger="mouseenter">
+              {{printAggregate(visit._source.symptoms) | truncate:30}}
             </a>
           </td>
           <td ng-show="fields.diagnoses.enabled" data-title="'Diagnoses' | translate">
-            <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)">
-              {{visit._source.diagnoses | pluck:'name' | join | truncate:30}}
+            <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)"
+               popover="{{printAggregate(visit._source.diagnoses, true) | truncate:500}}" popover-trigger="mouseenter">
+              {{printAggregate(visit._source.diagnoses) | truncate:30}}
             </a>
           </td>
 
-          <td ng-show="fields['antiviral.name'].enabled" data-title="'Antiviral' | translate" data-sortable="'antiviral.name'">
+          <td ng-show="fields['antiviral.name'].enabled" data-title="'Antiviral' | translate"
+              data-sortable="'antiviral.name'">
             <a ng-click="tableFilter('antiviralName', visit._source.antiviral.name)">
               {{visit._source.antiviral.name}}
             </a>
@@ -70,7 +77,11 @@
     </div>
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
-    <crosstab class="crosstab" records="crosstabData" options="options" pivot="pivot"></crosstab>
+    <crosstab
+            options="options"
+            pivot="pivot"
+            records="crosstabData">
+    </crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
     <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
@@ -82,20 +93,20 @@
   </div>
   <div class="animation-switch" ng-switch-when="pie">
     <outpatient-pie-chart
-        filters="filters"
-        query-string="queryString"
-        options="options"
-        pivot="pivot"
-        agg-data="aggData">
+            filters="filters"
+            query-string="queryString"
+            options="options"
+            pivot="pivot"
+            agg-data="aggData">
     </outpatient-pie-chart>
   </div>
   <div class="animation-switch" ng-switch-when="bar">
     <outpatient-bar-chart
-        filters="filters"
-        query-string="queryString"
-        options="options"
-        pivot="pivot"
-        agg-data="aggData">
+            filters="filters"
+            query-string="queryString"
+            options="options"
+            pivot="pivot"
+            agg-data="aggData">
     </outpatient-bar-chart>
   </div>
   <div class="animation-switch" ng-switch-when="map">

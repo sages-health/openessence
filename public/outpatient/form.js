@@ -21,6 +21,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
     compile: function () {
       return {
         pre: function (scope) {
+          scope.dataType = scope.form.dataType;  //aggregate or individual
           scope.page = scope.page || 1;
           scope.record = scope.record || {};
           scope.visit = angular.copy(scope.record._source) || {};
@@ -34,7 +35,8 @@ module.exports = function ($parse, OutpatientVisitResource) {
           // convert array of fields to object indexed by field name
           // TODO keep order of fields
           scope.fields = scope.form.fields.reduce(function (fields, field) {
-            if (field.values) {
+            var aggregateField = (scope.form.dataType === 'aggregate' && aggregateFields.indexOf(field.name) > -1 );
+            if (field.enabled && field.values && !aggregateField) { //not an aggregatedField, ok to convert to string
               // index values by name to make lookups easy
               var valuesByName = field.values.reduce(function (values, v) {
                 values[v.name] = v;
@@ -114,6 +116,52 @@ module.exports = function ($parse, OutpatientVisitResource) {
             $event.preventDefault();
             $event.stopPropagation();
             scope.datePopupsOpen[name] = !scope.datePopupsOpen[name];
+          };
+
+          scope.allSymptoms = scope.fields.symptoms ? scope.fields.symptoms.values.map(function (v) {
+            return {name: v.name};
+          }) : [];
+          scope.allDiagnoses = scope.fields.diagnoses ? scope.fields.diagnoses.values.map(function (v) {
+            return {name: v.name};
+          }) : [];
+
+          var addDefaultFieldsToDataField = function (dataElement, allPossibleValues) {
+            dataElement = dataElement ? dataElement : [];
+            allPossibleValues.forEach(function (el) {
+              var found = dataElement.filter(function (a) {
+                return a.name === el.name;
+              });
+              if (found.length === 0) {
+                dataElement.push({name: el.name});
+              }
+            });
+            return dataElement;
+          };
+
+          if (scope.form.dataType === 'aggregate') {
+            scope.visit.symptoms = addDefaultFieldsToDataField(scope.visit.symptoms, scope.allSymptoms);
+            scope.visit.diagnoses = addDefaultFieldsToDataField(scope.visit.diagnoses, scope.allDiagnoses);
+          }
+
+          scope.symptomsGridOptions = {
+            data: 'visit.symptoms',
+            enableRowSelection: false,
+            enableCellSelection: true,
+            enableCellEditOnFocus: true,
+            columnDefs: [
+              {field: 'name', displayName: 'Name', cellEditableCondition: 'false'},
+              {field: 'count', displayName: 'Count'}
+            ]
+          };
+          scope.diagnosesGridOptions = {
+            data: 'visit.diagnoses',
+            enableRowSelection: false,
+            enableCellSelection: true,
+            enableCellEditOnFocus: true,
+            columnDefs: [
+              {field: 'name', displayName: 'Name', cellEditableCondition: 'false'},
+              {field: 'count', displayName: 'Count'}
+            ]
           };
 
           scope.submit = function (visitForm) {
@@ -214,41 +262,54 @@ module.exports = function ($parse, OutpatientVisitResource) {
                 return;
               }
 
-              var selectedValues = field.expression(recordToSubmit);
-              if (!selectedValues) {
-                // user didn't select anything
-                return;
-              }
-
-              if (Array.isArray(selectedValues)) {
-                // multi-select
-                selectedValues = selectedValues.map(function (v) {
-                  if (v.name) {
-                    // already an object
-                    return v;
-                  } else {
-                    // won't be in field.valuesByName if it's an "Other"
-                    return field.valuesByName[v] || {name: v};
-                  }
+              var aggregateField = (scope.form.dataType === 'aggregate' && aggregateFields.indexOf(field.name) > -1 );
+              if (aggregateField) {
+                // only store objects having count value
+                recordToSubmit[field.name] = recordToSubmit[field.name].filter(function (el) {
+                  return el.count !== '' && !isNaN(el.count);
+                });
+                recordToSubmit[field.name].forEach(function (e) {
+                  e.count = parseInt(e.count, 0);
                 });
               } else {
-                // single-select
-                if (!selectedValues.name) {
-                  selectedValues = field.valuesByName[selectedValues] || {name: selectedValues};
+                var selectedValues = field.expression(recordToSubmit);
+                if (!selectedValues) {
+                  // user didn't select anything
+                  return;
                 }
-              }
 
-              field.expression.assign(recordToSubmit, selectedValues);
+                if (Array.isArray(selectedValues)) {
+                  // multi-select
+                  selectedValues = selectedValues.map(function (v) {
+                    if (v.name) {
+                      // already an object
+                      return v;
+                    } else {
+                      // won't be in field.valuesByName if it's an "Other"
+                      return field.valuesByName[v] || {name: v};
+                    }
+                  });
+                } else {
+                  // single-select
+                  if (!selectedValues.name) {
+                    selectedValues = field.valuesByName[selectedValues] || {name: selectedValues};
+                  }
+                }
+
+                field.expression.assign(recordToSubmit, selectedValues);
+              }
             });
 
-            // add count: 1 to aggregate fields
-            aggregateFields.forEach(function (field) {
-              if (recordToSubmit[field]) {
-                recordToSubmit[field].forEach(function (v) {
-                  v.count = 1;
-                });
-              }
-            });
+            if (scope.dataType === 'individual') {
+              // add count: 1 to aggregate stored fields under individual dataType
+              aggregateFields.forEach(function (field) {
+                if (recordToSubmit[field]) {
+                  recordToSubmit[field].forEach(function (v) {
+                    v.count = 1;
+                  });
+                }
+              });
+            }
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit
               OutpatientVisitResource.update({
@@ -283,7 +344,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
               });
           };
 
-          scope.$on('next-page', function nextPage () {
+          scope.$on('next-page', function nextPage() {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
               if (scope.page === numPages - 1) {
@@ -298,7 +359,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
             }
           });
 
-          scope.$on('previous-page', function previousPage () {
+          scope.$on('previous-page', function previousPage() {
             scope.yellAtUser = !!scope.visitForm.$invalid;
             if (!scope.yellAtUser) {
               if (scope.page === 'last') {

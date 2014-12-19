@@ -1,7 +1,14 @@
 <div class="container">
-
+  
   <div class="panel panel-primary">
-    <div class="panel-heading"><h3>{{report.name}}</h3></div>
+    <div class="panel-heading">
+      <h3>
+        {{report.name}}
+        <button ng-show="allowExport" class="btn btn-primary" ng-click="export()">
+          <span class="icon-export"></span>
+        </button>
+      </h3>
+    </div>
     <div class="panel-body">
       <div class="row">
         <div class="col-md-8">

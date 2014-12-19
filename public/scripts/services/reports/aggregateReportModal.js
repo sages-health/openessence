@@ -8,7 +8,7 @@ module.exports = function ($modal) {
     openWeeklyReport: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-weekly-report-dialog.html'),
-        controller: /*ngInject*/ function ($scope, $modalInstance, $window, gettextCatalog) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, gettextCatalog) {
           $scope.report = {};
           $scope.report.name = gettextCatalog.getString('Reported Cases by Country - Weekly Report');
           $scope.isInvalid = function (field) {

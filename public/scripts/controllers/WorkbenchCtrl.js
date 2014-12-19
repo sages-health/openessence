@@ -4,10 +4,16 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog,
-                           scopeToJson, FormResource, possibleFilters, updateURL, Workbench) {
+                           scopeToJson, FormResource, possibleFilters, outpatientAggregation, updateURL, Workbench) {
+  var NUM_COLUMNS = 24,
+    DEFAULT_SIZE_X = 12,
+    DEFAULT_SIZE_Y = 8;
+
   $scope.gridsterOptions = {
     margins: [10, 10],
-    columns: 12,
+    columns: NUM_COLUMNS,
+    minRows: 5,
+    //minColumns: 11,
     draggable: {
       enabled: true,
       handle: '.viz-drag-handle'
@@ -17,36 +23,9 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
   };
 
-  // operates similar to possibleFilters, move out of here?
-  $scope.pivotOptions = [
-    {
-      value: 'patient.age',
-      label: gettextCatalog.getString('Age')
-    },
-    {
-      value: 'medicalFacility',
-      label: gettextCatalog.getString('Facility')
-    },
-    {
-      value: 'medicalFacility.location.district',
-      label: gettextCatalog.getString('District')
-    },
-    {
-      value: 'diagnoses',
-      label: gettextCatalog.getString('Diagnoses')
-    },
-    {
-      value: 'patient.sex',
-      label: gettextCatalog.getString('Sex')
-    },
-    {
-      value: 'symptoms',
-      label: gettextCatalog.getString('Symptoms')
-    }
-  ];
-
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];
+  $scope.pivotOptions = [];
 
   var getNextVizId = function () {
     if (!$scope.nextVizId) {
@@ -87,11 +66,10 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       if (possibleFilter) {
         filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
       }
-
       return filters;
     }, {});
 
-    $scope.pivotOptions = angular.copy($scope.pivotOptions).filter(function (value) {
+    $scope.pivotOptions = outpatientAggregation.getAggregables().filter(function (value) {
       var formField = form.fields.filter(function (fValue) {
         return value.value === fValue.name;
       });
@@ -196,8 +174,8 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
 
     var viz = {
-      sizeX: options.sizeX || 6,
-      sizeY: options.sizeY || 4,
+      sizeX: options.sizeX || DEFAULT_SIZE_X,
+      sizeY: options.sizeY || DEFAULT_SIZE_Y,
       row: options.row,
       col: options.col,
       type: 'outpatient-visit',

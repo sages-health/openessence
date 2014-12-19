@@ -44,14 +44,14 @@ module.exports = [
         name: 'medicalFacility.location.district',
         enabled: false,
         values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
-            // construct set of districts
-            if (facility.location && facility.location.district) {
-              var district = facility.location.district;
-              districts[district] = true;
-            }
+          // construct set of districts
+          if (facility.location && facility.location.district) {
+            var district = facility.location.district;
+            districts[district] = true;
+          }
 
-            return districts;
-          }, {}))
+          return districts;
+        }, {}))
           .sort()
           .map(function (name) {
             return {
@@ -216,7 +216,7 @@ module.exports = [
   },
   {
     // everything enabled for demo
-    name: 'ILI',
+    name: 'DemoData',
     fields: [
       {
         name: 'visitDate',
@@ -286,7 +286,7 @@ module.exports = [
       // patient info
       {
         name: 'patient.id',
-        enabled: true
+        enabled: false
       },
       {
         name: 'patient.name',
@@ -303,7 +303,7 @@ module.exports = [
       },
       {
         name: 'patient.age',
-        enabled: false
+        enabled: true
       },
 
       // pregnancy status
@@ -392,7 +392,29 @@ module.exports = [
       {
         name: 'symptoms',
         enabled: true,
-        values: require('./symptom.json')
+        values: [
+          'Abdominal Pain',
+          'Cold',
+          'Coryza',
+          'Cough',
+          'Dehydration',
+          'Diarrhea',
+          'Fever',
+          'Flushing',
+          'Headache',
+          'Joint Pain',
+          'Muscle Pain',
+          'Nosebleed',
+          'Rash',
+          'Shock',
+          'Sore throat',
+          'Stomach Pain',
+          'Vomit'
+        ].map(function (c) {
+            return {
+              name: c
+            };
+          })
       },
       {
         name: 'symptoms.other',
@@ -402,7 +424,21 @@ module.exports = [
       {
         name: 'diagnoses',
         enabled: true,
-        values: require('./diagnosis.json')
+        values: [
+          'Asthma',
+          'Bronchitis',
+          'Cholera',
+          'Dengue',
+          'Diarrhea/Vomiting',
+          'Ear Infection',
+          'HIV',
+          'Malaria',
+          'URTI'
+        ].map(function (c) {
+            return {
+              name: c
+            };
+          })
       },
       {
         name: 'diagnoses.other',
@@ -427,5 +463,4 @@ module.exports = [
       }
     ]
   }
-
 ];

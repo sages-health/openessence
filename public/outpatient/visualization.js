@@ -239,23 +239,63 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           });
         };
 
+        //TODO this is due to local aggregation for crosstab, should utilize backend
         var crosstabifyRecord = function (source) {
           var record = {};
-          var ref = {
-            'patient.sex': source.patient ? source.patient.sex : null || null,
-            'patient.age': outpatientAggregation.getAgeGroup((source.patient && source.patient.age) ? source.patient.age.years : null) || null,
-            symptoms: source.symptoms || null,
-            diagnoses: source.diagnoses || null,
-            'medicalFacility.location.district': source.medicalFacility && source.medicalFacility.location ? source.medicalFacility.location.district : null,
-            medicalFacility: source.medicalFacility ? source.medicalFacility.name : null
+          var special = {
+            'patient.age': outpatientAggregation.getAgeGroup((source.patient && source.patient.age) ? source.patient.age.years : null) || null
           };
 
           angular.forEach(scope.fields, function (value, key) {
             if (value.enabled) {
-              this[key] = ref[key];
+              if (special[key]) {
+                this[key] = special[key];
+              } else {
+                var prop = key.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
+                  return obj ? obj[i] : undefined;
+                }, source);
+                this[key] = prop && prop.name ? prop.name : (prop || 'Missing-' + key); //TODO extract text
+              }
             }
           }, record);
           return record;
+        };
+
+        var flattenRecord = function (record, flatRecs) {
+          //currently we explode symptoms and diagnosis to make crosstab counts for them happy
+          var rec = angular.copy(record);
+          delete rec.symptoms;
+          delete rec.diagnoses;
+
+          if (record.symptoms) {
+            record.symptoms.forEach(function (v) {
+              var r = angular.copy(rec);
+              var count = 1;
+              if (v.count !== undefined) {
+                count = v.count;
+              }
+              r.symptoms = [
+                {name: v.name || v, count: count}
+              ];
+              flatRecs.push(r);
+            });
+          }
+          if (record.diagnoses) {
+            record.diagnoses.forEach(function (v) {
+              var r = angular.copy(rec);
+              var count = 1;
+              if (v.count !== undefined) {
+                count = v.count;
+              }
+              r.diagnoses = [
+                {name: v.name || v, count: count}
+              ];
+              flatRecs.push(r);
+            });
+          }
+          if (!(record.symptoms) && !(record.diagnoses)) {
+            flatRecs.push(rec);
+          }
         };
 
         var reload = function () {
@@ -273,11 +313,18 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               size: 999999,
               q: scope.queryString
             }, function (data) {
-              var flatRecs = [];
+              var records = [];
+              //TODO add missing count, remove 0 from flattened records
               data.results.forEach(function (r) {
-                flatRecs.push(crosstabifyRecord(r._source));
+                var rec = crosstabifyRecord(r._source);
+                if (scope.form.dataType === 'aggregate') {
+                  //flatten symptoms/diagonses
+                  flattenRecord(rec, records);
+                } else {
+                  records.push(rec);
+                }
               });
-              scope.crosstabData = flatRecs;
+              scope.crosstabData = records;
             });
           }
         };
@@ -286,14 +333,16 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           outpatientEditModal.open({record: record, form: scope.form})
             .result
             .then(function () {
-              reload(); // TODO highlight changed record
+              //reload(); // TODO highlight changed record
+              $rootScope.$broadcast('outpatientVisit.edit');
             });
         };
         scope.deleteVisit = function (record) {
           outpatientDeleteModal.open({record: record})
             .result
             .then(function () {
-              reload();
+              //reload();
+              $rootScope.$broadcast('outpatientVisit.edit');
             });
         };
 
@@ -405,6 +454,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           }, 25);
         });
 
+        scope.$on('outpatientVisit.edit', function (angularEvent, event) {
+          reload();
+        });
+
         scope.$on('elementClick.directive', function (angularEvent, event) {
           var filter;
           if (event.point.col && event.point.colName.indexOf('missing') !== 0) {
@@ -422,6 +475,17 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             $rootScope.$emit('filterChange', filter, true, true);
           }
         });
+
+        scope.printAggregate = function (field, showCount) {
+          var includeCount = showCount || scope.form.dataType === 'aggregate';
+          var print = [];
+          if (field) {
+            field.map(function (val) {
+              print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
+            });
+          }
+          return print.join(',');
+        };
 
         scope.tableFilter = function (field, value) {
           //TODO multiselect if value.length > ?
