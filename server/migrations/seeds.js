@@ -35,10 +35,10 @@ function bulkInsert (model, data, params, callback) {
 }
 
 async.parallel([
-  function dashboards (callback) {
-    var Dashboard = require('../models/Dashboard');
-    new Dashboard(require('./dashboards.json')[0]).insert({id: 'default'}, callback);
-  },
+  //function dashboards (callback) {
+  //  var Dashboard = require('../models/Dashboard');
+  //  new Dashboard(require('./dashboards.json')[0]).insert({id: 'default'}, callback);
+  //},
 
   function dateShift (callback) {
     client.index({
@@ -98,6 +98,10 @@ async.parallel([
 
   function syndrome (callback) {
     bulkInsert(require('../models/Syndrome'), require('./syndrome.json'), callback);
+  },
+
+  function users (callback) {
+    bulkInsert(require('../models/User'), require('./users.json'), callback);
   },
 
   function visitType (callback) {
