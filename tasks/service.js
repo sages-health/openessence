@@ -36,7 +36,7 @@ gulp.task('service', function (done) {
     ]
   });
   svc.on('start', function () {
-    gutil.log('Service started successfully. Happy Fracasing :)');
+    gutil.log('Service started successfully.');
     done();
   });
   svc.on('install', function () {

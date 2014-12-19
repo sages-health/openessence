@@ -5,10 +5,10 @@
 # Adapted from https://github.com/coreos/coreos-vagrant
 # See https://coreos.com/docs/running-coreos/platforms/vagrant for more information.
 
-$vm_name = "corefracas"
+$vm_name = "openessence"
 
 # See https://coreos.com/releases
-$update_channel = "alpha" # need Docker >= 1.3 for `docker create` TODO change to beta/stable when Docker 1.3 lands
+$update_channel = "stable" # need Docker >= 1.3 for `docker create`
 
 VAGRANTFILE_API_VERSION = "2"
 
@@ -89,6 +89,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #   URL=http://localhost:9000
     #   USERS=false
     #   SESSION_SECRET=$UPER_DUPER_$ECRET
+    #   APP_NAME=OpenESSENCE
     #
     #   # commented out b/c if you're using this you probably want to build fracas locally, rather than pull it down
     #   #PULL_IMAGE=fracas
@@ -138,7 +139,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           sleep 1
         done
         echo 'Elasticsearch up and running. Reseeding now.'
-        docker run --rm --link elasticsearch:elasticsearch gabegorelick/fracas /bin/bash -c '#{reseed_command}'
+        source /home/core/services/fracas.env
+        docker run --rm --link elasticsearch:elasticsearch $IMAGE_NAME /bin/bash -c '#{reseed_command}'
       fi
     END
 

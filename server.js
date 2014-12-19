@@ -47,7 +47,7 @@ if (cluster.isMaster) {
     // This message isn't just to be friendly. We really only support running Fracas at one URL, since it makes
     // a lot of things, e.g. redirects, a lot easier. This log statement helps nudge the admin into using the preferred
     // URL.
-    logger.info('Fracas started successfully. Please use %s for all your disease surveillance needs', conf.url);
+    logger.info('OpenESSENCE started successfully. Please use %s for all your disease surveillance needs', conf.url);
 
     // if we have a parent, tell them we started
     if (process.send) {
@@ -66,7 +66,7 @@ if (cluster.isMaster) {
       logger.error({err: err}, 'Error from phantom master process');
     });
     phantom.on('exit', function () {
-      logger.error('Phantom master process exited. You should probably restart Fracas.');
+      logger.error('Phantom master process exited. You should probably restart OpenESSENCE.');
     });
   } else {
     logger.info('Not starting PhantomJS');
@@ -94,7 +94,7 @@ if (cluster.isMaster) {
 
   // otherwise, we're using clustering
 
-  logger.info('Forking %d Fracas workers from parent process %d', conf.workers, process.pid);
+  logger.info('Forking %d OpenESSENCE workers from parent process %d', conf.workers, process.pid);
 
   cluster.on('online', function (worker) {
     logger.info('Worker %d is now online', worker.process.pid);

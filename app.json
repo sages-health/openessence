@@ -15,7 +15,7 @@
       "value": "https://github.com/gabegorelick/fracas-buildpack"
     },
     "ELASTICSEARCH_URL": {
-      "description": "Elasticsearch URL, e.g. http://example.com:9200. If not supplied, Fracas will try to use the URL provided by your Elasticsearch addon.",
+      "description": "Elasticsearch URL, e.g. http://example.com:9200. If not supplied, OpenESSENCE will try to use the URL provided by your Elasticsearch addon.",
       "required": false
     },
     "NODE_ENV": {
@@ -31,7 +31,7 @@
       "value": "true"
     },
     "REDIS_URL": {
-      "description": "Redis URL, e.g. redis://example.com:6379. If not supplied, Fracas will try to use the URL provided by your Redis addon.",
+      "description": "Redis URL, e.g. redis://example.com:6379. If not supplied, OpenESSENCE will try to use the URL provided by your Redis addon.",
       "required": false
     },
     "SESSION_SECRET": {
