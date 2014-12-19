@@ -254,7 +254,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var prop = key.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
                   return obj ? obj[i] : undefined;
                 }, source);
-                this[key] = prop && prop.name ? prop.name : (prop || 'Missing-' + key);
+                this[key] = prop && prop.name ? prop.name : (prop || 'Missing-' + key); //TODO extract text
               }
             }
           }, record);
