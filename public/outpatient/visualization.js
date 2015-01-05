@@ -78,7 +78,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
           var state = scopeToJson(scope);
-          ['data', 'crosstabData'].forEach(function (k) {
+          var arr = ['data', 'crosstabData'];
+          angular.forEach(arr, function (k) {
             delete state[k];
           });
           if (state.tableParams) {
@@ -98,7 +99,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
           var state = scopeToJson(scope);
-          ['data', 'crosstabData'].forEach(function (k) {
+          var arr = ['data', 'crosstabData'];
+          angular.forEach(arr, function (k) {
             delete state[k];
           });
           if (state.tableParams) {
@@ -198,15 +200,19 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                   var subStr = outpatientAggregation.bucketToKey(sub);
                   var scount = sub.count ? sub.count.value : sub.doc_count;
                   missingCount -= scount;
-                  slice = {col: first, colName: entry.key, row: second, rowName: sub.key,
-                    key: (keyStr + '_' + subStr), value: scount};
+                  slice = {
+                    col: first, colName: entry.key, row: second, rowName: sub.key,
+                    key: (keyStr + '_' + subStr), value: scount
+                  };
                   data.push(slice);
                   pieData.push(slice);
                 });
                 //add missing fields count from total hits - aggs total doc count
                 if (missingCount > 0) {
-                  slice = {col: first, colName: entry.key, row: second, rowName: 'missing',
-                    key: ('missing_' + keyStr + '_' + rowLabel), value: missingCount};
+                  slice = {
+                    col: first, colName: entry.key, row: second, rowName: 'missing',
+                    key: ('missing_' + keyStr + '_' + rowLabel), value: missingCount
+                  };
                   data.push(slice);
                   pieData.push(slice);
                 }
@@ -273,7 +279,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           delete rec.diagnoses;
 
           if (record.symptoms) {
-            record.symptoms.forEach(function (v) {
+            angular.forEach(record.symptoms, function (v) {
               var r = angular.copy(rec);
               var count = 1;
               if (v.count !== undefined) {
@@ -286,7 +292,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             });
           }
           if (record.diagnoses) {
-            record.diagnoses.forEach(function (v) {
+            angular.forEach(record.diagnoses, function (v) {
               var r = angular.copy(rec);
               var count = 1;
               if (v.count !== undefined) {
@@ -320,7 +326,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }, function (data) {
               var records = [];
               //TODO add missing count, remove 0 from flattened records
-              data.results.forEach(function (r) {
+              angular.forEach(data.results, function (r) {
                 var rec = crosstabifyRecord(r._source);
                 if (scope.form.dataType === 'aggregate') {
                   //flatten symptoms/diagonses
@@ -336,19 +342,19 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.editVisit = function (record) {
           outpatientEditModal.open({record: record, form: scope.form})
-            .result
-            .then(function () {
-              //reload(); // TODO highlight changed record
-              $rootScope.$broadcast('outpatientVisit.edit');
-            });
+              .result
+              .then(function () {
+                //reload(); // TODO highlight changed record
+                $rootScope.$broadcast('outpatientVisit.edit');
+              });
         };
         scope.deleteVisit = function (record) {
           outpatientDeleteModal.open({record: record})
-            .result
-            .then(function () {
-              //reload();
-              $rootScope.$broadcast('outpatientVisit.edit');
-            });
+              .result
+              .then(function () {
+                //reload();
+                $rootScope.$broadcast('outpatientVisit.edit');
+              });
         };
 
         scope.getWeek = function (date) {
@@ -496,7 +502,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           //TODO multiselect if value.length > ?
           if (value || value === false) {
             var a = [].concat(value);
-            a.forEach(function (v) {
+            angular.forEach(a, function (v) {
               var filter = {
                 filterID: field,
                 value: ((typeof v) === 'object' ? v.name : v)
