@@ -266,6 +266,31 @@ var indexRequests = [
                 }
               },
 
+              specimen: {
+                id: {
+                  type: 'string',
+                  index: 'not_analyzed'
+                },
+
+                collectionDate: {
+                  type: 'date'
+                }
+              },
+
+              antiviral: {
+                exposure: {
+                  type: 'boolean'
+                },
+                source: {
+                  type: 'string',
+                  index: 'not_analyzed'
+                },
+                name: {
+                  type: 'string',
+                  index: 'not_analyzed'
+                }
+              },
+
               // AKA the clinic, hospital, military treatment center, etc. where the patient was processed.
               // Why medicalFacility? Because that's what http://en.wikipedia.org/wiki/Medical_facility says.
               medicalFacility: {

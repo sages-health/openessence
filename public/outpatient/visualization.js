@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var moment = require('moment');
 
-angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization, $window) {
 
   return {
     restrict: 'E',
@@ -73,6 +73,9 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         scope.$on('exportVizualization', function () {
           if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it
+            return;
+          } else if (scope.visualization.name === 'table') {
+            visualization.csvExport(scope.queryString);
             return;
           }
 
