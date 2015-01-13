@@ -15,12 +15,12 @@
       <ul ng-show="isSiteConfig" class="nav navbar-nav">
 
         <!-- Dashboard -->
-        <li class="dropdown"> <!-- TODO active -->
+        <li class="dropdown" ng-class="{ active: isActive('/dashboard')}"> <!-- TODO active -->
           <!-- Delay loading items until we need them. This prevents Ajax spam every time you load the page, and means
                that the list of items will always be up to date. This should really fire on mousenter so that the query
                runs even earlier, but that doesn't work on mobile. -->
           <a class="dropdown-toggle" data-toggle="dropdown" ng-click="loadDashboards()">
-            <span class="icon-gauge"></span>
+            <span class="icon-gauge"></span>Dashboard
           </a>
           <ul class="dropdown-menu">
             <li><a ui-sref="dashboard({dashboardId: ''})" translate>New dashboard</a></li>
@@ -40,9 +40,9 @@
         </li>
 
         <!-- Workbench -->
-        <li class="dropdown">
+        <li class="dropdown" ng-class="{ active: isActive('/workbench')}">
           <a class="dropdown-toggle" data-toggle="dropdown" ng-click="loadWorkbenches()">
-            <span class="icon-chart-bar"></span>
+            <span class="icon-chart-bar"></span>Workbench
           </a>
           <ul class="dropdown-menu">
             <li><a ui-sref="workbench({workbenchId: ''})" translate>New workbench</a></li>
@@ -59,8 +59,10 @@
         </li>
 
         <!-- Open TODO make this reports -->
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-folder-open"></span></a>
+        <li class="dropdown" ng-class="{ active: isActive('/report')}">
+          <a class="dropdown-toggle" data-toggle="dropdown">
+            <span class="icon-folder-open"></span>Report
+          </a>
           <ul class="dropdown-menu">
             <li><a ng-click="visitsReport()" translate>Outpatient Visits Report</a></li>
             <!--<li><a ng-click="weeklyReport()" translate>Reported Cases by Country - Table</a></li>-->
@@ -69,8 +71,10 @@
         </li>
 
         <!-- Edit -->
-        <li class="dropdown" ng-show="user.isDataEnterer() || user.isAdmin()">
-          <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-pencil"></span></a>
+        <li class="dropdown" ng-class="{ active: isActive('/edit')}" ng-show="user.isDataEnterer() || user.isAdmin()">
+          <a class="dropdown-toggle" data-toggle="dropdown">
+            <span class="icon-pencil"></span>Edit
+          </a>
           <ul class="dropdown-menu">
             <li role="presentation" class="dropdown-header" translate>Edit</li>
             <!-- TODO define this in outpatient module -->

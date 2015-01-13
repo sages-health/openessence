@@ -87,7 +87,7 @@ module.exports = {
   // the default logger
   logger: createLogger(),
 
-  appName: process.env.APP_NAME || 'Fracas',
+  appName: process.env.APP_NAME || 'OpenESSENCE',
 
   ssl: {
     enabled: fs.existsSync(certPath) && fs.existsSync(keyPath),

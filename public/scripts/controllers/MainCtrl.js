@@ -1,11 +1,15 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($scope, $window, $state, appName, user, visitsReportModal, aggregateReportModal, Workbench,//
+module.exports = function ($scope, $window, $location, $state, appName, user, visitsReportModal, aggregateReportModal, Workbench,//
                            Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope) {
 
   $scope.navbar = {
     collapse: true
+  };
+
+  $scope.isActive = function (viewLocation) {
+    return $location.path().substring(0, viewLocation.length) === viewLocation;
   };
 
   var loadConfig = function () {
