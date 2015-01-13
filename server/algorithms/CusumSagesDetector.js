@@ -488,7 +488,10 @@ exports.calculateCUSUM =
       statLookupVals[i] = Math.max(minLT, Math.min(maxLT, testStat[i]));
       pvalues[i] = openMath.interp1(lookupTable[0], lookupTable[1], statLookupVals[i]);
     }
-    return (pvalues);
+    return {
+      pValues: pvalues,
+      testStats: testStat
+    };
   };
 
 

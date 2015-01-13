@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
+var exports = module.exports = {};
 
 var TDistribution = require('./TDistribution');
 var openMath = require('./OpenMath');
 var filterBaselineZeros = require('./FilterBaselineZeros3');
-var assign = require('object-assign');
 
 // EWMA SAGES
 exports.calculateEWMA =
@@ -36,15 +36,15 @@ exports.calculateEWMA =
     var minBaseline = NUM_FIT_PARAMS + MIN_DEG_FREEDOM;
     var degFreedomRange = MAX_BASELINE_LEN - NUM_FIT_PARAMS;
 
-    var UCL_R = new Array();
-    var UCL_Y = new Array();
-    var sigmaCoeff = new Array();
-    var deltaSigma = new Array();
-    var minSigma = new Array();
-    var degFreedom = new Array();
+    var UCL_R = [];
+    var UCL_Y = [];
+    var sigmaCoeff = [];
+    var deltaSigma = [];
+    var minSigma = [];
+    var degFreedom = [];
     var term1 = OMEGA / (2.0 - OMEGA);
-    var term2 = new Array();
-    var term3 = new Array();
+    var term2 = [];
+    var term3 = [];
 
     for (var i = 0; i < degFreedomRange; i++) {
       UCL_R[i] = TDistribution.inverseCumulativeProbability(1 - THRESHOLD_PROBABILITY_RED_ALERT, i + 1);
@@ -63,11 +63,11 @@ exports.calculateEWMA =
     }
 
 
-    var pvalues = openMath.valuevec(null, data.length);
+    var pvalues = openMath.valueVec(null, data.length);
     //var expectedData = openMath.valuevec(0, data.length);
-    var test_stat = openMath.valuevec(null, data.length);
+    var test_stat = openMath.valueVec(null, data.length);
     var sigma, testBase = [], baselineData = [];
-    var expectedDataArray = openMath.valuevec(null, data.length);
+    var expectedDataArray = openMath.valueVec(null, data.length);
 
     //
     // initialize the smoothed data
@@ -94,21 +94,21 @@ exports.calculateEWMA =
       // advance the indices of the baseline period
       openMath.arrayAdd(ndxBaseline, 1);
 
-      var testBase = openMath.subset2(data, ndxBaseline);
-      var baselineData = openMath.subset2(data, ndxBaseline);
+      testBase = openMath.subset2(data, ndxBaseline);
+      baselineData = openMath.subset2(data, ndxBaseline);
 
       if (REMOVE_ZEROES && filterBaselineZeros.filterBaselineZerosTest(testBase)) {
         var ndxOK = filterBaselineZeros.filterBaselineZeros(testBase);
         baselineData = openMath.subset2(testBase, ndxOK);
         if (testBase.length != baselineData.length) {
-          console.log(j + " original: " + testBase.length + " new length: " + baselineData.length);
+          //console.log(j + ' original: ' + testBase.length + ' new length: ' + baselineData.length);
         }
       } else {
         baselineData = testBase.slice(0);
       }
 
       // check the baseline period is filled with zeros; no prediction can be
-      if (baselineData.ifZero()) {
+      if (openMath.ifZero(baselineData)) {
         continue;
       }
 
@@ -121,12 +121,12 @@ exports.calculateEWMA =
       //console.log("degFreedom length: " + degFreedom.length + " baselineData length: " + baselineData.length);
       // the predicted current value of the data
       //expectedData[j] = baselineData.average();
-      var expectedData = baselineData.average();
+      var expectedData = openMath.average(baselineData);
       expectedDataArray[j] = expectedData;
 
       // calculate the test statistic
       // the adjusted standard deviation of the baseline data
-      sigma = sigmaCoeff[degFreedom[j] - 1] * baselineData.std() + deltaSigma[degFreedom[j] - 1];
+      sigma = sigmaCoeff[degFreedom[j] - 1] * openMath.std(baselineData) + deltaSigma[degFreedom[j] - 1];
       // don't allow values smaller than MinSigma
       sigma = Math.max(sigma, minSigma[degFreedom[j] - 1]);
       // the test statistic
@@ -136,7 +136,7 @@ exports.calculateEWMA =
         smoothedData = expectedData + openMath.sign(test_stat[j]) * UCL_R[degFreedom[j] - 1] * sigma;
       }
     }
-    console.log(expectedDataArray);
+    //console.log(expectedDataArray);
     for (var k = 0; k < data.length; k++) {
       if (Math.abs(test_stat[k]) > 0.0) {
         pvalues[k] = 1 - TDistribution.cumulativeProbability(test_stat[k], degFreedom[k]);
@@ -147,8 +147,10 @@ exports.calculateEWMA =
       }
       //console.log(test_stat[k] + "\t" + pvalues[k]);
     }
-    return([test_stat, pvalues])
-  }
+    return {
+      pValues: pvalues,
+      testStats:expectedDataArray
+    };
+  };
 
 //
-

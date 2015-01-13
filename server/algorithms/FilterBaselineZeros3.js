@@ -51,10 +51,10 @@ exports.size = function (vec) {
 
 exports.filterBaselineZerosTest =
   function filterBaselineZerosTest(d) {
-    var median = d.median();
+    var medianVal = this.median(d);
     //var nonzeromedian = (d.subset(openMath.find(d))).median();
-    var nonzeromedian = openMath.median(openMath.subset2(d, openMath.find(d)));
-    return (median > 0 || nonzeromedian > 4);
+    var nonzeromedian = this.median(openMath.subset2(d, openMath.find(d)));
+    return (medianVal > 0 || nonzeromedian > 4);
   };
 
 //////////////////////////////////////////////////////
