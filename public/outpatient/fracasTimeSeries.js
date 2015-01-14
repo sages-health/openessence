@@ -9,7 +9,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                                                                                           outpatientAggregation,
                                                                                           visualization,
                                                                                           OutpatientVisitResource,
-                                                                                          scopeToJson, EditSettings) {
+                                                                                          scopeToJson, EditSettings, $http) {
 
   return {
     restrict: 'E',
@@ -237,14 +237,28 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     scope.data = [
                       {
                         name: gettextCatalog.getString('Outpatient visits'),
-                        data: extractCounts(data.aggregations.date),
+                      /*data: [{
+                        x: 6,
+                        y: 3.9,
                         marker: {
+                          symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
+                        }
+                      }, [3, 4.2], [5, 5.7] ]
+                      */
+                       //data: extractCounts(data.aggregations.date),
+                       data: calcOutpatientPvalues(data.aggregations.date),
+                       marker: {
                           symbol: 'circle'
                         }
                       }
                     ];
+                    console.log("scope data:")
+                    console.log(scope.chartConfig);
+                    console.log(scope.data);
                   }
                   scope.chartConfig.series = scope.data;
+
+                  //reload();
                 }
               }
             )
@@ -354,13 +368,181 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.$apply();
           };
 
+          /*
           var extractCounts = function (agg) {
             var bucket = agg.buckets || agg._name.buckets;
             return bucket.map(function (b) {
-              /*jshint camelcase:false */
               var count = b.count ? b.count.value : b.doc_count;
 
               return [b.key, count];
+            });
+          };
+          */
+
+          var getCountArray = function (agg) {
+            /*jshint camelcase:false */
+            var counts = [];
+            var bucket = agg.buckets || agg._name.buckets;
+            for (var i = 0; i < bucket.length; i++) {
+              var b = bucket[i];
+              var count = b.count ? b.count.value : b.doc_count;
+              counts.push(count);
+            }
+            return counts;
+          };
+
+          var extractCounts = function (agg, pValues, expectedValues) {
+            /*jshint camelcase:false */
+            var bucket;
+            if (pValues === null) {
+              agg.counts = [];
+              bucket = agg.buckets || agg._name.buckets;
+              return bucket.map(function (b) {
+                /*jshint camelcase:false */
+                var count = b.count ? b.count.value : b.doc_count;
+                agg.counts.push(count);
+                return [b.key, count];
+              });
+            } else {
+              console.log("pValues is not null!");
+              bucket = agg.buckets || agg._name.buckets;
+              var values = [];
+              for (var i = 0; i < bucket.length && i < pValues.length; i++) {
+                var count = bucket[i].count ? bucket[i].count.value : bucket[i].doc_count;
+                var pValue = pValues[i] === null ? 1 : pValues[i];
+                var expected = expectedValues[i] === null ? 0 : expectedValues[i];
+                //values.push([bucket[i].key, count, pValue, expected]);
+                if (pValue >.05){
+                  values.push(
+                    {
+                      x:bucket[i].key,
+                      y:count,
+                      pValue:pValue,
+                      expected:expected
+                    }
+                  );
+                }else if(pValue <= .05 && pValue > .01){
+                  values.push(
+                    {
+                      x:bucket[i].key,
+                      y:count,
+                      marker:{
+                        fillColor: '#ffff00'
+                      },
+                      pValue:pValue,
+                      expected:expected
+                    }
+                  );
+                }else{
+                  values.push(
+                    {
+                      x:bucket[i].key,
+                      y:count,
+                      marker:{
+                        fillColor: '#ff0000'
+                      },
+                      pValue:pValue,
+                      expected:expected
+                    }
+                  );
+                }
+
+                /*data: [{
+                  x: 6,
+                  y: 3.9,
+                  marker: {
+                    fillColor: '#FFFFFF'
+                  }
+                 }, [3, 4.2], [5, 5.7] ]
+                 */
+
+              }
+              console.log("Resulting values:");
+              console.log(values);
+              return values;
+            }
+          };
+
+          var calcOutpatientPvalues = function (dates, algorithm){
+            var pValues = [];
+            var expectedValues = [];
+            var counts = getCountArray(dates);
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
+            console.log('using algorithm' + algorithmString);
+
+            $http.post(algorithmString,
+              {
+                data: counts,
+                baseline: 28,
+                guardBand: 2
+              }
+            ).
+              success(function (resp) {
+                console.log("Success!");
+                console.log(resp.pValues);
+                console.log(resp.expectedValues);
+                pValues = resp.pValues;
+                expectedValues = resp.expectedValues;
+                if (pValues.length > 0) {
+                  console.log("sending pvalues to extract counts");
+                  return extractCounts(dates, pValues, expectedValues)
+                }
+              });
+            console.log("Finishing calcOutpatientPValues");
+            return extractCounts(dates, null, null);
+          };
+
+          var calcPValues = function (dataStore, countStore, algorithm){
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
+            console.log('using algorithm' + algorithmString);
+            Object.keys(dataStore).forEach(function (k) {
+              var counts = countStore[k];
+              var pValues = [];
+              var expectedValues = [];
+
+              $http.post(algorithmString,
+                {
+                  data: counts,
+                  baseline: 28,
+                  guardBand: 2
+                }
+              ).
+                success(function(resp) {
+                  //console.log(resp.pValues);
+                  pValues = resp.pValues;
+                  expectedValues = resp.expectedValues;
+
+                  if (pValues.length > 0) {
+                    var values = [];
+                    for (var i = 0; i < dataStore[k].length && i < pValues.length; i++) {
+                      var pValue = pValues[i] === null ? 1 : pValues[i];
+                      var expected = expectedValues[i] === null ? 0 : expectedValues[i];
+                      //dataStore[entry.key].push([d.key, count]);
+                      //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
+                      values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
+                    }
+                    scope.data.push(
+                      {
+                        key: k,
+                        values: values
+                      }
+                    );
+                  }else{
+                    scope.data.push(
+                      {
+                        key: k,
+                        values: dataStore[k]
+                      }
+                    );
+                  }
+                }).error(function(){
+                  scope.data.push(
+                    {
+                      key: k,
+                      values: dataStore[k]
+                    }
+                  );
+                });
             });
           };
 
