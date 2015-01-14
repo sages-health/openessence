@@ -2,8 +2,8 @@
 
 var express = require('express');
 //var hidalgo = require('hidalgo');
-var cuSum = require('../algorithms/CusumSagesDetector');
-var ewma = require('../algorithms/EWMASages');
+var cuSum = require('./algorithms/CusumSagesDetector');
+var ewma = require('./algorithms/EWMASages');
 
 module.exports = function () {
   var app = express();
