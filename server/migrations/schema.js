@@ -267,27 +267,31 @@ var indexRequests = [
               },
 
               specimen: {
-                id: {
-                  type: 'string',
-                  index: 'not_analyzed'
-                },
+                properties: {
+                  id: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
 
-                collectionDate: {
-                  type: 'date'
+                  collectionDate: {
+                    type: 'date'
+                  }
                 }
               },
 
               antiviral: {
-                exposure: {
-                  type: 'boolean'
-                },
-                source: {
-                  type: 'string',
-                  index: 'not_analyzed'
-                },
-                name: {
-                  type: 'string',
-                  index: 'not_analyzed'
+                properties: {
+                  exposure: {
+                    type: 'boolean'
+                  },
+                  source: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
                 }
               },
 
@@ -675,8 +679,8 @@ var indexRequests = [
 ];
 
 bluebird.settle(indexRequests.map(function (ir) {
-    return bluebird.promisify(ir)();
-  }))
+  return bluebird.promisify(ir)();
+}))
   .then(function (promiseInspections) {
     var errors = promiseInspections.filter(function (pi) {
       return pi.isRejected();
