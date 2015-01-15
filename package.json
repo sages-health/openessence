@@ -129,7 +129,7 @@
     "angular-ui-sortable": "./bower_components/angular-ui-sortable/sortable.js",
     "checklist-model": "./bower_components/checklist-model/checklist-model.js",
     "csv-export": "./server/csv/config.js",
-    "exporting": "./server/exporting.js",
+    "exporting": "./bower_components/highcharts/modules/exporting.js",
     "flat": "./node_modules/flat/index.js",
     "highcharts": "./bower_components/highcharts/highcharts.js",
     "highcharts-ng": "./bower_components/highcharts-ng/dist/highcharts-ng.js",

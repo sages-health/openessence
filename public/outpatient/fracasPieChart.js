@@ -26,7 +26,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || {title: gettextCatalog.getString('Pie Chart')};
 
-          scope.$on('editVizualizationSettings', function () {
+          scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('pie', scope.options.labels)
               .result.then(function (labels) {
                 scope.options.labels = labels;

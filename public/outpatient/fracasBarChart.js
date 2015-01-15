@@ -28,7 +28,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             x: gettextCatalog.getString('Category')
           };
 
-          scope.$on('editVizualizationSettings', function () {
+          scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('bar', scope.options.labels)
               .result.then(function (labels) {
                 scope.options.labels = labels;

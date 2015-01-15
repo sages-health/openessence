@@ -49,17 +49,17 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
 
         scope.settings = function () {
           // broadcast on parent since transcluded scope is our sibling
-          scope.$parent.$broadcast('editVizualizationSettings');
+          scope.$parent.$broadcast('editVisualizationSettings');
         };
 
         scope.exportViz = function () {
           // broadcast on parent since transcluded scope is our sibling
-          scope.$parent.$broadcast('exportVizualization');
+          scope.$parent.$broadcast('exportVisualization');
         };
 
         scope.saveViz = function () {
           // broadcast on parent since transcluded scope is our sibling
-          scope.$parent.$broadcast('saveVizualization');
+          scope.$parent.$broadcast('saveVisualization');
         };
       },
       post: function (scope, element) {
@@ -102,7 +102,7 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
         });
 
         scope.$watchCollection('visualization.name', function () {
-          scope.$parent.$broadcast('vizualizationNameChanged');
+          scope.$parent.$broadcast('visualizationNameChanged');
         });
 
       }
