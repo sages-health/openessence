@@ -10,6 +10,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
       dataType: 'individual'
     };
     $scope.templateKeys = [];
+
     FormResource.get({size: 99}, function (response) {
 
       $scope.templates = response.results.reduce(function (templates, template) {
@@ -17,12 +18,13 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
 
           var temp = template._source;
           temp.fields.forEach(function (field) {
-            if (field.values) {
+            if (!field.isGroup && field.values) {
               field.values = field.values.map(function (val) {
                 return val.name;
               });
             }
           });
+
           // templates are stored as an array so that in future, user can select multiple templates
           if (angular.isArray(temp.templates)) {
             temp.templates = temp.templates[0];
@@ -104,7 +106,8 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
 
     template.fields.forEach(function (field) {
       // Ensure values has same format as possibleValues
-      if (field.values) {
+      if (!field.isGroup &&  field.values) {
+
         var possibleValuesByName = field.possibleValues.reduce(function (values, v) {
           values[v.name] = v;
           return values;
@@ -113,12 +116,14 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
           return possibleValuesByName[val] || {name: val};
         });
       }
-
     });
 
+    // Update form if it has an id
     if (template._id) {
       FormResource.update({id: template._id}, template, onSuccess);
-    } else {
+    }
+    // create/save a new site form
+    else {
       FormResource.save(template, onSuccess);
     }
   };
@@ -127,9 +132,8 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
     var fields = angular.copy($scope.templates[templateName].fields);
 
     fields.forEach(function (field) {
-
-      // if field has values ==> it is a single/multi-select field
-      if (field.values) {
+      // if field is mot a group field and it has values ==> it is a single/multi-select field
+      if (!field.isGroup && field.values) {
         // field.possibleValues has all possible values
         // field.values has values admin wants to select for this site
         field.possibleValues = angular.copy(field.values);
@@ -138,8 +142,9 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
         });
       }
     });
-
     $scope.siteTemplate.fields = fields;
+    var groups = angular.copy($scope.templates[templateName].groups);
+    $scope.siteTemplate.groups = groups;
   };
 
   $scope.$watch('siteTemplate.templates', function (newVals, oldVals) {
@@ -180,39 +185,15 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
 //    }
 //  });
 
-  var openAddNewValueModal = function (field) {
-    return $modal.open({
-      templateUrl: 'newValue.html',
-      controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
-        $scope.field = field;
-        $scope.data = {};
-        $scope.save = function (form) {
-          if (form.$invalid) {
-            $scope.yellAtUser = true;
-            return;
-          }
+  $scope.isNotGroupField = function (value) {
+    return value.isGroup === undefined || value.isGroup === false;
+  };
 
-          $modalInstance.close($scope.data.value);
-        };
-
-        $scope.closeModal = function () {
-          $modalInstance.dismiss('cancel');
-        };
-      }]
+  $scope.groupField = function(field){
+    var groupField = $scope.siteTemplate.fields.filter(function(fld){
+      return field.groupName === fld.name;
     });
-  };
-
-  $scope.removeAll = function (field) {
-    field.values = [];
-  };
-
-  $scope.addNewValue = function (field) {
-    // open a modal to enter a new value
-    openAddNewValueModal(field).result
-      .then(function (newValue) {
-        field.possibleValues.push({name: newValue});
-        field.values.push(newValue);
-      });
+    return groupField.length > 0 ? groupField[0] : null;
   };
 
   init();
