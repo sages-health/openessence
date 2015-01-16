@@ -258,9 +258,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                         }
                       }
                     ];
-                    console.log("scope data:");
-                    console.log(scope.chartConfig);
-                    console.log(scope.data);
                   }
                   scope.chartConfig.series = scope.data;
 
@@ -479,7 +476,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       x:bucket[i].key,
                       y:count,
                       marker:{
-                        symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)',
                         fillColor: '#ffff00'
                       },
                       pValue:pValue,
@@ -558,13 +554,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   ];
 
                   //scope.series[0] = scope.data[0];
-
-                  console.log("set scope data:");
-                  console.log("series:");
-                  console.log(scope.series);
-                  console.log("all scope: " );
-                  console.log(scope);
-                  console.log(scope.data);
+                  scope.chartConfig.series = scope.data;
                   createTableJSON();
                   return;
                 }
