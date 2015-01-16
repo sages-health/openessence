@@ -78,9 +78,9 @@
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
     <crosstab
-            options="options"
-            pivot="pivot"
-            records="crosstabData">
+        options="options"
+        pivot="pivot"
+        records="crosstabData">
     </crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
@@ -93,20 +93,20 @@
   </div>
   <div class="animation-switch" ng-switch-when="pie">
     <outpatient-pie-chart
-            filters="filters"
-            query-string="queryString"
-            options="options"
-            pivot="pivot"
-            agg-data="aggData">
+        filters="filters"
+        query-string="queryString"
+        options="options"
+        pivot="pivot"
+        agg-data="aggData" source="source" widget="widget">
     </outpatient-pie-chart>
   </div>
   <div class="animation-switch" ng-switch-when="bar">
     <outpatient-bar-chart
-            filters="filters"
-            query-string="queryString"
-            options="options"
-            pivot="pivot"
-            agg-data="aggData">
+        filters="filters"
+        query-string="queryString"
+        options="options"
+        pivot="pivot"
+        agg-data="aggData">
     </outpatient-bar-chart>
   </div>
   <div class="animation-switch" ng-switch-when="map">
