@@ -258,9 +258,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                         }
                       }
                     ];
-                    console.log("scope data:");
-                    console.log(scope.chartConfig);
-                    console.log(scope.data);
                   }
                   scope.chartConfig.series = scope.data;
 
@@ -464,7 +461,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 var pValue = pValues[i] === null ? 1 : pValues[i];
                 var expected = expectedValues[i] === null ? 0 : expectedValues[i];
                 //values.push([bucket[i].key, count, pValue, expected]);
-                if (pValue > .05) {
+                if (pValue > 0.05) {
                   values.push(
                     {
                       x: bucket[i].key,
@@ -473,13 +470,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       expected: expected
                     }
                   );
-                } else if (pValue <= .05 && pValue > .01) {
+                } else if (pValue <= 0.05 && pValue > 0.01) {
                   values.push(
                     {
                       x: bucket[i].key,
                       y: count,
                       marker: {
-                        symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)',
+                        fillColor: '#ffff00'
                       },
                       pValue: pValue,
                       expected: expected
@@ -557,13 +554,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   ];
 
                   //scope.series[0] = scope.data[0];
-
-                  console.log("set scope data:");
-                  console.log("series:");
-                  console.log(scope.series);
-                  console.log("all scope: " );
-                  console.log(scope);
-                  console.log(scope.data);
+                  scope.chartConfig.series = scope.data;
                   createTableJSON();
                   return;
                 }
