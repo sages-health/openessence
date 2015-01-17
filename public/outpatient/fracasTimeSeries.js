@@ -2,9 +2,10 @@
 
 var angular = require('angular');
 var moment = require('moment');
+var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location,
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location, $log,
                                                                                           updateURL, gettextCatalog,
                                                                                           outpatientAggregation,
                                                                                           visualization,
@@ -234,8 +235,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       });
                     });
 
-                    console.log("aggregations date");
-                    console.log(scope.data);
+                    $log.log('aggregations date');
+                    $log.log(scope.data);
                   } else {
                     scope.chartConfig.options.colors = ['#7cb5ec'];
                     calcOutpatientPvalues(data.aggregations.date);
@@ -251,9 +252,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                          }
                          }, [3, 4.2], [5, 5.7] ]
                          */
-                       data: extractCounts(data.aggregations.date, null, null),
-                       //data: calcOutpatientPvalues(data.aggregations.date),
-                       marker: {
+                        data: extractCounts(data.aggregations.date, null, null),
+                        //data: calcOutpatientPvalues(data.aggregations.date),
+                        marker: {
                           symbol: 'circle'
                         }
                       }
@@ -384,13 +385,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
            */
 
           var createTableJSON = function () {
-            console.log('in table json');
-            var data = scope.data;
+            $log.log('in table json');
+            //var data = scope.data;
             scope.tableMapJSON = [];
-            if (scope.series!= undefined && scope.series != null && scope.series.length > 0){
+            if (_.has(scope, 'series') && !_.isNull(scope.series) && scope.series.length > 0) {
               for (var i = 0; i < scope.series.length; i++) {
                 var pair = scope.series[i];
-                console.log('found series');
+                $log.log('found series');
                 for (var j = 0; j < pair.data.length; j++) {
                   var dp = pair.data[j];
                   /*
@@ -410,12 +411,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   });
                 }
               }
-            }else if (scope.data !== undefined && scope.data !== null && scope.data.length > 0) {
+            } else if (_.has(scope, 'data') && !_.isNull(scope.data) && scope.data.length > 0) {
               //create column headers
               //create rows
-              console.log('found data');
-              console.log('scope.data[0].data');
-              console.log(scope.data[0].data);
+              $log.log('found data');
+              $log.log('scope.data[0].data');
+              $log.log(scope.data[0].data);
               for (var i = 0; i < scope.data[0].data.length; i++) {
                 var pair = scope.data[0].data[i];
                 scope.tableMapJSON.push({
@@ -514,8 +515,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             var pValues = [];
             var expectedValues = [];
             var counts = getCountArray(dates);
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
-            console.log('using algorithm' + algorithmString);
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
+            $log.log('using algorithm' + algorithmString);
 
             $http.post(algorithmString,
               {
@@ -525,15 +526,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }
             ).
               success(function (resp) {
-                console.log("Success!");
-                console.log(resp.pValues);
-                console.log(resp.expectedValues);
+                $log.log('Success!');
+                $log.log(resp.pValues);
+                $log.log(resp.expectedValues);
                 pValues = resp.pValues;
                 expectedValues = resp.expectedValues;
                 if (pValues.length > 0) {
-                  console.log("non negative pvalues");
+                  $log.log('non negative pvalues');
                   //return extractCounts(dates, pValues, expectedValues);
-                  console.log("");
                   scope.data = [
                     {
                       name: gettextCatalog.getString('Outpatient visits'),
@@ -559,7 +559,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   return;
                 }
               });
-            console.log("Finishing calcOutpatientPValues");
+            $log.log("Finishing calcOutpatientPValues");
             //return extractCounts(dates, null, null);
             scope.data.data = extractCounts(dates, null, null);
 
@@ -584,8 +584,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           var calcPValues = function (dataStore, countStore, algorithm) {
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
-            console.log('using algorithm' + algorithmString);
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
+            $log.log('using algorithm' + algorithmString);
             Object.keys(dataStore).forEach(function (k) {
               var counts = countStore[k];
               var pValues = [];
@@ -599,7 +599,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 }
               ).
                 success(function (resp) {
-                  //console.log(resp.pValues);
+                  //$log.log(resp.pValues);
                   pValues = resp.pValues;
                   expectedValues = resp.expectedValues;
 
@@ -609,7 +609,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       var pValue = pValues[i] === null ? 1 : pValues[i];
                       var expected = expectedValues[i] === null ? 0 : expectedValues[i];
                       //dataStore[entry.key].push([d.key, count]);
-                      //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
+                      //$log.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
                       values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
                     }
                     scope.data.push(
@@ -694,12 +694,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.criteria = 'date';
           scope.direction = false;
-          scope.setCriteria = function(criteria) {
+          scope.setCriteria = function (criteria) {
             if (scope.criteria === criteria) {
               scope.direction = !scope.direction;
             } else {
               scope.criteria = criteria;
-              scope.direction  = false;
+              scope.direction = false;
             }
           };
 

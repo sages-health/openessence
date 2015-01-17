@@ -77,37 +77,23 @@
     </div>
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
-    <crosstab
-        options="options"
-        pivot="pivot"
-        records="crosstabData">
-    </crosstab>
+    <crosstab options="options" pivot="pivot" records="crosstabData"></crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
-    <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols"
-                            options="options" source="source" widget="widget"></outpatient-time-series>
+    <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols" options="options"
+                            source="source" widget="widget"></outpatient-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="smallline">
     <outpatient-small-time-series filters="filters" query-string="queryString" series="pivot.cols"
                                   options="options"></outpatient-small-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="pie">
-    <outpatient-pie-chart
-        filters="filters"
-        query-string="queryString"
-        options="options"
-        pivot="pivot"
-        agg-data="aggData" source="source" widget="widget">
-    </outpatient-pie-chart>
+    <outpatient-pie-chart filters="filters" query-string="queryString" options="options" pivot="pivot"
+                          agg-data="aggData" source="source" widget="widget"></outpatient-pie-chart>
   </div>
   <div class="animation-switch" ng-switch-when="bar">
-    <outpatient-bar-chart
-        filters="filters"
-        query-string="queryString"
-        options="options"
-        pivot="pivot"
-        agg-data="aggData">
-    </outpatient-bar-chart>
+    <outpatient-bar-chart filters="filters" query-string="queryString" options="options" pivot="pivot"
+                          agg-data="aggData" source="source" widget="widget"></outpatient-bar-chart>
   </div>
   <div class="animation-switch" ng-switch-when="map">
     <leaflet-map filters="filters" query-string="queryString" data="aggData" options="options">

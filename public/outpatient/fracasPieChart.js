@@ -85,7 +85,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
           };
 
           // Removing click functionality for clickthrough.
-          if (scope.source == 'dashboard') {
+          if (scope.source === 'dashboard') {
             scope.chartConfig.options.plotOptions.series.point.events = null;
             scope.chartConfig.options.chart.events = {
               click: function () {
@@ -93,7 +93,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                 savedWidget[scope.widget.name] = scope.widget.content;
                 sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
                 scope.$apply(function () {
-                  $location.path('/workbench/').search('visualization', scope.widget.name)
+                  $location.path('/workbench/').search('visualization', scope.widget.name);
                 });
               }
             };

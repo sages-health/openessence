@@ -41,8 +41,10 @@ require('text-angular'); // must be after the other text-angular resources
 require('d3');
 require('leaflet');
 require('highcharts');
-require('highcharts-ng');
 require('exporting');
+//require('drilldown');
+require('highcharts-ng');
+
 
 var frable = require('../frable');
 require('../select2');
