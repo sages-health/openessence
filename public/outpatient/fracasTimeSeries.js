@@ -204,13 +204,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
                   scope.data = [];
                   var dataStore = {};
+                  var countStore = {};
 
                   if (scope.series && scope.series.length > 0) {
                     scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
                                                         '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
 
+                    console.log('data.aggregations.date.buckets');
+                    console.log(data.aggregations.date.buckets);
                     data.aggregations.date.buckets.map(function (d) {
-
                       scope.series.forEach(function (s) {
                         var buk = d[s].buckets || d[s]._name.buckets;
                         buk.map(function (entry) {
@@ -222,52 +224,26 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                             if (!dataStore[entry.key]) {
                               dataStore[entry.key] = [];
                             }
+                            if (!countStore[entry.key]) {
+                              countStore[entry.key] = [];
+                            }
                             dataStore[entry.key].push([d.key, count]);
+                            countStore[entry.key].push(count);
                           }
                         });
                       });
                     });
-                    Object.keys(dataStore).forEach(function (k) {
-                      scope.data.push({
-                        name: k,
-                        data: dataStore[k]
-                      });
-                    });
-
-                    console.log("aggregations date");
-                    console.log(scope.data);
+                    calcPValues(dataStore, countStore, scope.options.algorithm);
+                    //scope.chartConfig.series = scope.data;
                   } else {
                     scope.chartConfig.options.colors = ['#7cb5ec'];
                     calcOutpatientPvalues(data.aggregations.date);
-
-                    scope.data = [
-                      {
-                        name: gettextCatalog.getString('Outpatient visits'),
-                      /*data: [{
-                        x: 6,
-                        y: 3.9,
-                        marker: {
-                          symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                        }
-                      }, [3, 4.2], [5, 5.7] ]
-                      */
-                       data: extractCounts(data.aggregations.date, null, null),
-                       //data: calcOutpatientPvalues(data.aggregations.date),
-                       marker: {
-                          symbol: 'circle'
-                        }
-                      }
-                    ];
                   }
-                  scope.chartConfig.series = scope.data;
-
-                  //reload();
                 }
               }
             )
             ;
             //}
-            createTableJSON();
           };
 
           //var chart = angular.element(document.querySelector('#highcharts-id-' + scope.options.id)).highcharts();
@@ -385,22 +361,52 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           var createTableJSON = function () {
             console.log('in table json');
-            var data = scope.data;
+            var data = scope.chartConfig.series;
             scope.tableMapJSON = [];
-            if (scope.series!= undefined && scope.series != null && scope.series.length > 0){
-              for (var i = 0; i < scope.series.length; i++) {
-                var pair = scope.series[i];
+            /*
+             if (scope.series!= undefined && scope.series != null && scope.series.length > 0){
+             for (var i = 0; i < scope.data.length; i++) {
+             var pair = scope.data[i];
+             console.log('found series');
+             for (var j = 0; j < pair.data.length; j++) {
+             var dp = pair.data[j];
+
+             scope.tableMapJSON.push({
+             date: dp.x,
+             series: pair.name,
+             count: dp.y,
+             pValue: dp.pValue,
+             expected: dp.expected
+             });
+             }
+             }
+             }else if (scope.data !== undefined && scope.data !== null && scope.data.length > 0) {
+             //create column headers
+             //create rows
+             console.log('found data');
+             console.log('scope.data[0].data');
+             console.log(scope.data[0].data);
+             for (var i = 0; i < scope.data[0].data.length; i++) {
+             var pair = scope.data[0].data[i];
+             scope.tableMapJSON.push({
+             date: pair.x,
+             series: 'Outpatient visits',
+             count: pair.y,
+             pValue: pair.pValue,
+             expected: pair.expected
+             });
+             }
+             }
+             */
+            console.log(data);
+            if (data !== undefined && data !== null && data.length > 0) {
+              console.log('data not zero: ' + data.length);
+              for (var i = 0; i < data.length; i++) {
+                var pair = data[i];
                 console.log('found series');
                 for (var j = 0; j < pair.data.length; j++) {
                   var dp = pair.data[j];
-                  /*
-                   {
-                   x:bucket[i].key,
-                   y:count,
-                   pValue:pValue,
-                   expected:expected
-                   }
-                   */
+
                   scope.tableMapJSON.push({
                     date: dp.x,
                     series: pair.name,
@@ -410,23 +416,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   });
                 }
               }
-            }else if (scope.data !== undefined && scope.data !== null && scope.data.length > 0) {
-              //create column headers
-              //create rows
-              console.log('found data');
-              console.log('scope.data[0].data');
-              console.log(scope.data[0].data);
-              for (var i = 0; i < scope.data[0].data.length; i++) {
-                var pair = scope.data[0].data[i];
-                scope.tableMapJSON.push({
-                  date: pair.x,
-                  series: 'Outpatient visits',
-                  count: pair.y,
-                  pValue: pair.pValue,
-                  expected: pair.expected
-                });
-              }
             }
+            console.log(scope.tableMapJSON);
           };
 
           var getCountArray = function (agg) {
@@ -495,16 +486,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     }
                   );
                 }
-
-                /*data: [{
-                  x: 6,
-                  y: 3.9,
-                  marker: {
-                    fillColor: '#FFFFFF'
-                  }
-                 }, [3, 4.2], [5, 5.7] ]
-                 */
-
               }
               return values;
             }
@@ -514,8 +495,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             var pValues = [];
             var expectedValues = [];
             var counts = getCountArray(dates);
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
-            console.log('using algorithm' + algorithmString);
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
 
             $http.post(algorithmString,
               {
@@ -525,14 +505,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }
             ).
               success(function (resp) {
-                console.log("Success!");
-                console.log(resp.pValues);
-                console.log(resp.expectedValues);
                 pValues = resp.pValues;
                 expectedValues = resp.expectedValues;
                 if (pValues.length > 0) {
-                  console.log("non negative pvalues");
-                  //return extractCounts(dates, pValues, expectedValues);
                   console.log("");
                   scope.data = [
                     {
@@ -552,17 +527,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       }
                     }
                   ];
-
                   //scope.series[0] = scope.data[0];
                   scope.chartConfig.series = scope.data;
                   createTableJSON();
                   return;
                 }
               });
-            console.log("Finishing calcOutpatientPValues");
-            //return extractCounts(dates, null, null);
             scope.data.data = extractCounts(dates, null, null);
-
             scope.data = [
               {
                 name: gettextCatalog.getString('Outpatient visits'),
@@ -575,12 +546,13 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                  }, [3, 4.2], [5, 5.7] ]
                  */
                 data: extractCounts(dates, null, null),
-                //data: calcOutpatientPvalues(data.aggregations.date),
                 marker: {
                   symbol: 'circle'
                 }
               }
             ];
+            scope.chartConfig.series = scope.data;
+            createTableJSON();
           };
 
           var calcPValues = function (dataStore, countStore, algorithm){
@@ -608,33 +580,67 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     for (var i = 0; i < dataStore[k].length && i < pValues.length; i++) {
                       var pValue = pValues[i] === null ? 1 : pValues[i];
                       var expected = expectedValues[i] === null ? 0 : expectedValues[i];
+                      var x = (dataStore[k])[i][0];
+                      var count = (dataStore[k])[i][1];
                       //dataStore[entry.key].push([d.key, count]);
                       //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
-                      values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
-                    }
-                    scope.data.push(
-                      {
-                        key: k,
-                        values: values
+                      //values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
+                      if (pValue >.05){
+                        values.push(
+                          {
+                            x:x,
+                            y:count,
+                            pValue:pValue,
+                            expected:expected
+                          }
+                        );
+                      }else if(pValue <= .05 && pValue > .01){
+                        values.push(
+                          {
+                            x:x,
+                            y:count,
+                            marker:{
+                              fillColor: '#ffff00'
+                            },
+                            pValue:pValue,
+                            expected:expected
+                          }
+                        );
+                      }else{
+                        values.push(
+                          {
+                            x:x,
+                            y:count,
+                            marker:{
+                              fillColor: '#ff0000'
+                            },
+                            pValue:pValue,
+                            expected:expected
+                          }
+                        );
                       }
-                    );
+                    }
+                    scope.data.push({
+                      name: k,
+                      data: values
+                    });
                   }else{
-                    scope.data.push(
-                      {
-                        key: k,
-                        values: dataStore[k]
-                      }
-                    );
+                    scope.data.push({
+                      name: k,
+                      data: dataStore[k]
+                    });
                   }
+                  scope.chartConfig.series = scope.data;
+                  createTableJSON();
                 }).error(function(){
-                  scope.data.push(
-                    {
-                      key: k,
-                      values: dataStore[k]
-                    }
-                  );
+                  scope.data.push({
+                    name: k,
+                    data: dataStore[k]
+                  });
                 });
             });
+            scope.chartConfig.series = scope.data;
+            createTableJSON();
           };
 
           /*function sortResults (a, b) {
