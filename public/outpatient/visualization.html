@@ -108,11 +108,15 @@
         pivot="pivot"
         agg-data="aggData">
     </outpatient-bar-chart>
-  </div>
+  </div>F
   <div class="animation-switch" ng-switch-when="map">
     <leaflet-map filters="filters" query-string="queryString" data="aggData" options="options">
       <div id="svg-id-{{options.id}}" class="map"></div>
     </leaflet-map>
+  </div>
+  <div class="animation-switch" ng-switch-when="yoy">
+    <outpatient-year-over-year filters="filters" query-string="queryString" series="pivot.cols"
+                               options="options" source="source" widget="widget"></outpatient-year-over-yearF>
   </div>
   <div class="animation-switch" ng-switch-default>Unknown visualization {{visualization}} :(</div>
 </div>
