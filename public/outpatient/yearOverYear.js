@@ -29,6 +29,14 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
       return {
         pre: function (scope, element, attrs) {
 
+          var lastFrom = moment(scope.filters[0].from).subtract(1, 'year').format('YYYY-MM-DD'); //2014-10-22
+          console.log(lastFrom);
+          var lastTo = moment(scope.filters[0].to).subtract(1, 'year').format('YYYY-MM-DD');
+          console.log(lastTo);
+
+          scope.queryString2 = 'visitDate: [' + lastFrom + ' TO ' + lastTo + ']';
+          console.log(scope.queryString2);
+
           var defaultLabels = {
             title: gettextCatalog.getString('Year Over Year'),
             y: gettextCatalog.getString('Count'),
@@ -199,75 +207,77 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
                 size: 0, // we only want aggregations
                 aggs: aggs
               }, function (data) {
-                //expected scope.data = [ {aggKey, [ [dateMillis, count],.. ]},.. ]
-                if (data.aggregations.date) {
 
-                  scope.data = [];
-                  var dataStore = {};
+                scope.data = [];
+                var dataStore = {};
 
-                  if (scope.series && scope.series.length > 0) {
-                    scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-                                                        '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
+                if (scope.series && scope.series.length > 0) {
+                  data.aggregations.date.buckets.map(function (d) {
 
-                    data.aggregations.date.buckets.map(function (d) {
-
-                      scope.series.forEach(function (s) {
-                        var buk = d[s].buckets || d[s]._name.buckets;
-                        buk.map(function (entry) {
-                          /*jshint camelcase:false */
-                          // if we have filter on this field/series = s
-                          // only plot series meeting filter criteria
-                          if (plotSeries(entry.key, s)) {
-                            var count = entry.count ? entry.count.value : entry.doc_count;
-                            if (!dataStore[entry.key]) {
-                              dataStore[entry.key] = [];
-                            }
-                            dataStore[entry.key].push([d.key, count]);
+                    scope.series.forEach(function (s) {
+                      var buk = d[s].buckets || d[s]._name.buckets;
+                      buk.map(function (entry) {
+                        /*jshint camelcase:false */
+                        // if we have filter on this field/series = s
+                        // only plot series meeting filter criteria
+                        if (plotSeries(entry.key, s)) {
+                          var count = entry.count ? entry.count.value : entry.doc_count;
+                          if (!dataStore[entry.key]) {
+                            dataStore[entry.key] = [];
                           }
-                        });
-                      });
-                    });
-                    Object.keys(dataStore).forEach(function (k) {
-                      scope.data.push({
-                        name: k,
-                        data: dataStore[k]
-                      });
-                    });
-
-                    console.log("aggregations date");
-                    console.log(scope.data);
-                  } else {
-                    scope.chartConfig.options.colors = ['#7cb5ec'];
-                    calcOutpatientPvalues(data.aggregations.date);
-
-                    scope.data = [
-                      {
-                        name: gettextCatalog.getString('Outpatient visits'),
-                        /*data: [{
-                         x: 6,
-                         y: 3.9,
-                         marker: {
-                         symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                         }
-                         }, [3, 4.2], [5, 5.7] ]
-                         */
-                        data: extractCounts(data.aggregations.date, null, null),
-                        //data: calcOutpatientPvalues(data.aggregations.date),
-                        marker: {
-                          symbol: 'circle'
+                          dataStore[entry.key].push([d.key, count]);
                         }
-                      }
-                    ];
-                  }
-                  scope.chartConfig.series = scope.data;
+                      });
+                    });
+                  });
 
-                  //reload();
+                  Object.keys(dataStore).forEach(function (k) {
+                    var data = {};
+                    data.name = k;
+                    data.data = [];
+                    var startDate = [];
+                    startDate.push(scope.minDate, null);
+                    data.data.push(startDate);
+                    for (var i = 0; i < dataStore[k].length; i++) {
+                      var dateArray = [];
+                      var date = dataStore[k][i][0];
+                      dateArray.push(date, dataStore[k][i][1]);
+                      data.data.push(dateArray);
+                    }
+                    var endDate = [];
+                    endDate.push(scope.maxDate, null);
+                    data.data.push(endDate);
+
+                    data.data.sort(sortResults);
+
+                    scope.chartConfig.series.push(data);
+                  });
+
+                } else {
+                  scope.data = [
+                    {
+                      key: gettextCatalog.getString('Outpatient visits'),
+                      values: extractCounts(data.aggregations.date)
+                    }
+                  ];
+                  console.log(scope.data);
                 }
               }
             )
             ;
-            //}
-            createTableJSON();
+          };
+
+          var extractCounts = function (agg) {
+            /*jshint camelcase:false */
+            var bucket;
+            agg.counts = [];
+            bucket = agg.buckets || agg._name.buckets;
+            return bucket.map(function (b) {
+              /*jshint camelcase:false */
+              var count = b.count ? b.count.value : b.doc_count;
+              agg.counts.push(count);
+              return [b.key, count];
+            });
           };
 
           //var chart = angular.element(document.querySelector('#highcharts-id-' + scope.options.id)).highcharts();
@@ -372,63 +382,6 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
             scope.$apply();
           };
 
-          /*
-           var extractCounts = function (agg) {
-           var bucket = agg.buckets || agg._name.buckets;
-           return bucket.map(function (b) {
-           var count = b.count ? b.count.value : b.doc_count;
-
-           return [b.key, count];
-           });
-           };
-           */
-
-          var createTableJSON = function () {
-            console.log('in table json');
-            var data = scope.data;
-            scope.tableMapJSON = [];
-            if (scope.series != undefined && scope.series != null && scope.series.length > 0) {
-              for (var i = 0; i < scope.series.length; i++) {
-                var pair = scope.series[i];
-                console.log('found series');
-                for (var j = 0; j < pair.data.length; j++) {
-                  var dp = pair.data[j];
-                  /*
-                   {
-                   x:bucket[i].key,
-                   y:count,
-                   pValue:pValue,
-                   expected:expected
-                   }
-                   */
-                  scope.tableMapJSON.push({
-                    date: dp.x,
-                    series: pair.name,
-                    count: dp.y,
-                    pValue: dp.pValue,
-                    expected: dp.expected
-                  });
-                }
-              }
-            } else if (scope.data !== undefined && scope.data !== null && scope.data.length > 0) {
-              //create column headers
-              //create rows
-              console.log('found data');
-              console.log('scope.data[0].data');
-              console.log(scope.data[0].data);
-              for (var i = 0; i < scope.data[0].data.length; i++) {
-                var pair = scope.data[0].data[i];
-                scope.tableMapJSON.push({
-                  date: pair.x,
-                  series: 'Outpatient visits',
-                  count: pair.y,
-                  pValue: pair.pValue,
-                  expected: pair.expected
-                });
-              }
-            }
-          };
-
           var getCountArray = function (agg) {
             /*jshint camelcase:false */
             var counts = [];
@@ -440,212 +393,6 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
             }
             return counts;
           };
-
-          var extractCounts = function (agg, pValues, expectedValues) {
-            /*jshint camelcase:false */
-            var bucket;
-            if (pValues === null) {
-              agg.counts = [];
-              bucket = agg.buckets || agg._name.buckets;
-              return bucket.map(function (b) {
-                /*jshint camelcase:false */
-                var count = b.count ? b.count.value : b.doc_count;
-                agg.counts.push(count);
-                return [b.key, count];
-              });
-            } else {
-              bucket = agg.buckets || agg._name.buckets;
-              var values = [];
-              for (var i = 0; i < bucket.length && i < pValues.length; i++) {
-                var count = bucket[i].count ? bucket[i].count.value : bucket[i].doc_count;
-                var pValue = pValues[i] === null ? 1 : pValues[i];
-                var expected = expectedValues[i] === null ? 0 : expectedValues[i];
-                //values.push([bucket[i].key, count, pValue, expected]);
-                if (pValue > .05) {
-                  values.push(
-                    {
-                      x: bucket[i].key,
-                      y: count,
-                      pValue: pValue,
-                      expected: expected
-                    }
-                  );
-                } else if (pValue <= .05 && pValue > .01) {
-                  values.push(
-                    {
-                      x: bucket[i].key,
-                      y: count,
-                      marker: {
-                        fillColor: '#ffff00'
-                      },
-                      pValue: pValue,
-                      expected: expected
-                    }
-                  );
-                } else {
-                  values.push(
-                    {
-                      x: bucket[i].key,
-                      y: count,
-                      marker: {
-                        fillColor: '#ff0000'
-                      },
-                      pValue: pValue,
-                      expected: expected
-                    }
-                  );
-                }
-
-                /*data: [{
-                 x: 6,
-                 y: 3.9,
-                 marker: {
-                 fillColor: '#FFFFFF'
-                 }
-                 }, [3, 4.2], [5, 5.7] ]
-                 */
-
-              }
-              return values;
-            }
-          };
-
-          var calcOutpatientPvalues = function (dates, algorithm) {
-            var pValues = [];
-            var expectedValues = [];
-            var counts = getCountArray(dates);
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
-            console.log('using algorithm' + algorithmString);
-
-            $http.post(algorithmString,
-              {
-                data: counts,
-                baseline: 28,
-                guardBand: 2
-              }
-            ).
-              success(function (resp) {
-                console.log("Success!");
-                console.log(resp.pValues);
-                console.log(resp.expectedValues);
-                pValues = resp.pValues;
-                expectedValues = resp.expectedValues;
-                if (pValues.length > 0) {
-                  console.log("non negative pvalues");
-                  //return extractCounts(dates, pValues, expectedValues);
-                  console.log("");
-                  scope.data = [
-                    {
-                      name: gettextCatalog.getString('Outpatient visits'),
-                      /*data: [{
-                       x: 6,
-                       y: 3.9,
-                       marker: {
-                       symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                       }
-                       }, [3, 4.2], [5, 5.7] ]
-                       */
-                      data: extractCounts(dates, pValues, expectedValues),
-                      //data: calcOutpatientPvalues(data.aggregations.date),
-                      marker: {
-                        symbol: 'circle'
-                      }
-                    }
-                  ];
-
-                  //scope.series[0] = scope.data[0];
-                  scope.chartConfig.series = scope.data;
-                  createTableJSON();
-                  return;
-                }
-              });
-            console.log("Finishing calcOutpatientPValues");
-            //return extractCounts(dates, null, null);
-            scope.data.data = extractCounts(dates, null, null);
-
-            scope.data = [
-              {
-                name: gettextCatalog.getString('Outpatient visits'),
-                /*data: [{
-                 x: 6,
-                 y: 3.9,
-                 marker: {
-                 symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                 }
-                 }, [3, 4.2], [5, 5.7] ]
-                 */
-                data: extractCounts(dates, null, null),
-                //data: calcOutpatientPvalues(data.aggregations.date),
-                marker: {
-                  symbol: 'circle'
-                }
-              }
-            ];
-          };
-
-          var calcPValues = function (dataStore, countStore, algorithm) {
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
-            console.log('using algorithm' + algorithmString);
-            Object.keys(dataStore).forEach(function (k) {
-              var counts = countStore[k];
-              var pValues = [];
-              var expectedValues = [];
-
-              $http.post(algorithmString,
-                {
-                  data: counts,
-                  baseline: 28,
-                  guardBand: 2
-                }
-              ).
-                success(function (resp) {
-                  //console.log(resp.pValues);
-                  pValues = resp.pValues;
-                  expectedValues = resp.expectedValues;
-
-                  if (pValues.length > 0) {
-                    var values = [];
-                    for (var i = 0; i < dataStore[k].length && i < pValues.length; i++) {
-                      var pValue = pValues[i] === null ? 1 : pValues[i];
-                      var expected = expectedValues[i] === null ? 0 : expectedValues[i];
-                      //dataStore[entry.key].push([d.key, count]);
-                      //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
-                      values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
-                    }
-                    scope.data.push(
-                      {
-                        key: k,
-                        values: values
-                      }
-                    );
-                  } else {
-                    scope.data.push(
-                      {
-                        key: k,
-                        values: dataStore[k]
-                      }
-                    );
-                  }
-                }).error(function () {
-                  scope.data.push(
-                    {
-                      key: k,
-                      values: dataStore[k]
-                    }
-                  );
-                });
-            });
-          };
-
-          /*function sortResults (a, b) {
-           if (a[0] < b[0]) {
-           return -1;
-           }
-           if (a[0] > b[0]) {
-           return 1;
-           }
-           return 0;
-           }*/
 
           var plotSeries = function (seriesName, seriesType) {
             if (scope.filters) {
