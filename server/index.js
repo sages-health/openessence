@@ -111,9 +111,10 @@ app.use(function (req, res, next) {
   var self = "'self'";
   var none = "'none'";
 
+  // TODO: Remove http://github.highcharts.com/ once next release is out (>4.0.4)
   helmet.contentSecurityPolicy({
     'default-src': [self],
-    'script-src': [self, 'https://login.persona.org'],
+    'script-src': [self, 'https://login.persona.org', 'http://github.highcharts.com/'],
     // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
     'style-src': [self, "'unsafe-inline'"],
     'img-src': [self, 'data:', 'https://otile1-s.mqcdn.com', 'https://otile2-s.mqcdn.com', 'https://otile3-s.mqcdn.com',

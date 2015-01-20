@@ -4,7 +4,11 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var moment = require('moment');
 
-angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout, $log,
+                                                                                             orderByFilter, gettextCatalog, sortString,
+                                                                                             FrableParams, OutpatientVisitResource,
+                                                                                             outpatientEditModal, updateURL, outpatientDeleteModal,
+                                                                                             scopeToJson, outpatientAggregation, visualization) {
 
   return {
     restrict: 'E',
@@ -65,12 +69,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return print.join(',');
         };
 
-        scope.$on('vizualizationNameChanged', function () {
+        scope.$on('visualizationNameChanged', function () {
           delete scope.options.labels;
           updateVisualization();
         });
 
-        scope.$on('exportVizualization', function () {
+        scope.$on('exportVisualization', function () {
           if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it
             return;
@@ -78,7 +82,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
           var state = scopeToJson(scope);
-          ['data', 'crosstabData'].forEach(function (k) {
+          var arr = ['data', 'crosstabData'];
+          angular.forEach(arr, function (k) {
             delete state[k];
           });
           if (state.tableParams) {
@@ -90,7 +95,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           visualization.export(state);
         });
 
-        scope.$on('saveVizualization', function () {
+        scope.$on('saveVisualization', function () {
           if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it
             return;
@@ -98,7 +103,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
           var state = scopeToJson(scope);
-          ['data', 'crosstabData'].forEach(function (k) {
+          var arr = ['data', 'crosstabData'];
+          angular.forEach(arr, function (k) {
             delete state[k];
           });
           if (state.tableParams) {
@@ -134,10 +140,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         //assuming only two deep BY one for now...
         var parseAggQuery = function (aggregation, first, second) {
-          console.log("parsing agg query");
+          $log.log('parsing agg query');
           /*jshint camelcase:false */
           var aggs = aggregation.aggregations;
-          console.log(aggs);
+          $log.log(aggs);
           var colLabel = first;
           var rowLabel = second;
 
@@ -150,9 +156,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           var slice, bucket;
           if (aggs) {
             //if there is only one aggregation selected parse as normal
-            console.log("here");
             if (first && !second) {
-              console.log("here2");
               bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
               bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
@@ -170,7 +174,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               }
             }
             if (!first && second) {
-              console.log("here3");
               bucket = aggs[sa].buckets || aggs[sa]._name.buckets;
               bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
@@ -188,9 +191,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               barData.push({row: second, key: rowLabel, values: pieData});
             }
             //if there are two aggregations parse and return as agg1-agg2..
-            console.log("here4");
             if (first && second && aggs[fa] && (aggs[fa].buckets || aggs[fa]._name)) {
-              console.log("here5");
               var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
               bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
               bucket.map(function (entry) {
@@ -233,7 +234,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             if (scope.visualization.name === 'bar') {
               return barData;
             } else if (scope.visualization.name === 'pie') {
-              console.log(pieData);
               return pieData;
             } else if (scope.visualization.name === 'map') {
               return pieData;
@@ -285,7 +285,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           delete rec.diagnoses;
 
           if (record.symptoms) {
-            record.symptoms.forEach(function (v) {
+            angular.forEach(record.symptoms, function (v) {
               var r = angular.copy(rec);
               var count = 1;
               if (v.count !== undefined) {
@@ -298,7 +298,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             });
           }
           if (record.diagnoses) {
-            record.diagnoses.forEach(function (v) {
+            angular.forEach(record.diagnoses, function (v) {
               var r = angular.copy(rec);
               var count = 1;
               if (v.count !== undefined) {
@@ -332,7 +332,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }, function (data) {
               var records = [];
               //TODO add missing count, remove 0 from flattened records
-              data.results.forEach(function (r) {
+              angular.forEach(data.results, function (r) {
                 var rec = crosstabifyRecord(r._source);
                 if (scope.form.dataType === 'aggregate') {
                   //flatten symptoms/diagonses
@@ -508,7 +508,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           //TODO multiselect if value.length > ?
           if (value || value === false) {
             var a = [].concat(value);
-            a.forEach(function (v) {
+            angular.forEach(a, function (v) {
               var filter = {
                 filterID: field,
                 value: ((typeof v) === 'object' ? v.name : v)

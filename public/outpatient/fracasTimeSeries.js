@@ -2,9 +2,10 @@
 
 var angular = require('angular');
 var moment = require('moment');
+var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location,
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location, $log,
                                                                                           updateURL, gettextCatalog,
                                                                                           outpatientAggregation,
                                                                                           visualization,
@@ -39,7 +40,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           scope.options.labels = scope.options.labels || defaultLabels;
           scope.series = scope.series || scope.options.series || [];
           if (scope.options.interval) {
-            scope.interval = scope.options.interval
+            scope.interval = scope.options.interval;
           }
           else {
             scope.interval = 'day';
@@ -122,14 +123,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           /*
-           Activating built in highcharts export.
-
-           if (scope.source == 'export') {
+           //Activating built in highcharts export.
+           if (scope.source === 'export') {
            scope.chartConfig.options.exporting.enabled = true;
-           }*/
+           }
+           */
 
           // Removing click functionality for clickthrough.
-          if (scope.source == 'dashboard') {
+          if (scope.source === 'dashboard') {
             scope.chartConfig.options.chart.zoomType = null;
             scope.chartConfig.options.chart.events.click =
               function () {
@@ -137,12 +138,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 savedWidget[scope.widget.name] = scope.widget.content;
                 sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
                 scope.$apply(function () {
-                  $location.path('/workbench/').search('visualization', scope.widget.name)
+                  $location.path('/workbench/').search('visualization', scope.widget.name);
                 });
               };
           }
 
-          scope.$on('editVizualizationSettings', function () {
+          scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('timeseries', scope.options.labels)
               .result.then(function (labels) {
                 scope.options.labels = labels;
@@ -152,7 +153,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               });
           });
 
-          scope.$on('exportVizualization', function () {
+          scope.$on('exportVisualization', function () {
             visualization.export(angular.extend({}, scopeToJson(scope), {
               visualization: {
                 name: 'line'
@@ -164,7 +165,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }));
           });
 
-          scope.$on('saveVizualization', function () {
+          scope.$on('saveVisualization', function () {
             visualization.save(angular.extend({}, scopeToJson(scope), {
               visualization: {
                 name: 'line'
@@ -207,7 +208,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
                   if (scope.series && scope.series.length > 0) {
                     scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-                                                        '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
+                      '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
 
                     data.aggregations.date.buckets.map(function (d) {
 
@@ -234,8 +235,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       });
                     });
 
-                    console.log("aggregations date");
-                    console.log(scope.data);
+                    $log.log('aggregations date');
+                    $log.log(scope.data);
                   } else {
                     scope.chartConfig.options.colors = ['#7cb5ec'];
                     calcOutpatientPvalues(data.aggregations.date);
@@ -243,17 +244,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     scope.data = [
                       {
                         name: gettextCatalog.getString('Outpatient visits'),
-                      /*data: [{
-                        x: 6,
-                        y: 3.9,
+                        /*data: [{
+                         x: 6,
+                         y: 3.9,
+                         marker: {
+                         symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
+                         }
+                         }, [3, 4.2], [5, 5.7] ]
+                         */
+                        data: extractCounts(data.aggregations.date, null, null),
+                        //data: calcOutpatientPvalues(data.aggregations.date),
                         marker: {
-                          symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                        }
-                      }, [3, 4.2], [5, 5.7] ]
-                      */
-                       data: extractCounts(data.aggregations.date, null, null),
-                       //data: calcOutpatientPvalues(data.aggregations.date),
-                       marker: {
                           symbol: 'circle'
                         }
                       }
@@ -373,24 +374,24 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           /*
-          var extractCounts = function (agg) {
-            var bucket = agg.buckets || agg._name.buckets;
-            return bucket.map(function (b) {
-              var count = b.count ? b.count.value : b.doc_count;
+           var extractCounts = function (agg) {
+           var bucket = agg.buckets || agg._name.buckets;
+           return bucket.map(function (b) {
+           var count = b.count ? b.count.value : b.doc_count;
 
-              return [b.key, count];
-            });
-          };
-          */
+           return [b.key, count];
+           });
+           };
+           */
 
           var createTableJSON = function () {
-            console.log('in table json');
-            var data = scope.data;
+            $log.log('in table json');
+            //var data = scope.data;
             scope.tableMapJSON = [];
-            if (scope.series!= undefined && scope.series != null && scope.series.length > 0){
+            if (_.has(scope, 'series') && !_.isNull(scope.series) && scope.series.length > 0) {
               for (var i = 0; i < scope.series.length; i++) {
                 var pair = scope.series[i];
-                console.log('found series');
+                $log.log('found series');
                 for (var j = 0; j < pair.data.length; j++) {
                   var dp = pair.data[j];
                   /*
@@ -410,12 +411,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   });
                 }
               }
-            }else if (scope.data !== undefined && scope.data !== null && scope.data.length > 0) {
+            } else if (_.has(scope, 'data') && !_.isNull(scope.data) && scope.data.length > 0) {
               //create column headers
               //create rows
-              console.log('found data');
-              console.log('scope.data[0].data');
-              console.log(scope.data[0].data);
+              $log.log('found data');
+              $log.log('scope.data[0].data');
+              $log.log(scope.data[0].data);
               for (var i = 0; i < scope.data[0].data.length; i++) {
                 var pair = scope.data[0].data[i];
                 scope.tableMapJSON.push({
@@ -461,47 +462,47 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 var pValue = pValues[i] === null ? 1 : pValues[i];
                 var expected = expectedValues[i] === null ? 0 : expectedValues[i];
                 //values.push([bucket[i].key, count, pValue, expected]);
-                if (pValue >.05){
+                if (pValue > 0.05) {
                   values.push(
                     {
-                      x:bucket[i].key,
-                      y:count,
-                      pValue:pValue,
-                      expected:expected
+                      x: bucket[i].key,
+                      y: count,
+                      pValue: pValue,
+                      expected: expected
                     }
                   );
-                }else if(pValue <= .05 && pValue > .01){
+                } else if (pValue <= 0.05 && pValue > 0.01) {
                   values.push(
                     {
-                      x:bucket[i].key,
-                      y:count,
-                      marker:{
+                      x: bucket[i].key,
+                      y: count,
+                      marker: {
                         fillColor: '#ffff00'
                       },
-                      pValue:pValue,
-                      expected:expected
+                      pValue: pValue,
+                      expected: expected
                     }
                   );
-                }else{
+                } else {
                   values.push(
                     {
-                      x:bucket[i].key,
-                      y:count,
-                      marker:{
+                      x: bucket[i].key,
+                      y: count,
+                      marker: {
                         fillColor: '#ff0000'
                       },
-                      pValue:pValue,
-                      expected:expected
+                      pValue: pValue,
+                      expected: expected
                     }
                   );
                 }
 
                 /*data: [{
-                  x: 6,
-                  y: 3.9,
-                  marker: {
-                    fillColor: '#FFFFFF'
-                  }
+                 x: 6,
+                 y: 3.9,
+                 marker: {
+                 fillColor: '#FFFFFF'
+                 }
                  }, [3, 4.2], [5, 5.7] ]
                  */
 
@@ -510,12 +511,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }
           };
 
-          var calcOutpatientPvalues = function (dates, algorithm){
+          var calcOutpatientPvalues = function (dates, algorithm) {
             var pValues = [];
             var expectedValues = [];
             var counts = getCountArray(dates);
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
-            console.log('using algorithm' + algorithmString);
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
+            $log.log('using algorithm' + algorithmString);
 
             $http.post(algorithmString,
               {
@@ -525,15 +526,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }
             ).
               success(function (resp) {
-                console.log("Success!");
-                console.log(resp.pValues);
-                console.log(resp.expectedValues);
+                $log.log('Success!');
+                $log.log(resp.pValues);
+                $log.log(resp.expectedValues);
                 pValues = resp.pValues;
                 expectedValues = resp.expectedValues;
                 if (pValues.length > 0) {
-                  console.log("non negative pvalues");
+                  $log.log('non negative pvalues');
                   //return extractCounts(dates, pValues, expectedValues);
-                  console.log("");
                   scope.data = [
                     {
                       name: gettextCatalog.getString('Outpatient visits'),
@@ -559,7 +559,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   return;
                 }
               });
-            console.log("Finishing calcOutpatientPValues");
+            $log.log("Finishing calcOutpatientPValues");
             //return extractCounts(dates, null, null);
             scope.data.data = extractCounts(dates, null, null);
 
@@ -583,9 +583,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             ];
           };
 
-          var calcPValues = function (dataStore, countStore, algorithm){
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum'
-            console.log('using algorithm' + algorithmString);
+          var calcPValues = function (dataStore, countStore, algorithm) {
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
+            $log.log('using algorithm' + algorithmString);
             Object.keys(dataStore).forEach(function (k) {
               var counts = countStore[k];
               var pValues = [];
@@ -598,8 +598,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   guardBand: 2
                 }
               ).
-                success(function(resp) {
-                  //console.log(resp.pValues);
+                success(function (resp) {
+                  //$log.log(resp.pValues);
                   pValues = resp.pValues;
                   expectedValues = resp.expectedValues;
 
@@ -609,7 +609,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       var pValue = pValues[i] === null ? 1 : pValues[i];
                       var expected = expectedValues[i] === null ? 0 : expectedValues[i];
                       //dataStore[entry.key].push([d.key, count]);
-                      //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
+                      //$log.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
                       values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
                     }
                     scope.data.push(
@@ -618,7 +618,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                         values: values
                       }
                     );
-                  }else{
+                  } else {
                     scope.data.push(
                       {
                         key: k,
@@ -626,7 +626,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       }
                     );
                   }
-                }).error(function(){
+                }).error(function () {
                   scope.data.push(
                     {
                       key: k,
@@ -694,14 +694,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.criteria = 'date';
           scope.direction = false;
-          scope.setCriteria = function(criteria) {
+          scope.setCriteria = function (criteria) {
             if (scope.criteria === criteria) {
               scope.direction = !scope.direction;
             } else {
               scope.criteria = criteria;
-              scope.direction  = false;
+              scope.direction = false;
             }
           };
+
         }
       };
     }
