@@ -58,243 +58,6 @@ var indexRequests = [
                 type: 'date'
               },
 
-              // AKA presenting problem, Reason for Encounter, Reason for Presenting, etc. Free text
-              notes: {
-                type: 'string'
-              },
-
-              // Array of well-known symptoms that the patient presented with. Might be populated by parsing
-              // notes, or might be used instead of notes. Used for syndromic surveillance.
-              symptoms: {
-                type: 'nested',
-                include_in_root: true, //allows for query on flattened array
-                properties: {
-                  // name of the symptom, e.g. Back Pain
-                  name: {
-                    type: 'string',
-                    fields: {
-                      raw: {
-                        type: 'string',
-                        index: 'not_analyzed'
-                      }
-                    }
-                  },
-
-                  // How many cases presented with this symptom. Used for aggregate reporting. For individual reporting,
-                  // this will be 1.
-                  count: {
-                    type: 'integer'
-                  }
-                }
-              },
-
-              visitType: {
-                properties: {
-                  name: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              },
-
-              disposition: {
-                properties: {
-                  name: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              },
-
-              // Array of well-known diagnoses. Usually used with symptoms.
-              diagnoses: {
-                type: 'nested',
-                include_in_root: true, //allows for query on flattened array
-                properties: {
-                  // name of the diagnosis, e.g. Anemia
-                  name: {
-                    type: 'string',
-                    fields: {
-                      raw: {
-                        type: 'string',
-                        index: 'not_analyzed'
-                      }
-                    }
-                  },
-
-                  // How many cases presented with this diagnosis. Used for aggregate reporting. For individual
-                  // reporting, this will be 1.
-                  count: {
-                    type: 'integer'
-                  }
-                }
-              },
-
-              // Syndromes are high-level groupings useful for surveillance, for example, "Dental." They are often
-              // related to symptoms.
-              syndromes: {
-                type: 'nested',
-                include_in_root: true, //allows for query on flattened array
-                properties: {
-                  // name of the syndrome, e.g. Eye Disease
-                  name: {
-                    type: 'string',
-                    fields: {
-                      raw: {
-                        type: 'string',
-                        index: 'not_analyzed'
-                      }
-                    }
-                  },
-
-                  // How many cases presented with this syndrome. Used for aggregate reporting. For individual
-                  // reporting, this will be 1.
-                  count: {
-                    type: 'integer'
-                  }
-                }
-              },
-
-              patient: {
-                properties: {
-                  // Some kind of unique patient identifier, e.g. SSN
-                  id: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  },
-
-                  // The only way to support names across cultures is with a single "name" field
-                  name: {
-                    type: 'string'
-                  },
-
-                  // Addresses are way too complicated to do anything but a single "address" field. This is more for
-                  // manual followup of a patient than analysis anyway.
-                  address: {
-                    type: 'string'
-                  },
-
-                  phone: {
-                    // phone numbers are not numbers!
-                    type: 'string',
-                    index: 'not_analyzed'
-                  },
-
-                  dateOfBirth: {
-                    type: 'date'
-                  },
-
-                  // This should be populated even if dateOfBirth is set to make querying easier. It can also be used
-                  // as an alternative to dateOfBirth if date of birth is not known but a more general age is known,
-                  // e.g. "I don't know this patient's date of birth, but I know they're about 65."
-                  age: {
-                    properties: {
-                      // We could store a single age decimal, but then we'd need to use floating point approximations
-                      // of rationals.
-                      // Note that this is not designed to store facts like "patient is 15-and-a-half,"
-                      // since epis don't really care about that. Instead, this is more of a union type:
-                      // if years is >= 1, then months is 0 or null, and if months is >0 then years is 0 or null.
-                      years: {
-                        type: 'integer'
-                      },
-
-                      // 1-12, more than that and you're in years
-                      months: {
-                        type: 'integer'
-                      }
-
-                      // per Brian, 0-1 month is typically binned together, so no need for more precision right now
-                    }
-                  },
-
-                  sex: {
-                    type: 'string',
-                    analyzer: 'sex'
-                  },
-                  weight: {
-                    // Note that we do not store units, e.g. lb or kg. It's up to the application to make sure every
-                    // entry uses the same units.
-                    type: 'double'
-                  },
-
-                  // TODO move all this under vitals? could be useful if we split it out as separate addon
-                  temperature: {
-                    type: 'double'
-                  },
-                  pulse: {
-                    type: 'double'
-                  },
-                  bloodPressure: {
-                    properties: {
-                      diastolic: {
-                        type: 'double'
-                      },
-                      systolic: {
-                        type: 'double'
-                      }
-                    }
-                  },
-
-                  // These are usually diagnoses
-                  preExistingConditions: {
-                    properties: {
-                      name: {
-                        type: 'string'
-                      }
-                      // room for other data
-                    }
-                  },
-
-                  pregnant: {
-                    properties: {
-                      // True if patient is pregnant
-                      is: {
-                        type: 'boolean'
-                      },
-
-                      // Number of weeks pregnant. Not currently used.
-                      weeks: {
-                        type: 'double'
-                      },
-
-                      // What trimester patient is in. Less granularity than weeks, but often collected instead.
-                      trimester: {
-                        type: 'double'
-                      }
-                    }
-                  }
-                }
-              },
-
-              specimen: {
-                properties: {
-                  id: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  },
-
-                  collectionDate: {
-                    type: 'date'
-                  }
-                }
-              },
-
-              antiviral: {
-                properties: {
-                  exposure: {
-                    type: 'boolean'
-                  },
-                  source: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  },
-                  name: {
-                    type: 'string',
-                    index: 'not_analyzed'
-                  }
-                }
-              },
-
               // AKA the clinic, hospital, military treatment center, etc. where the patient was processed.
               // Why medicalFacility? Because that's what http://en.wikipedia.org/wiki/Medical_facility says.
               medicalFacility: {
@@ -336,6 +99,242 @@ var indexRequests = [
                     }
                   }
                 }
+              },
+
+              patient: {
+                properties: {
+                  // Some kind of unique patient identifier, e.g. SSN
+                  id: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+
+                  // The only way to support names across cultures is with a single "name" field
+                  name: {
+                    type: 'string'
+                  },
+
+
+                  dateOfBirth: {
+                    type: 'date'
+                  },
+
+                  // This should be populated even if dateOfBirth is set to make querying easier. It can also be used
+                  // as an alternative to dateOfBirth if date of birth is not known but a more general age is known,
+                  // e.g. "I don't know this patient's date of birth, but I know they're about 65."
+                  age: {
+                    properties: {
+                      // We could store a single age decimal, but then we'd need to use floating point approximations
+                      // of rationals.
+                      // Note that this is not designed to store facts like "patient is 15-and-a-half,"
+                      // since epis don't really care about that. Instead, this is more of a union type:
+                      // if years is >= 1, then months is 0 or null, and if months is >0 then years is 0 or null.
+                      years: {
+                        type: 'integer'
+                      },
+
+                      // 1-12, more than that and you're in years
+                      months: {
+                        type: 'integer'
+                      }
+
+                      // per Brian, 0-1 month is typically binned together, so no need for more precision right now
+                    }
+                  },
+
+                  sex: {
+                    type: 'string',
+                    analyzer: 'sex'
+                  },
+
+                  phone: {
+                    // phone numbers are not numbers!
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  // Addresses are way too complicated to do anything but a single "address" field. This is more for
+                  // manual followup of a patient than analysis anyway.
+                  address: {
+                    type: 'string'
+                  },
+
+                  weight: {
+                    // Note that we do not store units, e.g. lb or kg. It's up to the application to make sure every
+                    // entry uses the same units.
+                    type: 'double'
+                  },
+                  // TODO move all this under vitals? could be useful if we split it out as separate addon
+                  temperature: {
+                    type: 'double'
+                  },
+                  pulse: {
+                    type: 'double'
+                  },
+                  bloodPressure: {
+                    properties: {
+                      diastolic: {
+                        type: 'double'
+                      },
+                      systolic: {
+                        type: 'double'
+                      }
+                    }
+                  },
+
+                  pregnant: {
+                    properties: {
+                      // True if patient is pregnant
+                      is: {
+                        type: 'boolean'
+                      },
+
+                      // Number of weeks pregnant. Not currently used.
+                      weeks: {
+                        type: 'double'
+                      },
+
+                      // What trimester patient is in. Less granularity than weeks, but often collected instead.
+                      trimester: {
+                        type: 'double'
+                      }
+                    }
+                  },
+
+                  // These are usually diagnoses
+                  preExistingConditions: {
+                    properties: {
+                      name: {
+                        type: 'string'
+                      }
+                      // room for other data
+                    }
+                  }
+                }
+              },
+
+              // Array of well-known symptoms that the patient presented with. Might be populated by parsing
+              // notes, or might be used instead of notes. Used for syndromic surveillance.
+              symptoms: {
+                type: 'nested',
+                include_in_root: true, //allows for query on flattened array
+                properties: {
+                  // name of the symptom, e.g. Back Pain
+                  name: {
+                    type: 'string',
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
+                  },
+
+                  // How many cases presented with this symptom. Used for aggregate reporting. For individual reporting,
+                  // this will be 1.
+                  count: {
+                    type: 'integer'
+                  }
+                }
+              },
+              // Syndromes are high-level groupings useful for surveillance, for example, "Dental." They are often
+              // related to symptoms.
+              syndromes: {
+                type: 'nested',
+                include_in_root: true, //allows for query on flattened array
+                properties: {
+                  // name of the syndrome, e.g. Eye Disease
+                  name: {
+                    type: 'string',
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
+                  },
+
+                  // How many cases presented with this syndrome. Used for aggregate reporting. For individual
+                  // reporting, this will be 1.
+                  count: {
+                    type: 'integer'
+                  }
+                }
+              },
+
+              // Array of well-known diagnoses. Usually used with symptoms.
+              diagnoses: {
+                type: 'nested',
+                include_in_root: true, //allows for query on flattened array
+                properties: {
+                  // name of the diagnosis, e.g. Anemia
+                  name: {
+                    type: 'string',
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
+                  },
+
+                  // How many cases presented with this diagnosis. Used for aggregate reporting. For individual
+                  // reporting, this will be 1.
+                  count: {
+                    type: 'integer'
+                  }
+                }
+              },
+
+              specimen: {
+                properties: {
+                  id: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+
+                  collectionDate: {
+                    type: 'date'
+                  }
+                }
+              },
+
+              antiviral: {
+                properties: {
+                  exposure: {
+                    type: 'boolean'
+                  },
+                  source: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  },
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+
+              visitType: {
+                properties: {
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+
+              disposition: {
+                properties: {
+                  name: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+
+              // AKA presenting problem, Reason for Encounter, Reason for Presenting, etc. Free text
+              notes: {
+                type: 'string'
               }
             }
           })

@@ -19,9 +19,9 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
         return filters;
       }
 
-      var possibleFilter = possibleFilters[field.name];
+      var possibleFilter = possibleFilters.possibleFilters[field.name];
       if (possibleFilter) {
-        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
+        filters[field.name] = angular.extend({values: field.values}, possibleFilters.possibleFilters[field.name]);
       }
 
       $scope.editTemplate = require('../../../partials/edit/forms/aggregate-data-form.html');
@@ -68,7 +68,7 @@ module.exports = function ($scope, crud, tableUtil, gettextCatalog, OutpatientVi
       angular.extend({
         filterID: 'visitDate'
         // no to/from window, we page the results anyway
-      }, possibleFilters.visitDate)
+      }, possibleFilters.possibleFilters.visitDate)
     ];
 
     var options = {
