@@ -12,9 +12,11 @@ angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ funct
     open: function (scope, modalOptions) { // TODO fix all usages of this
       modalOptions = angular.extend({
         template: require('./modal-edit.html'),
+        backdrop: 'static',
         controller: /*@ngInject*/ function ($scope, $modalInstance) {
           angular.extend($scope, {
-            page: 1
+            page: 1,
+            paging: scope.paging || false
           }, scope);
 
           // the save button on the modal
@@ -54,6 +56,7 @@ angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ fun
     open: function (options) {
       options = angular.extend({
         template: require('../partials/delete-record.html'),
+        backdrop: 'static',
         controller: /*@ngInject*/ function ($scope, $modalInstance, record) {
           $scope.record = record;
 
@@ -86,7 +89,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     angular.extend({
       filterID: 'visitDate'
       // no to/from window, we page the results anyway
-    }, possibleFilters.visitDate)
+    }, possibleFilters.possibleFilters.visitDate)
   ];
 
   var reload = function () {
@@ -126,9 +129,9 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
         return filters;
       }
 
-      var possibleFilter = possibleFilters[field.name];
+      var possibleFilter = possibleFilters.possibleFilters[field.name];
       if (possibleFilter) {
-        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
+        filters[field.name] = angular.extend({values: field.values}, possibleFilters.possibleFilters[field.name]);
       }
 
       return filters;

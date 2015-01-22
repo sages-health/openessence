@@ -15,6 +15,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
     scope: {
       form: '=',
       page: '=',
+      paging: '=',
       onSubmit: '&',
       record: '=?' // to populate fields
     },
@@ -23,6 +24,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
         pre: function (scope) {
           scope.dataType = scope.form.dataType;  //aggregate or individual
           scope.page = scope.page || 1;
+          scope.paging = scope.paging || false;
           scope.record = scope.record || {};
           scope.visit = angular.copy(scope.record._source) || {};
 
