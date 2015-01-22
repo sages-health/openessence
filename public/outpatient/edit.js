@@ -12,9 +12,11 @@ angular.module(services.name).factory('outpatientEditModal', /*@ngInject*/ funct
     open: function (scope, modalOptions) { // TODO fix all usages of this
       modalOptions = angular.extend({
         template: require('./modal-edit.html'),
+        backdrop: 'static',
         controller: /*@ngInject*/ function ($scope, $modalInstance) {
           angular.extend($scope, {
-            page: 1
+            page: 1,
+            paging: scope.paging || false
           }, scope);
 
           // the save button on the modal
@@ -54,6 +56,7 @@ angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ fun
     open: function (options) {
       options = angular.extend({
         template: require('../partials/delete-record.html'),
+        backdrop: 'static',
         controller: /*@ngInject*/ function ($scope, $modalInstance, record) {
           $scope.record = record;
 

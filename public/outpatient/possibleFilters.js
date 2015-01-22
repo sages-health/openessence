@@ -114,11 +114,11 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     {
       filterID: 'patient.preExistingConditions',
       type: 'multi-select',
-      field: 'patient.preExistingConditions',
+      field: 'patient.preExistingConditions.name',
       name: gettextCatalog.getString('Pre-existing conditions'),
       aggregation: {
         terms: {
-          field: 'patient.preExistingConditions',
+          field: 'patient.preExistingConditions.name.raw',
           order: { '_term': 'asc' }
         }
       }
