@@ -80,11 +80,6 @@ module.exports = [
         enabled: false
       },
       {
-        name: 'patient.sex',
-        enabled: false
-      },
-
-      {
         name: 'patient.dateOfBirth',
         enabled: false
       },
@@ -92,14 +87,8 @@ module.exports = [
         name: 'patient.age',
         enabled: false
       },
-
-      // pregnancy status
       {
-        name: 'patient.pregnant.is',
-        enabled: false
-      },
-      {
-        name: 'patient.pregnant.trimester',
+        name: 'patient.sex',
         enabled: false
       },
 
@@ -115,6 +104,10 @@ module.exports = [
 
       // patient vitals
       {
+        name: 'patient.weight',
+        enabled: false
+      },
+      {
         name: 'patient.temperature',
         enabled: false
       },
@@ -122,8 +115,14 @@ module.exports = [
         name: 'patient.pulse',
         enabled: false
       },
+
+      // pregnancy status
       {
-        name: 'patient.weight',
+        name: 'patient.pregnant.is',
+        enabled: false
+      },
+      {
+        name: 'patient.pregnant.trimester',
         enabled: false
       },
 
@@ -152,6 +151,34 @@ module.exports = [
         enabled: false
       },
 
+      {
+        name: 'symptoms',
+        enabled: false,
+        values: require('./symptom.json')
+      },
+      {
+        name: 'symptoms.other',
+        enabled: false
+      },
+      {
+        name: 'syndromes',
+        enabled: false,
+        values: require('./syndrome.json')
+      },
+      {
+        name: 'syndromes.other',
+        enabled: false
+      },
+      {
+        name: 'diagnoses',
+        enabled: false,
+        values: require('./diagnosis.json')
+      },
+      {
+        name: 'diagnoses.other',
+        enabled: false
+      },
+
       // specimen collection, e.g. for flu culturing
       {
         name: 'specimen.collectionDate',
@@ -177,36 +204,16 @@ module.exports = [
       },
 
       {
-        name: 'symptoms',
-        enabled: false,
-        values: require('./symptom.json')
-      },
-      {
-        name: 'symptoms.other',
-        enabled: false
-      },
-
-      {
-        name: 'diagnoses',
-        enabled: false,
-        values: require('./diagnosis.json')
-      },
-      {
-        name: 'diagnoses.other',
-        enabled: false
-      },
-
-      {
-        name: 'disposition',
-        enabled: false,
-        values: require('./disposition.json')
-      },
-      {
         name: 'visitType',
         // we have this field in case anyone wants it, but doing this right means totally changing the form,
         // e.g. a "Well Baby" visit makes the rest of the form nonsensical
         enabled: false,
         values: require('./visit-type.json')
+      },
+      {
+        name: 'disposition',
+        enabled: false,
+        values: require('./disposition.json')
       },
       {
         name: 'notes',

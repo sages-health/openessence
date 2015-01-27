@@ -62,9 +62,9 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
         return filters;
       }
 
-      var possibleFilter = possibleFilters[field.name];
+      var possibleFilter = possibleFilters.possibleFilters[field.name];
       if (possibleFilter) {
-        filters[field.name] = angular.extend({values: field.values}, possibleFilters[field.name]);
+        filters[field.name] = angular.extend({values: field.values}, possibleFilter);
       }
       return filters;
     }, {});
@@ -132,7 +132,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
         angular.extend({
           from: from,
           to: new Date()
-        }, possibleFilters.visitDate)
+        }, possibleFilters.possibleFilters.visitDate)
       ];
 
       // TODO don't do this
