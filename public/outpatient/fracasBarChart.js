@@ -1,407 +1,285 @@
 'use strict';
 
+var _ = require('lodash');
 var angular = require('angular');
-var d3 = require('d3');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, updateURL, //
-                                                                                        gettextCatalog, EditSettings) {
+angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, $log, $location, $timeout,
+                                                                                           updateURL, gettextCatalog, EditSettings) {
   return {
     restrict: 'E',
     template: require('./bar-chart.html'),
     scope: {
-      options: '=?',
+      options: '=',
       queryString: '=',
       filters: '=',
       pivot: '=',
-      aggData: '='
+      aggData: '=',
+      source: '=?',
+      widget: '=?'
     },
     compile: function () {
       return {
-        pre: function (scope, element) {
-          scope.options = scope.options || {};
+        pre: function (scope) {
 
-          scope.options.labels = scope.options.labels ||
-          {
+          var defaultLabels = {
             title: gettextCatalog.getString('Bar Chart'),
             y: gettextCatalog.getString('Count'),
             x: gettextCatalog.getString('Category')
           };
 
-          scope.$on('editVizualizationSettings', function () {
+          scope.options = scope.options || {};
+
+          scope.options.labels = scope.options.labels || defaultLabels;
+
+          scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('bar', scope.options.labels)
               .result.then(function (labels) {
                 scope.options.labels = labels;
+                scope.chartConfig.yAxis.title.text = scope.options.labels.y;
+                scope.chartConfig.xAxis.title.text = scope.options.labels.x;
+                scope.chartConfig.title.text = scope.options.labels.title;
               });
           });
 
-          /**
-           * Return a 'g' element in the SVG for drawing the Bar
-           * @param svgWidth
-           * @param svgHeight
-           * @returns g
-           */
-          var getSVG = function (svgWidth, svgHeight) {
-            var svg = d3.select(element[0])
-              .select('svg.bar-chart');
-
-            if (svg.select('g.bar').empty()) {
-              return svg.attr('width', svgWidth)
-                .attr('height', svgHeight)
-                .style({
-                  'width': svgWidth,
-                  'height': svgHeight
-                })
-                .append('g')
-                .attr('class', 'bar')
-                .attr('transform', function () {
-                  var x = 75;//svgWidth / 2;
-                  var y = 25;//svgHeight / 2;
-                  return 'translate(' + x + ',' + y + ')';
-                });
-            } else {
-              svg.attr('width', svgWidth)
-                .attr('height', svgHeight)
-                .style({
-                  'width': svgWidth,
-                  'height': svgHeight
-                });
-              return svg.select('g.bar')
-                .attr('transform', function () {
-                  var x = 75;//svgWidth / 2;
-                  var y = 25;//svgHeight / 2;
-                  return 'translate(' + x + ',' + y + ')';
-                });
+          scope.chartConfig = {
+            options: {
+              chart: {
+                type: 'column'
+              },
+              exporting: {enabled: false},
+              tooltip: {
+                formatter: function () {
+                  return '<span>Category: <i>' + this.key + '</i></span><br/>' + '<span>Value: <b>' + this.y + '</b></span><br/>';
+                }
+              },
+              plotOptions: {
+                column: {
+                  grouping: false,
+                  pointPadding: 0.2
+                }
+              },
+              drilldown: {
+                series: []
+              }
+            },
+            xAxis: {
+              type: 'category',
+              categories: [],
+              title: {
+                text: scope.options.labels.x
+              },
+              labels: {
+                enabled: true
+              }
+            },
+            yAxis: {
+              allowDecimals: false,
+              min: 0,
+              lineWidth: 1,
+              title: {
+                text: scope.options.labels.y
+              },
+              labels: {
+                enabled: true
+              }
+            },
+            title: {
+              text: scope.options.labels.title
+            },
+            series: [],
+            loading: false,
+            credits: {
+              enabled: false
+            },
+            size: {
+              width: scope.options.width,
+              height: scope.options.height
             }
           };
 
           /**
            * Get the display name for the data point
            * Also used to match new data points to existing ones
-           * @param data
-           * @returns string
+           * @param aggDataPoint either an aggDatapoint or a value (which has these fields)
+           * @param tryRowFirst boolean
+           * @returns string || null
            */
-          var getName = function (data) {
-            if (data.colName && data.rowName) {
-              return data.colName + '_' + data.rowName;
+          var getAggDataPointName = function (aggDataPoint, tryRowFirst) {
+            var hasKey = _.has(aggDataPoint, 'key');
+            var hasColName = _.has(aggDataPoint, 'colName');
+            var hasRowName = _.has(aggDataPoint, 'rowName');
+            if (tryRowFirst) {
+              return hasRowName ? aggDataPoint.rowName : hasColName ? aggDataPoint.colName : hasKey ? aggDataPoint.key : null;
             } else {
-              return data.colName || data.rowName;
+              return hasColName ? aggDataPoint.colName : hasRowName ? aggDataPoint.rowName : hasKey ? aggDataPoint.key : null;
             }
           };
 
           /**
-           * Show a tooltip for d
-           * @param d
-           * @param arc
-           * @param svgWidth
-           * @param svgHeight
+           * Gathers the values
+           * Also used to match new data points to existing ones
+           * @param aggDataPoint dataPoint from scope.aggData
+           * @param reduceValues boolean
+           * @returns Array || Number
            */
-          var showTooltip = function (d, context, coords) {
-            hideTooltip();
-            var tooltipHTML = '<div class="colorcircle"></div>';
-            tooltipHTML += '<b>' + getName(d) + '</b><br>';
-            tooltipHTML += d.value;
-            element.append('<div class="timeseries_tooltip">' + tooltipHTML + '</div>');
-            element.find('.timeseries_tooltip')
-              .css({
-                'top': coords[1],
-                'left': coords[0]
+          var getAggDataPointValues = function (aggDataPoint, reduceValues) {
+            var hasValues = _.has(aggDataPoint, 'values');
+            if (hasValues) {
+              var values = [];
+              _.each(aggDataPoint.values, function (valueData) {
+                var hasValue = _.has(valueData, 'value');
+                if (hasValue) {
+                  values.push(valueData.value);
+                }
               });
-            element.find('.timeseries_tooltip .colorcircle')
-              .css({
-                'background-color': context._color
+              if (reduceValues === true) {
+                return _.reduce(values, function (sum, value) {
+                  return sum + value;
+                }, 0);
+              } else {
+                return values;
+              }
+            } else {
+              return [];
+            }
+          };
+
+          /**
+           * Gets the categories for the bar chart
+           * These are used for highCharts configuration
+           * @param aggData usually scope.aggData
+           * @returns Array
+           */
+          var getAggDataCategories = function (aggData) {
+            var categories = [];
+            _.each(aggData, function (aggDataPoint) {
+              var name = getAggDataPointName(aggDataPoint, false);
+              if (!_.isNull(name)) {
+                categories.push(name);
+              }
+            });
+            return categories;
+          };
+
+
+          /**
+           * Transforms the aggregated value data into highCharts series format for column chart.
+           * This will place it in a nested drill down format for better visual effect
+           * @param id unique name of the drilldown, must match parent drilldown name
+           * @param aggDataPoint one datapoint of the aggregated data
+           * @returns Array
+           */
+          var addDrillDownSeries = function (id, aggDataPoint) {
+            var series = {id: id, name: id, data: [], colorByPoint: true};
+            var hasValues = _.has(aggDataPoint, 'values');
+            if (hasValues) {
+              _.each(aggDataPoint.values, function (valueData) {
+                var name = getAggDataPointName(valueData, true);
+                var value = _.has(valueData, 'value') ? valueData.value : 0;
+                var event = {
+                  click: function () {
+                    addFilter(valueData);
+                  }
+                };
+                var point = {name: name, y: value, events: event};
+                series.data.push(point);
               });
+            }
+            return series;
           };
 
           /**
-           * Hide all tooltips in the element
+           * Transforms the aggregated data into highCharts series format for column chart.
+           * @returns Array
            */
-          var hideTooltip = function () {
-            element.find('.timeseries_tooltip').remove();
-          };
-
-          /**
-           * Refine the workbench filters based on the data object
-           * provided
-           */
-          var narrowFilters = function (data) {
-            var filter;
-            if (data.col) {
-              filter = {
-                filterID: data.col,
-                value: data.colName
-              };
-              $rootScope.$emit('filterChange', filter, true, true);
-            }
-            if (data.row) {
-              filter = {
-                filterID: data.row,
-                value: data.rowName
-              };
-              $rootScope.$emit('filterChange', filter, true, true);
-            }
-          };
-
-          // http://bl.ocks.org/mbostock/3887051
-          var redraw = function () {
-            var svgWidth = scope.options.width || element.find('svg.bar-chart')[0].parentNode.offsetWidth || 500,
-              svgHeight = scope.options.height || 400;
-
-            var chartWidth = svgWidth - 125,
-              chartHeight = svgHeight - 100;
-
-            var ymargin = 100;
-            var xmargin = 50;
-
-            scope.titleXpx = (svgWidth / 2);
-            scope.titleYpx = 20;
-            scope.yLabelXpx = (xmargin / 3);
-            scope.yLabelYpx = (svgHeight / 2);
-            scope.xLabelXpx = (svgWidth / 2);
-            scope.xLabelYpx = (svgHeight - ymargin / 6);
-
-            var barChart = d3.select(element[0]).select('.bar-chart');
-            barChart.select('text.title-label').attr('transform',
-              'translate(' + scope.titleXpx + ', ' + scope.titleYpx + ')');
-            barChart.select('text.x-label').attr('transform',
-              'translate(' + scope.xLabelXpx + ', ' + scope.xLabelYpx + ')');
-            barChart.select('text.y-label').attr('transform',
-              'translate(' + scope.yLabelXpx + ', ' + scope.yLabelYpx + ')rotate(-90)');
-
-            var svg = getSVG(svgWidth, svgHeight);
-            var data = scope.aggData;
-
-            if (data.length === 0) {
-              svg.selectAll('.g').remove();
-              return;
-            }
-
-            var rowNames = [];
-            for (var i = 0; i < data.length; i++) {
-              if (data[i].values) {
-                for (var j = 0; j < data[i].values.length; j++) {
-                  if (data[i].values[j].rowName) {
-                    if (rowNames.indexOf(data[i].values[j].rowName) === -1) {
-                      rowNames.push(data[i].values[j].rowName);
-                    }
+          var getAggDataToHCSeries = function () {
+            var series = [];
+            var categories = getAggDataCategories(scope.aggData);
+            var hasUpperEvent = _.isEmpty(scope.pivot.cols) || _.isEmpty(scope.pivot.rows);
+            var hasDrillDown = !hasUpperEvent;
+            var drillDownSeries = [];
+            _.each(scope.aggData, function (aggDataPoint) {
+                var point = {name: null, data: []};
+                var name = getAggDataPointName(aggDataPoint, false);
+                var aggValue = getAggDataPointValues(aggDataPoint, true);
+                if (!_.isNull(name)) {
+                  point.name = name;
+                  if (!_.isNaN(aggValue) && _.isNumber(aggValue)) {
+                    var valueIndex = _.indexOf(categories, name);
+                    _.each(_.range(_.size(categories)), function (val, index) {
+                        if (index === valueIndex) { // This is the location index where data should be placed
+                          var data = {
+                            name: name,
+                            y: aggValue
+                          };
+                          if (hasUpperEvent) {
+                            var event = {
+                              click: function () {
+                                addFilter(aggDataPoint);
+                              }
+                            };
+                            _.extend(data, {events: event});
+                          }
+                          if (hasDrillDown) {
+                            drillDownSeries.push(addDrillDownSeries(name, aggDataPoint));
+                            _.extend(data, {drilldown: name});
+                          }
+                          point.data.push(data);
+                        }
+                        else {
+                          point.data.push(null);
+                        }
+                      }
+                    );
                   }
                 }
+                series.push(point);
               }
+            );
+            scope.chartConfig.options.drilldown.series = drillDownSeries;
+            return series;
+          };
+
+          /**
+           * Refine the workbench filters based on the data object/point selected on plot
+           * @params aggDataPoint
+           */
+          var addFilter = function (aggDataPoint) {
+            var hasCol = _.has(aggDataPoint, 'col');
+            var hasRow = _.has(aggDataPoint, 'row');
+            var hasColName = _.has(aggDataPoint, 'colName');
+            var hasRowName = _.has(aggDataPoint, 'rowName');
+            var filter;
+            if (hasCol && hasColName) {
+              filter = {
+                filterID: aggDataPoint.col,
+                value: aggDataPoint.colName
+              };
+              $log.debug('Added Col Filter', filter);
+              $rootScope.$emit('filterChange', filter, true, true);
             }
-            if (rowNames.length === 0) {
-              rowNames.push(undefined);
+            if (hasRow && hasRowName) {
+              filter = {
+                filterID: aggDataPoint.row,
+                value: aggDataPoint.rowName
+              };
+              $log.debug('Added Row Filter', filter);
+              $rootScope.$emit('filterChange', filter, true, true);
             }
+          };
 
-            var legend = svg.select('g.legend');
-            if (legend.empty()) {
-              legend = svg.append('g')
-                .attr('class', 'legend');
-            }
-            legend.selectAll('circle').remove();
-            legend.selectAll('text').remove();
-            var currLegendItemOffset = 0;
-            var currLegendItemCol = 0;
-            angular.forEach(rowNames, function (value, key) {
-              if (typeof value === 'undefined') {
-                return;
-              }
-              var color = d3.scale.category20().range()[key % 20];
 
-              var text = legend.append('text')
-                .attr('x', 0)
-                .attr('y', 0)
-                .text(value)
-                .attr('text-anchor', 'left');
-
-              var textWidth = text[0][0].getBBox().width;
-
-              legend.append('circle')
-                .attr('cx', currLegendItemOffset + 13)
-                .attr('cy', 15 * currLegendItemCol + 5)
-                .attr('r', 5)
-                .style('fill', color);
-              currLegendItemOffset += 20;
-
-              text.attr('x', currLegendItemOffset);
-              text.attr('y', 15 * currLegendItemCol + 10);
-
-              currLegendItemOffset += textWidth;
-              if (currLegendItemOffset >= chartWidth - 20) {
-                currLegendItemOffset = 0;
-                currLegendItemCol++;
-              }
+          /**
+           * Refreshes the plot
+           * @params aggDataPoint
+           */
+          var reload = function () {
+            scope.chartConfig.series = getAggDataToHCSeries();
+            $log.info('ChartConfig', scope.chartConfig);
+            $timeout(function () {
+              scope.$broadcast('highchartsng.reflow');
             });
-            var legendHeight = (currLegendItemCol + 1) * 15 + 10;
-            legend.attr('x', 0)
-              .attr('y', 0)
-              .attr('width', svgWidth)
-              .attr('height', legendHeight);
-
-
-            var x0 = d3.scale.ordinal()
-              .rangeRoundBands([0, chartWidth], 1);
-
-            var x1 = d3.scale.ordinal();
-
-            var y = d3.scale.linear()
-              .range([chartHeight, legendHeight]);
-
-            var color = d3.scale.category20();
-
-            var xAxis = d3.svg.axis()
-              .scale(x0)
-              .orient('bottom');
-
-            var yAxis = d3.svg.axis()
-              .scale(y)
-              .orient('left')
-              .tickFormat(d3.format('d'));
-
-            var yMax = data ? d3.max(data, function (d1) {
-              return d1.values ? d3.max(d1.values, function (d2) {
-                return d2.value;
-              }) : 0;
-            }) : 0;
-
-            x0.domain(data.map(function (d) {
-              return d.colName || d.key;
-            })).rangeRoundBands([0, chartWidth], 0.1);
-
-            x1.domain(rowNames).rangeRoundBands([0, x0.rangeBand()]);
-
-            y.domain([0, yMax]);
-
-            var xAxisText;
-            if (svg.selectAll('.x.axis').empty()) {
-              xAxisText = svg.append('g')
-                .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + chartHeight + ')')
-                .call(xAxis)
-                .selectAll('text');
-
-            } else {
-              xAxisText = svg.select('.x.axis').attr('transform', 'translate(0,' + chartHeight + ')')
-                .call(xAxis)
-                .selectAll('text');
-            }
-
-            // If xAxis has overlapping labels, rotate them 30 degrees
-            var needRotation = false;
-            xAxisText.each(function () {
-              needRotation = this.getComputedTextLength() > x1.rangeBand() || needRotation;
-            });
-
-            if (needRotation) {
-              xAxisText.attr('transform', 'rotate(-30)')
-                .attr('text-anchor', 'end')
-                .attr('x', '-1.5em')
-                .style('stroke-rendering', 'crispEdges');
-            } else {
-              xAxisText.attr('transform', 'rotate(0)')
-                .attr('text-anchor', 'middle')
-                .attr('x', '0');
-            }
-
-            var yAxisTicks;
-            if (svg.selectAll('.y.axis').empty()) {
-              yAxisTicks = svg.append('g')
-                .attr('class', 'y axis')
-                .call(yAxis);
-
-              yAxisTicks.selectAll('.tick')
-                .append('svg:line')
-                .attr('class', 'gridline')
-                .attr('x1', 0)
-                .attr('y1', 0)
-                .attr('x2', function (d) {
-                  if (d % 1 === 0) {
-                    return chartWidth;
-                  }
-                  return 0;
-                })
-                .attr('y2', 0);
-            } else {
-              yAxisTicks = svg.selectAll('.y.axis').call(yAxis);
-              yAxisTicks.selectAll('.tick.gridline').remove();
-              yAxisTicks.selectAll('.tick')
-                .append('svg:line')
-                .attr('class', 'gridline')
-                .attr('x1', 0)
-                .attr('y1', 0)
-                .attr('x2', function (d) {
-                  if (d % 1 === 0) {
-                    return chartWidth;
-                  }
-                  return 0;
-                })
-                .attr('y2', 0);
-            }
-
-            var col = svg.selectAll('.g')
-              .data(data, function (d) {
-                return getName(d) || d.key;
-              });
-            col.exit().remove();
-
-            col.transition()
-              .attr('transform', function (d) { return 'translate(' + x0(d.colName || d.key) + ',0)'; });
-
-            col.enter().append('g')
-              .attr('class', 'g')
-              .attr('transform', function (d) { return 'translate(' + x0(d.colName || d.key) + ',0)'; });
-
-            var rect = col.selectAll('rect')
-              .data(function (d) {
-                return d.values ? d.values.filter(function (d1) {
-                  return d1.value > 0;
-                }) : 0;
-              });
-            rect.exit().remove();
-
-            rect.transition()
-              .attr('width', function () {
-                return Math.min(x1.rangeBand(), 80);
-              })
-              .attr('x', function (d) {
-                var diff = x1.rangeBand() - Math.min(x1.rangeBand(), 80);
-                return x1(d.rowName) + diff / 2;
-              })
-              .attr('y', function (d) { return y(d.value); })
-              .attr('height', function(d) { return chartHeight - y(d.value); })
-              .style('fill', function (d) { return color(d.rowName); })
-              .each(function (d) {
-                this._color = color(d.rowName);
-              });
-
-            rect.enter().append('rect')
-              .attr('width', function () {
-                return Math.min(x1.rangeBand(), 80);
-              })
-              .attr('x', function (d) {
-                var diff = x1.rangeBand() - Math.min(x1.rangeBand(), 80);
-                return x1(d.rowName) + diff / 2;
-              })
-              .attr('y', function (d) { return y(d.value); })
-              .attr('height', function(d) { return chartHeight - y(d.value); })
-              .style('fill', function (d) { return color(d.rowName); })
-              .style('opacity', '.8')
-              .each(function (d) {
-                this._color = color(d.rowName);
-              })
-              .on('mousemove', function (d) {
-                var coords = d3.mouse(this.parentElement.parentElement.parentElement); // meh this is hacky
-                showTooltip(d, this, coords);
-                d3.select(this)
-                  .style('opacity', '1');
-              })
-              .on('mouseout', function () {
-                hideTooltip();
-                d3.select(this)
-                  .style('opacity', 0.8);
-              })
-              .on('click', function (d) {
-                narrowFilters(d);
-              });
           };
 
           var updateVisualization = function () {
@@ -412,8 +290,23 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             });
           };
 
+          // Removing click functionality for clickthrough.
+          if (scope.source === 'dashboard') {
+            scope.chartConfig.options.plotOptions.series.point.events = null;
+            scope.chartConfig.options.chart.events = {
+              click: function () {
+                var savedWidget = {};
+                savedWidget[scope.widget.name] = scope.widget.content;
+                sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
+                scope.$apply(function () {
+                  $location.path('/workbench/').search('visualization', scope.widget.name);
+                });
+              }
+            };
+          }
+
           scope.$watchCollection('[aggData]', function () {
-            redraw();
+            reload();
             updateVisualization();
           });
 
@@ -422,15 +315,24 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
           });
 
           scope.$watchCollection('[options.labels.title, options.labels.x, options.labels.y]', function () {
+            scope.chartConfig.title.text = scope.options.labels.title;
+            scope.chartConfig.xAxis.title.text = scope.options.labels.x;
+            scope.chartConfig.yAxis.title.text = scope.options.labels.y;
             updateVisualization();
           });
 
-          scope.$watchCollection('[options.width, options.height]', function () {
-            redraw();
+          scope.$watchCollection('[options.height, options.width]', function () {
+            scope.chartConfig.size.height = scope.options.height;
+            scope.chartConfig.size.width = scope.options.width;
+            reload();
             updateVisualization();
           });
+
+
         }
       };
     }
   };
+
 });
+

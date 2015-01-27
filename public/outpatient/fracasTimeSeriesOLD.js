@@ -40,14 +40,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.interval = scope.interval || scope.options.interval || 'day'; // TODO auto-select based on date range
 
-          scope.$on('editVizualizationSettings', function () {
+          scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('timeseries', scope.options.labels)
               .result.then(function (labels) {
                 scope.options.labels = labels;
               });
           });
 
-          scope.$on('exportVizualization', function () {
+          scope.$on('exportVisualization', function () {
             visualization.export(angular.extend({}, scopeToJson(scope), {
               visualization: {
                 name: 'line'
@@ -58,7 +58,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }));
           });
 
-          scope.$on('saveVizualization', function () {
+          scope.$on('saveVisualization', function () {
             visualization.save(angular.extend({}, scopeToJson(scope), {
               visualization: {
                 name: 'line'

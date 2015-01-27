@@ -41,8 +41,10 @@ require('text-angular'); // must be after the other text-angular resources
 require('d3');
 require('leaflet');
 require('highcharts');
-require('highcharts-ng');
 require('exporting');
+//require('drilldown');
+require('highcharts-ng');
+
 
 var frable = require('../frable');
 require('../select2');
@@ -62,8 +64,8 @@ require('./directives');
 require('./filters');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.select2', 'ui.sortable',
-                    'gettext','angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', frable.name]
+  'gettext', 'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+  'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -83,6 +85,11 @@ app.config(function ($httpProvider, csrfToken) {
 app.config(function (cfpLoadingBarProvider) {
   // what's the point of having a spinner when we already have a loading bar?
   cfpLoadingBarProvider.includeSpinner = false;
+});
+
+app.config(function ($logProvider) {
+  // TODO: Turn off For Production!!! or make it automatic in a config at build time :P
+  $logProvider.debugEnabled(true);
 });
 
 var previousState = {};

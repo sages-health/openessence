@@ -3,14 +3,14 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($resource, $modal, $window, $location, VisualizationResource) {
+module.exports = function ($resource, $modal, $window, $location, $document, VisualizationResource) {
   return {
     // TODO make clients use this directly
     resource: VisualizationResource,
     save: function (state1) {
       var state = angular.copy(state1);
       // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
-      ['data', 'crosstabData', 'strings'].forEach(function (k) {
+      angular.forEach(['data', 'crosstabData', 'strings'], function (k) {
         delete state[k];
       });
       state.filters.map(function (v) {
@@ -51,8 +51,7 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
           new VisualizationResource({
             name: name,
             state: state
-          })
-            .$save();
+          }).$save();
         });
     },
     export: function (state) {
@@ -79,7 +78,8 @@ module.exports = function ($resource, $modal, $window, $location, VisualizationR
       }
 
       //var url = $window.location.protocol + '//' + $window.location.host + $window.location.pathname;
-      var url = document.baseURI;
+      //var url = document.baseURI;
+      var url = $document[0].baseURI;
       url = url + 'visualization-export';
 
       $window.open(url, 'visualizationExport', 'width=1200,resizable=1,scrollbars=1,toolbar=0,location=0,menubar=0,titlebar=0');
