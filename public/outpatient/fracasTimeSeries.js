@@ -235,7 +235,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     //scope.chartConfig.series = scope.data;
                   } else {
                     scope.chartConfig.options.colors = ['#7cb5ec'];
-                    calcOutpatientPvalues(data.aggregations.date);
+                    calcOutpatientPvalues(data.aggregations.date, scope.options.algorithm);
 
                     scope.data = [
                       {
@@ -377,11 +377,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
            */
 
           var createTableJSON = function () {
-            console.log('in table json');
             var data = scope.chartConfig.series;
             scope.tableMapJSON = [];
             if (data !== undefined && data !== null && data.length > 0) {
-              console.log('data not zero: ' + data.length);
               for (var i = 0; i < data.length; i++) {
                 var pair = data[i];
                 for (var j = 0; j < pair.data.length; j++) {
@@ -397,7 +395,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 }
               }
             }
-            console.log(scope.tableMapJSON);
+            //console.log(scope.tableMapJSON);
           };
 
           var getCountArray = function (agg) {
@@ -646,7 +644,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             return true;
           };
 
-          scope.$watchCollection('[series, queryString]', function () {
+          scope.$watchCollection('[series, queryString, options.algorithm]', function () {
             reload();
             //scope.redraw();
           });
