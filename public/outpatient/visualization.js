@@ -78,6 +78,9 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           if (scope.visualization.name === 'line') {
             // let timeSeries directive handle it
             return;
+          } else if (scope.visualization.name === 'table') {
+            visualization.csvExport(scope.queryString);
+            return;
           }
 
           // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
