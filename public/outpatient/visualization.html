@@ -6,19 +6,19 @@
     <crosstab options="options" pivot="pivot" records="crosstabData"></crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
-    <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols" options="options"
+    <outpatient-time-series filters="filters" form="form" query-string="queryString" series="pivot.cols" options="options"
                             source="source" widget="widget"></outpatient-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="smallline">
-    <outpatient-small-time-series filters="filters" query-string="queryString" series="pivot.cols"
+    <outpatient-small-time-series filters="filters" form="form" query-string="queryString" series="pivot.cols"
                                   options="options"></outpatient-small-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="pie">
-    <outpatient-pie-chart filters="filters" query-string="queryString" options="options" pivot="pivot"
+    <outpatient-pie-chart filters="filters" form="form" query-string="queryString" options="options" pivot="pivot"
                           agg-data="aggData" source="source" widget="widget"></outpatient-pie-chart>
   </div>
   <div class="animation-switch" ng-switch-when="bar">
-    <outpatient-bar-chart filters="filters" query-string="queryString" options="options" pivot="pivot"
+    <outpatient-bar-chart filters="filters" form="form" query-string="queryString" options="options" pivot="pivot"
                           agg-data="aggData" source="source" widget="widget"></outpatient-bar-chart>
   </div>
   <div class="animation-switch" ng-switch-when="map">

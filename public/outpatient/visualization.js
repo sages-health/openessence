@@ -125,14 +125,15 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           } else if (rows[0]) {
             first = rows[0];
           }
+
           //build first aggregation
           if (first && second) {
-            query.first = outpatientAggregation.getAggregation(first, 10);
+            query.first = outpatientAggregation.getAggregation(first, 10, scope.form);
             //if a second exists, add to first aggregation object
             query.first.aggs = {};
-            query.first.aggs.second = outpatientAggregation.getAggregation(second, 10);
+            query.first.aggs.second = outpatientAggregation.getAggregation(second, 10, scope.form);
           } else if (first) {
-            query.first = outpatientAggregation.getAggregation(first, 10);
+            query.first = outpatientAggregation.getAggregation(first, 10, scope.form);
           }
           return {query: query, first: first, second: second};
         };
@@ -157,6 +158,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             //if there is only one aggregation selected parse as normal
             if (first && !second) {
               bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
+              bucket = outpatientAggregation.toArray(bucket);
               bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
                 var count = entry.count ? entry.count.value : entry.doc_count;
@@ -174,6 +176,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }
             if (!first && second) {
               bucket = aggs[sa].buckets || aggs[sa]._name.buckets;
+              bucket = outpatientAggregation.toArray(bucket);
               bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
                 var count = entry.count ? entry.count.value : entry.doc_count;
@@ -193,6 +196,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             if (first && second && aggs[fa] && (aggs[fa].buckets || aggs[fa]._name)) {
               var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
               bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
+              bucket = outpatientAggregation.toArray(bucket);
               bucket.map(function (entry) {
                 var keyStr = outpatientAggregation.bucketToKey(entry);
                 var count = entry.count ? entry.count.value : entry.doc_count;
@@ -201,6 +205,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var missingCount = count;
                 var data = [];
                 var subBucket = entry[sa].buckets || entry[sa]._name.buckets;
+                subBucket = outpatientAggregation.toArray(subBucket);
                 subBucket.map(function (sub) {
                   var subStr = outpatientAggregation.bucketToKey(sub);
                   var scount = sub.count ? sub.count.value : sub.doc_count;

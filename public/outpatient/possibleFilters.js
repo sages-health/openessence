@@ -45,7 +45,13 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'medicalFacilityGroup',
       type: 'group',
       field: 'medicalFacility.name',
-      name: gettextCatalog.getString('Facility Group')
+      name: gettextCatalog.getString('Facility Group'),
+      aggregationField: 'medicalFacility.name.raw',
+      aggregation: {
+        filters : {
+          // Buckets/filters will be added here...
+        }
+      }
     },
     {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
@@ -194,6 +200,32 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       }
     },
     {
+      filterID: 'symptomsGroup',
+      type: 'group',
+      field: 'symptoms.name',
+      name: gettextCatalog.getString('Symptom Group'),
+      aggregationField: 'symptoms.name.raw',
+      aggregation: {
+        nested: {
+          path: 'symptoms'
+        },
+        aggs: {
+          _name: { //double check that using an underscore is kosher
+            filters : {
+              // Buckets/filters will be added here...
+            },
+            aggs: {
+              count: {
+                sum: {
+                  field: 'symptoms.count'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       filterID: 'syndromes',
       type: 'multi-select',
       field: 'syndromes.name',
@@ -218,12 +250,6 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
           }
         }
       }
-    },
-    {
-      filterID: 'symptomsGroup',
-      type: 'group',
-      field: 'symptoms.name',
-      name: gettextCatalog.getString('Symptom Group')
     },
     {
       filterID: 'diagnoses',
@@ -252,6 +278,32 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       }
     },
     {
+      filterID: 'diagnosesGroup',
+      type: 'group',
+      field: 'diagnoses.name',
+      name: gettextCatalog.getString('Diagnoses Group'),
+      aggregationField: 'diagnoses.name.raw',
+      aggregation: {
+        nested: {
+          path: 'diagnoses'
+        },
+        aggs: {
+          _name: { //double check that using an underscore is kosher
+            filters : {
+              // Buckets/filters will be added here...
+            },
+            aggs: {
+              count: {
+                sum: {
+                  field: 'diagnoses.count'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       filterID: 'specimen.id',
       type: 'multi-select',
       field: 'specimen.id',
@@ -262,12 +314,6 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
           order: { '_term': 'asc' }
         }
       }
-    },
-    {
-      filterID: 'diagnosesGroup',
-      type: 'group',
-      field: 'diagnoses.name',
-      name: gettextCatalog.getString('Diagnoses Group')
     },
     {
       filterID: 'antiviral.name',

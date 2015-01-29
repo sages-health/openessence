@@ -65,6 +65,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
   var openSaveTemplateModal = function (title, message) {
     return $modal.open({
       templateUrl: 'message.html',
+      backdrop: 'static',
       controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
         $scope.title = title;
         $scope.message = message;

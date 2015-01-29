@@ -38,6 +38,7 @@ angular.module(directives.name).directive('configGroup', /*@ngInject*/ function 
           var openAddNewValueModal = function (groups, row) {
             return $modal.open({
               template: require('./config-group-modal.html'),
+              backdrop: 'static',
               controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
                 $scope.noValues = false;
                 $scope.row = angular.copy(row || {});

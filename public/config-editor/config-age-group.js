@@ -37,6 +37,7 @@ angular.module(directives.name).directive('configAgeGroup', /*@ngInject*/ functi
           var openAddNewValueModal = function (groups, row) {
             return $modal.open({
               template: require('./config-age-group-modal.html'),
+              backdrop: 'static',
               controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
                 $scope.row = angular.copy(row || {});
                 $scope.yellAtUser = false;

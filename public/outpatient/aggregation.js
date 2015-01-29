@@ -6,24 +6,69 @@ var services = require('../scripts/modules').services;
 angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function (gettextCatalog, possibleFilters) {
 
   var aggs = [];
-  angular.forEach(possibleFilters.possibleFilters, function (value, key) {
-    if(value.aggregation) {
+  angular.forEach(possibleFilters.possibleFilters, function (value) {
+    if (value.aggregation) {
       aggs.push({value: value.filterID, label: value.name});
     }
   });
+
+  var getFormField = function (form, fieldName) {
+    var field;
+    if (form && form.fields) {
+      angular.forEach(form.fields, function (fld) {
+        if (fld.name === fieldName) {
+          field = angular.copy(fld);
+        }
+      });
+    }
+    return field;
+  };
 
   return {
     getAggregables: function () {
       return angular.copy(aggs);
     },
-    getAggregation: function (name, limit) {
-      var copy = angular.copy(possibleFilters.possibleFilters[name].aggregation);
+    getAggregation: function (name, limit, form) {
+      var filter = possibleFilters.possibleFilters[name];
+      var copy = angular.copy(filter.aggregation);
       if (limit && copy.terms) {
         copy.terms.size = limit;
       }
+      // if filter is medicalFacilityGroup, symptomsGroup, diagnosesGroup, ect.
+      else if (filter.type === 'group' && form) {
+        var formField = getFormField(form, name);
+        var groups = formField.values;
+        var buckets= {};
+        angular.forEach(groups, function (group) {
+          buckets[group.name] = {terms: {}};
+          buckets[group.name].terms[filter.aggregationField] = group.value;
+        });
+        // Field having string value
+        // facilityGroup
+        if(copy.filters){
+          copy.filters = { filters: buckets};
+        }
+        // Field having {name: x, count: x} array
+        // symptomsGroup, diagnosesGroup...
+         else if(copy.aggs && copy.aggs._name && copy.aggs._name.filters){
+          copy.aggs._name.filters = { filters: buckets};
+        }
+      }
       return copy;
     },
-
+    toArray: function (buckets) {
+      // if buckets undefiend or an array
+      if (!buckets || angular.isArray(buckets)) {
+        return buckets;
+      }
+      var bucketArray = [];
+      // if buckets is an object (when it is a group - symptomsGroup, diagnosesGroup)
+      angular.forEach(buckets, function (val, key) {
+        val.key = key;
+        bucketArray.push(val);
+      });
+      return bucketArray;
+    },
     /**
      * Given a bucket from elasticsearch aggregation response, return a key to identify said bucket
      * @param bucket elasticsearch bucket
@@ -64,5 +109,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }
       return '';
     }
-  };
-});
+  }
+    ;
+})
+;

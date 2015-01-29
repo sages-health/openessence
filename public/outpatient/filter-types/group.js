@@ -17,6 +17,7 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
           any: gettextCatalog.getString('Any')
         };
         scope.filter.value = scope.filter.value || '*';
+
         if (scope.filter.values) {
           scope.filter.values = scope.filter.values.map(function (v) {
             var value = v.value;
@@ -31,6 +32,24 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
               value: value
             };
           });
+        }
+
+        // returns id  for given displayvalue/name
+        var nameToValue = function (name) {
+          var res;
+          angular.forEach(scope.filter.values, function (v) {
+            if (v.name === name) {
+              res = v.value;
+            }
+          });
+          return res;
+        };
+
+        // we need to translate name=>value when filter is added by click through on a pie/bar chart
+        if (scope.filter.filterEvent && scope.filter.value && scope.filter.value !== '*') {
+          // TODO: handle scope.filter.value="missing" (when user clicks on "missing" slice on pie chart)
+          scope.filter.value = nameToValue(scope.filter.value);
+          delete scope.filter.filterEvent;
         }
 
         // If filter's value isn't in list of possible values, add it. Otherwise, it looks like nothing is selected
@@ -69,7 +88,5 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
         });
       }
     }
-  }
-    ;
-})
-;
+  };
+});
