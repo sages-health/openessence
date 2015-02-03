@@ -68,6 +68,18 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       }
     },
     {
+      filterID: 'patient.id',
+      type: 'text',
+      field: 'patient.id',
+      name: gettextCatalog.getString('Id'),
+      aggregation: {
+        terms: {
+          field: 'patient.id',
+          order: { '_term': 'asc' }
+        }
+      }
+    },
+    {
       filterID: 'patient.age',
       type: 'numeric-range',
       field: 'patient.age.years',
@@ -100,13 +112,13 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       }
     },
     {
-      filterID: 'patient.pregnant',
-      type: 'boolean',
-      field: 'patient.pregnant',
+      filterID: 'patient.pregnant.is',
+      type: 'check-box',
+      field: 'patient.pregnant.is',
       name: gettextCatalog.getString('Pregnant'),
       aggregation: {
         terms: {
-          field: 'patient.pregnant',
+          field: 'patient.pregnant.is',
           order: { '_term': 'asc' }
         }
       }
@@ -228,7 +240,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     {
       filterID: 'visitType',
       type: 'multi-select',
-      field: 'visitType',
+      field: 'visitType.name',
       name: gettextCatalog.getString('VisitType'),
       aggregation: {
         terms: {
@@ -240,7 +252,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     {
       filterID: 'disposition',
       type: 'multi-select',
-      field: 'disposition',
+      field: 'disposition.name',
       name: gettextCatalog.getString('Disposition'),
       aggregation: {
         terms: {

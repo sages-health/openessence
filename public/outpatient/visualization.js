@@ -4,22 +4,18 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var moment = require('moment');
 
-angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $timeout, $log,
-                                                                                             orderByFilter, gettextCatalog, sortString,
-                                                                                             FrableParams, OutpatientVisitResource,
-                                                                                             outpatientEditModal, updateURL, outpatientDeleteModal,
-                                                                                             scopeToJson, outpatientAggregation, visualization) {
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $log, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
 
   return {
     restrict: 'E',
     template: require('./visualization.html'),
     scope: {
       filters: '=',
-      form: '=?',
+      form: '=',
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',
-      options: '=', // settings as single object, useful for loading persisted state
+      options: '=?', // settings as single object, useful for loading persisted state
       source: '=?',
       widget: '=?'
     },
@@ -320,7 +316,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         var reload = function () {
           if (scope.visualization.name === 'table') {
-            scope.tableParams.reload();
+            //scope.tableParams.reload();
           } else if (scope.visualization.name === 'pie') {
             aggReload();
           } else if (scope.visualization.name === 'bar') {
@@ -349,22 +345,23 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           }
         };
 
-        scope.editVisit = function (record) {
-          outpatientEditModal.open({record: record, form: scope.form})
+
+        scope.$on('outpatientEdit', function (event, visit) {
+          outpatientEditModal.open({record: visit, form: scope.form})
             .result
             .then(function () {
               //reload(); // TODO highlight changed record
               $rootScope.$broadcast('outpatientVisit.edit');
             });
-        };
-        scope.deleteVisit = function (record) {
-          outpatientDeleteModal.open({record: record})
+        });
+        scope.$on('outpatientDelete', function (event, visit) {
+          outpatientDeleteModal.open({record: visit})
             .result
             .then(function () {
               //reload();
               $rootScope.$broadcast('outpatientVisit.edit');
             });
-        };
+        });
 
         scope.getWeek = function (date) {
           return moment(date).format('W');
@@ -372,41 +369,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         scope.getYear = function (date) {
           return moment(date).format('GGGG');
         };
-
-        scope.tableParams = new FrableParams({
-          page: 1,
-          count: 10,
-          sorting: {
-            visitDate: 'desc'
-          }
-        }, {
-          total: 0,
-          counts: [], // hide page count control
-          $scope: {
-            $data: {}
-          },
-          getData: function ($defer, params) {
-            if (!angular.isDefined(scope.queryString)) {
-              // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
-              // If you really don't want a filter, set queryString='' or null
-              // TODO there's probably a more Angular-y way to do this
-              $defer.resolve([]);
-              return;
-            }
-
-            OutpatientVisitResource.get({
-              q: scope.queryString,
-              from: (params.page() - 1) * params.count(),
-              size: params.count(),
-              sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting
-            }, function (data) {
-              params.total(data.total);
-              $defer.resolve(data.results);
-            }, function error (response) {
-              $rootScope.$broadcast('filterError', response);
-            });
-          }
-        });
 
         scope.$watch('queryString', function () {
           updateURL.updateFilters(scope.filters);
@@ -444,34 +406,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             updateVisualization();
             reload();
           }
-        });
-
-        scope.$watchCollection('[options.height, options.width, visualization.name]', function () {
-          if (scope.visualization.name !== 'table') {
-            return;
-          }
-          // TODO: Maybe this should be moved? All the other vizs handle resizing in their respective files
-          // Table doesn't have its own viz file
-
-          // Use a timer to prevent a gazillion table queries
-          if (scope.tableTimeout) {
-            $timeout.cancel(scope.tableTimeout);
-            scope.tableTimeout = null;
-          }
-          scope.tableTimeout = $timeout(function () {
-            // TODO: Could this be done w/out redoing the query? Just roll the results differently on the client or cache
-            var rowHeight = 34;
-            var rows = element.find('tbody tr');
-            angular.forEach(rows, function (row) {
-              var currRowHeight = angular.element(row).height();
-              rowHeight = currRowHeight > rowHeight ? currRowHeight : rowHeight;
-            });
-
-            var numRows = Math.floor((scope.options.height - 75) / rowHeight);
-            if (!isNaN(numRows)) {
-              scope.tableParams.parameters({count: numRows});
-            }
-          }, 25);
         });
 
         scope.$on('outpatientVisit.edit', function (angularEvent, event) {
