@@ -34,23 +34,43 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       if (limit && copy.terms) {
         copy.terms.size = limit;
       }
+      else if (filter.filterID === 'patient.ageGroup' && form && copy.range) {
+        var fld = getFormField(form, name);
+        var rangeDef = fld.values;
+        var ranges = [];
+        angular.forEach(rangeDef, function (group) {
+          if (!angular.isNumber(group.from)) {
+            console.error('Missing from for age group: ' + group.name);
+          }
+          if (!angular.isNumber(group.to)) {
+            console.error('Missing to for age group: ' + group.name);
+          }
+          ranges.push({
+            key: group.name,
+            from: group.from,
+            to: group.to
+          });
+        });
+        copy.range.ranges = ranges;
+      }
+
       // if filter is medicalFacilityGroup, symptomsGroup, diagnosesGroup, ect.
       else if (filter.type === 'group' && form) {
         var formField = getFormField(form, name);
         var groups = formField.values;
-        var buckets= {};
+        var buckets = {};
         angular.forEach(groups, function (group) {
           buckets[group.name] = {terms: {}};
           buckets[group.name].terms[filter.aggregationField] = group.value;
         });
         // Field having string value
         // facilityGroup
-        if(copy.filters){
+        if (copy.filters) {
           copy.filters = { filters: buckets};
         }
         // Field having {name: x, count: x} array
         // symptomsGroup, diagnosesGroup...
-         else if(copy.aggs && copy.aggs._name && copy.aggs._name.filters){
+        else if (copy.aggs && copy.aggs._name && copy.aggs._name.filters) {
           copy.aggs._name.filters = { filters: buckets};
         }
       }
@@ -109,7 +129,5 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }
       return '';
     }
-  }
-    ;
-})
-;
+  };
+});
