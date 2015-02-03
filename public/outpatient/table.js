@@ -107,17 +107,20 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             }
             scope.tableTimeout = $timeout(function () {
               // TODO: Could this be done w/out redoing the query? Just roll the results differently on the client or cache
-              var rowHeight = 42;
+              var rowHeight = 32;
               var parent = document.getElementById('svg-id-' + scope.options.id);
               if (!parent) { //we are on edit not the workbench
                 parent = document.getElementById('tableWidget');
               }
-              var rows = parent.getElementsByTagName('tr');//JQUERY does not return, element.find('tbody tr');
+              var rows = parent.getElementsByTagName('tbody')[0].getElementsByTagName('tr');//JQUERY does not return, element.find('tbody tr');
               angular.forEach(rows, function (row) {
                 var currRowHeight = angular.element(row).height();
                 rowHeight = currRowHeight > rowHeight ? currRowHeight : rowHeight;
               });
-              var numRows = Math.floor((scope.options.height - 125) / rowHeight);
+              var tbodyHeight = angular.element(parent.getElementsByTagName('tbody')[0]).height();
+              var numRows = Math.floor(((scope.options.height - 75)) / rowHeight);
+              console.log('tbodyH: %s, scopeH: %s, rows: %s, rowH: %s, numRows: %s',
+                               tbodyHeight, scope.options.height, rows.length, rowHeight, numRows);
               if (!isNaN(numRows)) {
                 scope.tableParams.parameters({count: numRows});
               }
