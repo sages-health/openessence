@@ -6,24 +6,89 @@ var services = require('../scripts/modules').services;
 angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function (gettextCatalog, possibleFilters) {
 
   var aggs = [];
-  angular.forEach(possibleFilters.possibleFilters, function (value, key) {
-    if(value.aggregation) {
+  angular.forEach(possibleFilters.possibleFilters, function (value) {
+    if (value.aggregation) {
       aggs.push({value: value.filterID, label: value.name});
     }
   });
+
+  var getFormField = function (form, fieldName) {
+    var field;
+    if (form && form.fields) {
+      angular.forEach(form.fields, function (fld) {
+        if (fld.name === fieldName) {
+          field = angular.copy(fld);
+        }
+      });
+    }
+    return field;
+  };
 
   return {
     getAggregables: function () {
       return angular.copy(aggs);
     },
-    getAggregation: function (name, limit) {
-      var copy = angular.copy(possibleFilters.possibleFilters[name].aggregation);
+    getAggregation: function (name, limit, form) {
+      var filter = possibleFilters.possibleFilters[name];
+      var copy = angular.copy(filter.aggregation);
       if (limit && copy.terms) {
         copy.terms.size = limit;
       }
+      else if (filter.filterID === 'patient.ageGroup' && form && copy.range) {
+        var fld = getFormField(form, name);
+        var rangeDef = fld.values;
+        var ranges = [];
+        angular.forEach(rangeDef, function (group) {
+          if (!angular.isNumber(group.from)) {
+            console.error('Missing from for age group: ' + group.name);
+          }
+          if (!angular.isNumber(group.to)) {
+            console.error('Missing to for age group: ' + group.name);
+          }
+          ranges.push({
+            key: group.name,
+            from: group.from,
+            to: group.to
+          });
+        });
+        copy.range.ranges = ranges;
+      }
+
+      // if filter is medicalFacilityGroup, symptomsGroup, diagnosesGroup, ect.
+      else if (filter.type === 'group' && form) {
+        var formField = getFormField(form, name);
+        var groups = formField.values;
+        var buckets = {};
+        angular.forEach(groups, function (group) {
+          buckets[group.name] = {terms: {}};
+          buckets[group.name].terms[filter.aggregationField] = group.value;
+        });
+        // Field having string value
+        // facilityGroup
+        if (copy.filters) {
+          copy.filters = { filters: buckets};
+        }
+        // Field having {name: x, count: x} array
+        // symptomsGroup, diagnosesGroup...
+        else if (copy.aggs && copy.aggs._name && copy.aggs._name.filters) {
+          copy.aggs._name.filters = { filters: buckets};
+        }
+      }
       return copy;
     },
-
+    toArray: function (buckets) {
+      // if buckets undefiend or an array
+      if (!buckets || angular.isArray(buckets)) {
+        return buckets;
+      }
+      var bucketArray = [];
+      // if buckets is an object (when it is a group - symptomsGroup, diagnosesGroup)
+      angular.forEach(buckets, function (val, key) {
+        val.key = key;
+        bucketArray.push(val);
+      });
+      return bucketArray;
+    },
     /**
      * Given a bucket from elasticsearch aggregation response, return a key to identify said bucket
      * @param bucket elasticsearch bucket

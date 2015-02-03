@@ -15,6 +15,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
       height: '=?',
       queryString: '=',
       filters: '=',
+      form: '=?',
       pivot: '=',
       aggData: '=',
       source: '=?',

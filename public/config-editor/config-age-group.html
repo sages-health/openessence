@@ -1,0 +1,20 @@
+<div class="checkbox">
+  <label>
+    <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
+           ng-checked="field.enabled">{{field.name}}
+  </label>
+</div>
+
+<div ng-show="field.enabled" style="width: 700px;">
+  <div class="form-control category-group-grid" ng-grid="gridOptions"></div>
+  <div class="btn-group pull-right">
+    <button class="btn btn-default btn-sm"
+            ng-click="edit()" title="Add New Age Group">
+      <span class="icon-plus"></span>
+    </button>
+    <button class="btn btn-warning btn-sm"
+            ng-click="removeAll()" title="Remove All Age Groups">
+      <span class="icon-cancel"></span>
+    </button>
+  </div>
+</div>

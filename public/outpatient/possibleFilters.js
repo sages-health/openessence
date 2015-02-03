@@ -42,6 +42,18 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       }
     },
     {
+      filterID: 'medicalFacilityGroup',
+      type: 'group',
+      field: 'medicalFacility.name',
+      name: gettextCatalog.getString('Facility Group'),
+      aggregationField: 'medicalFacility.name.raw',
+      aggregation: {
+        filters : {
+          // Buckets/filters will be added here...
+        }
+      }
+    },
+    {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.district',
       type: 'multi-select',
@@ -79,9 +91,10 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
         }
       }
     },
+    // TODO: Remove patient.age filter once age group aggregation works on cross tab
     {
       filterID: 'patient.age',
-      type: 'numeric-range',
+      type: 'age-range',
       field: 'patient.age.years',
       name: gettextCatalog.getString('Age'),
       aggregation: {
@@ -96,6 +109,18 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
             {key: '[45 TO 65}', from: 45, to: 65},
             {key: '[65 TO *]', from: 65}
           ]
+        }
+      }
+    },
+    {
+      filterID: 'patient.ageGroup',
+      type: 'group',
+      field: 'patient.age.years',
+      name: gettextCatalog.getString('Age Group'),
+      aggregation: {
+        range: { // age is actually an age group, b/c that's almost always what you actually want
+          field: 'patient.age.years',
+          keyed: true
         }
       }
     },
@@ -162,6 +187,32 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       }
     },
     {
+      filterID: 'symptomsGroup',
+      type: 'group',
+      field: 'symptoms.name',
+      name: gettextCatalog.getString('Symptom Group'),
+      aggregationField: 'symptoms.name.raw',
+      aggregation: {
+        nested: {
+          path: 'symptoms'
+        },
+        aggs: {
+          _name: { //double check that using an underscore is kosher
+            filters : {
+              // Buckets/filters will be added here...
+            },
+            aggs: {
+              count: {
+                sum: {
+                  field: 'symptoms.count'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       filterID: 'syndromes',
       type: 'multi-select',
       field: 'syndromes.name',
@@ -201,6 +252,32 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
             terms: {
               field: 'diagnoses.name.raw',
               order: { '_term': 'asc' }
+            },
+            aggs: {
+              count: {
+                sum: {
+                  field: 'diagnoses.count'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      filterID: 'diagnosesGroup',
+      type: 'group',
+      field: 'diagnoses.name',
+      name: gettextCatalog.getString('Diagnoses Group'),
+      aggregationField: 'diagnoses.name.raw',
+      aggregation: {
+        nested: {
+          path: 'diagnoses'
+        },
+        aggs: {
+          _name: { //double check that using an underscore is kosher
+            filters : {
+              // Buckets/filters will be added here...
             },
             aggs: {
               count: {

@@ -49,6 +49,7 @@ require('highcharts-ng');
 var frable = require('../frable');
 require('../select2');
 require('../hinge');
+require('../config-editor');
 require('../crosstab');
 require('../fracas-filter');
 require('../dashboard');
@@ -295,7 +296,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('edit.config', {
       url: '/config',
-      template: require('../partials/config-editor.html'),
+      template: require('../config-editor/config-editor.html'),
       controller: 'ConfigEditCtrl'
     });
 });
