@@ -24,6 +24,33 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     return field;
   };
 
+  // Maps a value to a group
+  // Note: if there are multiple groups having this value, it will return first group that has it
+  var valueToGroup = function (val, possibleValues) {
+    if (val) {
+      var i = 0;
+      for (i = 0; i < possibleValues.length; i++) {
+        if (possibleValues[i].value.indexOf(val) > -1) {
+          return possibleValues[i].name;
+        }
+      }
+    }
+    return null;
+  };
+
+  // Maps an age to an age group
+  var getAgeGroup = function (val, possibleValues) {
+    if (val) {
+      var i = 0;
+      for (i = 0; i < possibleValues.length; i++) {
+        if (val >= possibleValues[i].from && val < possibleValues[i].to) {
+          return possibleValues[i].name;
+        }
+      }
+    }
+    return null;
+  };
+
   return {
     getAggregables: function () {
       return angular.copy(aggs);
@@ -90,6 +117,46 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       return bucketArray;
     },
     /**
+     * For a given record, returns group(s)
+     */
+    getGroup: function (record, field) {
+      if (!field.isGroup) {
+        return null;
+      }
+
+      var res = null;
+
+      // If field is ageGroup
+      if (field.name === 'patient.ageGroup') {
+        var years = 'patient.age.years'.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
+          return obj ? obj[i] : undefined;
+        }, record);
+        res = getAgeGroup(years, field.values);
+      } else {
+        // value of the field which will be used to derive group name
+        var value = field.possibleValuesFrom.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
+          return obj ? obj[i] : undefined;
+        }, record);
+
+        // if it is an array, it should have name and count (symptoms, diagnoses)
+        // get group name for each name
+        if (angular.isArray(value)) {
+          res = [];
+          angular.forEach(value, function (val) {
+            res.push({count: val.count, name: valueToGroup(val.name, field.values)});
+          });
+          return res;
+        }
+        // medicalFacility
+        else if (angular.isObject(value) && value.name) {
+          res = valueToGroup(value.name, field.values);
+        } else if (!angular.isUndefined(value)) {
+          res = valueToGroup(value, field.values);
+        }
+      }
+      return res;
+    },
+    /**
      * Given a bucket from elasticsearch aggregation response, return a key to identify said bucket
      * @param bucket elasticsearch bucket
      */
@@ -107,27 +174,6 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       } else {
         throw new Error('Cannot make key for bucket ' + bucket);
       }
-    },
-    getAgeGroup: function (age) {
-      //TODO make this use the aggregation json "getAggregation('patient.age').. to limit potential inconsistencies.
-      if (age !== undefined) {
-        if (age < 1) {
-          return '[0 TO 1}';
-        } else if (age < 5) {
-          return '[1 TO 5}';
-        } else if (age < 12) {
-          return '[5 TO 12}';
-        } else if (age < 18) {
-          return '[12 TO 18}';
-        } else if (age < 45) {
-          return '[18 TO 45}';
-        } else if (age < 65) {
-          return '[45 TO 65}';
-        } else {
-          return '[65 TO *]';
-        }
-      }
-      return '';
     }
   };
 });
