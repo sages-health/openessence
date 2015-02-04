@@ -263,14 +263,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         //TODO this is due to local aggregation for crosstab, should utilize backend
         var crosstabifyRecord = function (source) {
           var record = {};
-          var special = {
-            'patient.age': outpatientAggregation.getAgeGroup((source.patient && source.patient.age) ? source.patient.age.years : null) || null
-          };
-
-          angular.forEach(scope.fields, function (value, key) {
-            if (value.enabled) {
-              if (special[key]) {
-                this[key] = special[key];
+          angular.forEach(scope.fields, function (field, key) {
+            if (field.enabled) {
+              if(field.isGroup === true){
+                this[key] = outpatientAggregation.getGroup(source, field);
               } else {
                 var prop = key.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
                   return obj ? obj[i] : undefined;
@@ -283,40 +279,47 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         var flattenRecord = function (record, flatRecs) {
-          //currently we explode symptoms and diagnosis to make crosstab counts for them happy
+          //currently we explode symptoms, symptomsGroup, diagnoses and diagnosesGroup to make crosstab counts for them happy
+          var explodFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
           var rec = angular.copy(record);
-          delete rec.symptoms;
-          delete rec.diagnoses;
 
-          if (record.symptoms) {
-            angular.forEach(record.symptoms, function (v) {
-              var r = angular.copy(rec);
-              var count = 1;
-              if (v.count !== undefined) {
-                count = v.count;
-              }
-              r.symptoms = [
-                {name: v.name || v, count: count}
-              ];
-              flatRecs.push(r);
-            });
-          }
-          if (record.diagnoses) {
-            angular.forEach(record.diagnoses, function (v) {
-              var r = angular.copy(rec);
-              var count = 1;
-              if (v.count !== undefined) {
-                count = v.count;
-              }
-              r.diagnoses = [
-                {name: v.name || v, count: count}
-              ];
-              flatRecs.push(r);
-            });
-          }
-          if (!(record.symptoms) && !(record.diagnoses)) {
+          var allNull = true;
+          angular.forEach(explodFields, function (fld) {
+            allNull = allNull && !rec[fld];
+            delete rec[fld];
+          });
+
+          angular.forEach(explodFields, function (fld) {
+            if (record[fld]) {
+              angular.forEach(record[fld], function (v) {
+                var r = angular.copy(rec);
+                var count = (v.count !== undefined) ? v.count : 1;
+                r[fld] = [
+                  {name: v.name || v, count: count}
+                ];
+                flatRecs.push(r);
+              });
+            }
+          });
+          if (allNull) {
             flatRecs.push(rec);
           }
+        };
+
+        var uniqueStrings = function (value, index, self) {
+          return self.indexOf(value) === index;
+        };
+
+        // grab distinct values, sort them and join using comma for symtomGroups and diagnosesGroup
+        var flattenGroupFields = function (record) {
+          var groupFields = ['symptomsGroup', 'diagnosesGroup'];
+          angular.forEach(groupFields, function (fld) {
+            if (record[fld]) {
+              record[fld] = record[fld].map(function (v) {
+                return v.name;
+              }).filter(uniqueStrings).sort().join(', ');
+            }
+          });
         };
 
         var reload = function () {
@@ -339,9 +342,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               angular.forEach(data.results, function (r) {
                 var rec = crosstabifyRecord(r._source);
                 if (scope.form.dataType === 'aggregate') {
-                  //flatten symptoms/diagonses
+                  //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
                   flattenRecord(rec, records);
                 } else {
+                  flattenGroupFields(rec);
                   records.push(rec);
                 }
               });
