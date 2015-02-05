@@ -160,7 +160,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
               bucket = outpatientAggregation.toArray(bucket);
               bucket.map(function (entry) {
-                var keyStr = outpatientAggregation.bucketToKey(entry);
+                var keyStr = entry.key;
                 var count = entry.count ? entry.count.value : entry.doc_count;
                 missingCount -= count;
                 slice = {col: first, colName: keyStr, key: keyStr, value: count};
@@ -178,7 +178,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               bucket = aggs[sa].buckets || aggs[sa]._name.buckets;
               bucket = outpatientAggregation.toArray(bucket);
               bucket.map(function (entry) {
-                var keyStr = outpatientAggregation.bucketToKey(entry);
+                var keyStr = entry.key;
                 var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
                 missingCount -= count;
@@ -198,7 +198,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
               bucket = outpatientAggregation.toArray(bucket);
               bucket.map(function (entry) {
-                var keyStr = outpatientAggregation.bucketToKey(entry);
+                var keyStr = entry.key;
                 var count = entry.count ? entry.count.value : entry.doc_count;
                 /*jshint camelcase:false */
                 missingTotalCount -= count;
@@ -207,7 +207,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var subBucket = entry[sa].buckets || entry[sa]._name.buckets;
                 subBucket = outpatientAggregation.toArray(subBucket);
                 subBucket.map(function (sub) {
-                  var subStr = outpatientAggregation.bucketToKey(sub);
+                  var subStr = sub.key;
                   var scount = sub.count ? sub.count.value : sub.doc_count;
                   missingCount -= scount;
                   slice = {
@@ -280,16 +280,16 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         var flattenRecord = function (record, flatRecs) {
           //currently we explode symptoms, symptomsGroup, diagnoses and diagnosesGroup to make crosstab counts for them happy
-          var explodFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
+          var explodeFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
           var rec = angular.copy(record);
 
           var allNull = true;
-          angular.forEach(explodFields, function (fld) {
+          angular.forEach(explodeFields, function (fld) {
             allNull = allNull && !rec[fld];
             delete rec[fld];
           });
 
-          angular.forEach(explodFields, function (fld) {
+          angular.forEach(explodeFields, function (fld) {
             if (record[fld]) {
               angular.forEach(record[fld], function (v) {
                 var r = angular.copy(rec);

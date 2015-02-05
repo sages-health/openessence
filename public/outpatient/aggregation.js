@@ -155,25 +155,6 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         }
       }
       return res;
-    },
-    /**
-     * Given a bucket from elasticsearch aggregation response, return a key to identify said bucket
-     * @param bucket elasticsearch bucket
-     */
-    bucketToKey: function (bucket) {
-      if (bucket.key) {
-        return gettextCatalog.getString(bucket.key);
-      }
-
-      if (bucket.from && bucket.to) {
-        return bucket.from + '-' + bucket.to;
-      } else if (bucket.from) {
-        return '>' + bucket.from;
-      } else if (bucket.to) {
-        return '<' + bucket.to;
-      } else {
-        throw new Error('Cannot make key for bucket ' + bucket);
-      }
     }
   };
 });
