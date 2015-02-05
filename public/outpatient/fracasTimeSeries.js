@@ -21,8 +21,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
       width: '=?',
       queryString: '=',
       filters: '=',
-      form: '=?',
-      series: '=?', // array of strings denoting series to graph
+      pivot: '=?', //updated to take both pivot cols/rows
+      //series: '=?', // array of strings denoting series to graph
       source: '=?',
       widget: '=?',
       tableMapJSON: '=?'
@@ -39,7 +39,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || defaultLabels;
-          scope.series = scope.series || scope.options.series || [];
+          //TODO.. pivot cols should define an aggregation(count) field
+          // pivot rows should define the series..
+          //e.g. pivot.rows=facility, pivot.cols=Symptom (total symptoms (or summation of symtoms count)).. assumes user will filter
+          scope.series = scope.pivot.rows || scope.options.series || [];
           if (scope.options.interval) {
             scope.interval = scope.options.interval;
           }
@@ -178,7 +181,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           });
 
           var reload = function () {
-
+            scope.series = scope.pivot.rows || scope.options.series || [];
             var aggs = {};
             var dateAgg = {
               'date_histogram': {
@@ -645,7 +648,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             return true;
           };
 
-          scope.$watchCollection('[series, queryString, options.algorithm]', function () {
+          scope.$watchCollection('[pivot.rows, pivot.cols, queryString, options.algorithm]', function () {
             reload();
             //scope.redraw();
           });
