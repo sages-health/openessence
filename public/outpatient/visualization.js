@@ -113,30 +113,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           visualization.save(state);
         });
 
-        //assuming only two deep for now..
-        var buildAggregationQuery = function (cols, rows) {
-          var first, second;
-          var query = {};
-          if (cols[0]) {
-            first = cols[0];
-            if (rows[0]) {
-              second = rows[0];
-            }
-          } else if (rows[0]) {
-            first = rows[0];
-          }
-
-          //build first aggregation
-          if (first && second) {
-            query.first = outpatientAggregation.getAggregation(first, 10, scope.form);
-            //if a second exists, add to first aggregation object
-            query.first.aggs = {};
-            query.first.aggs.second = outpatientAggregation.getAggregation(second, 10, scope.form);
-          } else if (first) {
-            query.first = outpatientAggregation.getAggregation(first, 10, scope.form);
-          }
-          return {query: query, first: first, second: second};
-        };
 
         //assuming only two deep BY one for now...
         var parseAggQuery = function (aggregation, first, second) {
@@ -249,7 +225,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         var aggReload = function () {
           var cols = angular.copy(scope.pivot.cols);
           var rows = angular.copy(scope.pivot.rows);
-          var agg = buildAggregationQuery(cols, rows);//TODO: nested aggs (symptoms etc.) must be first
+          //TODO: nested aggs (symptoms etc.) must be first?
+          var agg = outpatientAggregation.buildAggregationQuery(cols, rows, 10, scope.form);
           //query the new data for aggregations
           OutpatientVisitResource.search({
             size: 0,

@@ -5,12 +5,7 @@ var moment = require('moment');
 var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location, $log,
-                                                                                          updateURL, gettextCatalog,
-                                                                                          outpatientAggregation,
-                                                                                          visualization,
-                                                                                          OutpatientVisitResource,
-                                                                                          scopeToJson, EditSettings, $http) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http) {
 
   return {
     restrict: 'E',
@@ -195,8 +190,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             if (scope.series.length > 0) {
               aggs.date.aggs = {};
               scope.series.forEach(function (s) {
-                aggs.date.aggs[s] = outpatientAggregation.getAggregation(s, null, scope.form);
+                //aggs.date.aggs[s] = outpatientAggregation.getAggregation(s, null, scope.form);
+                var query = outpatientAggregation.buildAggregationQuery([s], scope.pivot.cols || [], null, scope.form);
+                aggs.date.aggs[s] = query.query.first;
               });
+            } else {
+              //no series to create, but we must count by the given field
+              if(scope.pivot.cols.length > 0) {
+                aggs.date.aggs = {};
+                var query = outpatientAggregation.buildAggregationQuery([], scope.pivot.cols, null, scope.form);
+                aggs.date.aggs.second = query.query.first;
+              }
             }
 
             OutpatientVisitResource.search({
@@ -224,6 +228,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                           // only plot series meeting filter criteria
                           if (plotSeries(entry.key, s)) {
                             var count = entry.count ? entry.count.value : entry.doc_count;
+                            if (entry.second && entry.second._name) {
+                              count = entry.second._name.buckets.reduce(function (prev, curr) {
+                                var val = curr.count ? curr.count.value : curr.doc_count;
+                                return prev + val;
+                              }, 0);  //TODO make sure starting with 0 doesn't add data to normally empty values
+                            }
                             if (!dataStore[entry.key]) {
                               dataStore[entry.key] = [];
                             }
@@ -571,34 +581,34 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       if (pValue > 0.05){
                         values.push(
                           {
-                            x:x,
-                            y:count,
-                            pValue:pValue,
-                            expected:expected
+                            x: x,
+                            y: count,
+                            pValue: pValue,
+                            expected: expected
                           }
                         );
                       }else if(pValue <= 0.05 && pValue > 0.01){
                         values.push(
                           {
-                            x:x,
-                            y:count,
-                            marker:{
+                            x: x,
+                            y: count,
+                            marker: {
                               fillColor: '#ffff00'
                             },
-                            pValue:pValue,
-                            expected:expected
+                            pValue: pValue,
+                            expected: expected
                           }
                         );
-                      }else{
+                      } else {
                         values.push(
                           {
-                            x:x,
-                            y:count,
-                            marker:{
+                            x: x,
+                            y: count,
+                            marker: {
                               fillColor: '#ff0000'
                             },
-                            pValue:pValue,
-                            expected:expected
+                            pValue: pValue,
+                            expected: expected
                           }
                         );
                       }
@@ -607,7 +617,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       name: k,
                       data: values
                     });
-                  }else{
+                  } else {
                     scope.data.push({
                       name: k,
                       data: dataStore[k]
@@ -615,7 +625,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   }
                   scope.chartConfig.series = scope.data;
                   createTableJSON();
-                }).error(function(){
+                }).error(function () {
                   scope.data.push({
                     name: k,
                     data: dataStore[k]
@@ -640,7 +650,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           var plotSeries = function (seriesName, seriesType) {
             if (scope.filters) {
               var filters = scope.filters.filter(function (filter) {
-                return filter.filterId === seriesType && filter.value.length > 0 &&
+                return filter.filterID === seriesType && filter.value.length > 0 &&
                   filter.value.indexOf(seriesName) === -1;
               });
               return filters.length === 0;

@@ -103,6 +103,29 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }
       return copy;
     },
+    //assuming only two deep for now..
+    buildAggregationQuery: function (cols, rows, limit, form) {
+      var first, second;
+      var query = {};
+      if (cols[0]) {
+        first = cols[0];
+        if (rows[0]) {
+          second = rows[0];
+        }
+      } else if (rows[0]) {
+        first = rows[0];
+      }
+      //build first aggregation
+      if (first && second) {
+        query.first = this.getAggregation(first, limit, form);
+        //if a second exists, add to first aggregation object
+        query.first.aggs = {};
+        query.first.aggs.second = this.getAggregation(second, limit, form);
+      } else if (first) {
+        query.first = this.getAggregation(first, limit, form);
+      }
+      return {query: query, first: first, second: second};
+    },
     toArray: function (buckets) {
       // if buckets undefiend or an array
       if (!buckets || angular.isArray(buckets)) {
