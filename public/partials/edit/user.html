@@ -8,7 +8,8 @@
       <div class="panel panel-default">
         <div class="panel-heading clearfix">
           <h4 class="panel-title pull-left" translate>Users</h4>
-          <button type="button" class="btn btn-primary pull-right" ng-click="createRecord()" translate>
+          <button type="button" class="btn btn-primary pull-right" ng-click="createRecord()"
+                  popover="{{'Create new user' | translate}}" popover-trigger="mouseenter" translate>
             New user
           </button>
         </div>
@@ -33,15 +34,15 @@
                 <div class="btn-group btn-group-xs pull-right edit-controls">
                   <!-- TODO titles look gross, these should be tooltips -->
                   <button type="button" class="btn btn-default" ng-click="changePassword(record)"
-                          title="{{'Change password' | translate}}">
+                          popover="{{'Change password' | translate}}" popover-trigger="mouseenter">
                     <span class="icon-key"></span>
                   </button>
                   <button type="button" class="btn btn-default" ng-click="editRecord(record)"
-                          title="{{'Edit user' | translate}}">
+                          popover="{{'Edit user' | translate}}" popover-trigger="mouseenter">
                     <span class="icon-pencil"></span>
                   </button>
                   <button type="button" class="btn btn-danger" ng-click="deleteRecord(record)"
-                          title="{{'Delete user' | translate}}">
+                          popover="{{'Delete user' | translate}}" popover-trigger="mouseenter">
                     <span class="icon-trash"></span>
                   </button>
                 </div>

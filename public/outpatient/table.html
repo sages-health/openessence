@@ -130,10 +130,12 @@
       <!-- Edit controls -->
       <td>
         <div class="btn-group btn-group-xs edit-controls pull-right">
-          <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
+          <button type="button" class="btn btn-default" ng-click="editVisit(visit)" popover="{{'Edit' | translate}}"
+                  popover-trigger="mouseenter">
             <span class="icon-pencil"></span>
           </button>
-          <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
+          <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)" popover="{{'Delete' | translate}}"
+                  popover-trigger="mouseenter">
             <span class="icon-cancel"></span>
           </button>
         </div>

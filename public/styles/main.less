@@ -305,3 +305,10 @@ input.invalidFilename-true {
   width: 700px;
   height: 150px;
 }
+
+// If a button is part of a button group, they move when user hower over it
+// Following is a CSS fix for it (https://github.com/twbs/bootstrap/issues/5704)
+.btn-group > .tooltip + .btn,
+.btn-group > .popover + .btn {
+  margin-left: -1px;
+}
