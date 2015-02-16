@@ -57,10 +57,11 @@
 </div>
 
 
-<div class="check-element animate-show" ng-show="tsTable.enabled">
+<div class="check-element animate-show" ng-show="tsTable.enabled" >
+  <!--
   <div class="table-responsive" id="table-view">
     <div class="table-responsive">
-      <table class="table table-striped table-hover table-condensed">
+      <table class="table table-striped table-hover table-condensed" style="overflow: scroll; height:200px;">
         <thead>
         <tr>
           <th>
@@ -102,7 +103,12 @@
       </table>
     </div>
   </div>
-</div>
+  -->
+
+    <div class="gridStyle" ng-grid="gridOptions" ></div>
+
+  </div>
+
 
 <!--
 <div class="table-responsive">

@@ -24,7 +24,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
       series: '=?', // array of strings denoting series to graph
       source: '=?',
       widget: '=?',
-      tableMapJSON: '=?'
+      tableMapJSON: '=?',
+      gridOptions: '=?'
     },
     compile: function () {
       return {
@@ -35,6 +36,64 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             y: gettextCatalog.getString('Count'),
             x: gettextCatalog.getString('Date')
           };
+
+          scope.totalServerItems = 0;
+
+          scope.pagingOptions = {
+            pageSizes: [31, 62, 248],
+            pageSize: 31,
+            currentPage: 1
+          };
+
+          scope.$watch('pagingOptions', function (newVal, oldVal) {
+            if (newVal != oldVal && newVal.currentPage != oldVal.currentPage) {
+              scope.refresh();
+            }
+          }, true);
+
+          scope.$watch(function () {
+            return {
+              currentPage: scope.pagingOptions.currentPage,
+              pageSize: scope.pagingOptions.pageSize
+            };
+          },
+          function (newVal, oldVal) {
+            // Reset to page 1 when the page size changes
+            if (newVal.pageSize != oldVal.pageSize) {
+              scope.pagingOptions.currentPage = 1;
+            }
+
+            fillGrid(scope.pagingOptions.currentPage, scope.pagingOptions.pageSize);
+          },
+          true);
+
+          var fillGrid = function (currentPage, pageSize) {
+              scope.gridData = scope.tableMapJSON.slice((scope.pagingOptions.currentPage - 1) * scope.pagingOptions.pageSize, (scope.pagingOptions.currentPage + 1) * scope.pagingOptions.pageSize);
+          }
+
+          scope.tableMapJSON = scope.tableMapJSON || [{data: 0, series: 'series', count: 0, pValue: 1, expected: 0}];
+          scope.gridData = scope.tableMapJSON;
+
+          scope.gridOptions = {
+            data: 'gridData',
+              columnDefs: [
+              //{field:'date', displayName:'Date', cellTemplate: "{{row.entity[col.field]| date:'shortDate'}}"},
+              {field:'date', displayName:'Date'},
+              {field:'series', displayName:'Series'},
+              {field:'count', displayName:'Count'},
+              {field:'pValue', displayName:'p-Value',
+                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:0}}</div>'
+              },
+              {field:'expected', displayName:'Expected Value',
+                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:3}}</div>'
+              }
+            ],
+            enablePaging: true,
+            showFooter: true,
+            pagingOptions: scope.pagingOptions,
+            showGroupPanel: true
+          }
+
 
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || defaultLabels;
@@ -384,18 +443,24 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 var pair = data[i];
                 for (var j = 0; j < pair.data.length; j++) {
                   var dp = pair.data[j];
-
+                  var date = new Date(dp.x);
                   scope.tableMapJSON.push({
-                    date: dp.x,
+                    //date: dp.x,
+                    date: date.toLocaleDateString(),
                     series: pair.name,
                     count: dp.y,
                     pValue: dp.pValue,
                     expected: dp.expected
                   });
                 }
+                fillGrid(scope.pagingOptions.currentPage, scope.pagingOptions.pageSize);
               }
             }
+            //console.log("created table json");
             //console.log(scope.tableMapJSON);
+            //scope.gridOptions.data = scope.tableMapJSON;
+
+
           };
 
           var getCountArray = function (agg) {
@@ -678,6 +743,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.chartConfig.size.width = scope.options.width;
           });
 
+          /*
           scope.criteria = 'date';
           scope.direction = false;
           scope.setCriteria = function (criteria) {
@@ -688,6 +754,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               scope.direction = false;
             }
           };
+          */
+
+
 
         }
       };
