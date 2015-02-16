@@ -4,7 +4,7 @@
 
 <!-- TODO split off sections of form into separate directives for ease of maintenance, ala antiviral and specimen -->
 
-<fieldset ng-show="page === 1">
+<fieldset ng-show="page === 1 || !paging">
   <!-- TODO red text on white background instead of alert -->
   <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
   <conflict-message ng-show="conflictError"></conflict-message>
@@ -104,10 +104,23 @@
            ng-model="others.medicalFacility">
   </div>
 
+
+  <div class="form-group" ng-show="fields['medicalFacility.sites.total'].enabled">
+    <label for="entry-aggregate-sites-total" translate>Sites Total</label>
+    <input class="form-control" type="number" id="entry-aggregate-sites-total" name="sitesTotal"
+           ng-model="medicalFacility.sites.total">
+  </div>
+
+  <div class="form-group" ng-show="fields['medicalFacility.sites.reporting'].enabled">
+    <label for="entry-aggregate-sites-reporting" translate>Sites Reporting</label>
+    <input class="form-control" type="number" id="entry-aggregate-sites-reporting" name="sitesReporting"
+           ng-model="medicalFacility.sites.reporting">
+  </div>
+
 </fieldset>
 
 <!-- Patient info page -->
-<fieldset ng-show="page === 2">
+<fieldset ng-show="page === 2 || !paging">
   <!-- Patient ID -->
   <div class="form-group" data-field="patient.id" ng-show="fields['patient.id'].enabled">
     <label for="entry-patient-id" translate>Patient ID</label>
@@ -128,7 +141,7 @@
 </fieldset>
 
 <!-- More patient info -->
-<fieldset ng-show="page === 3">
+<fieldset ng-show="page === 3 || !paging">
   <!-- Sex, this should be on the same page as pregnancy since they're linked -->
   <div class="form-group" data-field="patient.sex" ng-show="fields['patient.sex'].enabled">
     <label translate>Sex</label>
@@ -146,8 +159,6 @@
       <span translate>Unknown</span>
     </label>
   </div>
-
-  <pregnancy-inputs></pregnancy-inputs>
 
   <!-- Telephone -->
   <div class="form-group" data-field="patient.phone" ng-show="fields['patient.phone'].enabled"
@@ -173,7 +184,7 @@
 </fieldset>
 
 <!-- Patient vitals -->
-<fieldset ng-show="page === 4">
+<fieldset ng-show="page === 4 || !paging">
 
   <temperature-inputs></temperature-inputs>
 
@@ -200,6 +211,8 @@
       <span class="input-group-addon" translate>kg</span>
     </div>
   </div>
+
+  <pregnancy-inputs></pregnancy-inputs>
 
   <!-- Blood pressure is too annoying since it's 2 separate--but related--inputs, each with a label and unit -->
 
@@ -233,13 +246,13 @@
 </fieldset>
 
 <!-- Specimen -->
-<fieldset ng-show="page === 5">
+<fieldset ng-show="page === 5 || !paging">
   <specimen-inputs></specimen-inputs>
 
   <antiviral-inputs></antiviral-inputs>
 </fieldset>
 
-<fieldset ng-show="page === 'last'">
+<fieldset ng-show="page === 'last' || !paging">
   <!-- need this message for validation -->
   <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
 

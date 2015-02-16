@@ -80,11 +80,6 @@ module.exports = [
         enabled: false
       },
       {
-        name: 'patient.sex',
-        enabled: false
-      },
-
-      {
         name: 'patient.dateOfBirth',
         enabled: false
       },
@@ -92,14 +87,8 @@ module.exports = [
         name: 'patient.age',
         enabled: false
       },
-
-      // pregnancy status
       {
-        name: 'patient.pregnant.is',
-        enabled: false
-      },
-      {
-        name: 'patient.pregnant.trimester',
+        name: 'patient.sex',
         enabled: false
       },
 
@@ -115,6 +104,10 @@ module.exports = [
 
       // patient vitals
       {
+        name: 'patient.weight',
+        enabled: false
+      },
+      {
         name: 'patient.temperature',
         enabled: false
       },
@@ -122,8 +115,14 @@ module.exports = [
         name: 'patient.pulse',
         enabled: false
       },
+
+      // pregnancy status
       {
-        name: 'patient.weight',
+        name: 'patient.pregnant.is',
+        enabled: false
+      },
+      {
+        name: 'patient.pregnant.trimester',
         enabled: false
       },
 
@@ -152,6 +151,34 @@ module.exports = [
         enabled: false
       },
 
+      {
+        name: 'symptoms',
+        enabled: false,
+        values: require('./symptom.json')
+      },
+      {
+        name: 'symptoms.other',
+        enabled: false
+      },
+      {
+        name: 'syndromes',
+        enabled: false,
+        values: require('./syndrome.json')
+      },
+      {
+        name: 'syndromes.other',
+        enabled: false
+      },
+      {
+        name: 'diagnoses',
+        enabled: false,
+        values: require('./diagnosis.json')
+      },
+      {
+        name: 'diagnoses.other',
+        enabled: false
+      },
+
       // specimen collection, e.g. for flu culturing
       {
         name: 'specimen.collectionDate',
@@ -177,36 +204,16 @@ module.exports = [
       },
 
       {
-        name: 'symptoms',
-        enabled: false,
-        values: require('./symptom.json')
-      },
-      {
-        name: 'symptoms.other',
-        enabled: false
-      },
-
-      {
-        name: 'diagnoses',
-        enabled: false,
-        values: require('./diagnosis.json')
-      },
-      {
-        name: 'diagnoses.other',
-        enabled: false
-      },
-
-      {
-        name: 'disposition',
-        enabled: false,
-        values: require('./disposition.json')
-      },
-      {
         name: 'visitType',
         // we have this field in case anyone wants it, but doing this right means totally changing the form,
         // e.g. a "Well Baby" visit makes the rest of the form nonsensical
         enabled: false,
         values: require('./visit-type.json')
+      },
+      {
+        name: 'disposition',
+        enabled: false,
+        values: require('./disposition.json')
       },
       {
         name: 'notes',
@@ -240,8 +247,19 @@ module.exports = [
         // (even though the name is what's displayed and queried on).
         name: 'medicalFacility',
         enabled: true,
+        groupName: 'medicalFacilityGroup',
         // can't do this with JSON
         values: require('./facilities.json')
+      },
+
+      {
+        // medicalFacilities are grouped as medicalFacilityGroup for query purpose
+        // Outpatient model does not have grouping fields, so this field will not be populated on data entry page
+        // when this field is selected as a filter on workbench, it will expand query to medicalFacility
+        name: 'medicalFacilityGroup',
+        enabled: true,
+        isGroup: true,
+        possibleValuesFrom: 'medicalFacility'
       },
 
       // Allow user-supplied values for medical facility.
@@ -303,7 +321,22 @@ module.exports = [
       },
       {
         name: 'patient.age',
+        groupName: 'patient.ageGroup',
         enabled: true
+      },
+      {
+        name: 'patient.ageGroup',
+        enabled: true,
+        isGroup: true,
+        values: [
+          {name: 'Less than 1', value: '[0 TO 1}', from: 0, to: 1},
+          {name: '1 to 4', value: '[1 TO 5}', from: 2, to: 5},
+          {name: '5 to 11', value: '[5 TO 12}', from: 5, to: 12},
+          {name: '12 to 17', value: '[12 TO 18}', from: 12, to: 18},
+          {name: '18 to 44', value: '[18 TO 45}', from: 18, to: 45},
+          {name: '45 to 64', value: '[45 TO 65}', from: 45, to: 65},
+          {name: '65+', value: '[65 TO 999}', from: 65, to: 999}
+        ]
       },
 
       // pregnancy status
@@ -392,6 +425,7 @@ module.exports = [
       {
         name: 'symptoms',
         enabled: true,
+        groupName: 'symptomsGroup',
         values: [
           'Abdominal Pain',
           'Cold',
@@ -422,8 +456,16 @@ module.exports = [
       },
 
       {
+        name: 'symptomsGroup',
+        enabled: true,
+        isGroup: true,
+        possibleValuesFrom: 'symptoms'
+      },
+
+      {
         name: 'diagnoses',
         enabled: true,
+        groupName: 'diagnosesGroup',
         values: [
           'Asthma',
           'Bronchitis',
@@ -443,6 +485,13 @@ module.exports = [
       {
         name: 'diagnoses.other',
         enabled: true
+      },
+
+      {
+        name: 'diagnosesGroup',
+        enabled: true,
+        isGroup: true,
+        possibleValuesFrom: 'diagnoses'
       },
 
       {

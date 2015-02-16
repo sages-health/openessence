@@ -1,0 +1,47 @@
+<div class="modal-header">
+  <h3 class="modal-title" translate>Edit Age Group</h3>
+</div>
+<div class="modal-body">
+  <form class="form" role="form" novalidate name="groupForm">
+
+    <div class="form-group" ng-class="{'has-error': isInvalid(groupForm.name)}">
+      <label translate>Age Group Name</label>
+      <input class="form-control" type="text" name="name" ng-model="row.name" required>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 form-group" ng-class="{'has-error': isInvalid(groupForm.from)}">
+        <label translate>Starting At</label>
+        <input class="form-control" type="number" name="from" ng-model="row.from" required>
+
+      </div>
+
+      <div class="col-md-6 form-group" ng-class="{'has-error': isInvalid(groupForm.to)}">
+        <label translate>Less Than</label>
+        <input class="form-control" type="number" name="to" ng-model="row.to" required>
+      </div>
+
+    </div>
+    <div class="help-block" ng-show="yellAtUser && !row.name" translate>
+      Please enter a age group name
+    </div>
+
+    <div class="help-block" ng-show="nameInUse" translate>
+      Age group name "{{row.name}}" is already in use, please select a different name.
+    </div>
+
+    <div class="help-block" ng-show="yellAtUser && (!row.from || !row.to)" translate>
+      Define age range.
+    </div>
+
+    <div class="help-block" ng-show="row.from > row.to" translate>
+      Invalid age range.
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
+  <button class="btn btn-primary" ng-click="save(groupForm)">Save</button>
+</div>

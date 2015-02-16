@@ -11,10 +11,12 @@
           <h4 class="panel-title pull-left" translate>Outpatient visits</h4>
 
           <div class="btn-group  pull-right" role="group">
-            <button type="button" class="btn btn-primary" ng-click="createVisit()" translate>
+            <button type="button" class="btn btn-primary" ng-click="createVisit()" translate
+                    popover="{{'Create new visit' | translate}}" popover-trigger="mouseenter">
               New visit
             </button>
-            <button type="button" class="btn btn-default" ng-click="importVisits()" translate>
+            <button type="button" class="btn btn-default" ng-click="importVisits()" translate
+                    popover="{{'Import CSV' | translate}}" popover-trigger="mouseenter">
               Import
             </button>
           </div>

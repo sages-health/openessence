@@ -20,8 +20,14 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
           scope.possibleFilters = scope.possibleFilters || {};
           scope.activeFilters = scope.activeFilters || [];
 
-          scope.addFilter = function (filter) {
-            scope.activeFilters.push(angular.extend({}, scope.possibleFilters[filter.filterID], filter));
+          scope.addFilter = function (filter, isFilterEvent) {
+            var newFilter = angular.extend({}, scope.possibleFilters[filter.filterID], filter);
+
+            // group filter needs to translate selected display name to id where filter is added using click through
+            if(isFilterEvent && newFilter.type === 'group'){
+              newFilter.filterEvent = true;
+            }
+            scope.activeFilters.push(newFilter);
           };
 
           scope.removeFilter = function (index) {
@@ -47,9 +53,10 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
           );
 
           $rootScope.$on('filterChange', function (event, filter, add, fire) {
+
             var apply = function (filter, add) {
               if (add) {
-                scope.addFilter(filter);
+                scope.addFilter(filter, true);
               } else {
                 scope.removeFilter(filter);
               }

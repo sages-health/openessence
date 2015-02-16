@@ -1,38 +1,39 @@
-  <div id="first" class="modal-header">
-    <button type="button" class="close" ng-click="cancel()">
-      <span class="icon-cancel" aria-hidden="true"></span>
-      <span class="sr-only" translate>Close</span>
-    </button>
-    <h4 class="modal-title" translate>Edit record</h4>
-  </div>
-  <div class="modal-body">
-    <outpatient-form form="form" record="record" page="page" on-submit="onSubmit()"></outpatient-form>
-  </div>
-  <div class="modal-footer" ng-if="page !== 'last'">
-    <ul class="pager">
-      <li class="previous" ng-class="{disabled: page === 1}">
-        <a ng-click="previous()">
-          <span class="icon-left-big"></span>
-          <span translate>Previous</span>
-        </a>
-      </li>
-      <li class="next">
-        <a ng-click="next()">
-          <span translate>Next</span>
-          <span class="icon-right-big"></span>
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div class="modal-footer" ng-if="page === 'last'">
-    <ul class="pager">
-      <li class="previous">
-        <a ng-click="previous()">
+<div id="first" class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">
+    <span class="icon-cancel" aria-hidden="true"></span>
+    <span class="sr-only" translate>Close</span>
+  </button>
+  <h4 class="modal-title" translate>Edit record</h4>
+</div>
+<div class="modal-body">
+  <outpatient-form form="form" record="record" paging="paging" page="page"
+                   on-submit="onSubmit()"></outpatient-form>
+</div>
+<div class="modal-footer" ng-if="paging && page !== 'last'">
+  <ul class="pager">
+    <li class="previous" ng-class="{disabled: page === 1}">
+      <a ng-click="previous()">
         <span class="icon-left-big"></span>
-         <span translate>Previous</span>
-        </a>
-      </li>
-    </ul>
+        <span translate>Previous</span>
+      </a>
+    </li>
+    <li class="next">
+      <a ng-click="next()">
+        <span translate>Next</span>
+        <span class="icon-right-big"></span>
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="modal-footer" ng-if="!paging || page === 'last'">
+  <ul class="pager" ng-if="paging && page === 'last'">
+    <li class="previous">
+      <a ng-click="previous()">
+        <span class="icon-left-big"></span>
+        <span translate>Previous</span>
+      </a>
+    </li>
+  </ul>
   <div>
     <button class="btn btn-default" ng-click="cancel()">
       <span class="icon-cancel"></span>
@@ -43,4 +44,4 @@
       <span translate>Save</span>
     </button>
   </div>
-  </div>
+</div>

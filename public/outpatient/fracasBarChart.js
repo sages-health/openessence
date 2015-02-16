@@ -13,6 +13,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
       options: '=',
       queryString: '=',
       filters: '=',
+      form: '=?',
       pivot: '=',
       aggData: '=',
       source: '=?',

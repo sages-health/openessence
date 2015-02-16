@@ -15,10 +15,12 @@
 
         <td>
           <div class="btn-group btn-group-xs pull-right">
-            <button type="button" class="btn btn-default" ng-click="editRecord(record)">
+            <button type="button" class="btn btn-default" ng-click="editRecord(record)"
+                    popover="{{'Edit' | translate}}" popover-trigger="mouseenter">
               <span class="icon-pencil"></span>
             </button>
-            <button type="button" class="btn btn-danger" ng-click="deleteRecord(record)">
+            <button type="button" class="btn btn-danger" ng-click="deleteRecord(record)"
+                    popover="{{'Delete' | translate}}" popover-trigger="mouseenter">
               <span class="icon-cancel"></span>
             </button>
           </div>

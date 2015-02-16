@@ -2,11 +2,23 @@
   <div class="panel-heading viz-drag-handle">
     <div class="clearfix header">
       <div class="panel-control btn-group">
-        <button type="button" class="close" ng-click="close()"><span class="icon-cancel"></span></button>
+        <button type="button" class="close" ng-click="close()" popover="{{'Remove widget' | translate}}"
+                popover-trigger="mouseenter">
+          <span class="icon-cancel"></span>
+        </button>
         <!-- TODO next to the close button is the worst possible position for these buttons -->
-        <button type="button" class="save" ng-click="saveViz()"><span class="icon-floppy"></span></button>
-        <button type="button" class="export" ng-click="exportViz()"><span class="icon-export"></span></button>
-        <button type="button" class="settings" ng-click="settings()"><span class="icon-cog"></span></button>
+        <button type="button" class="save" ng-click="saveViz()" popover="{{'Save visualization' | translate}}"
+                popover-trigger="mouseenter">
+          <span class="icon-floppy"></span>
+        </button>
+        <button type="button" class="export" ng-click="exportViz()" popover="{{'Export visualization' | translate}}"
+                popover-trigger="mouseenter">
+          <span class="icon-export"></span>
+        </button>
+        <button type="button" class="settings" ng-click="settings()" popover="{{'Settings' | translate}}"
+                popover-trigger="mouseenter">
+          <span class="icon-cog"></span>
+        </button>
       </div>
       <div class="col-md-6 pull-right">
         <input type="hidden" class="select2-multiple pivot-cols" multiple
@@ -29,25 +41,31 @@
 
       <!-- don't wrap btn-group in col since we don't ever want it to wrap -->
       <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'"
+                popover="{{'Table' | translate}}" popover-trigger="mouseenter">
           <span class="icon-table"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'crosstab'">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'crosstab'"
+                popover="{{'Crosstab' | translate}}" popover-trigger="mouseenter">
           <span class="icon-cube"></span><!-- TODO get a better crosstab icon -->
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'line'">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'line'"
+                popover="{{'Time series' | translate}}" popover-trigger="mouseenter">
           <span class="icon-chart-line"></span>
         </button>
         <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'yoy'">
           <span class="icon-calendar"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'pie'">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'pie'"
+                popover="{{'Pie chart' | translate}}" popover-trigger="mouseenter">
           <span class="icon-chart-pie"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'bar'">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'bar'"
+                popover="{{'Bar chart' | translate}}" popover-trigger="mouseenter">
           <span class="icon-chart-bar-box"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'map'">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'map'"
+                popover="{{'Map' | translate}}" popover-trigger="mouseenter">
           <span class="icon-globe"></span>
         </button>
       </div>

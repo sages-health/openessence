@@ -72,7 +72,9 @@ module.exports = function ($resource, $modal, $window, $location, $document, Vis
       });
       if ($window.state.form) {
         $window.state.form.fields.map(function (v) {
-          delete v.values;
+          if (!v.isGroup) {  //TODO, fix form passing
+            delete v.values;
+          }
           return v;
         });
       }
