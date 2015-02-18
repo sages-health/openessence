@@ -488,7 +488,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 pValues = resp.pValues;
                 expectedValues = resp.expectedValues;
                 if (pValues.length > 0) {
-                  console.log("");
                   scope.data = [
                     {
                       name: gettextCatalog.getString('Outpatient visits'),
@@ -566,7 +565,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       //dataStore[entry.key].push([d.key, count]);
                       //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
                       //values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
-                      if (pValue >.05){
+                      if (pValue > 0.05){
                         values.push(
                           {
                             x:x,
@@ -575,7 +574,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                             expected:expected
                           }
                         );
-                      }else if(pValue <= .05 && pValue > .01){
+                      }else if(pValue <= 0.05 && pValue > 0.01){
                         values.push(
                           {
                             x:x,

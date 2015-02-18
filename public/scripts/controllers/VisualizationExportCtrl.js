@@ -19,6 +19,8 @@ module.exports = function ($scope, $window, $timeout, $log, Report, visualizatio
     var lang = $document[0].documentElement.lang;
     var cstate = angular.copy($scope.state);
 
+    delete cstate.form;
+
     if (!cstate.options.showNotes) {
       cstate.options.labels.notes = '';
     } else {

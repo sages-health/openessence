@@ -193,7 +193,7 @@ engine.on('queueItemReady', function (options) {
           });
         });
 
-      }, 5000);
+      }, 3000);
     });
   });
 });

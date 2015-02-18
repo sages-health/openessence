@@ -92,6 +92,12 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       }
     },
     {
+      filterID: 'patient.age',
+      type: 'numeric-range',
+      field: 'patient.age.years',
+      name: gettextCatalog.getString('Age')
+    },
+    {
       filterID: 'patient.ageGroup',
       type: 'group',
       field: 'patient.age.years',
