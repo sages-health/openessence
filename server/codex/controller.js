@@ -3,7 +3,7 @@
 var async = require('async');
 var esErrors = require('elasticsearch').errors;
 
-function Controller (Model, options) {
+function Controller(Model, options) {
   if (!(this instanceof Controller)) { // enable codex.controller(...) in addition to  new codex.controller(...)
     return new Controller(Model, options);
   }
@@ -315,30 +315,35 @@ function Controller (Model, options) {
         body: {}
       };
 
+      // NOTE: params can be in query string or request body
+
       // Support pagination
-      var from = req.param('from'); // params can be in query string or request body
+      var from = req.query.from || req.body.from;
       if (from || from === 0) {
         esRequest.from = parseInt(from, 10);
       }
-      var size = req.param('size');
+
+      var size = req.query.size || req.body.size;
       if (size || size === 0) {
         esRequest.size = parseInt(size, 10);
       }
 
       // Support sorting
-      if (req.param('sort')) { // sort is always a string
+      var sort = req.query.sort || req.body.sort;
+      if (sort) { // sort is always a string
         // TODO test this for potential injection attacks
-        esRequest.sort = req.param('sort');
+        esRequest.sort = sort;
       }
 
-      if (req.param('q')) {
+      var q = req.query.q || req.body.q;
+      if (q) {
         // We don't check for the empty string here since most of the time you don't want to search for the empty
         // string, especially since elasticsearch's inverted index doesn't store nulls or the empty string
         // (you're supposed to use a missing filter instead)
 
         esRequest.body.query = { // have to use body instead of q because we might have aggregations
           'query_string': {
-            query: req.param('q')
+            query: q
           }
         };
       } else {
@@ -477,36 +482,36 @@ function Controller (Model, options) {
   }
 
   // clients can use preInsert and postInsert and just check if an ID was specified
-//  if (this.replace) {
-//    this.preReplace = options.preReplace;
-//    this.postReplace = options.postReplace;
-//  }
+  //  if (this.replace) {
+  //    this.preReplace = options.preReplace;
+  //    this.postReplace = options.postReplace;
+  //  }
 
   // this isn't used yet because it's dangerous
-//  if (this.replaceAll) {
-//    this.preReplaceAll = options.preReplaceAll;
-//    if (!Array.isArray(this.preReplaceAll)) {
-//      this.preReplaceAll = [this.preReplaceAll];
-//    }
-//
-//    this.postReplaceAll = options.postReplaceAll;
-//    if (!Array.isArray(this.postReplaceAll)) {
-//      this.postReplaceAll = [this.postReplaceAll];
-//    }
-//  }
+  //  if (this.replaceAll) {
+  //    this.preReplaceAll = options.preReplaceAll;
+  //    if (!Array.isArray(this.preReplaceAll)) {
+  //      this.preReplaceAll = [this.preReplaceAll];
+  //    }
+  //
+  //    this.postReplaceAll = options.postReplaceAll;
+  //    if (!Array.isArray(this.postReplaceAll)) {
+  //      this.postReplaceAll = [this.postReplaceAll];
+  //    }
+  //  }
 
   // this isn't used yet because it's dangerous
-//  if (this.deleteAll) {
-//    this.preDeleteAll = options.preDeleteAll;
-//    if (!Array.isArray(this.preDeleteAll)) {
-//      this.preDeleteAll = [this.preDeleteAll];
-//    }
-//
-//    this.postDeleteAll = options.postDeleteAll;
-//    if (!Array.isArray(this.postDeleteAll)) {
-//      this.postDeleteAll = [this.postDeleteAll];
-//    }
-//  }
+  //  if (this.deleteAll) {
+  //    this.preDeleteAll = options.preDeleteAll;
+  //    if (!Array.isArray(this.preDeleteAll)) {
+  //      this.preDeleteAll = [this.preDeleteAll];
+  //    }
+  //
+  //    this.postDeleteAll = options.postDeleteAll;
+  //    if (!Array.isArray(this.postDeleteAll)) {
+  //      this.postDeleteAll = [this.postDeleteAll];
+  //    }
+  //  }
 }
 
 Controller.prototype['with'] = function (plugin) {

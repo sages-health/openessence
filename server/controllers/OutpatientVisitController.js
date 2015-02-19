@@ -52,6 +52,10 @@ module.exports = codex.controller(OutpatientVisit, {
       return callback(Boom.forbidden());
     }
 
+    if (req.user && req.user.isAPIUser() && req.method === 'PUT') {
+      return callback(Boom.forbidden());
+    }
+
     // Record form submission date. This duplicates what's stored in the paperTrail, but paperTrail isn't safe
     // to send down to clients
     esRequest.body = esRequest.body || {};

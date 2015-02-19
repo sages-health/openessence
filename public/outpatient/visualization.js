@@ -11,7 +11,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
     template: require('./visualization.html'),
     scope: {
       filters: '=',
-      form: '=',
+      form: '=?',
       queryString: '=', // TODO use filters instead
       visualization: '=?',
       pivot: '=?',

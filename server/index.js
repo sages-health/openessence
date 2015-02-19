@@ -46,6 +46,8 @@ app.use((function () {
 // log requests
 if (conf.env === 'production') {
   app.use(require('morgan')('combined'));
+} else {
+  app.use(require('morgan')('dev'));
 }
 
 app.use(assets.static());
@@ -82,6 +84,9 @@ app.use((function () {
   });
 })());
 app.use(require('connect-flash')());
+
+// Hide X-Powered-By
+app.use(helmet.hidePoweredBy({setTo: 'OpenEssence'}));
 
 // Set X-Frame: DENY to prevent clickjacking.
 // Change this if you want to embed Fracas in an iframe
@@ -125,7 +130,15 @@ app.use(function (req, res, next) {
 });
 
 // CSRF tokens
-app.use(require('csurf')());
+app.use(function (req, res, next) {
+  // Test if request starts with /api/ using regex (best performance)
+  if (/^\/api\//.test(req.path)) {
+    next(); // Don't use CSRF if its /api/
+  }
+  else {
+    require('csurf')()(req, res, next);
+  }
+});
 
 app.use(locale(require('./locale').supportedLocales)); // adds req.locale based on best matching locale
 app.get('/', function (req, res) {
@@ -135,21 +148,9 @@ app.get('/', function (req, res) {
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
-app.use(function (req, res, next) {
-  //req check for bearer authorization
-  //grab token, look up user, set user
-  var reqAuth = req.get('Authorization');
-  if (reqAuth && reqAuth.indexOf('Bearer ') === 0 ) {
-    auth.bearer(req, res, next);
-  } else {
-    next();
-  }
-});
-
 app.use(require('./locale').middleware);
 app.use('/session', require('./session'));
 
-// TODO rename /api and include version in URL
 app.use('/resources', express()
   .use(auth.denyAnonymousAccess)
   .use(require('./resources')()));
@@ -159,16 +160,19 @@ app.use('/reports', express()
   .use(require('./reports')()));
 
 app.use('/detectors', express()
-    .use(auth.denyAnonymousAccess)
-    .use(require('./detectors')()));
+  .use(auth.denyAnonymousAccess)
+  .use(require('./detectors')()));
 
 app.use('/csv', express()
   .use(auth.denyAnonymousAccess)
   .use(require('./csv/export')()));
 
+app.use('/api', express()
+  .use(auth.bearer)
+  .use(require('./resources')()));
+
 app.use(require('./error').middleware);
 
 module.exports = express()
   .use(app)
-  .use('/api', express().use(auth.bearer).use(app)) // TODO test this
   .use(require('./error').notFound); // this must be the last route
