@@ -29,14 +29,6 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
       return {
         pre: function (scope, element, attrs) {
 
-          var lastFrom = moment(scope.filters[0].from).subtract(1, 'year').format('YYYY-MM-DD'); //2014-10-22
-          console.log(lastFrom);
-          var lastTo = moment(scope.filters[0].to).subtract(1, 'year').format('YYYY-MM-DD');
-          console.log(lastTo);
-
-          scope.queryString2 = 'visitDate: [' + lastFrom + ' TO ' + lastTo + ']';
-          console.log(scope.queryString2);
-
           var defaultLabels = {
             title: gettextCatalog.getString('Year Over Year'),
             y: gettextCatalog.getString('Count'),
@@ -52,6 +44,13 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
           else {
             scope.interval = 'day';
             scope.options.interval = 'day';
+          }
+          if (scope.options.range) {
+            scope.range = scope.options.range
+          }
+          else {
+            scope.range = 1;
+            scope.options.range = 1;
           }
           scope.refresh = false;
 
@@ -220,77 +219,25 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
               aggs: aggs
             }, function (data) {
 
-              OutpatientVisitResource.search({
-                  q: scope.queryString2,
-                  size: 0,
-                  aggs: aggs
-                }, function (dataOld) {
+              var loopRange = scope.range;
 
-                  //expected scope.data = [ {aggKey, [ [dateMillis, count],.. ]},.. ]
-                  if (data.aggregations.date) {
+              scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
+                                                  '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
 
-                    scope.data = [];
-                    var dataStore = {};
+              scope.chartConfig.series = [];
 
-                    if (scope.series && scope.series.length > 0) {
-                      scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-                                                          '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
-
-                      data.aggregations.date.buckets.map(function (d) {
-
-                        scope.series.forEach(function (s) {
-                          var buk = d[s].buckets || d[s]._name.buckets;
-                          buk.map(function (entry) {
-                            /*jshint camelcase:false */
-                            // if we have filter on this field/series = s
-                            // only plot series meeting filter criteria
-                            if (plotSeries(entry.key, s)) {
-                              var count = entry.count ? entry.count.value : entry.doc_count;
-                              if (!dataStore[entry.key]) {
-                                dataStore[entry.key] = [];
-                              }
-                              dataStore[entry.key].push([d.key, count]);
-                            }
-                          });
-                        });
-                      });
-                      Object.keys(dataStore).forEach(function (k) {
-                        scope.data.push({
-                          name: k,
-                          data: dataStore[k]
-                        });
-                      });
-                    } else {
-                      scope.chartConfig.options.colors = ['#7cb5ec', '#f7a35c'];
-                      scope.data = [
-                        {
-                          id: 'current',
-                          name: gettextCatalog.getString('Outpatient visits'),
-                          data: extractCounts(data.aggregations.date),
-                          marker: {
-                            symbol: 'circle'
-                          }
-                        }
-                      ];
-                      scope.data.push({
-                        id: 'prime',
-                        name: gettextCatalog.getString('Outpatient visits') + ' PRIME',
-                        data: extractCountsOld(dataOld.aggregations.date),
-                        marker: {
-                          symbol: 'square'
-                        }
-                      })
-                    }
-                    scope.chartConfig.series = scope.data;
+              if (data.aggregations.date) {
+                scope.chartConfig.series.push({
+                    id: 'current',
+                    name: gettextCatalog.getString('Outpatient visits'),
+                    data: extractCounts(data.aggregations.date)
                   }
-                }
-              )
-            });
-          };
+                );
 
-          //var chart = angular.element(document.querySelector('#highcharts-id-' + scope.options.id)).highcharts();
-          //var xMin = chart.xAxis[0].min;
-          //var xMax = chart.xAxis[0].max;
+                getPreviousYears(loopRange, scope.filters[0].from, scope.filters[0].to);
+              }
+            });
+          }
           /**
            *
            * @param factor zoom factor, 0.5 would cut timespan in half (zoom in), 2 would double timespan (zoom out)
@@ -409,16 +356,6 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
             });
           };
 
-          /*function sortResults (a, b) {
-           if (a[0] < b[0]) {
-           return -1;
-           }
-           if (a[0] > b[0]) {
-           return 1;
-           }
-           return 0;
-           }*/
-
           var plotSeries = function (seriesName, seriesType) {
             if (scope.filters) {
               var filters = scope.filters.filter(function (filter) {
@@ -430,13 +367,63 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
             return true;
           };
 
+          var getPreviousYears = function (years, startDate, endDate) {
+            if (years > 0) {
+
+              var aggs = {};
+              var dateAgg = {
+                'date_histogram': {
+                  field: 'visitDate',
+                  interval: scope.interval,
+                  'min_doc_count': 0
+                }
+              };
+              aggs.date = dateAgg;
+
+              if (scope.series.length > 0) {
+                aggs.date.aggs = {};
+                scope.series.forEach(function (s) {
+                  aggs.date.aggs[s] = outpatientAggregation.getAggregation(s);
+                });
+              }
+
+              var dateFrom = moment(startDate).subtract(years, 'year');
+              var lastFrom = dateFrom.format('YYYY-MM-DD');
+              var dateTo = moment(endDate).subtract(years, 'year');
+              var lastTo = dateTo.format('YYYY-MM-DD');
+
+              var year = moment(endDate).subtract(years, 'year').year();
+
+              var queryString = 'visitDate: [' + lastFrom + ' TO ' + lastTo + ']';
+
+              OutpatientVisitResource.search({
+                q: queryString,
+                size: 0,
+                aggs: aggs
+              }, function (dataOld) {
+
+                scope.chartConfig.series.push({
+                  id: year,
+                  name: gettextCatalog.getString('Outpatient visits') + ' ' + year,
+                  data: extractCountsOld(dataOld.aggregations.date)
+                });
+
+                getPreviousYears(years - 1, startDate, endDate);
+              });
+            }
+          };
+
           scope.$watchCollection('[series, queryString]', function () {
             reload();
-            //scope.redraw();
           });
 
           scope.$watch('options.interval', function () {
             scope.interval = scope.options.interval;
+            reload();
+          });
+
+          scope.$watch('options.range', function () {
+            scope.range = scope.options.range;
             reload();
           });
 
