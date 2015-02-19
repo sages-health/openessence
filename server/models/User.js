@@ -105,10 +105,15 @@ var User = codex.model({
     isAdmin: function () {
       return this.doc.roles && this.doc.roles.indexOf('admin') !== -1;
     },
+    isAPIUser: function () { // Using Bearer Authenticated API
+      return this.doc.roles && this.doc.roles.indexOf('api_user') !== -1;
+    },
+    isDataEnterer: function () {
+      return this.doc.roles && this.doc.roles.indexOf('data_entry') !== -1;
+    },
     hasAllDistricts: function () {
       return this.doc.roles && this.doc.roles.indexOf('district_all') !== -1;
     },
-
     hasRightsToDocument: function (doc) {
       if (!doc) {
         return true;
@@ -135,7 +140,9 @@ var User = codex.model({
 
       var myRoles = this.doc.roles || [];
       if (doc.roles) {
-        if (!doc.roles.every(function (r) { return myRoles.indexOf(r) !== -1; })) {
+        if (!doc.roles.every(function (r) {
+            return myRoles.indexOf(r) !== -1;
+          })) {
           // can't give user a role you don't have
           return false;
         }
@@ -173,9 +180,9 @@ var User = codex.model({
 
   preInsert: function (user, callback) {
     async.parallel({
-      hash: function _hash (callback) {
+      hash: function _hash(callback) {
         if (!user.doc.password) { // Persona users don't have passwords
-          return callback(null,  user.doc.password);
+          return callback(null, user.doc.password);
         }
 
         User.hashPassword(user.doc.password, function (err, password) {
@@ -187,7 +194,7 @@ var User = codex.model({
         });
       },
 
-      unlock: function _lock (callback) {
+      unlock: function _lock(callback) {
         // Lock while we check the unique constraint. Otherwise, another client could insert after we check the
         // constraint but before we insert. This is equivalent to the table-wide write locks that most relational
         // DBs use to enforce constraints.

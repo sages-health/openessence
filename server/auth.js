@@ -147,6 +147,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
 }));
 
 passport.use(new BearerStrategy({}, function (token, done) {
+
   if (!conf.users) {
     // "Demo" mode: give any user who logs in via Persona full admin rights
     return done(null, new User({
@@ -194,8 +195,10 @@ function denyAnonymousAccess (req, res, next) {
   }
 }
 
-function authenticate (strategy) {
+function authenticate(strategy) {
   return function (req, res, next) {
+    logger.info('Using strategy:', strategy);
+    logger.info('Using session:', strategy !== 'bearer');
     passport.authenticate(strategy, {session: strategy !== 'bearer'}, function (err, user) {
       if (err) {
         return next(err);
