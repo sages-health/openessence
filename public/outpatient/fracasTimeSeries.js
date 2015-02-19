@@ -5,7 +5,7 @@ var moment = require('moment');
 var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http) {
 
   return {
     restrict: 'E',
@@ -31,7 +31,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             y: gettextCatalog.getString('Count'),
             x: gettextCatalog.getString('Date')
           };
-
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || defaultLabels;
           //TODO.. pivot cols should define an aggregation(count) field
@@ -175,7 +174,22 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }));
           });
 
+          var sumBucket = function (bucket) {
+            if (!bucket) {
+              return 0;
+            }
+            var sum = bucket.reduce(function (prev, curr) {
+              var val = curr.count ? curr.count.value : curr.doc_count;
+              return prev + val;
+            }, 0);  //TODO make sure starting with 0 doesn't add data to normally empty values
+            return sum;
+          };
+
           var reload = function () {
+            debounce(reloadDebounce, 1000).call();
+          };
+
+          var reloadDebounce = function () {
             scope.series = scope.pivot.rows || scope.options.series || [];
             var aggs = {};
             var dateAgg = {
@@ -196,10 +210,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               });
             } else {
               //no series to create, but we must count by the given field
-              if(scope.pivot.cols.length > 0) {
+              if (scope.pivot.cols.length > 0) {
                 aggs.date.aggs = {};
                 var query = outpatientAggregation.buildAggregationQuery([], scope.pivot.cols, null, scope.form);
                 aggs.date.aggs.second = query.query.first;
+              } else {
+                //no columns selected.. no timeseries?
               }
             }
 
@@ -210,66 +226,54 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }, function (data) {
                 //expected scope.data = [ {aggKey, [ [dateMillis, count],.. ]},.. ]
                 if (data.aggregations.date) {
-
                   scope.data = [];
                   var dataStore = {};
-                  var countStore = {};
-
-                  if (scope.series && scope.series.length > 0) {
-                    scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-                      '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
+                  //TODO cycles through colors each time series is pushed/removed, need to reset colors/index
+                  scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
+                    '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
+                  var ser = scope.series ? angular.copy(scope.series) : [];
+                  if (ser.length < 1 && scope.pivot.cols.length > 0) {
+                    ser.push('second');
+                  }
+                  if (ser.length > 0) {
                     data.aggregations.date.buckets.map(function (d) {
-                      scope.series.forEach(function (s) {
+                      ser.forEach(function (s) {
                         var buk = d[s].buckets || d[s]._name.buckets;
                         buk = outpatientAggregation.toArray(buk);
-                        buk.map(function (entry) {
-                          /*jshint camelcase:false */
-                          // if we have filter on this field/series = s
-                          // only plot series meeting filter criteria
-                          if (plotSeries(entry.key, s)) {
-                            var count = entry.count ? entry.count.value : entry.doc_count;
-                            if (entry.second && entry.second._name) {
-                              count = entry.second._name.buckets.reduce(function (prev, curr) {
-                                var val = curr.count ? curr.count.value : curr.doc_count;
-                                return prev + val;
-                              }, 0);  //TODO make sure starting with 0 doesn't add data to normally empty values
-                            }
-                            if (!dataStore[entry.key]) {
-                              dataStore[entry.key] = [];
-                            }
-                            if (!countStore[entry.key]) {
-                              countStore[entry.key] = [];
-                            }
-                            dataStore[entry.key].push([d.key, count]);
-                            countStore[entry.key].push(count);
+
+                        if (s === 'second') { //TODO future proof word use
+                          //they selected just a column, make sure we total by column.count if available
+                          var count = sumBucket(buk);
+                          var label = gettextCatalog.getString('Outpatient visits');
+                          if (!dataStore[label]) {
+                            dataStore[label] = [];
                           }
-                        });
+                          dataStore[label].push({x: d.key, y: count});
+                        } else {
+                          buk.map(function (entry) {
+                            /*jshint camelcase:false */
+                            // if we have filter on this field/series = s
+                            // only plot series meeting filter criteria
+                            if (plotSeries(entry.key, s)) {
+                              var count = entry.count ? entry.count.value : entry.doc_count;
+                              if (entry.second && entry.second._name) {
+                                count = sumBucket(entry.second._name.buckets);
+                              }
+                              if (!dataStore[entry.key]) {
+                                dataStore[entry.key] = [];
+                              }
+                              dataStore[entry.key].push({x: d.key, y: count});
+                            }
+                          });
+                        }
                       });
                     });
-                    calcPValues(dataStore, countStore, scope.options.algorithm);
+                    calcPValues(dataStore, scope.options.algorithm);
                     //scope.chartConfig.series = scope.data;
                   } else {
-                    scope.chartConfig.options.colors = ['#7cb5ec'];
-                    calcOutpatientPvalues(data.aggregations.date, scope.options.algorithm);
-
-                    scope.data = [
-                      {
-                        name: gettextCatalog.getString('Outpatient visits'),
-                        /*data: [{
-                         x: 6,
-                         y: 3.9,
-                         marker: {
-                         symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                         }
-                         }, [3, 4.2], [5, 5.7] ]
-                         */
-                        data: extractCounts(data.aggregations.date, null, null),
-                        //data: calcOutpatientPvalues(data.aggregations.date),
-                        marker: {
-                          symbol: 'circle'
-                        }
-                      }
-                    ];
+                    var counts = extractCounts(data.aggregations.date, null, null);
+                    dataStore[gettextCatalog.getString('Outpatient visits')] = counts;
+                    calcPValues(dataStore, scope.options.algorithm);
                   }
                 }
               }
@@ -380,17 +384,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.$apply();
           };
 
-          /*
-           var extractCounts = function (agg) {
-           var bucket = agg.buckets || agg._name.buckets;
-           return bucket.map(function (b) {
-           var count = b.count ? b.count.value : b.doc_count;
-
-           return [b.key, count];
-           });
-           };
-           */
-
           var createTableJSON = function () {
             var data = scope.chartConfig.series;
             scope.tableMapJSON = [];
@@ -413,18 +406,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             //console.log(scope.tableMapJSON);
           };
 
-          var getCountArray = function (agg) {
-            /*jshint camelcase:false */
-            var counts = [];
-            var bucket = agg.buckets || agg._name.buckets;
-            for (var i = 0; i < bucket.length; i++) {
-              var b = bucket[i];
-              var count = b.count ? b.count.value : b.doc_count;
-              counts.push(count);
-            }
-            return counts;
-          };
-
+          /**
+           * @param agg
+           * @param pValues
+           * @param expectedValues
+           * @returns values: { [ {x: key, y: count, pValue: pValue, expected: expected} ],[{}]...}
+           */
           var extractCounts = function (agg, pValues, expectedValues) {
             /*jshint camelcase:false */
             var bucket;
@@ -435,7 +422,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 /*jshint camelcase:false */
                 var count = b.count ? b.count.value : b.doc_count;
                 agg.counts.push(count);
-                return [b.key, count];
+                //return [b.key, count];
+                return {x: b.key, y: count, pValue: null, expected: null};
               });
             } else {
               bucket = agg.buckets || agg._name.buckets;
@@ -444,115 +432,19 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 var count = bucket[i].count ? bucket[i].count.value : bucket[i].doc_count;
                 var pValue = pValues[i] === null ? 1 : pValues[i];
                 var expected = expectedValues[i] === null ? 0 : expectedValues[i];
-                //values.push([bucket[i].key, count, pValue, expected]);
-                if (pValue > 0.05) {
-                  values.push(
-                    {
-                      x: bucket[i].key,
-                      y: count,
-                      pValue: pValue,
-                      expected: expected
-                    }
-                  );
-                } else if (pValue <= 0.05 && pValue > 0.01) {
-                  values.push(
-                    {
-                      x: bucket[i].key,
-                      y: count,
-                      marker: {
-                        fillColor: '#ffff00'
-                      },
-                      pValue: pValue,
-                      expected: expected
-                    }
-                  );
-                } else {
-                  values.push(
-                    {
-                      x: bucket[i].key,
-                      y: count,
-                      marker: {
-                        fillColor: '#ff0000'
-                      },
-                      pValue: pValue,
-                      expected: expected
-                    }
-                  );
-                }
+                values.push(populatePValue(pValue, bucket[i].key, count, expected));
               }
               return values;
             }
           };
 
-          var calcOutpatientPvalues = function (dates, algorithm) {
-            var pValues = [];
-            var expectedValues = [];
-            var counts = getCountArray(dates);
+          var calcPValues = function (dataStore, algorithm) {
             var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
-
-            $http.post(algorithmString,
-              {
-                data: counts,
-                baseline: 28,
-                guardBand: 2
-              }
-            ).
-              success(function (resp) {
-                pValues = resp.pValues;
-                expectedValues = resp.expectedValues;
-                if (pValues.length > 0) {
-                  scope.data = [
-                    {
-                      name: gettextCatalog.getString('Outpatient visits'),
-                      /*data: [{
-                       x: 6,
-                       y: 3.9,
-                       marker: {
-                       symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                       }
-                       }, [3, 4.2], [5, 5.7] ]
-                       */
-                      data: extractCounts(dates, pValues, expectedValues),
-                      //data: calcOutpatientPvalues(data.aggregations.date),
-                      marker: {
-                        symbol: 'circle'
-                      }
-                    }
-                  ];
-                  //scope.series[0] = scope.data[0];
-                  scope.chartConfig.series = scope.data;
-                  createTableJSON();
-                  return;
-                }
+            //$log.log('using algorithm' + algorithmString);
+            angular.forEach(dataStore, function (points, key) {
+              var counts = points.map(function (c) {
+                return c.y;
               });
-
-            scope.data.data = extractCounts(dates, null, null);
-            scope.data = [
-              {
-                name: gettextCatalog.getString('Outpatient visits'),
-                /*data: [{
-                 x: 6,
-                 y: 3.9,
-                 marker: {
-                 symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                 }
-                 }, [3, 4.2], [5, 5.7] ]
-                 */
-                data: extractCounts(dates, null, null),
-                marker: {
-                  symbol: 'circle'
-                }
-              }
-            ];
-            scope.chartConfig.series = scope.data;
-            createTableJSON();
-          };
-
-          var calcPValues = function (dataStore, countStore, algorithm) {
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
-            $log.log('using algorithm' + algorithmString);
-            Object.keys(dataStore).forEach(function (k) {
-              var counts = countStore[k];
               var pValues = [];
               var expectedValues = [];
 
@@ -570,82 +462,70 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
                   if (pValues.length > 0) {
                     var values = [];
-                    for (var i = 0; i < dataStore[k].length && i < pValues.length; i++) {
+                    for (var i = 0; i < points.length && i < pValues.length; i++) {
                       var pValue = pValues[i] === null ? 1 : pValues[i];
                       var expected = expectedValues[i] === null ? 0 : expectedValues[i];
-                      var x = (dataStore[k])[i][0];
-                      var count = (dataStore[k])[i][1];
-                      //dataStore[entry.key].push([d.key, count]);
-                      //console.log("Adding: " + k +"\t"+ (dataStore[k])[i][0]+"\t"+ (dataStore[k])[i][1]+"\t"+ pValue);
-                      //values.push([(dataStore[k])[i][0], (dataStore[k])[i][1], pValue, expected]);
-                      if (pValue > 0.05){
-                        values.push(
-                          {
-                            x: x,
-                            y: count,
-                            pValue: pValue,
-                            expected: expected
-                          }
-                        );
-                      }else if(pValue <= 0.05 && pValue > 0.01){
-                        values.push(
-                          {
-                            x: x,
-                            y: count,
-                            marker: {
-                              fillColor: '#ffff00'
-                            },
-                            pValue: pValue,
-                            expected: expected
-                          }
-                        );
-                      } else {
-                        values.push(
-                          {
-                            x: x,
-                            y: count,
-                            marker: {
-                              fillColor: '#ff0000'
-                            },
-                            pValue: pValue,
-                            expected: expected
-                          }
-                        );
-                      }
+                      values.push(populatePValue(pValue, points[i].x, points[i].y, expected));
                     }
+                    //name: gettextCatalog.getString('Outpatient visits'),
+                    /*data: [{
+                     x: 6,
+                     y: 3.9,
+                     marker: {
+                     symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
+                     }
+                     }, [3, 4.2], [5, 5.7] ]
+                     */
                     scope.data.push({
-                      name: k,
+                      name: key,
                       data: values
                     });
                   } else {
                     scope.data.push({
-                      name: k,
-                      data: dataStore[k]
+                      name: key,
+                      data: points
                     });
                   }
                   scope.chartConfig.series = scope.data;
                   createTableJSON();
                 }).error(function () {
                   scope.data.push({
-                    name: k,
-                    data: dataStore[k]
+                    name: key,
+                    data: points
                   });
-
                 });
             });
             scope.chartConfig.series = scope.data;
             createTableJSON();
           };
 
-          /*function sortResults (a, b) {
-           if (a[0] < b[0]) {
-           return -1;
-           }
-           if (a[0] > b[0]) {
-           return 1;
-           }
-           return 0;
-           }*/
+          /**
+           *
+           * @param pValue
+           * @param x
+           * @param count
+           * @param expected
+           * @returns {*}
+           */
+          var populatePValue = function (pValue, x, count, expected) {
+            var pv = {
+              x: x,
+              y: count,
+              pValue: pValue,
+              expected: expected
+            };
+            // between 0.01 and 0.05 = yellow
+            if (pValue <= 0.05 && pValue > 0.01) {
+              pv.marker = {
+                fillColor: '#ffff00'
+              };
+            } else if (pValue <= 0.01) {
+              pv.marker = {
+                fillColor: '#ff0000'
+              };
+            }
+            return pv;
+          };
 
           var plotSeries = function (seriesName, seriesType) {
             if (scope.filters) {
@@ -706,7 +586,5 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
         }
       };
     }
-  }
-    ;
-})
-;
+  };
+});

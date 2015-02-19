@@ -116,10 +116,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         //assuming only two deep BY one for now...
         var parseAggQuery = function (aggregation, first, second) {
-          $log.log('parsing agg query');
+          //$log.log('parsing agg query');
           /*jshint camelcase:false */
           var aggs = aggregation.aggregations;
-          $log.log(aggs);
+          //$log.log(aggs);
           var colLabel = first;
           var rowLabel = second;
 

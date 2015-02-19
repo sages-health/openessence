@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope, updateURL, //
+angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope, debounce, updateURL, //
                                                                                         gettextCatalog, EditSettings, $location) {
   return {
     restrict: 'E',
@@ -101,6 +101,10 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
           }
 
           var reload = function () {
+            debounce(reloadDebounce, 200).call();
+          };
+
+          var reloadDebounce = function () {
 
             scope.data = [];
 
