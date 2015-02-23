@@ -65,11 +65,12 @@ module.exports = codex.controller(User, {
           }
           // set password
           esRequest.body.password = esr.doc.password;
+          esRequest.body.encryptedPassword = true;
           callback(null, esRequest);
         });
       } else {
         // existing user editing their password, so the password is already hashed
-        // Note that scrypt is smart enough not to double encode digests (I guess it checks for the "scrypt" preamble
+        // Note that scrypt is smart enough not to duble encode digests (I guess it checks for the "scrypt" preamble
         // and associated params), so it's OK that the model still tries to hash it.
         return callback(null, esRequest);
       }

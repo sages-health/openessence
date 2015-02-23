@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, FacilityResource) {
+module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, FormResource, $location) {
   $scope.activeFilters = [
     {
       filterID: 'username',
@@ -65,7 +65,7 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, User
     delete result.passwordConfirm;
     return result;
   };
-  editOptions.roles = ['admin', 'data_entry', 'district_all'];
+  editOptions.roles = ['admin', 'data_entry', 'all_locations'];
   editOptions.minPasswordLength = 4; // TODO don't use this on the client
   editOptions.isShort = function (field) {
     return field.$modelValue && field.$modelValue.length < $scope.minPasswordLength;
@@ -74,19 +74,20 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, User
   editOptions.passwordMatch = function (field1, field2) {
     return field1.$modelValue === field2.$modelValue;
   };
-  var searchParams = {
-    size: 100, // TODO search on demand if response indicates there are more records
-    sort: 'name.raw'
-  };
-  FacilityResource.get(searchParams, function (response) {
-    var districts = response.results.map(function (r) {
-      return r._source.location.district;
+  FormResource.get({q: 'name:site', size: 1}, function (response) {
+    if (response.results.length === 0) {
+      console.error('No configured forms');
+      $location.path('/edit/config');
+      return;
+    }
+
+    var form = response.results[0]._source;
+    var facilityField = form.fields.filter(function (fld) {
+      return fld.name === 'medicalFacility';
     });
-    editOptions.medicalFacility = {
-      location: {
-        districts: districts
-      }
-    };
+    editOptions.locations = (facilityField.length > 0 ? facilityField[0].values : []).map(function (obj) {
+      return obj.name;
+    });
   });
 
   $scope.$watchCollection('queryString', reload);

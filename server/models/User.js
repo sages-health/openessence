@@ -111,8 +111,8 @@ var User = codex.model({
     isDataEnterer: function () {
       return this.doc.roles && this.doc.roles.indexOf('data_entry') !== -1;
     },
-    hasAllDistricts: function () {
-      return this.doc.roles && this.doc.roles.indexOf('district_all') !== -1;
+    hasAllLocations: function () {
+      return this.doc.roles && this.doc.roles.indexOf('all_locations') !== -1;
     },
     hasRightsToDocument: function (doc) {
       if (!doc) {
@@ -125,12 +125,12 @@ var User = codex.model({
         return true;
       }
 
-      var district = facility.district;
-      if (!district || !this.doc.districts) {
+      var location = facility.name;
+      if (!location || !this.doc.locations) {
         return true;
       }
 
-      return this.hasAllDistricts() || this.doc.districts.indexOf(district) !== -1;
+      return this.hasAllLocations() || this.doc.locations.indexOf(location) !== -1;
     },
 
     canCreateUser: function (doc) {
@@ -181,7 +181,8 @@ var User = codex.model({
   preInsert: function (user, callback) {
     async.parallel({
       hash: function _hash(callback) {
-        if (!user.doc.password) { // Persona users don't have passwords
+        if (!user.doc.password || user.doc.encryptedPassword) { // Persona users don't have passwords
+          delete user.doc.encryptedPassword;
           return callback(null, user.doc.password);
         }
 
@@ -189,9 +190,9 @@ var User = codex.model({
           if (err) {
             return callback(err);
           }
-
           return callback(null, password.toString('hex'));
         });
+
       },
 
       unlock: function _lock(callback) {

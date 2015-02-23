@@ -607,7 +607,8 @@ var indexRequests = [
                   }
                 }
               },
-              districts: {
+              // Renamed districts to locations so that we will be able to do facility/district/country level access
+              locations: {
                 type: 'string',
                 fields: {
                   raw: {

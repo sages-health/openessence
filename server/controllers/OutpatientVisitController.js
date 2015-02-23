@@ -22,11 +22,11 @@ module.exports = codex.controller(OutpatientVisit, {
 
     var filter = {
       terms: {
-        'medicalFacility.location.district.raw': req.user.doc.medicalFacility ? req.user.doc.medicalFacility.location.districts : []
+        'medicalFacility.name.raw': req.user.doc.locations ? req.user.doc.locations : []
       }
     };
 
-    if (req.user.hasAllDistricts() || req.user.isAdmin()) {
+    if (req.user.hasAllLocations() || req.user.isAdmin()) {
       filter = {};
     }
 
