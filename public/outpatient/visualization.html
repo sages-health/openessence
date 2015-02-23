@@ -6,7 +6,7 @@
     <crosstab options="options" pivot="pivot" records="crosstabData"></crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
-    <outpatient-time-series filters="filters" form="form" query-string="queryString" series="pivot.cols" options="options"
+    <outpatient-time-series filters="filters" query-string="queryString" pivot="pivot" options="options"
                             source="source" widget="widget"></outpatient-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="yoy">

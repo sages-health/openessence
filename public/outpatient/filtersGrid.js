@@ -20,6 +20,10 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
           scope.possibleFilters = scope.possibleFilters || {};
           scope.activeFilters = scope.activeFilters || [];
 
+          scope.addFilters = function (filters, isFilterEvent) {
+
+          };
+
           scope.addFilter = function (filter, isFilterEvent) {
             var newFilter = angular.extend({}, scope.possibleFilters[filter.filterID], filter);
 
@@ -67,7 +71,7 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
               apply(filter, add);
             }
           });
-       
+
 
           scope.$watch('queryString', function () {
             scope.queryForm.queryStrings.$setValidity('syntaxError', true);

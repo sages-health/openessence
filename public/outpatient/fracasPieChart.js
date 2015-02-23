@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope, updateURL, //
+angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope, debounce, updateURL, //
                                                                                         gettextCatalog, EditSettings, $location) {
   return {
     restrict: 'E',
@@ -41,32 +41,33 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             options: {
               chart: {
                 plotBackgroundColor: null,
-                plotShadow: false
+                plotShadow: false,
+                type: 'pie'
               },
               tooltip: {
-                pointFormat: '{series.name}: <b>{point.value}</b>'
+                pointFormat: 'Count: <b>{point.y}</b>'
               },
               exporting: {enabled: false},
               plotOptions: {
                 pie: {
                   allowPointSelect: true,
-                  cursor: 'pointer',
-                  dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>',
-                    style: {
-                      color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    }
-                  }
+                  cursor: 'pointer'
                 },
                 series: {
                   point: {
                     events: {
                       click: function () {
+
                         var point = {
                           name: this.name,
-                          col: this.col
+                          col: null
                         };
+
+                        if (this.series.options.id == 'cols') {
+                          point.col = this.col
+                        } else {
+                          point.col = this.series.name
+                        }
 
                         narrowFilters(point);
                       }
@@ -101,21 +102,83 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
           }
 
           var reload = function () {
+            debounce(reloadDebounce, 200).call();
+          };
 
-            scope.data = [];
+          var reloadDebounce = function () {
 
-            for (var i = 0; i < scope.aggData.length; i++) {
-              scope.aggData[i].name = scope.aggData[i].colName;
-              scope.aggData[i].y = scope.aggData[i].value;
+            scope.chartConfig.series = [];
+
+            if (scope.pivot.cols.length > 0) {
+
+              var innerData = scope.aggData.concat();
+
+              for (var i = 0; i < innerData.length; i++) {
+                innerData[i].name = innerData[i].colName;
+                innerData[i].y = innerData[i].value;
+              }
+
+              var series = [];
+              var inner = [];
+              var outer = [];
+
+              for (var i = 0; i < innerData.length; i++) {
+                var found = false;
+
+                for (var j = 0; j < inner.length; j++) {
+                  if (innerData[i].colName == inner[j].colName) {
+                    inner[j].y = inner[j].y + innerData[i].y;
+                    found = true;
+                    break;
+                  }
+                }
+
+                if (found == false) {
+                  inner.push(innerData[i]);
+                }
+              }
+
+              series.push({
+                id: 'cols',
+                name: innerData[0].col,
+                data: inner,
+                size: '80%',
+                dataLabels: {
+                  formatter: function () {
+                    return this.y > 5 ? this.point.name : null;
+                  },
+                  color: 'white',
+                  distance: -30
+                }
+              });
+
+              if (scope.pivot.rows.length > 0) {
+                for (var x = 0; x < scope.aggData.length; x++) {
+                  outer.push({
+                    name: scope.aggData[x].rowName,
+                    y: scope.aggData[x].value
+                  });
+                }
+
+                series.push({
+                  id: 'rows',
+                  name: scope.aggData[0].row,
+                  data: outer,
+                  size: '100%',
+                  innerSize: '80%'
+                });
+              } else {
+                series[0].dataLabels = {
+                  enabled: true,
+                  format: '<b>{point.name}</b>',
+                  style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                  }
+                };
+                series[0].size = '100%';
+              }
+              scope.chartConfig.series = series;
             }
-
-            scope.data.push({
-              type: 'pie',
-              name: scope.options.labels.title,
-              data: scope.aggData
-            });
-
-            scope.chartConfig.series = scope.data;
           };
 
           var narrowFilters = function (point) {

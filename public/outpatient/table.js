@@ -119,8 +119,6 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
               });
               var tbodyHeight = angular.element(parent.getElementsByTagName('tbody')[0]).height();
               var numRows = Math.floor(((scope.options.height - 75)) / rowHeight);
-              console.log('tbodyH: %s, scopeH: %s, rows: %s, rowH: %s, numRows: %s',
-                               tbodyHeight, scope.options.height, rows.length, rowHeight, numRows);
               if (!isNaN(numRows)) {
                 scope.tableParams.parameters({count: numRows});
               }
