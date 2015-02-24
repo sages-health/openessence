@@ -547,7 +547,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               res = res || filters.length === 0;
 
               for(var i = 0; i < filters.length; i++){
-                res = res || filters[i].value.indexOf(seriesName) === -1;
+                res = res || filters[i].value.indexOf(seriesName) !== -1;
               }
             }
             return res;
