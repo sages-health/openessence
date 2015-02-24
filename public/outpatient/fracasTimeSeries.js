@@ -5,7 +5,7 @@ var moment = require('moment');
 var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters) {
 
   return {
     restrict: 'E',
@@ -341,11 +341,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               dateFilter.to = new Date(to);
             } else {
               // add a new filter we we zoom in, action can be reversed by deleting this new filter
-              scope.filters.push({
-                type: 'date',
-                from: new Date(from),
-                to: new Date(to)
-              }); // TODO filter panel needs to watch for changes to filters
+              scope.filters.push(
+                angular.extend({
+                  from: new Date(from),
+                  to: new Date(to)
+                }, possibleFilters.possibleFilters.visitDate)); // TODO filter panel needs to watch for changes to filters
             }
           };
 
@@ -362,6 +362,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             });
 
             var dateFilter;
+
             if (dateFilters.length === 0) {
               // TODO add new date filter
             } else {
@@ -369,12 +370,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }
 
             if (!dateFilter) {
-              dateFilter = {
-                filterID: 'date',
+              dateFilter = angular.extend({
                 from: new Date(from),
                 to: new Date(to)
-              };
-              scope.filters.push(dateFilter);
+              }, possibleFilters.possibleFilters.visitDate);
+//              scope.filters.push(dateFilter);
               scope.$emit('filterChange', dateFilter, true);
             } else {
               dateFilter.from = new Date(from);
@@ -528,14 +528,19 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           var plotSeries = function (seriesName, seriesType) {
+            var res = !scope.filters;
             if (scope.filters) {
               var filters = scope.filters.filter(function (filter) {
-                return filter.filterID === seriesType && filter.value.length > 0 &&
-                  filter.value.indexOf(seriesName) === -1;
+                return filter.filterID === seriesType && filter.value.length > 0;
               });
-              return filters.length === 0;
+
+              res = res || filters.length === 0;
+
+              for(var i = 0; i < filters.length; i++){
+                res = res || filters[i].value.indexOf(seriesName) === -1;
+              }
             }
-            return true;
+            return res;
           };
 
           scope.$watchCollection('[pivot.rows, pivot.cols, queryString, options.algorithm]', function () {
