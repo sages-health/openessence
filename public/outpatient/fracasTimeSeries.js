@@ -439,61 +439,71 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           var calcPValues = function (dataStore, algorithm) {
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' :
+                                  (algorithm === 'CUSUM') ?'/detectors/cusum' : undefined;
             //$log.log('using algorithm' + algorithmString);
             angular.forEach(dataStore, function (points, key) {
-              var counts = points.map(function (c) {
-                return c.y;
-              });
-              var pValues = [];
-              var expectedValues = [];
 
-              $http.post(algorithmString,
-                {
-                  data: counts,
-                  baseline: 28,
-                  guardBand: 2
-                }
-              ).
-                success(function (resp) {
-                  //$log.log(resp.pValues);
-                  pValues = resp.pValues;
-                  expectedValues = resp.expectedValues;
+              if(!algorithmString){
+                scope.data.push({
+                  name: key,
+                  data: points
+                });
+              }
+              else {
+                var counts = points.map(function (c) {
+                  return c.y;
+                });
+                var pValues = [];
+                var expectedValues = [];
 
-                  if (pValues.length > 0) {
-                    var values = [];
-                    for (var i = 0; i < points.length && i < pValues.length; i++) {
-                      var pValue = pValues[i] === null ? 1 : pValues[i];
-                      var expected = expectedValues[i] === null ? 0 : expectedValues[i];
-                      values.push(populatePValue(pValue, points[i].x, points[i].y, expected));
+                $http.post(algorithmString,
+                  {
+                    data: counts,
+                    baseline: 28,
+                    guardBand: 2
+                  }
+                ).
+                  success(function (resp) {
+                    //$log.log(resp.pValues);
+                    pValues = resp.pValues;
+                    expectedValues = resp.expectedValues;
+
+                    if (pValues.length > 0) {
+                      var values = [];
+                      for (var i = 0; i < points.length && i < pValues.length; i++) {
+                        var pValue = pValues[i] === null ? 1 : pValues[i];
+                        var expected = expectedValues[i] === null ? 0 : expectedValues[i];
+                        values.push(populatePValue(pValue, points[i].x, points[i].y, expected));
+                      }
+                      //name: gettextCatalog.getString('Outpatient visits'),
+                      /*data: [{
+                       x: 6,
+                       y: 3.9,
+                       marker: {
+                       symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
+                       }
+                       }, [3, 4.2], [5, 5.7] ]
+                       */
+                      scope.data.push({
+                        name: key,
+                        data: values
+                      });
+                    } else {
+                      scope.data.push({
+                        name: key,
+                        data: points
+                      });
                     }
-                    //name: gettextCatalog.getString('Outpatient visits'),
-                    /*data: [{
-                     x: 6,
-                     y: 3.9,
-                     marker: {
-                     symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                     }
-                     }, [3, 4.2], [5, 5.7] ]
-                     */
-                    scope.data.push({
-                      name: key,
-                      data: values
-                    });
-                  } else {
+                    scope.chartConfig.series = scope.data;
+                    createTableJSON();
+                  }).error(function () {
                     scope.data.push({
                       name: key,
                       data: points
                     });
-                  }
-                  scope.chartConfig.series = scope.data;
-                  createTableJSON();
-                }).error(function () {
-                  scope.data.push({
-                    name: key,
-                    data: points
                   });
-                });
+              }
             });
             scope.chartConfig.series = scope.data;
             createTableJSON();
@@ -537,7 +547,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               res = res || filters.length === 0;
 
               for(var i = 0; i < filters.length; i++){
-                res = res || filters[i].value.indexOf(seriesName) !== -1;
+                res = res || filters[i].value.indexOf(seriesName) === -1;
               }
             }
             return res;
