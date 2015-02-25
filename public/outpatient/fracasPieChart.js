@@ -37,12 +37,16 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
           scope.refresh = false;
 
+          var colors = Highcharts.getOptions().colors;
+
           scope.chartConfig = {
             options: {
               chart: {
                 plotBackgroundColor: null,
                 plotShadow: false,
-                type: 'pie'
+                type: 'pie',
+                events: {},
+                animation: false
               },
               tooltip: {
                 pointFormat: 'Count: <b>{point.y}</b>'
@@ -81,25 +85,10 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             },
             series: [],
             size: {
-              width: scope.options.width,
+              width: scope.options.width - 10,
               height: scope.options.height
             }
           };
-
-          // Removing click functionality for clickthrough.
-          if (scope.source === 'dashboard') {
-            scope.chartConfig.options.plotOptions.series.point.events = null;
-            scope.chartConfig.options.chart.events = {
-              click: function () {
-                var savedWidget = {};
-                savedWidget[scope.widget.name] = scope.widget.content;
-                sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
-                scope.$apply(function () {
-                  $location.path('/workbench/').search('visualization', scope.widget.name);
-                });
-              }
-            };
-          }
 
           var reload = function () {
             debounce(reloadDebounce, 200).call();
@@ -116,6 +105,8 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
               if (scope.pivot.cols.length > 0) {
 
                 var innerData = scope.aggData.concat();
+
+                var color = 0;
 
                 for (var i = 0; i < innerData.length; i++) {
                   innerData[i].name = innerData[i].colName;
@@ -134,6 +125,8 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                   }
 
                   if (found == false) {
+                    innerData[i].color = colors[color];
+                    color++;
                     inner.push(innerData[i]);
                   }
                 }
@@ -164,22 +157,50 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
               if (scope.pivot.rows.length > 0) {
 
-                console.log(scope.aggData);
-
+                var catName = '';
                 var sourceName = '';
                 var source = '';
                 if (scope.pivot.cols.length > 0) {
                   sourceName = 'rowName';
+                  catName = 'colName'
                   source = 'row';
                 } else {
                   sourceName = 'colName';
+                  catName = 'rowName';
                   source = 'row';
                 }
 
+                var parent = '';
+                var colorVal = null;
+                var color = 0;
+                var brightScale = 10;
+
                 for (var x = 0; x < scope.aggData.length; x++) {
+
+                  if (scope.pivot.cols.length > 0) {
+                    var brightness = 0.2 - (x / brightScale) / 5;
+
+                    if (scope.aggData[x][catName] == parent) {
+                      colorVal = Highcharts.Color(colors[color]).brighten(brightness).get();
+                      brightness--;
+
+                    } else {
+                      if (x != 0) {
+                        color++;
+                      }
+                      parent = scope.aggData[x][catName];
+                      brightScale = 50;
+                      colorVal = Highcharts.Color(colors[color]).brighten(0.2 - (x / brightScale) / 5).get();
+                      brightScale--;
+                    }
+                  } else {
+                    colorVal = colors[x];
+                  }
+
                   outer.push({
                     name: scope.aggData[x][sourceName],
-                    y: scope.aggData[x].value
+                    y: scope.aggData[x].value,
+                    color: colorVal
                   });
                 }
 
@@ -212,6 +233,25 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             $rootScope.$emit('filterChange', filter, true, true);
           };
 
+          var chartToWorkbench = function () {
+            var savedWidget = {};
+            savedWidget[scope.widget.name] = scope.widget.content;
+            sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
+            scope.$apply(function () {
+              $location.path('/workbench/').search('visualization', scope.widget.name);
+            });
+          };
+
+          // Removing click functionality for clickthrough.
+          if (scope.source === 'dashboard') {
+            scope.chartConfig.options.plotOptions.series.point.events = {
+              click: chartToWorkbench
+            }
+            scope.chartConfig.options.chart.events = {
+              click: chartToWorkbench
+            }
+          }
+
           scope.$watchCollection('[aggData]', function () {
             reload();
           });
@@ -220,12 +260,9 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             scope.chartConfig.title.text = scope.options.labels.title;
           });
 
-          scope.$watch('options.height', function () {
+          scope.$watchCollection('[options.height, options.width]', function () {
             scope.chartConfig.size.height = scope.options.height;
-          });
-
-          scope.$watch('options.width', function () {
-            scope.chartConfig.size.width = scope.options.width;
+            scope.chartConfig.size.width = scope.options.width - 10;
           });
         }
       };

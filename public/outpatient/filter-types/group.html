@@ -2,7 +2,7 @@
   <form class="form" role="form">
     <div class="form-group">
       <select class="form-control" multiple ui-select2 ng-model="filter.value" placeholder="{{'Any' | translate}}">
-        <option ng-repeat="item in filter.values | orderBy:'name'" value="{{item.value}}">{{item.name}}</option>
+        <option ng-repeat="item in filter.values | orderBy:(filter.sortBy || 'name')" value="{{item.value}}">{{item.name}}</option>
       </select>
     </div>
   </form>
