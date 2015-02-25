@@ -102,6 +102,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       type: 'group',
       field: 'patient.age.years',
       name: gettextCatalog.getString('Age Group'),
+      sortBy: 'from', // sort possible values by this property
       aggregation: {
         range: { // age is actually an age group, b/c that's almost always what you actually want
           field: 'patient.age.years',
