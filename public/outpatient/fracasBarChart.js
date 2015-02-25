@@ -5,7 +5,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, $log, $location, $timeout, debounce,
-                                                                                           updateURL, gettextCatalog, EditSettings) {
+                                                                                        updateURL, gettextCatalog, EditSettings) {
   return {
     restrict: 'E',
     template: require('./bar-chart.html'),
@@ -46,22 +46,60 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
           scope.chartConfig = {
             options: {
               chart: {
-                type: 'column'
+                type: 'column',
+                animation: false,
+                events: {}
               },
               exporting: {enabled: false},
               tooltip: {
                 formatter: function () {
-                  return '<span>Category: <i>' + this.key + '</i></span><br/>' + '<span>Value: <b>' + this.y + '</b></span><br/>';
+
+                  var identifier = '';
+                  if (this.series.options.id == 'single') {
+                    identifier = 'Count';
+                  } else {
+                    identifier = this.series.name;
+                  }
+
+                  return '<span>Category: <i>' + this.key + '</i></span><br/>' + '<span>' + identifier + ': <b>' + this.y + '</b></span><br/>';
                 }
               },
               plotOptions: {
                 column: {
-                  grouping: false,
-                  pointPadding: 0.2
+                  pointPadding: 0.1,
+                  borderWidth: 0,
+                  groupPadding: 0
+                },
+                series: {
+                  point: {
+                    events: {
+                      click: function () {
+
+                        var point = {
+                          name: null,
+                          col: null
+                        };
+
+                        if (this.series.options.id == 'single') {
+                          point.name = this.category;
+                          if (scope.pivot.cols.length > 0) {
+                            point.col = scope.pivot.cols[0];
+                          } else {
+                            point.col = scope.pivot.rows[0]
+                          }
+                        } else {
+                          point.name = this.series.name;
+                          point.col = scope.pivot.rows[0];
+                        }
+
+                        narrowFilters(point);
+                      }
+                    }
+                  }
                 }
               },
-              drilldown: {
-                series: []
+              legend: {
+                enabled: true
               }
             },
             xAxis: {
@@ -75,119 +113,22 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               }
             },
             yAxis: {
-              allowDecimals: false,
-              min: 0,
-              lineWidth: 1,
               title: {
                 text: scope.options.labels.y
               },
-              labels: {
-                enabled: true
-              }
+              min: 0
             },
             title: {
               text: scope.options.labels.title
             },
             series: [],
-            loading: false,
             credits: {
               enabled: false
             },
             size: {
-              width: scope.options.width,
+              width: scope.options.width - 10,
               height: scope.options.height
             }
-          };
-
-          /**
-           * Get the display name for the data point
-           * Also used to match new data points to existing ones
-           * @param aggDataPoint either an aggDatapoint or a value (which has these fields)
-           * @param tryRowFirst boolean
-           * @returns string || null
-           */
-          var getAggDataPointName = function (aggDataPoint, tryRowFirst) {
-            var hasKey = _.has(aggDataPoint, 'key');
-            var hasColName = _.has(aggDataPoint, 'colName');
-            var hasRowName = _.has(aggDataPoint, 'rowName');
-            if (tryRowFirst) {
-              return hasRowName ? aggDataPoint.rowName : hasColName ? aggDataPoint.colName : hasKey ? aggDataPoint.key : null;
-            } else {
-              return hasColName ? aggDataPoint.colName : hasRowName ? aggDataPoint.rowName : hasKey ? aggDataPoint.key : null;
-            }
-          };
-
-          /**
-           * Gathers the values
-           * Also used to match new data points to existing ones
-           * @param aggDataPoint dataPoint from scope.aggData
-           * @param reduceValues boolean
-           * @returns Array || Number
-           */
-          var getAggDataPointValues = function (aggDataPoint, reduceValues) {
-            var hasValues = _.has(aggDataPoint, 'values');
-            if (hasValues) {
-              var values = [];
-              _.each(aggDataPoint.values, function (valueData) {
-                var hasValue = _.has(valueData, 'value');
-                if (hasValue) {
-                  values.push(valueData.value);
-                }
-              });
-              if (reduceValues === true) {
-                return _.reduce(values, function (sum, value) {
-                  return sum + value;
-                }, 0);
-              } else {
-                return values;
-              }
-            } else {
-              return [];
-            }
-          };
-
-          /**
-           * Gets the categories for the bar chart
-           * These are used for highCharts configuration
-           * @param aggData usually scope.aggData
-           * @returns Array
-           */
-          var getAggDataCategories = function (aggData) {
-            var categories = [];
-            _.each(aggData, function (aggDataPoint) {
-              var name = getAggDataPointName(aggDataPoint, false);
-              if (!_.isNull(name)) {
-                categories.push(name);
-              }
-            });
-            return categories;
-          };
-
-
-          /**
-           * Transforms the aggregated value data into highCharts series format for column chart.
-           * This will place it in a nested drill down format for better visual effect
-           * @param id unique name of the drilldown, must match parent drilldown name
-           * @param aggDataPoint one datapoint of the aggregated data
-           * @returns Array
-           */
-          var addDrillDownSeries = function (id, aggDataPoint) {
-            var series = {id: id, name: id, data: [], colorByPoint: true};
-            var hasValues = _.has(aggDataPoint, 'values');
-            if (hasValues) {
-              _.each(aggDataPoint.values, function (valueData) {
-                var name = getAggDataPointName(valueData, true);
-                var value = _.has(valueData, 'value') ? valueData.value : 0;
-                var event = {
-                  click: function () {
-                    addFilter(valueData);
-                  }
-                };
-                var point = {name: name, y: value, events: event};
-                series.data.push(point);
-              });
-            }
-            return series;
           };
 
           /**
@@ -195,144 +136,136 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
            * @params aggDataPoint
            */
           var reload = function () {
-            debounce(reloadDebounce, 100).call();
+            debounce(reloadDebounce, 200).call();
           };
 
           var reloadDebounce = function () {
-            scope.chartConfig.series = getAggDataToHCSeries();
-            $log.info('ChartConfig', scope.chartConfig);
-            $timeout(function () {
-              scope.$broadcast('highchartsng.reflow');
-            });
-          };
 
-          /**
-           * Transforms the aggregated data into highCharts series format for column chart.
-           * @returns Array
-           */
-          var getAggDataToHCSeries = function () {
-            var series = [];
-            var categories = getAggDataCategories(scope.aggData);
-            var hasUpperEvent = _.isEmpty(scope.pivot.cols) || _.isEmpty(scope.pivot.rows);
-            var hasDrillDown = !hasUpperEvent;
-            var drillDownSeries = [];
-            _.each(scope.aggData, function (aggDataPoint) {
-                var point = {name: null, data: []};
-                var name = getAggDataPointName(aggDataPoint, false);
-                var aggValue = getAggDataPointValues(aggDataPoint, true);
-                if (!_.isNull(name)) {
-                  point.name = name;
-                  if (!_.isNaN(aggValue) && _.isNumber(aggValue)) {
-                    var valueIndex = _.indexOf(categories, name);
-                    _.each(_.range(_.size(categories)), function (val, index) {
-                        if (index === valueIndex) { // This is the location index where data should be placed
-                          var data = {
-                            name: name,
-                            y: aggValue
-                          };
-                          if (hasUpperEvent) {
-                            var event = {
-                              click: function () {
-                                addFilter(aggDataPoint);
-                              }
-                            };
-                            _.extend(data, {events: event});
-                          }
-                          if (hasDrillDown) {
-                            drillDownSeries.push(addDrillDownSeries(name, aggDataPoint));
-                            _.extend(data, {drilldown: name});
-                          }
-                          point.data.push(data);
-                        }
-                        else {
-                          point.data.push(null);
-                        }
+              scope.chartConfig.series = [];
+              scope.chartConfig.xAxis.categories = [];
+
+              for (var i = 0; i < scope.aggData.length; i++) {
+                if (typeof scope.aggData[i].colName === 'undefined') {
+                  scope.chartConfig.xAxis.categories.push(scope.aggData[i].key);
+                } else {
+                  scope.chartConfig.xAxis.categories.push(scope.aggData[i].colName);
+                }
+              }
+
+              var colors = Highcharts.getOptions().colors;
+
+              var series = [];
+
+              if ((scope.pivot.cols.length <= 0 && scope.pivot.rows.length > 0) || (scope.pivot.rows.length <= 0 && scope.pivot.cols.length > 0)) {
+
+                scope.chartConfig.options.legend.enabled = false;
+
+                var series = [{
+                                id: 'single',
+                                data: [],
+                                color: colors[0]
+                              }];
+                for (var i = 0; i < scope.aggData.length; i++) {
+                  series[0].data.push(scope.aggData[i].values[0].value);
+                }
+              } else {
+
+                scope.chartConfig.options.legend.enabled = true;
+
+                var subCats = [];
+
+                for (var i = 0; i < scope.aggData.length; i++) {
+                  for (var y = 0; y < scope.aggData[i].values.length; y++) {
+                    var found = false;
+                    for (var x = 0; x < subCats.length; x++) {
+                      if (subCats[x] == scope.aggData[i].values[y].rowName) {
+                        found = true;
                       }
-                    );
+                    }
+
+                    if (found == false) {
+                      if (typeof scope.aggData[i].values[y].rowName !== 'undefined') {
+                        subCats.push(scope.aggData[i].values[y].rowName);
+                      }
+                      ;
+                    }
                   }
                 }
-                series.push(point);
+
+                for (var x = 0; x < subCats.length; x++) {
+                  var subSeries = {
+                    name: subCats[x],
+                    data: [],
+                    color: colors[x]
+                  };
+
+                  for (var i = 0; i < scope.aggData.length; i++) {
+
+                    var found = false;
+
+                    if (scope.aggData[i].values.length > 0) {
+                      for (var y = 0; y < scope.aggData[i].values.length; y++) {
+                        if (subSeries.name == scope.aggData[i].values[y].rowName) {
+                          subSeries.data.push(scope.aggData[i].values[y].value);
+                          found = true;
+                        }
+                      }
+                    }
+
+                    if (found == false) {
+                      subSeries.data.push(0);
+                    }
+                  }
+
+                  series.push(subSeries);
+                }
               }
-            );
-            scope.chartConfig.options.drilldown.series = drillDownSeries;
-            return series;
+
+              scope.chartConfig.series = series;
+            }
+            ;
+
+          var narrowFilters = function (point) {
+            var filter = {
+              filterID: point.col,
+              value: point.name
+            };
+            $rootScope.$emit('filterChange', filter, true, true);
           };
 
-
-          /**
-           * Refine the workbench filters based on the data object/point selected on plot
-           * @params aggDataPoint
-           */
-          var addFilter = function (aggDataPoint) {
-            var hasCol = _.has(aggDataPoint, 'col');
-            var hasRow = _.has(aggDataPoint, 'row');
-            var hasColName = _.has(aggDataPoint, 'colName');
-            var hasRowName = _.has(aggDataPoint, 'rowName');
-            var filter;
-            if (hasCol && hasColName) {
-              filter = {
-                filterID: aggDataPoint.col,
-                value: aggDataPoint.colName
-              };
-              $log.debug('Added Col Filter', filter);
-              $rootScope.$emit('filterChange', filter, true, true);
-            }
-            if (hasRow && hasRowName) {
-              filter = {
-                filterID: aggDataPoint.row,
-                value: aggDataPoint.rowName
-              };
-              $log.debug('Added Row Filter', filter);
-              $rootScope.$emit('filterChange', filter, true, true);
-            }
-          };
-
-          var updateVisualization = function () {
-            delete scope.options.options;
-            updateURL.updateVisualization(scope.options.id, {
-              options: scope.options,
-              pivot: scope.pivot
+          var chartToWorkbench = function () {
+            var savedWidget = {};
+            savedWidget[scope.widget.name] = scope.widget.content;
+            sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
+            scope.$apply(function () {
+              $location.path('/workbench/').search('visualization', scope.widget.name);
             });
           };
 
           // Removing click functionality for clickthrough.
           if (scope.source === 'dashboard') {
-            scope.chartConfig.options.plotOptions.series.point.events = null;
+            scope.chartConfig.options.plotOptions.series.point.events = {
+              click: chartToWorkbench
+            }
             scope.chartConfig.options.chart.events = {
-              click: function () {
-                var savedWidget = {};
-                savedWidget[scope.widget.name] = scope.widget.content;
-                sessionStorage.setItem('visualization', JSON.stringify(savedWidget));
-                scope.$apply(function () {
-                  $location.path('/workbench/').search('visualization', scope.widget.name);
-                });
-              }
-            };
+              click: chartToWorkbench
+            }
           }
 
           scope.$watchCollection('[aggData]', function () {
             reload();
-            updateVisualization();
-          });
-
-          scope.$watchCollection('[pivot.cols, pivot.rows]', function () {
-            updateVisualization();
           });
 
           scope.$watchCollection('[options.labels.title, options.labels.x, options.labels.y]', function () {
             scope.chartConfig.title.text = scope.options.labels.title;
             scope.chartConfig.xAxis.title.text = scope.options.labels.x;
             scope.chartConfig.yAxis.title.text = scope.options.labels.y;
-            updateVisualization();
           });
 
           scope.$watchCollection('[options.height, options.width]', function () {
             scope.chartConfig.size.height = scope.options.height;
-            scope.chartConfig.size.width = scope.options.width;
-            reload();
-            updateVisualization();
+            scope.chartConfig.size.width = scope.options.width - 10;
           });
-
 
         }
       };
