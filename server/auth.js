@@ -235,7 +235,7 @@ function authenticate(strategy) {
             email: user.doc.email,
             name: user.doc.name,
             roles: user.doc.roles,
-            districts: user.doc.districts,
+            locations: user.doc.locations,
             authType: user.doc.authType
           });
       });

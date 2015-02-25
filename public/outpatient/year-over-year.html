@@ -1,0 +1,51 @@
+<div class="row viz-toolbar">
+  <div class="col-md-3">
+    <a class="icon-zoom-out" ng-click="zoom(2)" translate>Zoom out</a>
+  </div>
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <form class="form-inline" role="form">
+      <!-- range -->
+      <div class="form-group pull-right">
+        <label translate>Years</label>
+        &nbsp;
+
+        <select class="form-control" ng-model="options.range">
+          <!-- descending order from day, since day is most popular (probably) -->
+          <option value=1 translate>1</option>
+          <option value=2 translate>2</option>
+          <option value=3 translate>3</option>
+          <option value=4 translate>4</option>
+          <option value=5 translate>5</option>
+          <!-- elasticsearch also supports smaller intervals, but they're not that useful for our data and are
+               expensive to calculate --><!--<option translate>hour</option>--><!--<option translate>minute</option>-->
+          <!--<option translate>second</option>-->
+        </select>
+        &nbsp;
+        &nbsp;
+        <!-- interval -->
+        <label translate>Interval</label>
+        &nbsp;
+
+        <select class="form-control" ng-model="options.interval">
+          <!-- descending order from day, since day is most popular (probably) -->
+          <option value="day" translate>day</option>
+          <option value="week" translate>week</option>
+          <option value="month" translate>month</option>
+          <option value="year" translate>year</option>
+          <option value="quarter" translate>quarter</option>
+          <!-- elasticsearch also supports smaller intervals, but they're not that useful for our data and are
+               expensive to calculate --><!--<option translate>hour</option>--><!--<option translate>minute</option>-->
+          <!--<option translate>second</option>-->
+        </select>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <highchart id="highcharts-id-{{options.id}}" config="chartConfig"></highchart>
+  </div>
+</div>

@@ -74,14 +74,16 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             data: 'gridData',
               columnDefs: [
               //{field:'date', displayName:'Date', cellTemplate: "{{row.entity[col.field]| date:'shortDate'}}"},
-              {field:'date', displayName:'Date'},
+              {field:'date', displayName:'Date',
+                cellTemplate: '<div class="ngCellText">{{ row.getProperty(col.field) | date:\'shortDate\' }}</div>'
+              },
               {field:'series', displayName:'Series'},
               {field:'count', displayName:'Count'},
               {field:'pValue', displayName:'p-Value',
-                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:0}}</div>'
+                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:3}}</div>'
               },
               {field:'expected', displayName:'Expected Value',
-                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:3}}</div>'
+                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:0}}</div>'
               }
             ],
             enablePaging: true,
@@ -401,11 +403,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               dateFilter.to = new Date(to);
             } else {
               // add a new filter we we zoom in, action can be reversed by deleting this new filter
-              scope.filters.push({
-                type: 'date',
-                from: new Date(from),
-                to: new Date(to)
-              }); // TODO filter panel needs to watch for changes to filters
+              scope.filters.push(
+                angular.extend({
+                  from: new Date(from),
+                  to: new Date(to)
+                }, possibleFilters.possibleFilters.visitDate)); // TODO filter panel needs to watch for changes to filters
             }
           };
 
@@ -422,6 +424,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             });
 
             var dateFilter;
+
             if (dateFilters.length === 0) {
               // TODO add new date filter
             } else {
@@ -429,12 +432,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }
 
             if (!dateFilter) {
-              dateFilter = {
-                filterID: 'date',
+              dateFilter = angular.extend({
                 from: new Date(from),
                 to: new Date(to)
-              };
-              scope.filters.push(dateFilter);
+              }, possibleFilters.possibleFilters.visitDate);
+//              scope.filters.push(dateFilter);
               scope.$emit('filterChange', dateFilter, true);
             } else {
               dateFilter.from = new Date(from);
@@ -443,17 +445,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             scope.$apply();
           };
-
-          /*
-           var extractCounts = function (agg) {
-           var bucket = agg.buckets || agg._name.buckets;
-           return bucket.map(function (b) {
-           var count = b.count ? b.count.value : b.doc_count;
-
-           return [b.key, count];
-           });
-           };
-           */
 
           var createTableJSON = function () {
             var data = scope.chartConfig.series;
@@ -465,8 +456,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   var dp = pair.data[j];
                   var date = new Date(dp.x);
                   scope.tableMapJSON.push({
-                    //date: dp.x,
-                    date: date.toLocaleDateString(),
+                    date: dp.x,
                     series: pair.name,
                     count: dp.y,
                     pValue: dp.pValue,
@@ -512,7 +502,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           var calcPValues = function (dataStore, algorithm) {
-            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' : '/detectors/cusum';
+            var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' :
+                                  (algorithm === 'CUSUM') ?'/detectors/cusum' : undefined;
             //$log.log('using algorithm' + algorithmString);
             angular.forEach(dataStore, function (points, key) {
               var counts = points.map(function (c) {
@@ -521,53 +512,66 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               var pValues = [];
               var expectedValues = [];
 
-              $http.post(algorithmString,
-                {
-                  data: counts,
-                  baseline: 28,
-                  guardBand: 2
-                }
-              ).
-                success(function (resp) {
-                  //$log.log(resp.pValues);
-                  pValues = resp.pValues;
-                  expectedValues = resp.expectedValues;
+              if(!algorithmString){
+                scope.data.push({
+                  name: key,
+                  data: points
+                });
+              }
+              else {
+                var counts = points.map(function (c) {
+                  return c.y;
+                });
+                var pValues = [];
+                var expectedValues = [];
 
-                  if (pValues.length > 0) {
-                    var values = [];
-                    for (var i = 0; i < points.length && i < pValues.length; i++) {
-                      var pValue = pValues[i] === null ? 1 : pValues[i];
-                      var expected = expectedValues[i] === null ? 0 : expectedValues[i];
-                      values.push(populatePValue(pValue, points[i].x, points[i].y, expected));
+                $http.post(algorithmString,
+                  {
+                    data: counts,
+                    baseline: 28,
+                    guardBand: 2
+                  }
+                ).
+                  success(function (resp) {
+                    //$log.log(resp.pValues);
+                    pValues = resp.pValues;
+                    expectedValues = resp.expectedValues;
+
+                    if (pValues.length > 0) {
+                      var values = [];
+                      for (var i = 0; i < points.length && i < pValues.length; i++) {
+                        var pValue = pValues[i] === null ? 1 : pValues[i];
+                        var expected = expectedValues[i] === null ? 0 : expectedValues[i];
+                        values.push(populatePValue(pValue, points[i].x, points[i].y, expected));
+                      }
+                      //name: gettextCatalog.getString('Outpatient visits'),
+                      /*data: [{
+                       x: 6,
+                       y: 3.9,
+                       marker: {
+                       symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
+                       }
+                       }, [3, 4.2], [5, 5.7] ]
+                       */
+                      scope.data.push({
+                        name: key,
+                        data: values
+                      });
+                    } else {
+                      scope.data.push({
+                        name: key,
+                        data: points
+                      });
                     }
-                    //name: gettextCatalog.getString('Outpatient visits'),
-                    /*data: [{
-                     x: 6,
-                     y: 3.9,
-                     marker: {
-                     symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                     }
-                     }, [3, 4.2], [5, 5.7] ]
-                     */
-                    scope.data.push({
-                      name: key,
-                      data: values
-                    });
-                  } else {
+                    scope.chartConfig.series = scope.data;
+                    createTableJSON();
+                  }).error(function () {
                     scope.data.push({
                       name: key,
                       data: points
                     });
-                  }
-                  scope.chartConfig.series = scope.data;
-                  createTableJSON();
-                }).error(function () {
-                  scope.data.push({
-                    name: key,
-                    data: points
                   });
-
-                });
+              }
             });
             scope.chartConfig.series = scope.data;
             createTableJSON();
@@ -602,14 +606,19 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           var plotSeries = function (seriesName, seriesType) {
+            var res = !scope.filters;
             if (scope.filters) {
               var filters = scope.filters.filter(function (filter) {
-                return filter.filterID === seriesType && filter.value.length > 0 &&
-                  filter.value.indexOf(seriesName) === -1;
+                return filter.filterID === seriesType && filter.value.length > 0;
               });
-              return filters.length === 0;
+
+              res = res || filters.length === 0;
+
+              for(var i = 0; i < filters.length; i++){
+                res = res || filters[i].value.indexOf(seriesName) !== -1;
+              }
             }
-            return true;
+            return res;
           };
 
           scope.$watchCollection('[pivot.rows, pivot.cols, queryString, options.algorithm]', function () {

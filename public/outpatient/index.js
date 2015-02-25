@@ -10,6 +10,7 @@ require('./resource');
 require('./table');
 require('./fracasSmallTimeSeries');
 require('./fracasTimeSeries');
+require('./yearOverYear');
 require('./visualization');
 require('./fracasPieChart');
 require('./fracasBarChart');

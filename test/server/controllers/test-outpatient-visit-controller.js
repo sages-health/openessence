@@ -32,12 +32,12 @@ describe('OutpatientVisitController', function () {
       _source: {
         foo: 'bar',
         medicalFacility: {
-          district: 'District 1'
+          name: 'District 1'
         }
       }
     };
 
-    it('should return no results if user does not belong to proper district', function (done) {
+    it('should return no results if user does not belong to proper location', function (done) {
       nock(conf.elasticsearch.host)
         .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
@@ -49,14 +49,14 @@ describe('OutpatientVisitController', function () {
           _source: {
             foo: 'bar',
             medicalFacility: {
-              district: 'District 1'
+              name: 'District 1'
             }
           }
         });
 
       var app = express();
       app.use(addUser(new User({ // mock user
-        districts: ['District 2']
+        locations: ['District 2']
       })));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
@@ -73,7 +73,7 @@ describe('OutpatientVisitController', function () {
         });
     });
 
-    it('should return no results if user belongs to no districts', function (done) {
+    it('should return no results if user belongs to no locations', function (done) {
       nock(conf.elasticsearch.host)
         .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
@@ -85,14 +85,14 @@ describe('OutpatientVisitController', function () {
           _source: {
             foo: 'bar',
             medicalFacility: {
-              district: 'District 1'
+              name: 'District 1'
             }
           }
         });
 
       var app = express();
       app.use(addUser(new User({
-        districts: []
+        locations: []
       })));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
@@ -110,7 +110,7 @@ describe('OutpatientVisitController', function () {
         });
     });
 
-    it('should return full results if user has rights to district', function (done) {
+    it('should return full results if user has rights to location', function (done) {
       nock(conf.elasticsearch.host)
         .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
@@ -122,14 +122,14 @@ describe('OutpatientVisitController', function () {
           _source: {
             foo: 'bar',
             medicalFacility: {
-              district: 'District 1'
+              name: 'District 1'
             }
           }
         });
 
       var app = express();
       app.use(addUser(new User({
-        districts: ['District 1']
+        locations: ['District 1']
       })));
 
       app.use(codex.middleware(OutpatientVisitController))
@@ -150,7 +150,7 @@ describe('OutpatientVisitController', function () {
         });
     });
 
-    it('should return full results if user has district_all role', function (done) {
+    it('should return full results if user has all_location role', function (done) {
       nock(conf.elasticsearch.host)
         .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
@@ -162,14 +162,14 @@ describe('OutpatientVisitController', function () {
           _source: {
             foo: 'bar',
             medicalFacility: {
-              district: 'District 1'
+              name: 'District 1'
             }
           }
         });
 
       var app = express();
       app.use(addUser(new User({
-        roles: ['district_all']
+        roles: ['all_location']
       })));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
@@ -189,7 +189,7 @@ describe('OutpatientVisitController', function () {
         });
     });
 
-    it('should return full results if user has undefined districts', function (done) {
+    it('should return full results if user has undefined locations', function (done) {
       nock(conf.elasticsearch.host)
         .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
@@ -201,7 +201,7 @@ describe('OutpatientVisitController', function () {
           _source: {
             foo: 'bar',
             medicalFacility: {
-              district: 'District 1'
+              name: 'District 1'
             }
           }
         });
@@ -229,18 +229,18 @@ describe('OutpatientVisitController', function () {
   });
 
   describe('GET /', function () {
-    it('should filter results by user\'s district', function (done) {
+    it('should filter results by user\'s location', function (done) {
       nock(conf.elasticsearch.host)
         .post('/outpatient_visit/outpatient_visit/_search?version=true', {
           query: {
             filtered: {
               filter: {
                 terms: {
-                  'medicalFacility.district.raw': {
+                  'medicalFacility.name.raw': {
                     index: 'user',
                     type: 'user',
                     id: 1234,
-                    path: 'districts.raw',
+                    path: 'locations.raw',
                     cache: false
                   },
                   '_cache_key': 'outpatient_visit_user_user_1234'
@@ -272,7 +272,7 @@ describe('OutpatientVisitController', function () {
                 _version: 1,
                 _source: {
                   medicalFacility: {
-                    district: 'District 1'
+                    name: 'District 1'
                   }
                 }
               }
@@ -281,7 +281,7 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser(new User({districts: ['District 1']}, {id: '1234'})));
+      app.use(addUser(new User({locations: ['District 1']}, {id: '1234'})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -302,9 +302,9 @@ describe('OutpatientVisitController', function () {
 
   describe('POST /', function () {
     /*jshint quotmark:false */
-    it("should return 403 if user doesn't have rights to district", function (done) {
+    it("should return 403 if user doesn't have rights to location", function (done) {
       var app = express();
-      app.use(addUser(new User({districts: []})));
+      app.use(addUser(new User({locations: []})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -312,7 +312,7 @@ describe('OutpatientVisitController', function () {
         .post('/')
         .send({
           medicalFacility: {
-            district: 'District 1'
+            name: 'District 1'
           }
         })
         .expect(403)
@@ -326,10 +326,10 @@ describe('OutpatientVisitController', function () {
         });
     });
 
-    it('should return 201 if user does have rights to district', function (done) {
+    it('should return 201 if user does have rights to location', function (done) {
       var requestBody = {
         medicalFacility: {
-          district: 'District 1'
+          name: 'District 1'
         }
       };
 
@@ -355,7 +355,7 @@ describe('OutpatientVisitController', function () {
           created: true
         });
       var app = express();
-      app.use(addUser(new User({districts: ['District 1']})));
+      app.use(addUser(new User({locations: ['District 1']})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -376,7 +376,7 @@ describe('OutpatientVisitController', function () {
 
   describe('DELETE /:id', function () {
     /*jshint quotmark:false */
-    it("should return 403 if user doesn't have rights to district", function (done) {
+    it("should return 403 if user doesn't have rights to location", function (done) {
       nock(conf.elasticsearch.host)
         .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
@@ -387,13 +387,13 @@ describe('OutpatientVisitController', function () {
           found: true,
           _source: {
             medicalFacility: {
-              district: 'District 1'
+              name: 'District 1'
             }
           }
         });
 
       var app = express();
-      app.use(addUser(new User({districts: []})));
+      app.use(addUser(new User({locations: []})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -409,7 +409,7 @@ describe('OutpatientVisitController', function () {
         });
     });
 
-    it('should return 200 if user does have rights to district', function (done) {
+    it('should return 200 if user does have rights to location', function (done) {
       nock(conf.elasticsearch.host)
         .get('/outpatient_visit/outpatient_visit/1')
         .reply(200, {
@@ -420,7 +420,7 @@ describe('OutpatientVisitController', function () {
           found: true,
           _source: {
             medicalFacility: {
-              district: 'District 1'
+              name: 'District 1'
             }
           }
         })
@@ -434,7 +434,7 @@ describe('OutpatientVisitController', function () {
         });
 
       var app = express();
-      app.use(addUser(new User({districts: ['District 1']})));
+      app.use(addUser(new User({locations: ['District 1']})));
       app.use(codex.middleware(OutpatientVisitController))
         .use(errorMiddleware);
 
@@ -456,7 +456,7 @@ describe('OutpatientVisitController', function () {
     it('should work if user is an admin', function (done) {
       var requestBody = {
         medicalFacility: {
-          district: 'District 1'
+          name: 'District 1'
         }
       };
 

@@ -1,19 +1,20 @@
 <div class="row viz-toolbar">
-  <div class="col-md-2">
+  <div class="col-md-3">
     <a class="icon-zoom-out" ng-click="zoom(2)" translate>Zoom out</a>
   </div>
 
-  <div class="col-md-2">
+  <div class="col-md-3">
     <button type="button" class="btn btn-primary" ng-model="tsTable.enabled" btn-checkbox translate>View table</button>
   </div>
 
-  <div class="col-md-2">
+  <div class="col-md-3">
     <form class="form-inline" role="form">
       <div class="form-group pull-right">
         <label translate>Algorithm</label>
         &nbsp;
         <select class="form-control" ng-model="options.algorithm">
           <!-- descending order from day, since day is most popular (probably) -->
+          <option value="" translate></option>
           <option value="CUSUM" translate>CUSUM</option>
           <option value="EWMA" translate>EWMA</option>
         </select>
@@ -21,7 +22,7 @@
     </form>
   </div>
 
-  <div class="col-md-2">
+  <div class="col-md-3">
     <form class="form-inline" role="form">
       <!-- time series options --><!--<label class="checkbox-inline">--><!--<input type="checkbox" checked>-->
       <!--<span translate>Lines</span>--><!--</label>-->

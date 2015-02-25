@@ -16,25 +16,25 @@ describe('User', function () {
 
   describe('hasRightsToDocument()', function () {
     it('should return true if record has no medicalFacility', function (done) {
-      var user = new User({districts: []});
+      var user = new User({locations: []});
       expect(user.hasRightsToDocument({})).to.be.true;
       done();
     });
 
-    it('should return true if medicalFacility has no district', function (done) {
-      var user = new User({districts: []});
+    it('should return true if medicalFacility has no locations', function (done) {
+      var user = new User({locations: []});
       expect(user.hasRightsToDocument({medicalFacility: {}})).to.be.true;
       done();
     });
 
-    it('should return false if user has no districts', function (done) {
-      var user = new User({districts: []});
+    it('should return false if user has no locations', function (done) {
+      var user = new User({locations: []});
       expect(user.hasRightsToDocument({medicalFacility: {district: 'D1'}})).to.be.false;
       done();
     });
 
-    it('should return true if user has correct district', function (done) {
-      var user = new User({districts: ['D1']});
+    it('should return true if user has correct locations', function (done) {
+      var user = new User({locations: ['D1']});
       expect(user.hasRightsToDocument({medicalFacility: {district: 'D1'}})).to.be.true;
       done();
     });

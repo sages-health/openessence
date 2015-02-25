@@ -23,6 +23,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
       // runs before nested directives, see http://stackoverflow.com/a/18491502
       pre: function (scope, element) {
 
+        console.log(scope.visualization);
+
         scope.options = scope.options || {};
         scope.form = scope.form || {};
 

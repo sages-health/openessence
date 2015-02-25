@@ -70,10 +70,10 @@
       </div>
 
       <div class="form-group">
-        <label for="entry-user-districts" translate>Districts</label>
-        <select class="form-control select2-multiple" id="entry-user-districts" multiple ui-select2
-                ng-model="data.medicalFacility.location.districts">
-          <option ng-repeat="district in medicalFacility.location.districts" value="{{district}}">{{district}}</option>
+        <label for="entry-user-locations" translate>Locations</label>
+        <select class="form-control select2-multiple" id="entry-user-locations" multiple ui-select2
+                ng-model="data.locations">
+          <option ng-repeat="location in locations" value="{{location}}">{{location}}</option>
         </select>
       </div>
 
