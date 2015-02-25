@@ -4,7 +4,7 @@ var _ = require('lodash');
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, $log, $location, $timeout,
+angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, $log, $location, $timeout, debounce,
                                                                                            updateURL, gettextCatalog, EditSettings) {
   return {
     restrict: 'E',
@@ -13,6 +13,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
       options: '=',
       queryString: '=',
       filters: '=',
+      form: '=?',
       pivot: '=',
       aggData: '=',
       source: '=?',
@@ -190,6 +191,22 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
           };
 
           /**
+           * Refreshes the plot
+           * @params aggDataPoint
+           */
+          var reload = function () {
+            debounce(reloadDebounce, 100).call();
+          };
+
+          var reloadDebounce = function () {
+            scope.chartConfig.series = getAggDataToHCSeries();
+            $log.info('ChartConfig', scope.chartConfig);
+            $timeout(function () {
+              scope.$broadcast('highchartsng.reflow');
+            });
+          };
+
+          /**
            * Transforms the aggregated data into highCharts series format for column chart.
            * @returns Array
            */
@@ -241,6 +258,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             return series;
           };
 
+
           /**
            * Refine the workbench filters based on the data object/point selected on plot
            * @params aggDataPoint
@@ -267,19 +285,6 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               $log.debug('Added Row Filter', filter);
               $rootScope.$emit('filterChange', filter, true, true);
             }
-          };
-
-
-          /**
-           * Refreshes the plot
-           * @params aggDataPoint
-           */
-          var reload = function () {
-            scope.chartConfig.series = getAggDataToHCSeries();
-            $log.info('ChartConfig', scope.chartConfig);
-            $timeout(function () {
-              scope.$broadcast('highchartsng.reflow');
-            });
           };
 
           var updateVisualization = function () {

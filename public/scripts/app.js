@@ -49,6 +49,7 @@ require('highcharts-ng');
 var frable = require('../frable');
 require('../select2');
 require('../hinge');
+require('../config-editor');
 require('../crosstab');
 require('../fracas-filter');
 require('../dashboard');
@@ -238,41 +239,6 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../outpatient/edit.html'),
       controller: 'OutpatientEditCtrl'
     })
-    .state('edit.aggregate', { // TODO define this in outpatient module
-      url: '/aggregate-data',
-      template: require('../partials/edit/aggregate-data.html'),
-      controller: 'AggregateDataEditCtrl'
-    })
-    .state('edit.district', {
-      url: '/district',
-      template: require('../partials/edit/district.html'),
-      controller: 'DistrictEditCtrl'
-    })
-    .state('edit.symptom', {
-      url: '/symptom',
-      template: require('../partials/edit/symptom.html'),
-      controller: 'SymptomEditCtrl'
-    })
-    .state('edit.syndrome', {
-      url: '/syndrome',
-      template: require('../partials/edit/syndrome.html'),
-      controller: 'SyndromeEditCtrl'
-    })
-    .state('edit.disposition', {
-      url: '/disposition',
-      template: require('../partials/edit/disposition.html'),
-      controller: 'DispositionEditCtrl'
-    })
-    .state('edit.visitType', {
-      url: '/visitType',
-      template: require('../partials/edit/visit-type.html'),
-      controller: 'VisitTypeEditCtrl'
-    })
-    .state('edit.diagnosis', {
-      url: '/diagnosis',
-      template: require('../partials/edit/diagnosis.html'),
-      controller: 'DiagnosisEditCtrl'
-    })
     .state('edit.user', {
       url: '/user',
       template: require('../partials/edit/user.html'),
@@ -295,7 +261,7 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
     })
     .state('edit.config', {
       url: '/config',
-      template: require('../partials/config-editor.html'),
+      template: require('../config-editor/config-editor.html'),
       controller: 'ConfigEditCtrl'
     });
 });

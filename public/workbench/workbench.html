@@ -3,11 +3,13 @@
     <!-- TODO these buttons are in a weird place -->
     <div class="col-md-3 pull-right">
       <div class="well text-center">
-        <button class="btn btn-primary" ng-click="addVisualization()">
+        <button class="btn btn-primary" ng-click="addVisualization()" popover="{{'Add widget' | translate}}"
+                popover-trigger="mouseenter">
           <span class="icon-plus"></span>
           <span translate>Add widget</span>
         </button>
-        <button class="btn btn-default" ng-click="saveWorkbench()">
+        <button class="btn btn-default" ng-click="saveWorkbench()" popover="{{'Save workbench' | translate}}"
+                popover-trigger="mouseenter">
           <span class="icon-floppy"></span>
           <span translate>Save</span>
         </button>
@@ -21,7 +23,7 @@
   <div class="row">
     <div gridster="gridsterOptions">
       <ul>
-        <li class="workbench-visualization"  id="{{viz.id}}" gridster-item="viz" ng-repeat="viz in visualizations">
+        <li class="workbench-visualization" id="{{viz.id}}" gridster-item="viz" ng-repeat="viz in visualizations">
           <div class="panel-body workbench-panel">
             <workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="activeFilters"
                                      form="form"

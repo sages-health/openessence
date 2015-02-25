@@ -104,6 +104,19 @@
            ng-model="others.medicalFacility">
   </div>
 
+
+  <div class="form-group" ng-show="fields['medicalFacility.sites.total'].enabled">
+    <label for="entry-aggregate-sites-total" translate>Sites Total</label>
+    <input class="form-control" type="number" id="entry-aggregate-sites-total" name="sitesTotal"
+           ng-model="medicalFacility.sites.total">
+  </div>
+
+  <div class="form-group" ng-show="fields['medicalFacility.sites.reporting'].enabled">
+    <label for="entry-aggregate-sites-reporting" translate>Sites Reporting</label>
+    <input class="form-control" type="number" id="entry-aggregate-sites-reporting" name="sitesReporting"
+           ng-model="medicalFacility.sites.reporting">
+  </div>
+
 </fieldset>
 
 <!-- Patient info page -->
@@ -146,8 +159,6 @@
       <span translate>Unknown</span>
     </label>
   </div>
-
-  <pregnancy-inputs></pregnancy-inputs>
 
   <!-- Telephone -->
   <div class="form-group" data-field="patient.phone" ng-show="fields['patient.phone'].enabled"
@@ -200,6 +211,8 @@
       <span class="input-group-addon" translate>kg</span>
     </div>
   </div>
+
+  <pregnancy-inputs></pregnancy-inputs>
 
   <!-- Blood pressure is too annoying since it's 2 separate--but related--inputs, each with a label and unit -->
 

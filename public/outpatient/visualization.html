@@ -1,98 +1,24 @@
 <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
   <div id="svg-id-{{options.id}}" class="animation-switch" ng-switch-when="table">
-    <div class="table-responsive">
-      <!-- can't reuse the table used for editing b/c that's a lot bigger -->
-      <table class="table table-striped table-hover table-condensed" frable="tableParams">
-        <tr ng-repeat="visit in $data">
-
-          <td ng-show="fields.visitDate.enabled" data-title="'Visit' | translate" data-sortable="'visitDate'">
-            <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
-          </td>
-
-          <td ng-show="fields.week.enabled || false" data-title="'Week' | translate" data-sortable="'visitDate'">
-            <a>{{getWeek(visit._source.reportDate)}}</a>
-          </td>
-          <td ng-show="fields.year.enabled || false" data-title="'Year' | translate" data-sortable="'visitDate'">
-            <a>{{getYear(visit._source.reportDate)}}</a>
-          </td>
-
-          <!-- could also roll up to geographic area, but we usually deal with so few sites that that's not helpful -->
-          <td ng-show="fields.medicalFacility.enabled" data-title="'Facility' | translate"
-              data-sortable="'medicalFacility.name'">
-            <a ng-click="tableFilter('medicalFacility', visit._source.medicalFacility.name)"
-               popover="{{visit._source.medicalFacility.name}}" popover-trigger="mouseenter">
-              {{visit._source.medicalFacility.name | truncate:15}}
-            </a>
-          </td>
-          <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="'District' | translate"
-              data-sortable="'medicalFacility.location.district'">
-            <a ng-click="tableFilter('medicalFacility.location.district', visit._source.medicalFacility.location.district)"
-               popover="{{visit._source.medicalFacility.location.district}}" popover-trigger="mouseenter">>
-              {{visit._source.medicalFacility.location.district | truncate:15}}
-            </a>
-          </td>
-
-          <td ng-show="fields['patient.sex'].enabled" data-title="'Sex' | translate" data-sortable="'patient.sex'">
-            <a ng-click="tableFilter('patient.sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
-          </td>
-          <td ng-show="fields['patient.age'].enabled" data-title="'Age' | translate"
-              data-sortable="'patient.age.years'">
-            <a ng-click="tableFilter('patient.age', visit._source.patient.age.years)">
-              {{visit._source.patient.age.years}}
-            </a>
-          </td>
-
-          <td ng-show="fields.symptoms.enabled" data-title="'Symptoms' | translate">
-            <a ng-click="tableFilter('symptoms', visit._source.symptoms)"
-               popover="{{printAggregate(visit._source.symptoms, true) | truncate:500}}" popover-trigger="mouseenter">
-              {{printAggregate(visit._source.symptoms) | truncate:30}}
-            </a>
-          </td>
-          <td ng-show="fields.diagnoses.enabled" data-title="'Diagnoses' | translate">
-            <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)"
-               popover="{{printAggregate(visit._source.diagnoses, true) | truncate:500}}" popover-trigger="mouseenter">
-              {{printAggregate(visit._source.diagnoses) | truncate:30}}
-            </a>
-          </td>
-
-          <td ng-show="fields['antiviral.name'].enabled" data-title="'Antiviral' | translate"
-              data-sortable="'antiviral.name'">
-            <a ng-click="tableFilter('antiviralName', visit._source.antiviral.name)">
-              {{visit._source.antiviral.name}}
-            </a>
-          </td>
-
-          <td>
-            <div class="btn-group btn-group-xs edit-controls pull-right">
-              <button type="button" class="btn btn-default" ng-click="editVisit(visit)">
-                <span class="icon-pencil"></span>
-              </button>
-              <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)">
-                <span class="icon-cancel"></span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
+    <outpatient-table query-string="queryString" form="form" options="options"></outpatient-table>
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
     <crosstab options="options" pivot="pivot" records="crosstabData"></crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
-    <outpatient-time-series filters="filters" query-string="queryString" series="pivot.cols" options="options"
+    <outpatient-time-series filters="filters" query-string="queryString" pivot="pivot" options="options"
                             source="source" widget="widget"></outpatient-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="smallline">
-    <outpatient-small-time-series filters="filters" query-string="queryString" series="pivot.cols"
+    <outpatient-small-time-series filters="filters" form="form" query-string="queryString" series="pivot.cols"
                                   options="options"></outpatient-small-time-series>
   </div>
   <div class="animation-switch" ng-switch-when="pie">
-    <outpatient-pie-chart filters="filters" query-string="queryString" options="options" pivot="pivot"
+    <outpatient-pie-chart filters="filters" form="form" query-string="queryString" options="options" pivot="pivot"
                           agg-data="aggData" source="source" widget="widget"></outpatient-pie-chart>
   </div>
   <div class="animation-switch" ng-switch-when="bar">
-    <outpatient-bar-chart filters="filters" query-string="queryString" options="options" pivot="pivot"
+    <outpatient-bar-chart filters="filters" form="form" query-string="queryString" options="options" pivot="pivot"
                           agg-data="aggData" source="source" widget="widget"></outpatient-bar-chart>
   </div>
   <div class="animation-switch" ng-switch-when="map">

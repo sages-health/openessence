@@ -40,6 +40,7 @@
               </div>
             </div>
           </div>
+
           <div ng-show="siteTemplate.fields" class="panel panel-default">
 
             <div class="panel-heading clearfix">
@@ -55,53 +56,36 @@
               </div>
             </div>
             <div class="panel-body">
-
-              <div class="form-group">
-
-                <table class="table table-striped">
-                  <tr ng-repeat="field in siteTemplate.fields">
-                    <td>
-                      <div class="checkbox"><label>
+              <table class="table table-striped">
+                <tr ng-repeat="field in siteTemplate.fields | filter: isNotGroupField">
+                  <td>
+                    <div class="checkbox">
+                      <label>
                         <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
-                               ng-checked="field.enabled">
-                        {{field.name}}
+                               ng-checked="field.enabled">{{field.name}}
                       </label>
+                    </div>
+                  </td>
+                  <td>
+                    <div ng-if="field.enabled && field.groupName === 'patient.ageGroup'">
+                      <config-age-group field="groupField(field)"></config-age-group>
+                    </div>
+
+                    <div ng-if="field.enabled && field.values !== undefined">
+                      <config-multiselect field="field"></config-multiselect>
+                      <br>
+                      <div ng-if="field.groupName !== undefined">
+                          <config-group field="groupField(field)" possible-values="field.values"></config-group>
                       </div>
-                    </td>
-                    <td>
-                      <div ng-if="field.enabled && field.values !== undefined">
-
-                        <ui-select class="form-control" multiple ng-model="field.values" theam="select2"
-                                   ng-disabled="disabled">
-                          <ui-select-match placeholder="Select {{field.name}}...">{{$item.name}}</ui-select-match>
-                          <ui-select-choices ng-value="val.name"
-                                             repeat="val.name as val in field.possibleValues  | filter:$select.search">
-                            <div ng-bind-html="val.name | highlight: $select.search"></div>
-                          </ui-select-choices>
-                        </ui-select>
-
-                        <div class="btn-group pull-right">
-                          <button class="btn btn-default btn-sm"
-                                  ng-click="addNewValue(field)" title="Add New Possible Value">
-                            <span class="icon-plus"></span>
-                          </button>
-                          <button class="btn btn-warning btn-sm"
-                                  ng-click="removeAll(field)" title="Remove All">
-                            <span class="icon-cancel"></span>
-                          </button>
-                        </div>
-
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <div class="panel-footer clearfix">
       <div class="pull-right">
         <!-- include i18n-friendly images -->
@@ -117,6 +101,7 @@
     </div>
   </div>
 
+  <!-- Template for modal that displays a message -->
   <script type="text/ng-template" id="message.html">
     <div class="modal-header">
       <h3 class="modal-title">{{title}}</h3>
@@ -129,24 +114,5 @@
     </div>
   </script>
 
-  <script type="text/ng-template" id="newValue.html">
-    <div class="modal-header">
-      <h3 class="modal-title" translate>Enter a new {{field.name}}</h3>
-    </div>
-    <div class="modal-body">
-      <form class="form" role="form" novalidate name="newValForm">
-        <div class="form-group" ng-class="{'has-error': yellAtUser}">
-          <input class="form-control" type="text" name="value" ng-model="data.value" required>
 
-          <div class="help-block" ng-show="yellAtUser" translate>
-            Please enter a value
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
-      <button class="btn btn-primary" ng-click="save(newValForm)">Save</button>
-    </div>
-  </script>
 </div>

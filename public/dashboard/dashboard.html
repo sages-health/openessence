@@ -8,10 +8,12 @@
         <h3 class="panel-title pull-left">{{dashboard.name}}</h3>
 
         <div class="pull-right">
-          <a class="btn btn-primary" ng-click="addWidget()">
+          <a class="btn btn-primary" ng-click="addWidget()" popover="{{'Add widget' | translate}}"
+             popover-trigger="mouseenter">
             <span class="icon-plus" translate>Add widget</span>
           </a>
-          <a class="btn btn-primary" ng-click="export()">
+          <a class="btn btn-primary" ng-click="export()" popover="{{'Save dashboard' | translate}}"
+             popover-trigger="mouseenter">
             <span class="icon-floppy" translate>Save</span>
           </a>
         </div>
@@ -25,10 +27,12 @@
                 <h4 class="panel-title pull-left">{{ widget.name }}</h4>
 
                 <div class="pull-right">
-                  <button type="button" class="btn btn-default" ng-click="openSettings(widget)">
+                  <button type="button" class="btn btn-default" ng-click="openSettings(widget)"
+                          popover="{{'Settings' | translate}}" popover-trigger="mouseenter">
                     <span class="icon-cog"></span>
                   </button>
-                  <button type="button" class="btn btn-default" ng-click="remove(widget)">
+                  <button type="button" class="btn btn-default" ng-click="remove(widget)"
+                          popover="{{'Remove widget' | translate}}" popover-trigger="mouseenter">
                     <span class="icon-cancel"></span>
                   </button>
                 </div>

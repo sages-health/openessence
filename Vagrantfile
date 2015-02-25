@@ -81,26 +81,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     # Copy services from fracas-services container onto host
+    # https://github.com/gabegorelick/fracas-services
     config.vm.provision :shell, :inline => "docker pull gabegorelick/fracas-services" # make sure image is up to date
     config.vm.provision :shell, :inline => "docker run --rm -v /home/core/services:/out gabegorelick/fracas-services sh -c 'cp /services/* /out'"
 
-    # Uncomment this to override the settings in fracas-services.
-    # fracas_env = <<-END.gsub(/^\s+/, '')
-    #   URL=http://localhost:9000
-    #   USERS=false
-    #   SESSION_SECRET=$UPER_DUPER_$ECRET
-    #   APP_NAME=OpenESSENCE
-    #
-    #   # commented out b/c if you're using this you probably want to build fracas locally, rather than pull it down
-    #   #PULL_IMAGE=fracas
-    #
-    #   IMAGE_NAME=fracas
-    #   WORKERS=1
-    #   NODE_ENV=production
-    #   SESSION_STORE=redis
-    # END
-    # config.vm.provision :shell, :inline => "echo '#{fracas_env}' > /home/core/services/fracas.env"
-
+    # ##### (start) potential comment block###################################
+    # Comment this out to revert to the settings in Gabe's fracas-services.
+    # Changes from default:
+    #    *) SESSION_SECRET is different
+    #    *) APP_NAME       is defined
+    #    *) PULL_IMAGE     is omitted to mark a local build process.
+    #    *) IMAGE_NAME     is adjusted to mark a local build process.
+    fracas_env = <<-END.gsub(/^\s+/, '')
+      URL=http://localhost:9000
+      USERS=false
+      SESSION_SECRET=$UPER_DUPER_$ECRET
+      APP_NAME=OpenESSENCE
+      IMAGE_NAME=fracas
+      WORKERS=1
+      NODE_ENV=production
+      SESSION_STORE=redis
+    END
+    config.vm.provision :shell, :inline => "echo '#{fracas_env}' > /home/core/services/fracas.env"
+    # ##### (end) potential comment block#####################################
 
     # This is necessary if the service files have changed
     config.vm.provision :shell, :inline => "systemctl daemon-reload"

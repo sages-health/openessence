@@ -3,16 +3,15 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ function ($rootScope, orderByFilter,
-                                                                       FrableParams, OutpatientVisitResource,
-                                                                       sortString) {
+angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ function ($rootScope, $timeout, orderByFilter, FrableParams, OutpatientVisitResource, sortString) {
   return {
     restrict: 'E',
     template: require('./table.html'),
     scope: {
       records: '=?',
       queryString: '=',
-      form: '='
+      form: '=',
+      options: '=?'
     },
     compile: function (element, attrs) {
       var condensed = angular.isDefined(attrs.condensed) && attrs.condensed !== 'false';
@@ -20,6 +19,10 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
       return {
         pre: function (scope) {
           scope.condensed = condensed;
+          scope.options = scope.options || {};
+          scope.form = scope.form || {};
+
+          scope.options.height = scope.options.height || 600;
 
           // index fields by name
           scope.$watch('form.fields', function (fields) {
@@ -40,6 +43,14 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
           scope.deleteVisit = function (visit) {
             scope.$emit('outpatientDelete', visit);
           };
+
+          scope.$on('outpatientVisit.edit', function (angularEvent, event) {
+            scope.tableParams.reload();
+          });
+
+          scope.$on('outpatientVisit.delete', function (angularEvent, event) {
+            scope.tableParams.reload();
+          });
 
           scope.tableParams = new FrableParams({
             page: 1, // page is 1-based
@@ -77,7 +88,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
                     params.total(response.total);
                     $defer.resolve(response.results);
                   },
-                  function error (response) {
+                  function error(response) {
                     $rootScope.$broadcast('filterError', response);
                   });
               }
@@ -86,6 +97,32 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
 
           scope.$watchCollection('queryString', function () {
             scope.tableParams.reload();
+          });
+
+          scope.$watchCollection('[options.height, options.width]', function () {
+            // Use a timer to prevent a gazillion table queries
+            if (scope.tableTimeout) {
+              $timeout.cancel(scope.tableTimeout);
+              scope.tableTimeout = null;
+            }
+            scope.tableTimeout = $timeout(function () {
+              // TODO: Could this be done w/out redoing the query? Just roll the results differently on the client or cache
+              var rowHeight = 32;
+              var parent = document.getElementById('svg-id-' + scope.options.id);
+              if (!parent) { //we are on edit not the workbench
+                parent = document.getElementById('tableWidget');
+              }
+              var rows = parent.getElementsByTagName('tbody')[0].getElementsByTagName('tr');//JQUERY does not return, element.find('tbody tr');
+              angular.forEach(rows, function (row) {
+                var currRowHeight = angular.element(row).height();
+                rowHeight = currRowHeight > rowHeight ? currRowHeight : rowHeight;
+              });
+              var tbodyHeight = angular.element(parent.getElementsByTagName('tbody')[0]).height();
+              var numRows = Math.floor(((scope.options.height - 75)) / rowHeight);
+              if (!isNaN(numRows)) {
+                scope.tableParams.parameters({count: numRows});
+              }
+            }, 25);
           });
 
           if (scope.records) {
@@ -98,11 +135,22 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             });
           }
 
+          scope.printAggregate = function (field, showCount) {
+            var includeCount = showCount || scope.form.dataType === 'aggregate';
+            var print = [];
+            if (field) {
+              field.map(function (val) {
+                print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
+              });
+            }
+            return print.join(',');
+          };
+
           scope.tableFilter = function (field, value) {
             //TODO multiselect if value.length > ?
             if (value || value === false) {
               var a = [].concat(value);
-              a.forEach(function (v) {
+              angular.forEach(a, function (v) {
                 var filter = {
                   filterID: field,
                   value: ((typeof v) === 'object' ? v.name : v)

@@ -1,0 +1,19 @@
+<ui-select class="form-control" multiple ng-model="field.values" theam="select2"
+           ng-disabled="disabled">
+  <ui-select-match placeholder="Select {{field.name}}...">{{$item.name}}</ui-select-match>
+  <ui-select-choices ng-value="val.name"
+                     repeat="val.name as val in field.possibleValues  | filter:$select.search">
+    <div ng-bind-html="val.name | highlight: $select.search"></div>
+  </ui-select-choices>
+</ui-select>
+
+<div class="btn-group pull-right">
+  <button class="btn btn-default btn-sm"
+          ng-click="addNewValue(field)" title="Add New Possible Value">
+    <span class="icon-plus"></span>
+  </button>
+  <button class="btn btn-warning btn-sm"
+          ng-click="removeAll(field)" title="Remove All">
+    <span class="icon-cancel"></span>
+  </button>
+</div>

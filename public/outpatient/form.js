@@ -39,6 +39,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
           scope.fields = scope.form.fields.reduce(function (fields, field) {
             var aggregateField = (scope.form.dataType === 'aggregate' && aggregateFields.indexOf(field.name) > -1 );
             if (field.enabled && field.values && !aggregateField) { //not an aggregatedField, ok to convert to string
+
               // index values by name to make lookups easy
               var valuesByName = field.values.reduce(function (values, v) {
                 values[v.name] = v;
@@ -79,6 +80,16 @@ module.exports = function ($parse, OutpatientVisitResource) {
             fields[field.name] = field;
             return fields;
           }, {});
+
+          //TODO remove sites hack when UI supports object representation
+          // current workaround for medicalFacility.sites
+          scope.medicalFacility = {'sites': {}};
+          if (scope.fields['medicalFacility.sites.total'].enabled) {
+            scope.medicalFacility.sites.total = $parse('medicalFacility.sites.total')(scope.record._source) || 0;
+          }
+          if (scope.fields['medicalFacility.sites.reporting'].enabled) {
+            scope.medicalFacility.sites.reporting = $parse('medicalFacility.sites.reporting')(scope.record._source) || 0;
+          }
 
           scope.includesOther = function (model) {
             return model && model.indexOf('Other') !== -1;
@@ -311,6 +322,12 @@ module.exports = function ($parse, OutpatientVisitResource) {
                   });
                 }
               });
+            }
+            //TODO remove sites hack
+            //current hard code to add sites { total, reporting }
+            //this is due to the medicalFacility object being converted to a string for ng-model/drop down
+            if (scope.fields['medicalFacility.sites.total'].enabled || scope.fields['medicalFacility.sites.reporting'].enabled) {
+              angular.extend(recordToSubmit['medicalFacility'], {'sites': scope.medicalFacility.sites});
             }
 
             if (scope.record._id || scope.record._id === 0) { // TODO move this logic to OutpatientVisit

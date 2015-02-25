@@ -16,6 +16,7 @@ angular.module(directives.name).directive('outpatientSmallTimeSeries', //
         width: '=?',
         queryString: '=',
         filters: '=',
+        form: '=?',
         series: '=?' // array of strings denoting series to graph
       },
       compile: function () {
@@ -117,7 +118,7 @@ angular.module(directives.name).directive('outpatientSmallTimeSeries', //
                 if (scope.series.length > 0) {
                   aggs.date.aggs = {};
                   scope.series.forEach(function (s) {
-                    aggs.date.aggs[s] = outpatientAggregation.getAggregation(s);
+                    aggs.date.aggs[s] = outpatientAggregation.getAggregation(s, null, scope.form);
                   });
                 }
 
@@ -136,6 +137,7 @@ angular.module(directives.name).directive('outpatientSmallTimeSeries', //
 
                         scope.series.forEach(function (s) {
                           var buk = d[s].buckets || d[s]._name.buckets;
+                          buk = outpatientAggregation.toArray(buk);
                           buk.map(function (entry) {
                             /*jshint camelcase:false */
                             // if we have filter on this field/series = s

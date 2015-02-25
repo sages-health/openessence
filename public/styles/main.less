@@ -98,6 +98,10 @@ body {
   }
 }
 
+.table-scroll-x {
+  overflow-x: scroll;
+}
+
 // This is bootstrap's default, but they don't expose it as a variable. We do this in case it ever changes.
 .panel-heading {
   padding: @padding-base-vertical @padding-base-horizontal;
@@ -295,6 +299,18 @@ input.invalidFilename-true {
 
 .gridster-preview-holder {
   background-color: #5F8AAE;
+}
+
+.category-group-grid {
+  width: 700px;
+  height: 150px;
+}
+
+// If a button is part of a button group, they move when user hower over it
+// Following is a CSS fix for it (https://github.com/twbs/bootstrap/issues/5704)
+.btn-group > .tooltip + .btn,
+.btn-group > .popover + .btn {
+  margin-left: -1px;
 }
 
 .gridStyle {

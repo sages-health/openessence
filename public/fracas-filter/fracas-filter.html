@@ -2,8 +2,10 @@
   <div class="panel-heading condensed">
     <div class="clearfix">
       <span ng-bind="name"></span>
+
       <div class="panel-control">
-        <button type="button" class="close" ng-click="close()">
+        <button type="button" class="close" ng-click="close()" popover="{{'Remove filter' | translate}}"
+                popover-trigger="mouseenter">
           <span class="icon-cancel"></span>
         </button>
       </div>
