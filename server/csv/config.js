@@ -96,7 +96,7 @@ var dataTypes = {
         val.split(';').forEach(function (str) {
           var arr = str.split(':');
           res.push({
-            name: arr[0].replace(/'/g, ''),
+            name: arr[0].replace(/'/g, '').trim(),
             count: parseInt(arr[1])
           });
         });
