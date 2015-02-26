@@ -80,10 +80,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               {field:'series', displayName:'Series'},
               {field:'count', displayName:'Count'},
               {field:'pValue', displayName:'p-Value',
-                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:3}}</div>'
+                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 && row.getProperty(\'pValue\') }">{{ row.getProperty(col.field) | number:3}}</div>'
               },
               {field:'expected', displayName:'Expected Value',
-                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 }">{{ row.getProperty(col.field) | number:0}}</div>'
+                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 && row.getProperty(\'pValue\') > 0 && row.getProperty(\'pValue\')}">{{ row.getProperty(col.field) | number:0}}</div>'
               }
             ],
             enablePaging: true,
