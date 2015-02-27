@@ -257,7 +257,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return record;
         };
 
-        var flattenRecord = function (record, flatRecs) {
+        var flattenAggregateRecord = function (record, flatRecs) {
           //currently we explode symptoms, symptomsGroup, diagnoses and diagnosesGroup to make crosstab counts for them happy
           var explodeFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
           var rec = angular.copy(record);
@@ -270,7 +270,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           angular.forEach(explodeFields, function (fld) {
             if (record[fld]) {
-              angular.forEach(record[fld], function (v) {
+              var data = record[fld].sort(function(a, b){
+                var a1 = a.name || a || '';
+                var b1 = b.name || b || '';
+                return a1 > b1;
+              });
+              angular.forEach(data, function (v) {
                 var r = angular.copy(rec);
                 var count = (v.count !== undefined) ? v.count : 1;
                 r[fld] = [
@@ -289,9 +294,23 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return self.indexOf(value) === index;
         };
 
-        // grab distinct values, sort them and join using comma for symtomGroups and diagnosesGroup
-        var flattenGroupFields = function (record) {
+        var flattenIndividualRecord = function (record, flatRecs) {
+          //sort symptoms, diagnoses
+          var fields = ['symptoms', 'diagnoses'];
+          // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
+          angular.forEach(fields, function (fld) {
+            if (record[fld] && angular.isArray(record[fld])) {
+              record[fld] = record[fld].sort(function (a, b) {
+                var a1 = a.name || a || '';
+                var b1 = b.name || b || '';
+                return a1 > b1;
+              });
+            }
+
+          });
+
           var groupFields = ['symptomsGroup', 'diagnosesGroup'];
+          // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
           angular.forEach(groupFields, function (fld) {
             if (record[fld]) {
               record[fld] = record[fld].map(function (v) {
@@ -299,6 +318,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               }).filter(uniqueStrings).sort().join(', ');
             }
           });
+          flatRecs.push(record);
         };
 
         var reload = function () {
@@ -322,10 +342,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var rec = crosstabifyRecord(r._source);
                 if (scope.form.dataType === 'aggregate') {
                   //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
-                  flattenRecord(rec, records);
+                  flattenAggregateRecord(rec, records);
                 } else {
-                  flattenGroupFields(rec);
-                  records.push(rec);
+                  flattenIndividualRecord(rec, records);
+
                 }
               });
               scope.crosstabData = records;
