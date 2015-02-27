@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
@@ -55,7 +54,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
                 formatter: function () {
 
                   var identifier = '';
-                  if (this.series.options.id == 'single') {
+                  if (this.series.options.id === 'single') {
                     identifier = 'Count';
                   } else {
                     identifier = this.series.name;
@@ -80,12 +79,12 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
                           col: null
                         };
 
-                        if (this.series.options.id == 'single') {
+                        if (this.series.options.id === 'single') {
                           point.name = this.category;
                           if (scope.pivot.cols.length > 0) {
                             point.col = scope.pivot.cols[0];
                           } else {
-                            point.col = scope.pivot.rows[0]
+                            point.col = scope.pivot.rows[0];
                           }
                         } else {
                           point.name = this.series.name;
@@ -178,16 +177,15 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
                   for (var y = 0; y < scope.aggData[i].values.length; y++) {
                     var found = false;
                     for (var x = 0; x < subCats.length; x++) {
-                      if (subCats[x] == scope.aggData[i].values[y].rowName) {
+                      if (subCats[x] === scope.aggData[i].values[y].rowName) {
                         found = true;
                       }
                     }
 
-                    if (found == false) {
+                    if (found === false) {
                       if (typeof scope.aggData[i].values[y].rowName !== 'undefined') {
                         subCats.push(scope.aggData[i].values[y].rowName);
                       }
-                      ;
                     }
                   }
                 }
@@ -205,14 +203,14 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
                     if (scope.aggData[i].values.length > 0) {
                       for (var y = 0; y < scope.aggData[i].values.length; y++) {
-                        if (subSeries.name == scope.aggData[i].values[y].rowName) {
+                        if (subSeries.name === scope.aggData[i].values[y].rowName) {
                           subSeries.data.push(scope.aggData[i].values[y].value);
                           found = true;
                         }
                       }
                     }
 
-                    if (found == false) {
+                    if (found === false) {
                       subSeries.data.push(0);
                     }
                   }
@@ -246,10 +244,10 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
           if (scope.source === 'dashboard') {
             scope.chartConfig.options.plotOptions.series.point.events = {
               click: chartToWorkbench
-            }
+            };
             scope.chartConfig.options.chart.events = {
               click: chartToWorkbench
-            }
+            };
           }
 
           scope.$watchCollection('[aggData]', function () {
