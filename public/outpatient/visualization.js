@@ -56,11 +56,17 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.crosstabData = [];
 
-        // TODO make this a filter
-        scope.printAggregate = function (field, includeCount) {
+        var sortByName =  function (a, b) {
+          var a1 = a.name || a || '';
+          var b1 = b.name || b || '';
+          return a1 > b1;
+        };
+
+        scope.printAggregate = function (field, showCount) {
+          var includeCount = showCount || scope.form.dataType === 'aggregate';
           var print = [];
           if (field) {
-            field.map(function (val) {
+            field.sort(sortByName).map(function (val) {
               print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
             });
           }
@@ -270,11 +276,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           angular.forEach(explodeFields, function (fld) {
             if (record[fld]) {
-              var data = record[fld].sort(function(a, b){
-                var a1 = a.name || a || '';
-                var b1 = b.name || b || '';
-                return a1 > b1;
-              });
+              var data = record[fld].sort(sortByName);
               angular.forEach(data, function (v) {
                 var r = angular.copy(rec);
                 var count = (v.count !== undefined) ? v.count : 1;
@@ -300,13 +302,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
           angular.forEach(fields, function (fld) {
             if (record[fld] && angular.isArray(record[fld])) {
-              record[fld] = record[fld].sort(function (a, b) {
-                var a1 = a.name || a || '';
-                var b1 = b.name || b || '';
-                return a1 > b1;
-              });
+              record[fld] = record[fld].sort(sortByName);
             }
-
           });
 
           var groupFields = ['symptomsGroup', 'diagnosesGroup'];
@@ -438,16 +435,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           }
         });
 
-        scope.printAggregate = function (field, showCount) {
-          var includeCount = showCount || scope.form.dataType === 'aggregate';
-          var print = [];
-          if (field) {
-            field.map(function (val) {
-              print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
-            });
-          }
-          return print.join(',');
-        };
+
 
         scope.tableFilter = function (field, value) {
           //TODO multiselect if value.length > ?

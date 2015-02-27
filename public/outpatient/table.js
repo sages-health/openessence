@@ -135,11 +135,17 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             });
           }
 
+          var sortByName =  function (a, b) {
+            var a1 = a.name || a || '';
+            var b1 = b.name || b || '';
+            return a1 > b1;
+          };
+
           scope.printAggregate = function (field, showCount) {
             var includeCount = showCount || scope.form.dataType === 'aggregate';
             var print = [];
             if (field) {
-              field.map(function (val) {
+              field.sort(sortByName).map(function (val) {
                 print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
               });
             }
