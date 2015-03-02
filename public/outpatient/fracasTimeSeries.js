@@ -48,23 +48,24 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           }, true);
 
           scope.$watch(function () {
-            return {
-              currentPage: scope.pagingOptions.currentPage,
-              pageSize: scope.pagingOptions.pageSize
-            };
-          },
-          function (newVal, oldVal) {
-            // Reset to page 1 when the page size changes
-            if (newVal.pageSize != oldVal.pageSize) {
-              scope.pagingOptions.currentPage = 1;
-            }
+              return {
+                currentPage: scope.pagingOptions.currentPage,
+                pageSize: scope.pagingOptions.pageSize
+              };
+            },
+            function (newVal, oldVal) {
+              // Reset to page 1 when the page size changes
+              if (newVal.pageSize != oldVal.pageSize) {
+                scope.pagingOptions.currentPage = 1;
+              }
 
-            fillGrid(scope.pagingOptions.currentPage, scope.pagingOptions.pageSize);
-          },
-          true);
+              fillGrid(scope.pagingOptions.currentPage, scope.pagingOptions.pageSize);
+            },
+            true);
 
           var fillGrid = function (currentPage, pageSize) {
-              scope.gridData = scope.tableMapJSON.slice((scope.pagingOptions.currentPage - 1) * scope.pagingOptions.pageSize, (scope.pagingOptions.currentPage + 1) * scope.pagingOptions.pageSize);
+            scope.gridData =
+              scope.tableMapJSON.slice((scope.pagingOptions.currentPage - 1) * scope.pagingOptions.pageSize, (scope.pagingOptions.currentPage + 1) * scope.pagingOptions.pageSize);
           }
 
           scope.tableMapJSON = scope.tableMapJSON || [{data: 0, series: 'series', count: 0, pValue: 1, expected: 0}];
@@ -72,17 +73,20 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.gridOptions = {
             data: 'gridData',
-              columnDefs: [
+            columnDefs: [
               //{field:'date', displayName:'Date', cellTemplate: "{{row.entity[col.field]| date:'shortDate'}}"},
-              {field:'date', displayName:'Date',
+              {
+                field: 'date', displayName: 'Date',
                 cellTemplate: '<div class="ngCellText">{{ row.getProperty(col.field) | date:\'shortDate\' }}</div>'
               },
-              {field:'series', displayName:'Series'},
-              {field:'count', displayName:'Count'},
-              {field:'pValue', displayName:'p-Value',
+              {field: 'series', displayName: 'Series'},
+              {field: 'count', displayName: 'Count'},
+              {
+                field: 'pValue', displayName: 'p-Value',
                 cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 && row.getProperty(\'pValue\') }">{{ row.getProperty(col.field) | number:3}}</div>'
               },
-              {field:'expected', displayName:'Expected Value',
+              {
+                field: 'expected', displayName: 'Expected Value',
                 cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 && row.getProperty(\'pValue\') > 0 && row.getProperty(\'pValue\')}">{{ row.getProperty(col.field) | number:0}}</div>'
               }
             ],
@@ -91,7 +95,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             pagingOptions: scope.pagingOptions,
             showGroupPanel: true
           }
-
 
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || defaultLabels;
@@ -144,7 +147,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   events: {}
                 }
               },
-              events: {}
+              events: {},
+              tooltip: {
+                shared: true
+              }
             },
             xAxis: {
               ordinal: false,
@@ -159,7 +165,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 week: '%Y-%m-%d'
               },
               minRange: 0,
-              gridLineWidth: 1
+              gridLineWidth: 1,
+              min: moment(scope.filters[0].from).valueOf(),
+              max: moment(scope.filters[0].to).valueOf()
             },
             yAxis: {
               allowDecimals: false,
@@ -292,7 +300,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   var dataStore = {};
                   //TODO cycles through colors each time series is pushed/removed, need to reset colors/index
                   scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-                    '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
+                                                      '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
                   var ser = scope.series ? angular.copy(scope.series) : [];
                   if (ser.length < 1 && scope.pivot.cols.length > 0) {
                     ser.push('second');
@@ -409,6 +417,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   to: new Date(to)
                 }, possibleFilters.possibleFilters.visitDate)); // TODO filter panel needs to watch for changes to filters
             }
+
+            scope.chartConfig.xAxis.min = moment(from).valueOf();
+            scope.chartConfig.xAxis.max = moment(to).valueOf();
           };
 
           /**
@@ -442,6 +453,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               dateFilter.from = new Date(from);
               dateFilter.to = new Date(to);
             }
+
+            scope.chartConfig.xAxis.min = moment(from).valueOf();
+            scope.chartConfig.xAxis.max = moment(to).valueOf();
 
             scope.$apply();
           };
@@ -503,7 +517,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           var calcPValues = function (dataStore, algorithm) {
             var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' :
-                                  (algorithm === 'CUSUM') ?'/detectors/cusum' : undefined;
+                                  (algorithm === 'CUSUM') ? '/detectors/cusum' : undefined;
             //$log.log('using algorithm' + algorithmString);
             angular.forEach(dataStore, function (points, key) {
               var counts = points.map(function (c) {
@@ -512,7 +526,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               var pValues = [];
               var expectedValues = [];
 
-              if(!algorithmString){
+              if (!algorithmString) {
                 scope.data.push({
                   name: key,
                   data: points
@@ -614,7 +628,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
               res = res || filters.length === 0;
 
-              for(var i = 0; i < filters.length; i++){
+              for (var i = 0; i < filters.length; i++) {
                 res = res || filters[i].value.indexOf(seriesName) !== -1;
               }
             }
@@ -656,19 +670,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           });
 
           /*
-          scope.criteria = 'date';
-          scope.direction = false;
-          scope.setCriteria = function (criteria) {
-            if (scope.criteria === criteria) {
-              scope.direction = !scope.direction;
-            } else {
-              scope.criteria = criteria;
-              scope.direction = false;
-            }
-          };
-          */
-
-
+           scope.criteria = 'date';
+           scope.direction = false;
+           scope.setCriteria = function (criteria) {
+           if (scope.criteria === criteria) {
+           scope.direction = !scope.direction;
+           } else {
+           scope.criteria = criteria;
+           scope.direction = false;
+           }
+           };
+           */
 
         }
       };
