@@ -41,6 +41,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             currentPage: 1
           };
 
+          scope.colors = Highcharts.getOptions().colors;
+
           scope.$watch('pagingOptions', function (newVal, oldVal) {
             if (newVal != oldVal && newVal.currentPage != oldVal.currentPage) {
               scope.refresh();
@@ -129,7 +131,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                       scope.zoomWithRange(xMin, xMax);
                     }
                   }
-                }
+                },
+                animation: false
               },
               credits: {
                 enabled: false
@@ -141,7 +144,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                     hover: {
                       halo: false
                     }
-                  }
+                  },
+                  animation: false
                 },
                 line: {
                   events: {}
@@ -149,7 +153,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               },
               events: {},
               tooltip: {
-                shared: true
+                shared: true,
+                crosshairs: [{
+                               width: 1.5,
+                               dashStyle: 'solid',
+                               color: 'black'
+                             }, false]
               }
             },
             xAxis: {
@@ -164,7 +173,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 year: '%Y-%m-%d',
                 week: '%Y-%m-%d'
               },
-              minRange: 0,
+              minTickInterval: 86400000,
               gridLineWidth: 1,
               min: moment(scope.filters[0].from).valueOf(),
               max: moment(scope.filters[0].to).valueOf()
@@ -298,9 +307,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 if (data.aggregations.date) {
                   scope.data = [];
                   var dataStore = {};
-                  //TODO cycles through colors each time series is pushed/removed, need to reset colors/index
-                  scope.chartConfig.options.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-                                                      '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'];
                   var ser = scope.series ? angular.copy(scope.series) : [];
                   if (ser.length < 1 && scope.pivot.cols.length > 0) {
                     ser.push('second');
@@ -480,7 +486,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 fillGrid(scope.pagingOptions.currentPage, scope.pagingOptions.pageSize);
               }
             }
-            //console.log(scope.tableMapJSON);
           };
 
           /**
@@ -558,15 +563,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                         var expected = expectedValues[i] === null ? 0 : expectedValues[i];
                         values.push(populatePValue(pValue, points[i].x, points[i].y, expected));
                       }
-                      //name: gettextCatalog.getString('Outpatient visits'),
-                      /*data: [{
-                       x: 6,
-                       y: 3.9,
-                       marker: {
-                       symbol: 'url(http://www.highcharts.com/demo/gfx/snow.png)'
-                       }
-                       }, [3, 4.2], [5, 5.7] ]
-                       */
                       scope.data.push({
                         name: key,
                         data: values
@@ -587,6 +583,39 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   });
               }
             });
+
+            // Remove record outside of range
+            var filteredDate = null;
+            for (var i = 0; i < scope.filters.length; i++) {
+              if (scope.filters[i].filterID == 'visitDate') {
+                var minFound = false;
+                var found = false;
+                if (scope.filters[i].from) {
+                  filteredDate = scope.filters[i];
+                  scope.chartConfig.xAxis.min = moment(filteredDate.from).valueOf();
+                  found = true;
+                }
+                if (scope.filters[i].to) {
+                  scope.chartConfig.xAxis.max = moment(filteredDate.to).valueOf();
+                  found = true;
+                }
+              }
+            }
+            if (filteredDate) {
+              for (var x = 0; x < scope.data.length; x++) {
+                if (typeof scope.data[x].data[0] !== 'undefined') {
+                  if (moment(scope.data[x].data[0].x).valueOf() < moment(filteredDate.from).valueOf()) {
+                    scope.data[x].data.splice(0, 1);
+                    x--;
+                  }
+                }
+              }
+            }
+
+            // consistent colors
+            for (var x = 0; x < scope.data.length; x++) {
+              scope.data[x]['color'] = scope.colors[x];
+            }
             scope.chartConfig.series = scope.data;
             createTableJSON();
           };
@@ -668,19 +697,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           scope.$watch('options.width', function () {
             scope.chartConfig.size.width = scope.options.width;
           });
-
-          /*
-           scope.criteria = 'date';
-           scope.direction = false;
-           scope.setCriteria = function (criteria) {
-           if (scope.criteria === criteria) {
-           scope.direction = !scope.direction;
-           } else {
-           scope.criteria = criteria;
-           scope.direction = false;
-           }
-           };
-           */
 
         }
       };
