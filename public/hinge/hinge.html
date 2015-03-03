@@ -20,7 +20,12 @@
           <span class="icon-cog"></span>
         </button>
       </div>
-      <div class="col-md-6 pull-right">
+      <div class="col-md-4">
+        <input type="hidden" class="select2-multiple pivot-rows"
+               multiple placeholder="{{pivotRowsPlaceholder | translate}}" ui-select2="select2Options"
+               ng-model="pivot.rows">
+      </div>
+      <div class="col-md-4">
         <input type="hidden" class="select2-multiple pivot-cols" multiple
                placeholder="{{pivotColsPlaceholder | translate}}" ui-select2="select2Options"
                ng-model="pivot.cols">
@@ -34,9 +39,7 @@
   <div class="panel-footer viz-drag-handle">
     <div class="clearfix">
       <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5">
-        <input type="hidden" class="select2-multiple pivot-rows"
-               multiple placeholder="{{pivotRowsPlaceholder | translate}}" ui-select2="select2Options"
-               ng-model="pivot.rows">
+
       </div>
 
       <!-- don't wrap btn-group in col since we don't ever want it to wrap -->

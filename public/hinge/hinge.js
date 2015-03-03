@@ -33,8 +33,8 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
 
         // TODO think of visualization-independent name, e.g. 'Grouping', but better, or change placeholder depending
         // on the selected visualization
-        scope.pivotRowsPlaceholder = gettextCatalog.getString('Pivot rows');
-        scope.pivotColsPlaceholder = gettextCatalog.getString('Pivot columns');
+        scope.pivotRowsPlaceholder = gettextCatalog.getString('Report Rows');
+        scope.pivotColsPlaceholder = gettextCatalog.getString('Attribute Columns');
 
         scope.select2Options = {
           sortable: true,
