@@ -5,7 +5,7 @@ var moment = require('moment');
 var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters) {
 
   return {
     restrict: 'E',
@@ -174,9 +174,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 week: '%Y-%m-%d'
               },
               minTickInterval: 86400000,
-              gridLineWidth: 1,
-              min: moment(scope.filters[0].from).valueOf(),
-              max: moment(scope.filters[0].to).valueOf()
+              gridLineWidth: 1
             },
             yAxis: {
               allowDecimals: false,
@@ -311,6 +309,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   if (ser.length < 1 && scope.pivot.cols.length > 0) {
                     ser.push('second');
                   }
+
                   if (ser.length > 0) {
                     data.aggregations.date.buckets.map(function (d) {
                       ser.forEach(function (s) {
@@ -423,9 +422,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   to: new Date(to)
                 }, possibleFilters.possibleFilters.visitDate)); // TODO filter panel needs to watch for changes to filters
             }
-
-            scope.chartConfig.xAxis.min = moment(from).valueOf();
-            scope.chartConfig.xAxis.max = moment(to).valueOf();
           };
 
           /**
@@ -436,6 +432,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
            * @param to is the end date (i.e. x-axis maximum on the graph)
            */
           scope.zoomWithRange = function (from, to) {
+
             var dateFilters = scope.filters.filter(function (f) {
               return f.type === 'date-range';
             });
@@ -453,15 +450,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 from: new Date(from),
                 to: new Date(to)
               }, possibleFilters.possibleFilters.visitDate);
-//              scope.filters.push(dateFilter);
-              scope.$emit('filterChange', dateFilter, true);
+              $rootScope.$emit('filterChange', dateFilter, true, true);
             } else {
               dateFilter.from = new Date(from);
               dateFilter.to = new Date(to);
             }
-
-            scope.chartConfig.xAxis.min = moment(from).valueOf();
-            scope.chartConfig.xAxis.max = moment(to).valueOf();
 
             scope.$apply();
           };
@@ -573,7 +566,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                         data: points
                       });
                     }
-                    scope.chartConfig.series = scope.data;
+                    generateRange();
                     createTableJSON();
                   }).error(function () {
                     scope.data.push({
@@ -584,25 +577,39 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }
             });
 
+            generateRange();
+            createTableJSON();
+          };
+
+          var generateRange = function () {
+
             // Remove record outside of range
             var filteredDate = null;
+            var minFound = false;
+            var maxFound = false;
             for (var i = 0; i < scope.filters.length; i++) {
               if (scope.filters[i].filterID == 'visitDate') {
-                var minFound = false;
-                var found = false;
+                filteredDate = scope.filters[i];
                 if (scope.filters[i].from) {
-                  filteredDate = scope.filters[i];
-                  scope.chartConfig.xAxis.min = moment(filteredDate.from).valueOf();
-                  found = true;
+                  if (filteredDate.from) {
+                    scope.chartConfig.xAxis.min = moment(filteredDate.from).valueOf();
+                    minFound = true;
+                  }
                 }
                 if (scope.filters[i].to) {
-                  scope.chartConfig.xAxis.max = moment(filteredDate.to).valueOf();
-                  found = true;
+                  if (filteredDate.to) {
+                    scope.chartConfig.xAxis.max = moment(filteredDate.to).valueOf();
+                    maxFound = true;
+                  }
                 }
               }
             }
-            if (filteredDate) {
-              for (var x = 0; x < scope.data.length; x++) {
+
+            var minDate = [];
+            var maxDate = [];
+
+            for (var x = 0; x < scope.data.length; x++) {
+              if (filteredDate) {
                 if (typeof scope.data[x].data[0] !== 'undefined') {
                   if (moment(scope.data[x].data[0].x).valueOf() < moment(filteredDate.from).valueOf()) {
                     scope.data[x].data.splice(0, 1);
@@ -611,14 +618,30 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 }
               }
             }
+            for (var x = 0; x < scope.data.length; x++) {
+              if (scope.data[x].data.length > 0) {
+                minDate.push(Math.min.apply(Math, scope.data[x].data.map(function (o) {
+                  return o.x;
+                })));
+                maxDate.push(Math.max.apply(Math, scope.data[x].data.map(function (o) {
+                  return o.x;
+                })));
+              }
+            }
+
+            if (!minFound) {
+              scope.chartConfig.xAxis.min = Math.min.apply(Math, minDate);
+            }
+            if (!maxFound) {
+              scope.chartConfig.xAxis.max = Math.max.apply(Math, maxDate);
+            }
 
             // consistent colors
             for (var x = 0; x < scope.data.length; x++) {
               scope.data[x]['color'] = scope.colors[x];
             }
             scope.chartConfig.series = scope.data;
-            createTableJSON();
-          };
+          }
 
           /**
            *
