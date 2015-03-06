@@ -7,7 +7,7 @@ var moment = require('moment');
 var $ = require('jquery');
 require('../crosstab/pivot');
 
-angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $log, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $log, debounce, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
 
   return {
     restrict: 'E',
@@ -140,7 +140,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return res;
         };
 
-        var getCrosstabularData = function(records, opts) {
+        var getCrosstabularData = function (records, opts) {
           //TODO extra to service from crosstab.js
           var countKey = 'count';
           var sumcount = function (data, rowKey, colKey) {
@@ -188,6 +188,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               return true;
             },
             aggregator: sumcount,
+            //aggregator: $.pivotUtilities.aggregators.count(),
             derivedAttributes: {},
             localeStrings: {
               renderError: "An error occurred rendering the PivotTable results.",
@@ -195,13 +196,71 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             }
           }, opts);
 
-          var pv = $.pivotUtilities.getPivotData(records,
+          var pivotData = $.pivotUtilities.getPivotData(records,
             options.cols, options.rows, options.aggregator, options.filter, options.derivedAttributes);
 
-          var data = {};
+          var barData = [];
+          var pieData = [];
+          var data = [];
+          var keyStr, aggregator, count,total, slice;
 
-          return data;
-        }
+          var rowField = pivotData.rowAttrs.join();
+          var colField = pivotData.colAttrs.join();
+          var rowKeys = pivotData.getRowKeys();
+          var colKeys = pivotData.getColKeys();
+
+          if (rowKeys.length > 0) {
+            if (colKeys.length > 0) {//row and col
+              angular.forEach(rowKeys, function (rowVal, rk) {
+                data = [];
+                angular.forEach(colKeys, function (colVal, ck) {
+                  aggregator = pivotData.getAggregator(rowVal, colVal);
+                  count = aggregator.value();
+                  slice = {
+                    col: rowField, colName: rowVal.join(), row: colField, rowName: colVal.join(),
+                    key: (rowField + '_' + colField), value: count, total: pivotData.getAggregator([], colVal).value()
+                  };
+                  data.push(slice);
+                  pieData.push(slice);
+                });
+                barData.push({key: rowField, values: data, total: pivotData.getAggregator(rowVal, []).value()});
+              });
+            } else {//just row
+              //single selected
+              angular.forEach(rowKeys, function (val, key) {
+                keyStr = val.join();
+                aggregator = pivotData.getAggregator(val, []);
+                count = aggregator.value();
+                total = pivotData.getAggregator([], []).value();
+                //TODO do we diff pushing columns vs rows like in parseAggQuery now?
+                slice = {col: rowField, colName: keyStr, key: keyStr, value: count, total: total};
+                pieData.push(slice);
+                barData.push({col: rowField, colName: keyStr, key: keyStr, values: [slice]});
+              });
+            }
+          } else if (colKeys.length > 0) {//just col
+            //single selected
+            angular.forEach(colKeys, function (val, key) {
+              keyStr = val.join();
+              aggregator = pivotData.getAggregator([], val);
+              count = aggregator.value();
+              total = pivotData.getAggregator([], []).value();
+              //TODO do we diff pushing columns vs rows like in parseAggQuery now?
+              slice = {col: colField, colName: keyStr, key: keyStr, value: count, total: total};
+              pieData.push(slice);
+              barData.push({col: colField, colName: keyStr, key: keyStr, values: [slice]});
+            });
+          } else {//none
+
+          }
+          if (scope.visualization.name === 'bar') {
+            return barData;
+          } else if (scope.visualization.name === 'pie') {
+            return pieData;
+          } else if (scope.visualization.name === 'map') {
+            return pieData;
+          }
+        };
 
         //assuming only two deep BY one for now...
         var parseAggQuery = function (aggregation, first, second, rows, cols) {
@@ -320,6 +379,38 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return [];
         };
 
+        var queryData = function (resultFn) {
+          OutpatientVisitResource.get({
+            size: 999999,
+            q: scope.queryString
+          }, function (data) {
+            var records = [];
+            //TODO add missing count, remove 0 from flattened records
+            angular.forEach(data.results, function (r) {
+              var rec = crosstabifyRecord(r._source);
+              if (scope.form.dataType === 'aggregate') {
+                //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
+                flattenAggregateRecord(rec, records);
+              } else {
+                flattenIndividualRecord(rec, records);
+              }
+            });
+            resultFn(records);
+          });
+        };
+
+        var aggReload2 = function () {
+          queryData(function (records) {
+            //scope.crosstabData = records;
+            var opts = {
+              rows: angular.copy(scope.pivot.rows) || [],
+              cols: angular.copy(scope.pivot.cols) || []
+            };
+            var cdata = getCrosstabularData(records, opts);
+            scope.aggData = cdata;
+          });
+        };
+
         var aggReload = function () {
           var cols = angular.copy(scope.pivot.cols);
           var rows = angular.copy(scope.pivot.rows);
@@ -408,35 +499,22 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         var reload = function () {
+          debounce(reloadDebounce, 500).call();
+        };
+
+        var reloadDebounce = function () {
           if (scope.visualization.name === 'table') {
             //scope.tableParams.reload();
           } else if (scope.visualization.name === 'pie') {
-            aggReload();
+            aggReload2();
           } else if (scope.visualization.name === 'bar') {
-            aggReload();
+            aggReload2();
           } else if (scope.visualization.name === 'map') {
-            aggReload();
-          } else if (scope.visualization.name === 'crosstab') {
-            // TODO do this via aggregation
-            OutpatientVisitResource.get({
-              size: 999999,
-              q: scope.queryString
-            }, function (data) {
-              var records = [];
-              //TODO add missing count, remove 0 from flattened records
-              angular.forEach(data.results, function (r) {
-                var rec = crosstabifyRecord(r._source);
-                if (scope.form.dataType === 'aggregate') {
-                  //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
-                  flattenAggregateRecord(rec, records);
-                } else {
-                  flattenIndividualRecord(rec, records);
-
-                }
-              });
+            aggReload2();
+          } else if (scope.visualization.name === 'crosstab')
+            queryData(function (records) {
               scope.crosstabData = records;
             });
-          }
         };
 
 
@@ -478,7 +556,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             series: scope.pivot.cols || [],
             visualization: scope.visualization
           });
-
         };
 
         scope.$watch('pivot.cols', function (newValue, oldValue) {
@@ -523,8 +600,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             $rootScope.$emit('filterChange', filter, true, true);
           }
         });
-
-
 
         scope.tableFilter = function (field, value) {
           //TODO multiselect if value.length > ?

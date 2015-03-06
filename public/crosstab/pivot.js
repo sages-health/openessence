@@ -438,16 +438,6 @@ naturalSort = function (as, bs) {
   return a.length - b.length;
 };
 
-$.pivotUtilities = {
-  aggregatorTemplates: aggregatorTemplates,
-  aggregators: aggregators,
-  renderers: renderers,
-  derivers: derivers,
-  naturalSort: naturalSort,
-  numberFormat: numberFormat,
-  //added for data pull test
-  getPivotData: getPivotData
-};
 
 /*
  functions for accessing input
@@ -836,6 +826,19 @@ pivotTableRenderer = function (pivotData, opts) {
   result.data("dimensions", [rowKeys.length, colKeys.length]);
   return result;
 };
+
+
+$.pivotUtilities = {
+  aggregatorTemplates: aggregatorTemplates,
+  aggregators: aggregators,
+  renderers: renderers,
+  derivers: derivers,
+  naturalSort: naturalSort,
+  numberFormat: numberFormat,
+  //added for data pull test
+  getPivotData: getPivotData
+};
+
 
 /*
  Pivot Table
