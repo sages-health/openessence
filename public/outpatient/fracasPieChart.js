@@ -96,6 +96,8 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
           var reloadDebounce = function () {
 
+              console.log(scope.aggData);
+
               scope.chartConfig.series = [];
 
               var series = [];

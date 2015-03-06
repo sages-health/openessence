@@ -17,7 +17,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
       queryString: '=',
       filters: '=',
       pivot: '=?', //updated to take both pivot cols/rows
-      //series: '=?', // array of strings denoting series to graph
       source: '=?',
       widget: '=?',
       tableMapJSON: '=?',
@@ -100,9 +99,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || defaultLabels;
-          //TODO.. pivot cols should define an aggregation(count) field
-          // pivot rows should define the series..
-          //e.g. pivot.rows=facility, pivot.cols=Symptom (total symptoms (or summation of symtoms count)).. assumes user will filter
           scope.series = scope.pivot.rows || scope.options.series || [];
           if (scope.options.interval) {
             scope.interval = scope.options.interval;
@@ -354,12 +350,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }
             )
             ;
-            //}
           };
 
-          //var chart = angular.element(document.querySelector('#highcharts-id-' + scope.options.id)).highcharts();
-          //var xMin = chart.xAxis[0].min;
-          //var xMax = chart.xAxis[0].max;
           /**
            *
            * @param factor zoom factor, 0.5 would cut timespan in half (zoom in), 2 would double timespan (zoom out)
