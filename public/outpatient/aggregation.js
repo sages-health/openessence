@@ -103,17 +103,32 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }
       return copy;
     },
-    //assuming only two deep for now..
-    buildAggregationQuery: function (cols, rows, limit, form) {
+    /**
+     * assuming only two deep for now..
+     *
+     * cols = symptoms --> shows data only for filtered results (e.g. fever only shows fever)
+     * rows = symptoms --> shows all slices now filtered (counts for each slice)
+     * cols = symptoms, rows = symptoms --> shows data for filtered results broken down by all results  (fever - [rash,cold,cough],...)
+     *
+     * //TODO for nested property X nested property we need to use reverse nested filter on 2nd property/bucket
+     *
+     *
+     * @param series == series / first order bucket
+     * @param cols == aggregation field/attribute (symptoms.count) / second order bucket
+     * @param limit
+     * @param form
+     */
+    buildAggregationQuery: function (series, cols, limit, form) {
       var first, second;
       var query = {};
-      if (cols[0]) {
-        first = cols[0];
-        if (rows[0]) {
-          second = rows[0];
+      if (series[0]) {
+        first = series[0];
+        if (cols[0] && cols[0] !== first) {
+          second = cols[0];
+          //TODO if second is nested, we need to swap first/second and then custom parse
         }
-      } else if (rows[0]) {
-        first = rows[0];
+      } else if (cols[0]) {
+        first = cols[0];
       }
       //build first aggregation
       if (first && second) {

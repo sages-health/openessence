@@ -4,6 +4,9 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var moment = require('moment');
 
+var $ = require('jquery');
+require('../crosstab/pivot');
+
 angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $log, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
 
   return {
@@ -56,11 +59,17 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.crosstabData = [];
 
-        // TODO make this a filter
-        scope.printAggregate = function (field, includeCount) {
+        var sortByName =  function (a, b) {
+          var a1 = a.name || a || '';
+          var b1 = b.name || b || '';
+          return a1 > b1;
+        };
+
+        scope.printAggregate = function (field, showCount) {
+          var includeCount = showCount || scope.form.dataType === 'aggregate';
           var print = [];
           if (field) {
-            field.map(function (val) {
+            field.sort(sortByName).map(function (val) {
               print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
             });
           }
@@ -115,9 +124,87 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           visualization.save(state);
         });
 
+        var plotSeries = function (seriesName, seriesType) {
+          var res = !scope.filters;
+          if (scope.filters) {
+            var filters = scope.filters.filter(function (filter) {
+              return filter.filterID === seriesType && filter.value.length > 0;
+            });
+
+            res = res || filters.length === 0;
+
+            for(var i = 0; i < filters.length; i++){
+              res = res || filters[i].value.indexOf(seriesName) !== -1;
+            }
+          }
+          return res;
+        };
+
+        var getCrosstabularData = function(records, opts) {
+          //TODO extra to service from crosstab.js
+          var countKey = 'count';
+          var sumcount = function (data, rowKey, colKey) {
+            return {
+              colk: colKey,
+              rowk: rowKey,
+              countStore: {},
+              count: 0,
+              push: function (record) {
+                var col = scope.pivot.cols[0];
+                var row = scope.pivot.rows[0];
+
+                if (record[col]) {
+                  if (typeof record[col] !== 'string') {
+                    if (record[col][0] && record[col][0][countKey] !== undefined) {
+                      this.count += record[col][0][countKey];
+                      return;
+                    }
+                  }
+                  this.count++;
+                } else if (record[row]) {
+                  if (typeof record[row] !== 'string') {
+                    if (record[row][0] && record[row][0][countKey] !== undefined) {
+                      this.count += record[row][0][countKey];
+                      return;
+                    }
+                  }
+                  this.count++;
+                }
+              },
+              value: function () {
+                return this.count;
+              },
+              format: function (x) {
+                return x;
+              },
+              label: 'SumCount'
+            };
+          };
+
+          var options = $.extend({
+            cols: [],
+            rows: [],
+            filter: function () {
+              return true;
+            },
+            aggregator: sumcount,
+            derivedAttributes: {},
+            localeStrings: {
+              renderError: "An error occurred rendering the PivotTable results.",
+              computeError: "An error occurred computing the PivotTable results."
+            }
+          }, opts);
+
+          var pv = $.pivotUtilities.getPivotData(records,
+            options.cols, options.rows, options.aggregator, options.filter, options.derivedAttributes);
+
+          var data = {};
+
+          return data;
+        }
 
         //assuming only two deep BY one for now...
-        var parseAggQuery = function (aggregation, first, second) {
+        var parseAggQuery = function (aggregation, first, second, rows, cols) {
           //$log.log('parsing agg query');
           /*jshint camelcase:false */
           var aggs = aggregation.aggregations;
@@ -135,24 +222,33 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           if (aggs) {
             //if there is only one aggregation selected parse as normal
             if (first && !second) {
-              bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
-              bucket = outpatientAggregation.toArray(bucket);
-              bucket.map(function (entry) {
-                var keyStr = entry.key;
-                var count = entry.count ? entry.count.value : entry.doc_count;
-                missingCount -= count;
-                slice = {col: first, colName: keyStr, key: keyStr, value: count};
-                pieData.push(slice);
-                barData.push({col: first, colName: keyStr, key: keyStr, values: [slice]});
-              });
-              //add missing fields count from total hits - aggs total doc count
-              if (missingCount > 0) {
-                slice = {col: first, colName: 'missing', key: ('missing_' + colLabel), value: missingCount};
-                pieData.push(slice);
-                barData.push({col: first, colName: 'missing', key: ('missing_' + colLabel), values: [slice]});
+              if (first === cols[0] && first === rows[0]) { //selected both rows and cols
+                //TODO WE DO NOT HAVE THE DATA WE NEED FROM ONE AGG QUERY RIGHT NOW
+                //we need to filter plot the first, and add second
+              }else {
+                bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
+                bucket = outpatientAggregation.toArray(bucket);
+                bucket.map(function (entry) {
+                  //if series, and they didnt select row, then use filters for slices
+                  var pivotOnSeries = (first === rows[0] && !cols[0]); //TODO change buildAggQuery so this is clearer
+                  if (!pivotOnSeries || plotSeries(entry.key, first)) {
+                    var keyStr = entry.key;
+                    var count = entry.count ? entry.count.value : entry.doc_count;
+                    missingCount -= count;
+                    slice = {col: first, colName: keyStr, key: keyStr, value: count};
+                    pieData.push(slice);
+                    barData.push({col: first, colName: keyStr, key: keyStr, values: [slice]});
+                  }
+                });
+                //add missing fields count from total hits - aggs total doc count
+                if (missingCount > 0) {
+                  slice = {col: first, colName: 'missing', key: ('missing_' + colLabel), value: missingCount};
+                  pieData.push(slice);
+                  barData.push({col: first, colName: 'missing', key: ('missing_' + colLabel), values: [slice]});
+                }
               }
             }
-            if (!first && second) {
+            if (!first && second) {  //currently this does not occur?
               bucket = aggs[sa].buckets || aggs[sa]._name.buckets;
               bucket = outpatientAggregation.toArray(bucket);
               bucket.map(function (entry) {
@@ -227,15 +323,14 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         var aggReload = function () {
           var cols = angular.copy(scope.pivot.cols);
           var rows = angular.copy(scope.pivot.rows);
-          //TODO: nested aggs (symptoms etc.) must be first?
-          var agg = outpatientAggregation.buildAggregationQuery(cols, rows, 10, scope.form);
+          var agg = outpatientAggregation.buildAggregationQuery(rows, cols, 10, scope.form);
           //query the new data for aggregations
           OutpatientVisitResource.search({
             size: 0,
             q: scope.queryString,
             aggregations: agg.query
           }, function (data) {
-            scope.aggData = parseAggQuery(data, agg.first, agg.second);
+            scope.aggData = parseAggQuery(data, agg.first, agg.second, rows, cols);
           });
         };
 
@@ -257,7 +352,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return record;
         };
 
-        var flattenRecord = function (record, flatRecs) {
+        var flattenAggregateRecord = function (record, flatRecs) {
           //currently we explode symptoms, symptomsGroup, diagnoses and diagnosesGroup to make crosstab counts for them happy
           var explodeFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
           var rec = angular.copy(record);
@@ -270,7 +365,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           angular.forEach(explodeFields, function (fld) {
             if (record[fld]) {
-              angular.forEach(record[fld], function (v) {
+              var data = record[fld].sort(sortByName);
+              angular.forEach(data, function (v) {
                 var r = angular.copy(rec);
                 var count = (v.count !== undefined) ? v.count : 1;
                 r[fld] = [
@@ -289,9 +385,18 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return self.indexOf(value) === index;
         };
 
-        // grab distinct values, sort them and join using comma for symtomGroups and diagnosesGroup
-        var flattenGroupFields = function (record) {
+        var flattenIndividualRecord = function (record, flatRecs) {
+          //sort symptoms, diagnoses
+          var fields = ['symptoms', 'diagnoses'];
+          // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
+          angular.forEach(fields, function (fld) {
+            if (record[fld] && angular.isArray(record[fld])) {
+              record[fld] = record[fld].sort(sortByName);
+            }
+          });
+
           var groupFields = ['symptomsGroup', 'diagnosesGroup'];
+          // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
           angular.forEach(groupFields, function (fld) {
             if (record[fld]) {
               record[fld] = record[fld].map(function (v) {
@@ -299,6 +404,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               }).filter(uniqueStrings).sort().join(', ');
             }
           });
+          flatRecs.push(record);
         };
 
         var reload = function () {
@@ -322,10 +428,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 var rec = crosstabifyRecord(r._source);
                 if (scope.form.dataType === 'aggregate') {
                   //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
-                  flattenRecord(rec, records);
+                  flattenAggregateRecord(rec, records);
                 } else {
-                  flattenGroupFields(rec);
-                  records.push(rec);
+                  flattenIndividualRecord(rec, records);
+
                 }
               });
               scope.crosstabData = records;
@@ -418,16 +524,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           }
         });
 
-        scope.printAggregate = function (field, showCount) {
-          var includeCount = showCount || scope.form.dataType === 'aggregate';
-          var print = [];
-          if (field) {
-            field.map(function (val) {
-              print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
-            });
-          }
-          return print.join(',');
-        };
+
 
         scope.tableFilter = function (field, value) {
           //TODO multiselect if value.length > ?

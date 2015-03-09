@@ -32,6 +32,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
           scope.others = {};
 
           // Fields that have count: X. We need to add count: 1 to them on individual form
+          //TODO use possibleFilters[field].aggregation.nested
           var aggregateFields = ['symptoms', 'diagnoses'];
 
           // convert array of fields to object indexed by field name

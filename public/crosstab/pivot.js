@@ -444,7 +444,9 @@ $.pivotUtilities = {
   renderers: renderers,
   derivers: derivers,
   naturalSort: naturalSort,
-  numberFormat: numberFormat
+  numberFormat: numberFormat,
+  //added for data pull test
+  getPivotData: getPivotData
 };
 
 /*
