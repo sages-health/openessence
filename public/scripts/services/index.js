@@ -11,6 +11,7 @@ services.factory('aggregateReportModal', require('./reports/aggregateReportModal
   .factory('Report', require('./Report'))
   .factory('scopeToJson', require('./scopeToJson'))
   .factory('sortString', require('./sortString'))
+  .factory('stringUtil', require('./stringUtil'))
   .factory('tableUtil', require('./tableUtil'))
   .factory('EditSettings', require('./EditSettings'))
   .factory('updateURL', require('./updateURL'))

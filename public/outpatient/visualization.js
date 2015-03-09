@@ -7,7 +7,7 @@ var moment = require('moment');
 var $ = require('jquery');
 require('../crosstab/pivot');
 
-angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $log, debounce, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization) {
+angular.module(directives.name).directive('outpatientVisualization', /*@ngInject*/ function ($modal, $rootScope, $log, debounce, orderByFilter, gettextCatalog, sortString, FrableParams, OutpatientVisitResource, outpatientEditModal, updateURL, outpatientDeleteModal, scopeToJson, outpatientAggregation, visualization, stringUtil) {
 
   return {
     restrict: 'E',
@@ -64,17 +64,11 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.crosstabData = [];
 
-        var sortByName =  function (a, b) {
-          var a1 = a.name || a || '';
-          var b1 = b.name || b || '';
-          return a1 > b1;
-        };
-
         scope.printAggregate = function (field, showCount) {
           var includeCount = showCount || scope.form.dataType === 'aggregate';
           var print = [];
           if (field) {
-            field.sort(sortByName).map(function (val) {
+            field.sort(stringUtil.compare).map(function (val) {
               print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
             });
           }
@@ -469,7 +463,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           angular.forEach(explodeFields, function (fld) {
             if (record[fld] && angular.isArray(record[fld])) {
-              var data = record[fld].sort(sortByName);
+              var data = record[fld].sort(stringUtil.compare);
               angular.forEach(data, function (v) {
                 var r = angular.copy(rec);
                 var count = (v.count !== undefined) ? v.count : 1;
@@ -538,7 +532,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           // sort symptoms and diagnoses
           angular.forEach(multiValueFields, function (fld) {
             if (record[fld] && angular.isArray(record[fld])) {
-              record[fld] = record[fld].sort(sortByName);
+              record[fld] = record[fld].sort(stringUtil.compare);
             }
           });
 

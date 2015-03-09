@@ -3,7 +3,7 @@
 var angular = require('angular');
 //var $ = require('jquery');
 // @ngInject
-module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
+module.exports = function ($scope, $window, $rootScope, FormResource, $modal, stringUtil) {
 
   var init = function () {
     $scope.siteTemplate = {
@@ -115,7 +115,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal) {
         }, {});
         field.values = field.values.map(function (val) {
           return possibleValuesByName[val] || {name: val};
-        });
+        }).sort(stringUtil.compare);
       }
     });
 
