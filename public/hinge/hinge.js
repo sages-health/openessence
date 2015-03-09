@@ -44,6 +44,8 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
               id: o.value,
               text: o.label
             };
+          }).sort(function(a, b){
+            return a.text > b.text;
           })
         };
 
