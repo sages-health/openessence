@@ -147,7 +147,7 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
             loading: false,
             size: {
               width: scope.options.width - 10,
-              height: scope.options.height
+              height: scope.options.height - 40
             }
           };
 
@@ -431,7 +431,6 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
               }
 
               scope.chartConfig.series = scope.data;
-
 
             }
           };

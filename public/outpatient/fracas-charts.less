@@ -2,6 +2,22 @@
 * Time Series
 */
 
+// New UI for selectors on charts
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.nopadding {
+  padding: 0 5px 0 0 !important;
+  margin: 0 !important;
+}
+
+.padding-zoom-out {
+  padding: 5px 0 0 0 !important;
+  margin: 0 !important;
+}
+
 .viz-toolbar {
   .icon-zoom-out {
     -webkit-touch-callout: none;
@@ -10,6 +26,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    padding-left: 10px;
   }
 }
 
@@ -28,7 +45,7 @@ g.highlight-display rect.highlight-rect {
 
 // Used to hide an element used for sizing strings
 .str_width {
-  position : absolute;
+  position: absolute;
   visibility: hidden;
   height: auto;
   width: auto;

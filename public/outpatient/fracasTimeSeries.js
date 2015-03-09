@@ -189,7 +189,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             loading: false,
             size: {
               width: scope.options.width - 10,
-              height: scope.options.height
+              height: scope.options.height - 40
             }
           };
 
