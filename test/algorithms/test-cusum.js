@@ -1,5 +1,5 @@
 'use strict';
-var cuSum = require('.././CusumSagesDetector');
+var cuSum = require('../../server/algorithms/CusumSagesDetector');
 var chai = require('chai');
 var expect = chai.expect;
 
@@ -31,63 +31,33 @@ describe('error-CUSUM-algorithms', function () {
     it('Test Vectors', function () {
       for (var i = 0; i < testVectors.length; ++i) {
         var testVector = testVectors[i];
-        /*
         var output = cuSum.calculateCUSUM(testVector, 0.5, 28, 2, 0.5, 4, 0.01, 0.05);
-        var outputTestStats = output[0];
-        var outputPvalues = output[1];
+
+        var outputTestStats = output["testStats"];
+        var outputPvalues = output["pValues"];
 
         var pValue = pValues[i];
         var testStat = testStats[i];
-
-        expect(testVector.length).to.equal(outputTestStats.length).to.equal(outputPvalues.length);
         expect(outputTestStats.length).to.equal(outputPvalues.length);
         expect(outputTestStats.length).to.equal(testStat.length);
         expect(outputPvalues.length).to.equal(pValue.length);
-        */
-        var pValue = pValues[i];
-        var outputPvalues = cuSum.calculateCUSUM(testVector, 0.5, 28, 2, 0.5, 4);
-        expect(outputPvalues.length).to.equal(pValue.length);
+
       }
     });
   });
-
-   /*
-  describe('TestStatistics', function () {
-    it('Test Vectors', function () {
-      for (var i = 0; i < testVectors.length; ++i) {
-        var testVector = testVectors[i];
-        var output = cuSum.calculateCUSUM(testVector, 0.5, 28, 2, 0.5, 4, 0.01, 0.05);
-        var outputTestStats = output[0];
-        var testStat = testStats[i];
-
-        for (var j = 0; j < outputTestStats.length; ++j) {
-          if (testStat[j] == null) {
-            expect(outputTestStats[j]).to.be.a('null');
-          } else {
-            expect(outputTestStats[j]).to.be.closeTo(testStat[j], .05);
-          }
-        }//end for over test statistics
-      }
-    });
-  });
-   */
 
   describe('PValues', function () {
     it('Test Vectors', function () {
       for (var i = 0; i < testVectors.length; ++i) {
         var testVector = testVectors[i];
-        /*
-        var output = cuSum.calculateCUSUM(testVector, 0.5, 28, 2, 0.5, 4, 0.01, 0.05);
-        var outputPvalues = output[1];
-        var pValue = pValues[i];
-        */
-        var outputPvalues = cuSum.calculateCUSUM(testVector, 0.5, 28, 2, 0.5, 4);
+        var outputPvalues = cuSum.calculateCUSUM(testVector, 0.5, 28, 2, 0.5, 4)['pValues'];
         var pValue = pValues[i];
         for (var j = 0; j < outputPvalues.length; ++j){
+          console.log("Got: " + outputPvalues[j] + " expected:" + pValue[j]);
           if (outputPvalues[j]===null){
             expect(outputPvalues[j]).to.be.a('null');
           }else{
-            expect(outputPvalues[j]).to.be.closeTo(pValue[j], 0.05);
+            expect(outputPvalues[j]).to.be.closeTo(pValue[j], 0.0005);
           }
         }//end for over test statistics
       }
