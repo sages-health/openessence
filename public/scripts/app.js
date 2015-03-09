@@ -44,7 +44,9 @@ require('highcharts');
 require('exporting');
 //require('drilldown');
 require('highcharts-ng');
-
+require('ng-table');
+require('infinite-scroll');
+require('sticky-table-headers');
 
 var frable = require('../frable');
 require('../select2');
@@ -65,8 +67,8 @@ require('./directives');
 require('./filters');
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.select2', 'ui.sortable',
-  'gettext', 'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-  'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', frable.name]
+                    'gettext', 'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -96,7 +98,6 @@ app.config(function ($logProvider) {
 var previousState = {};
 var stateChanged = false; // there's probably a better way to track initial state change, but this works
 app.run(function ($rootScope, $state, $http, cfpLoadingBar, user, $injector) {
-
 
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
     cfpLoadingBar.start();

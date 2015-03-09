@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
-@import "bootstrap"; // use our custom bootstrap build
+@import "bootstrap";
+// use our custom bootstrap build
 @import "fracas-theme/flatly/variables";
 @import "fracas-theme/flatly/bootswatch";
 @import "fracas-fonts/fonts";
@@ -10,7 +11,9 @@
 @import (less) "fracas-jquery-ui/jquery-ui.css";
 @import (less) "ng-grid/ng-grid.css";
 @import (less) "angular-ui-select/dist/select.css";
-@import "../frable/frable"; // TODO figure out a way to include addons w/o having to manually add it here
+@import "../frable/frable";
+// TODO figure out a way to include addons w/o having to manually add it here
+@import "../../bower_components/ng-table/dist/ng-table.less";
 @import "../select2/select2";
 @import "../crosstab/crosstab";
 @import "../hinge/hinge";
@@ -257,7 +260,7 @@ workbench-visualization .frable-pagination {
   overflow: auto;
   font-family: inherit;
   font-size: 100%;
-  margin:20px 0;
+  margin: 20px 0;
 }
 
 @media print {
@@ -314,7 +317,7 @@ input.invalidFilename-true {
 }
 
 .gridStyle {
-  border: 1px solid rgb(212,212,212);
+  border: 1px solid rgb(212, 212, 212);
   width: 850px;
   height: 400px;
 }

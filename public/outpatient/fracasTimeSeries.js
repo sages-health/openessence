@@ -5,7 +5,7 @@ var moment = require('moment');
 var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, ngTableParams) {
 
   return {
     restrict: 'E',
@@ -34,68 +34,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.totalServerItems = 0;
 
-          scope.pagingOptions = {
-            pageSizes: [31, 62, 248],
-            pageSize: 31,
-            currentPage: 1
-          };
-
           scope.colors = Highcharts.getOptions().colors;
-
-          scope.$watch('pagingOptions', function (newVal, oldVal) {
-            if (newVal != oldVal && newVal.currentPage != oldVal.currentPage) {
-              scope.refresh();
-            }
-          }, true);
-
-          scope.$watch(function () {
-              return {
-                currentPage: scope.pagingOptions.currentPage,
-                pageSize: scope.pagingOptions.pageSize
-              };
-            },
-            function (newVal, oldVal) {
-              // Reset to page 1 when the page size changes
-              if (newVal.pageSize != oldVal.pageSize) {
-                scope.pagingOptions.currentPage = 1;
-              }
-
-              fillGrid(scope.pagingOptions.currentPage, scope.pagingOptions.pageSize);
-            },
-            true);
-
-          var fillGrid = function (currentPage, pageSize) {
-            scope.gridData =
-              scope.tableMapJSON.slice((scope.pagingOptions.currentPage - 1) * scope.pagingOptions.pageSize, (scope.pagingOptions.currentPage + 1) * scope.pagingOptions.pageSize);
-          }
-
-          scope.tableMapJSON = scope.tableMapJSON || [{data: 0, series: 'series', count: 0, pValue: 1, expected: 0}];
-          scope.gridData = scope.tableMapJSON;
-
-          scope.gridOptions = {
-            data: 'gridData',
-            columnDefs: [
-              //{field:'date', displayName:'Date', cellTemplate: "{{row.entity[col.field]| date:'shortDate'}}"},
-              {
-                field: 'date', displayName: 'Date',
-                cellTemplate: '<div class="ngCellText">{{ row.getProperty(col.field) | date:\'shortDate\' }}</div>'
-              },
-              {field: 'series', displayName: 'Series'},
-              {field: 'count', displayName: 'Count'},
-              {
-                field: 'pValue', displayName: 'p-Value',
-                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 && row.getProperty(\'pValue\') }">{{ row.getProperty(col.field) | number:3}}</div>'
-              },
-              {
-                field: 'expected', displayName: 'Expected Value',
-                cellTemplate: '<div class="ngCellText" ng-class="{\'warning\' : row.getProperty(\'pValue\') <.05 && row.getProperty(\'pValue\') > .01,  \'alert\': row.getProperty(\'pValue\') <=.01 && row.getProperty(\'pValue\') > 0 && row.getProperty(\'pValue\')}">{{ row.getProperty(col.field) | number:0}}</div>'
-              }
-            ],
-            enablePaging: true,
-            showFooter: true,
-            pagingOptions: scope.pagingOptions,
-            showGroupPanel: true
-          }
 
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || defaultLabels;
@@ -108,6 +47,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.options.interval = 'day';
           }
           scope.refresh = false;
+
+          scope.data = [];
+          scope.tableData = []
 
           scope.chartConfig = {
             options: {
@@ -451,28 +393,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.$apply();
           };
 
-          var createTableJSON = function () {
-            var data = scope.chartConfig.series;
-            scope.tableMapJSON = [];
-            if (data !== undefined && data !== null && data.length > 0) {
-              for (var i = 0; i < data.length; i++) {
-                var pair = data[i];
-                for (var j = 0; j < pair.data.length; j++) {
-                  var dp = pair.data[j];
-                  var date = new Date(dp.x);
-                  scope.tableMapJSON.push({
-                    date: dp.x,
-                    series: pair.name,
-                    count: dp.y,
-                    pValue: dp.pValue,
-                    expected: dp.expected
-                  });
-                }
-                fillGrid(scope.pagingOptions.currentPage, scope.pagingOptions.pageSize);
-              }
-            }
-          };
-
           /**
            * @param agg
            * @param pValues
@@ -633,7 +553,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               scope.data[x]['color'] = scope.colors[x];
             }
             scope.chartConfig.series = scope.data;
-          }
+          };
 
           /**
            *
@@ -679,6 +599,73 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             return res;
           };
 
+          /* ngTable options */
+
+          scope.calculateRows = function () {
+            var rowHeightAvailable = scope.options.height - 70;
+            var rowsAvailable = Math.floor(rowHeightAvailable / 28);
+            if (rowsAvailable < 1) {
+              return 1;
+            } else {
+              return rowsAvailable;
+            }
+          };
+
+          scope.tableParams = new ngTableParams({
+            page: 1,            // show first page
+            count: scope.calculateRows,           // count per page
+            sorting: {
+              date: 'asc'     // initial sorting
+            }
+          }, {
+            counts: [], // hide page count control
+            getData: function ($defer, params) {
+              var orderedData = params.sorting() ?
+                                $filter('orderBy')(scope.tableData, params.orderBy()) :
+                                scope.tableData;
+              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+          });
+
+          scope.tableHeight = {
+            'height': scope.options.height + 'px',
+            'overflow-y': 'auto'
+          };
+
+          var createTableJSON = function () {
+            scope.tableData = [];
+
+            for (var i = 0; i < scope.data.length; i++) {
+              for (var j = 0; j < scope.data[i].data.length; j++) {
+
+                var color = "";
+
+                if (typeof scope.data[i].data[j].marker !== 'undefined') {
+                  if (scope.data[i].data[j].marker.fillColor == '#ffff00') {
+                    color = 'yellow';
+                  } else if (scope.data[i].data[j].marker.fillColor == '#ff0000') {
+                    color = 'red';
+                  }
+                }
+
+                scope.tableData.push({
+                  date: scope.data[i].data[j].x,
+                  dateView: moment(scope.data[i].data[j].x).format('MMM DD,YYYY'),
+                  value: scope.data[i].data[j].y,
+                  series: scope.data[i].name,
+                  expected: Math.round(scope.data[i].data[j].expected * 1000) / 1000,
+                  pValue: Math.round(scope.data[i].data[j].pValue * 1000) / 1000,
+                  color: color
+                });
+              }
+            }
+
+            scope.tableParams.parameters({count: scope.tableData.length});
+            scope.tableParams.reload();
+          };
+
+          /* Watchers */
+
           scope.$watchCollection('[pivot.rows, pivot.cols, queryString, options.algorithm]', function () {
             reload();
             //scope.redraw();
@@ -707,6 +694,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.$watch('options.height', function () {
             scope.chartConfig.size.height = scope.options.height;
+            scope.tableHeight = {"height": scope.options.height};
           });
 
           scope.$watch('options.width', function () {
@@ -716,5 +704,20 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
         }
       };
     }
-  };
-});
+  }
+    ;
+})
+;
+
+angular.module(directives.name).directive('fixedTableHeaders', ['$timeout', function ($timeout) {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      $timeout(function () {
+        var container = element.parentsUntil(attrs.fixedTableHeaders);
+        element.stickyTableHeaders({scrollableArea: container});
+      }, 0);
+    }
+  }
+}]);
+

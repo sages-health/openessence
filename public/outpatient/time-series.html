@@ -67,6 +67,25 @@
 
 <div class="row" ng-show="tsTable.enabled">
   <div class="col-md-12">
-    <div class="gridStyle" ng-grid="gridOptions"></div>
+    <!-- date, series, count, p-value (red), expected value (red)
+    <div class="gridStyle" ng-grid="gridOptions"></div> -->
+    <div id="scrollable-area" ng-style="tableHeight" style="overflow-y:auto">
+      <table ng-table="tableParams" class="table table-striped table-condensed"
+             fixed-table-headers="scrollable-area">
+        <tr ng-repeat="point in $data">
+          <td data-title="'Date'" sortable="'date'">{{point.dateView}}</td>
+          <td data-title="'Series'" sortable="'series'">{{point.series}}</td>
+          <td data-title="'Count'" sortable="'value'">{{point.value}}</td>
+          <td data-title="'P-Value'" sortable="'pValue'"
+              ng-class="{'markedYellow': point.color == 'yellow', 'markedRed': point.color == 'red'}">
+            {{point.pValue}}
+          </td>
+          <td data-title="'Expected'" sortable="'expected'"
+              ng-class="{'markedYellow': point.color == 'yellow', 'markedRed': point.color == 'red'}">
+            {{point.expected}}
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 </div>
