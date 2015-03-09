@@ -81,16 +81,6 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function () 
         pivotFn(newValue, scope.pivot);
       }); // records array is always replaced by reference
 
-      scope.$watchCollection('[pivot.rows, pivot.cols]', function (newValue) {
-        var pivot = angular.extend(
-          scope.pivot,
-          {
-            rows: newValue[0] || [],
-            cols: newValue[1] || []
-          });
-        pivotFn(scope.records, pivot);
-      });
-
       scope.$watchCollection('[options.width, options.height]', function (newValue) {
         //console.log('width: %s, height: %s', newValue[0], newValue[1]);
         angular.element(element)[0].parentElement.style.height = newValue[1] + 'px';
