@@ -3,7 +3,7 @@
     <outpatient-table query-string="queryString" form="form" options="options"></outpatient-table>
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
-    <crosstab options="options" pivot="pivot" records="crosstabData"></crosstab>
+    <crosstab options="options" pivot="pivotOptions" records="crosstabData"></crosstab>
   </div>
   <div class="animation-switch" ng-switch-when="line">
     <outpatient-time-series filters="filters" query-string="queryString" pivot="pivot" options="options"

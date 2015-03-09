@@ -15,7 +15,14 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'visitDate',
       type: 'date-range',
       field: 'visitDate',
-      name: gettextCatalog.getString('Visit date')
+      name: gettextCatalog.getString('Visit date'),
+      aggregation: {
+        date_histogram: {
+          field: 'visitDate',
+          interval: 'day',
+          format : 'yyyy-MM-dd'
+        }
+      }
     },
     {
       filterID: 'symptomOnsetDate',

@@ -52,6 +52,11 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           cols: []
         };
 
+        scope.pivotOptions = scope.pivotOptions || scope.options.pivotOptions || {
+          rows: [],
+          cols: []
+        };
+
         scope.aggData = [
           //{ key: 'One',   value: Math.floor(Math.random()*20) } -- pie
           //{ key: 'Series', values:[{ key: 'One',   value: Math.floor(Math.random()*20) }]} -- bar
@@ -385,14 +390,18 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             q: scope.queryString
           }, function (data) {
             var records = [];
+            var seriesFilter = seriesFilters();
+
             //TODO add missing count, remove 0 from flattened records
             angular.forEach(data.results, function (r) {
               var rec = crosstabifyRecord(r._source);
+              rec.visitDate = moment(rec.visitDate).format('YYYY-MM-DD');
+
               if (scope.form.dataType === 'aggregate') {
                 //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
                 flattenAggregateRecord(rec, records);
               } else {
-                flattenIndividualRecord(rec, records);
+                flattenIndividualRecord(rec, records, seriesFilter);
               }
             });
             resultFn(records);
@@ -403,8 +412,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           queryData(function (records) {
             //scope.crosstabData = records;
             var opts = {
-              rows: angular.copy(scope.pivot.rows) || [],
-              cols: angular.copy(scope.pivot.cols) || []
+              rows: angular.copy(scope.pivotOptions.rows) || [],
+              cols: angular.copy(scope.pivotOptions.cols) || []
             };
             var cdata = getCrosstabularData(records, opts);
             scope.aggData = cdata;
@@ -446,6 +455,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         var flattenAggregateRecord = function (record, flatRecs) {
           //currently we explode symptoms, symptomsGroup, diagnoses and diagnosesGroup to make crosstab counts for them happy
           var explodeFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
+          flattenRecord(record, flatRecs, explodeFields);
+        };
+
+        var flattenRecord = function (record, flatRecs, explodeFields) {
           var rec = angular.copy(record);
 
           var allNull = true;
@@ -455,7 +468,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           });
 
           angular.forEach(explodeFields, function (fld) {
-            if (record[fld]) {
+            if (record[fld] && angular.isArray(record[fld])) {
               var data = record[fld].sort(sortByName);
               angular.forEach(data, function (v) {
                 var r = angular.copy(rec);
@@ -465,6 +478,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 ];
                 flatRecs.push(r);
               });
+            } else{
+              flatRecs.push(rec);
             }
           });
           if (allNull) {
@@ -476,11 +491,52 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return self.indexOf(value) === index;
         };
 
-        var flattenIndividualRecord = function (record, flatRecs) {
+        var addFilterGroups = function (record, filters) {
+
+          var field = scope.pivot.rows[0];
+          var values = record[field];
+          var grpValue = [];
+
+          //TODO: what if series is single value field sex, age etc...
+          if(angular.isArray(values)) {
+
+            // if we have series filter
+            if (filters.length > 0) {
+              filters.forEach(function (filter) {
+                var flg = filter.every(function (v) {
+                  return values.map(function (val) {
+                      return val.name || val;
+                    }).indexOf(v) > -1;
+                });
+                if (flg) {
+                  grpValue.push(filter);
+                }
+              });
+            }
+            // add each value as an individual element to the filterGroup
+            else {
+              values.forEach(function (v) {
+                grpValue.push([(v.name || v)]);
+              });
+            }
+          } else {
+            grpValue.push([values]);
+          }
+
+          grpValue = grpValue.map(function(v){
+            return (v.name || v).join(', ');
+          });
+
+          record.filterGroup = grpValue;
+        };
+
+
+        var flattenIndividualRecord = function (record, flatRecs, seriesFilters) {
           //sort symptoms, diagnoses
-          var fields = ['symptoms', 'diagnoses'];
-          // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
-          angular.forEach(fields, function (fld) {
+          var multiValueFields = ['symptoms', 'diagnoses'];
+
+          // sort symptoms and diagnoses
+          angular.forEach(multiValueFields, function (fld) {
             if (record[fld] && angular.isArray(record[fld])) {
               record[fld] = record[fld].sort(sortByName);
             }
@@ -495,7 +551,80 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               }).filter(uniqueStrings).sort().join(', ');
             }
           });
-          flatRecs.push(record);
+
+          if (scope.pivot.rows && scope.pivot.rows.length > 0) {
+            // Create filter group
+            // If filter id match series ==> fever and cough or fever and rash
+            // group will have array of and filters [[fever, cough], [fever, rash]]
+            // else group will match symptom value [[fever], [cough], [rash]
+            // record may have multiple filterGroups
+            // if we have filter Fever & (Cold or Rash) and record has Fever, Cold, Rash ==>
+            // this record will be mapped to two filterGroups [[Fever, Cold], [Fever, Rash]]
+            addFilterGroups(record, seriesFilters);
+
+            var tmpRecs = [];
+
+            flattenRecord(record, tmpRecs, ['filterGroup']);
+
+            if (scope.pivot.cols && scope.pivot.cols.length > 0 && multiValueFields.indexOf(scope.pivot.cols[0]) > -1) {
+              tmpRecs.forEach(function (rec) {
+                flattenRecord(rec, flatRecs, [scope.pivot.cols[0]]);
+              });
+            } else {
+              tmpRecs.forEach(function (rec) {
+                flatRecs.push(rec);
+              });
+            }
+
+            scope.pivotOptions.rows = ['filterGroup'];
+          } else {
+            flatRecs.push(record);
+          }
+
+
+        };
+
+        var cartesian = function (arg) {
+          var r = [], max = arg.length - 1;
+
+          function helper (arr, i) {
+            for (var j = 0, l = arg[i].length; j < l; j++) {
+              var a = arr.slice(0); // clone arr
+              a.push(arg[i][j]);
+              if (i === max) {
+                r.push(a);
+              } else {
+                helper(a, i + 1);
+              }
+            }
+          }
+
+          helper([], 0);
+          return r;
+        };
+
+        // return list of filters where filter id match with series (pivot column) id
+        var seriesFilters = function () {
+          var res = [];
+          if (scope.filters && scope.pivot && scope.pivot.rows && scope.pivot.rows.length > 0) {
+            var filters = scope.filters.filter(function (filter) {
+              return filter.filterID !== 'visitDate' && filter.filterID === scope.pivot.rows[0] && filter.value.length > 0 && filter.value[0] !== '*';
+            }).map(function (val) {
+              return val.value;
+            });
+
+            if(filters.length > 0){
+              res = cartesian(filters);
+              // sort combination, if we have filter = (a "and" b)
+              if(res.length > 0 && angular.isArray(res[0])) {
+                res.forEach(function (v, i) {
+                  res[i] = v.sort();
+                });
+              }
+            }
+          }
+
+          return res;
         };
 
         var reload = function () {
@@ -503,6 +632,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         var reloadDebounce = function () {
+          scope.pivotOptions = angular.copy(scope.pivot);
+
           if (scope.visualization.name === 'table') {
             //scope.tableParams.reload();
           } else if (scope.visualization.name === 'pie') {
@@ -552,6 +683,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           updateURL.updateVisualization(scope.options.id, {
             options: scope.options,
             pivot: scope.pivot,
+            pivotOptions: scope.pivotOptions,
             rows: scope.pivot.rows || [],
             series: scope.pivot.cols || [],
             visualization: scope.visualization
