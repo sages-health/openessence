@@ -37,7 +37,6 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function () 
               return {
                 colk: colKey,
                 rowk: rowKey,
-                countStore: {},
                 count: 0,
                 push: function (record) {
                   var col = scope.pivot.cols[0];

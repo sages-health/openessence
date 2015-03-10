@@ -204,6 +204,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             debounce(reloadDebounce, 1000).call();
           };
 
+          var reloadDebounce2 = function () {
+
+
+            //var counts = extractCounts(data.aggregations.date, null, null);
+            //dataStore[gettextCatalog.getString('Outpatient visits')] = counts;
+            //calcPValues(dataStore, scope.options.algorithm);
+          };
+
           var reloadDebounce = function () {
             scope.series = scope.pivot.rows || scope.options.series || [];
             var aggs = {};
