@@ -20,7 +20,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
       source: '=?',
       widget: '=?',
       tableMapJSON: '=?',
-      gridOptions: '=?'
+      gridOptions: '=?',
+      form: '=?'
     },
     compile: function () {
       return {
@@ -33,6 +34,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           scope.totalServerItems = 0;
+          scope.visualization = scope.visualization || scope.options.visualization || {
+            name: 'line'
+          };
 
           scope.colors = Highcharts.getOptions().colors;
 
@@ -47,6 +51,20 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.options.interval = 'day';
           }
           scope.refresh = false;
+
+          scope.form = scope.form || {};
+
+          // index fields by name
+          scope.$watch('form.fields', function (fields) {
+            if (!fields) {
+              return;
+            }
+
+            scope.fields = fields.reduce(function (fields, field) {
+              fields[field.name] = field;
+              return fields;
+            }, {});
+          });
 
           scope.data = [];
           scope.tableData = []
@@ -204,10 +222,45 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             debounce(reloadDebounce, 1000).call();
           };
 
+          var queryData = function (resultFn) {
+
+            OutpatientVisitResource.get({
+              size: 999999,
+              q: scope.queryString
+            }, function (data) {
+              var records = outpatientAggregation.parseResults(data, scope);
+              resultFn(records);
+            });
+          };
+
           var reloadDebounce2 = function () {
+            scope.pivotOptions = angular.copy(scope.pivot);
+
+            queryData(function (records) {
+              var opts = {
+                rows: angular.copy(scope.pivotOptions.rows) || [],
+                cols: angular.copy(scope.pivotOptions.cols) || []
+              };
+
+              //TODO remove visitDate as option from timeseries view
+              for (var x = 0; x < opts.cols.length; x++) {
+                if (opts.cols[x] === 'visitDate') {
+                  opts.cols.splice(x, 1);
+                }
+              }
+              opts.cols.unshift('visitDate');
+              //scope.colOverride = 'visitDate';
+
+              var data = outpatientAggregation.getCrosstabularData(records, opts, scope);
+
+              //console.log(JSON.stringify(data));
+            });
 
 
             //var counts = extractCounts(data.aggregations.date, null, null);
+
+            // dataStore[entry.key].push({x: d.key, y: count});
+
             //dataStore[gettextCatalog.getString('Outpatient visits')] = counts;
             //calcPValues(dataStore, scope.options.algorithm);
           };

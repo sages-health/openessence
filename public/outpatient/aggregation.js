@@ -301,6 +301,11 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
   };
 
   return {
+    /**
+     * @param data
+     * @param scope [fields, form.dataType, pivot (adds pivotOptions)  ]
+     * @returns {Array}
+     */
     parseResults: function (data, scope) {
       var records = [];
       var seriesFilter = seriesFilters(scope);
@@ -309,7 +314,10 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       angular.forEach(data.results, function (r) {
         var rec = crosstabifyRecord(r._source, scope.fields);
         rec.visitDate = moment(rec.visitDate).format('YYYY-MM-DD');
-        //TODO rec.visitWeek, visitMonth? = moment(rec.visitDate).format('YYYY-MM');
+        rec.visitWeek = moment(rec.visitDate).format('GGGG-WW'); //Week Year - Week (ISO)
+        rec.visitMonth = moment(rec.visitDate).format('YYYY-MM');
+        rec.visitQuarter = moment(rec.visitDate).format('YYYY-Q');
+
         if (scope.form.dataType === 'aggregate') {
           //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
           flattenAggregateRecord(rec, records);
@@ -320,7 +328,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       return records;
     },
     getCrosstabularData: function (records, opts, scope) {
-      //TODO extra to service from crosstab.js
+      //TODO extra from crosstab.js as well
       var countKey = 'count';
       var sumcount = function (data, rowKey, colKey) {
         return {
@@ -431,7 +439,9 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       } else {//none
 
       }
-      if (scope.visualization.name === 'bar') {
+      if (scope.visualization.name === 'line') {
+        return pieData;
+      }else if (scope.visualization.name === 'bar') {
         return barData;
       } else if (scope.visualization.name === 'pie') {
         return pieData;
