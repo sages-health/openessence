@@ -261,123 +261,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           }
         };
 
-        //assuming only two deep BY one for now...
-        var parseAggQuery = function (aggregation, first, second, rows, cols) {
-          //$log.log('parsing agg query');
-          /*jshint camelcase:false */
-          var aggs = aggregation.aggregations;
-          //$log.log(aggs);
-          var colLabel = first;
-          var rowLabel = second;
-
-          var fa = 'first';
-          var sa = 'second';
-
-          var pieData = []; //{ col: col, key: col, value: count }
-          var barData = []; //{ col: col, key: keyStr, values: [{col: col, key: keyStr, value: count}]}...
-          var missingCount = aggregation.total;
-          var slice, bucket;
-          if (aggs) {
-            //if there is only one aggregation selected parse as normal
-            if (first && !second) {
-              if (first === cols[0] && first === rows[0]) { //selected both rows and cols
-                //TODO WE DO NOT HAVE THE DATA WE NEED FROM ONE AGG QUERY RIGHT NOW
-                //we need to filter plot the first, and add second
-              }else {
-                bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
-                bucket = outpatientAggregation.toArray(bucket);
-                bucket.map(function (entry) {
-                  //if series, and they didnt select row, then use filters for slices
-                  var pivotOnSeries = (first === rows[0] && !cols[0]); //TODO change buildAggQuery so this is clearer
-                  if (!pivotOnSeries || plotSeries(entry.key, first)) {
-                    var keyStr = entry.key;
-                    var count = entry.count ? entry.count.value : entry.doc_count;
-                    missingCount -= count;
-                    slice = {col: first, colName: keyStr, key: keyStr, value: count};
-                    pieData.push(slice);
-                    barData.push({col: first, colName: keyStr, key: keyStr, values: [slice]});
-                  }
-                });
-                //add missing fields count from total hits - aggs total doc count
-                if (missingCount > 0) {
-                  slice = {col: first, colName: 'missing', key: ('missing_' + colLabel), value: missingCount};
-                  pieData.push(slice);
-                  barData.push({col: first, colName: 'missing', key: ('missing_' + colLabel), values: [slice]});
-                }
-              }
-            }
-            if (!first && second) {  //currently this does not occur?
-              bucket = aggs[sa].buckets || aggs[sa]._name.buckets;
-              bucket = outpatientAggregation.toArray(bucket);
-              bucket.map(function (entry) {
-                var keyStr = entry.key;
-                var count = entry.count ? entry.count.value : entry.doc_count;
-                /*jshint camelcase:false */
-                missingCount -= count;
-                slice = {row: second, rowName: keyStr, key: keyStr, value: count};
-                pieData.push(slice);
-              });
-              //add missing fields count from total hits - aggs total doc count
-              if (missingCount > 0) {
-                slice = {row: second, rowName: 'missing', key: ('missing_' + rowLabel), value: missingCount};
-                pieData.push(slice);
-              }
-              barData.push({row: second, key: rowLabel, values: pieData});
-            }
-            //if there are two aggregations parse and return as agg1-agg2..
-            if (first && second && aggs[fa] && (aggs[fa].buckets || aggs[fa]._name)) {
-              var missingTotalCount = aggregation.total;//aggs[cols[0]].buckets.doc_count;
-              bucket = aggs[fa].buckets || aggs[fa]._name.buckets;
-              bucket = outpatientAggregation.toArray(bucket);
-              bucket.map(function (entry) {
-                var keyStr = entry.key;
-                var count = entry.count ? entry.count.value : entry.doc_count;
-                /*jshint camelcase:false */
-                missingTotalCount -= count;
-                var missingCount = count;
-                var data = [];
-                var subBucket = entry[sa].buckets || entry[sa]._name.buckets;
-                subBucket = outpatientAggregation.toArray(subBucket);
-                subBucket.map(function (sub) {
-                  var subStr = sub.key;
-                  var scount = sub.count ? sub.count.value : sub.doc_count;
-                  missingCount -= scount;
-                  slice = {
-                    col: first, colName: entry.key, row: second, rowName: sub.key,
-                    key: (keyStr + '_' + subStr), value: scount
-                  };
-                  data.push(slice);
-                  pieData.push(slice);
-                });
-                //add missing fields count from total hits - aggs total doc count
-                if (missingCount > 0) {
-                  slice = {
-                    col: first, colName: entry.key, row: second, rowName: 'missing',
-                    key: ('missing_' + keyStr + '_' + rowLabel), value: missingCount
-                  };
-                  data.push(slice);
-                  pieData.push(slice);
-                }
-                barData.push({key: keyStr, values: data});
-              });
-              //add missing fields count from total hits - aggs total doc count
-              if (missingTotalCount > 0) {
-                slice = {col: first, colName: 'missing', key: ('missing_' + colLabel), value: missingTotalCount};
-                barData.push({col: first, colName: 'missing', key: ('missing_' + colLabel), values: [slice]});
-                pieData.push(slice);
-              }
-            }
-            if (scope.visualization.name === 'bar') {
-              return barData;
-            } else if (scope.visualization.name === 'pie') {
-              return pieData;
-            } else if (scope.visualization.name === 'map') {
-              return pieData;
-            }
-          }
-          return [];
-        };
-
         var queryData = function (resultFn) {
           OutpatientVisitResource.get({
             size: 999999,
@@ -390,7 +273,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             angular.forEach(data.results, function (r) {
               var rec = crosstabifyRecord(r._source);
               rec.visitDate = moment(rec.visitDate).format('YYYY-MM-DD');
-
+              //TODO rec.visitWeek, visitMonth? = moment(rec.visitDate).format('YYYY-MM');
               if (scope.form.dataType === 'aggregate') {
                 //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
                 flattenAggregateRecord(rec, records);
@@ -414,26 +297,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           });
         };
 
-        var aggReload = function () {
-          var cols = angular.copy(scope.pivot.cols);
-          var rows = angular.copy(scope.pivot.rows);
-          var agg = outpatientAggregation.buildAggregationQuery(rows, cols, 10, scope.form);
-          //query the new data for aggregations
-          OutpatientVisitResource.search({
-            size: 0,
-            q: scope.queryString,
-            aggregations: agg.query
-          }, function (data) {
-            scope.aggData = parseAggQuery(data, agg.first, agg.second, rows, cols);
-          });
-        };
-
         //TODO this is due to local aggregation for crosstab, should utilize backend
         var crosstabifyRecord = function (source) {
           var record = {};
           angular.forEach(scope.fields, function (field, key) {
             if (field.enabled) {
-              if(field.isGroup === true){
+              if (field.isGroup === true) {
                 this[key] = outpatientAggregation.getGroup(source, field);
               } else {
                 var prop = key.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
@@ -472,7 +341,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
                 ];
                 flatRecs.push(r);
               });
-            } else{
+            } else {
               flatRecs.push(rec);
             }
           });
@@ -486,13 +355,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         };
 
         var addFilterGroups = function (record, filters) {
-
           var field = scope.pivot.rows[0];
           var values = record[field];
           var grpValue = [];
 
           //TODO: what if series is single value field sex, age etc...
-          if(angular.isArray(values)) {
+          if (angular.isArray(values)) {
 
             // if we have series filter
             if (filters.length > 0) {
@@ -517,7 +385,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             grpValue.push([values]);
           }
 
-          grpValue = grpValue.map(function(v){
+          grpValue = grpValue.map(function (v) {
             return (v.name || v).join(', ');
           });
 
@@ -574,14 +442,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           } else {
             flatRecs.push(record);
           }
-
-
         };
 
         var cartesian = function (arg) {
           var r = [], max = arg.length - 1;
 
-          function helper (arr, i) {
+          function helper(arr, i) {
             for (var j = 0, l = arg[i].length; j < l; j++) {
               var a = arr.slice(0); // clone arr
               a.push(arg[i][j]);
@@ -607,10 +473,10 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
               return val.value;
             });
 
-            if(filters.length > 0){
+            if (filters.length > 0) {
               res = cartesian(filters);
               // sort combination, if we have filter = (a "and" b)
-              if(res.length > 0 && angular.isArray(res[0])) {
+              if (res.length > 0 && angular.isArray(res[0])) {
                 res.forEach(function (v, i) {
                   res[i] = v.sort();
                 });
@@ -636,12 +502,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             aggReload2();
           } else if (scope.visualization.name === 'map') {
             aggReload2();
-          } else if (scope.visualization.name === 'crosstab')
+          } else if (scope.visualization.name === 'crosstab') {
             queryData(function (records) {
               scope.crosstabData = records;
             });
+          }
         };
-
 
         scope.$on('outpatientEdit', function (event, visit) {
           outpatientEditModal.open({record: visit, form: scope.form})
@@ -740,6 +606,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             });
           }
         };
+
       }
     }
   };
