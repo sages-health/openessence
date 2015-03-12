@@ -55,7 +55,6 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         angular.forEach(value, function (val) {
           res.push({count: val.count, name: valueToGroup(val.name, field.values)});
         });
-        return res;
       }
       // medicalFacility
       else if (angular.isObject(value) && value.name) {
@@ -64,13 +63,17 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         res = valueToGroup(value, field.values);
       }
     }
+    if (res === null || angular.isUndefined(res)) {
+      res = 'Missing-' + field.name;
+    }
+
     return res;
   };
 
   // Maps a value to a group
   // Note: if there are multiple groups having this value, it will return first group that has it
   var valueToGroup = function (val, possibleValues) {
-    if (val) {
+    if (val !== null && angular.isDefined(val)) {
       var i = 0;
       for (i = 0; i < possibleValues.length; i++) {
         if (possibleValues[i].value.indexOf(val) > -1) {
@@ -83,7 +86,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
 
   // Maps an age to an age group
   var getAgeGroup = function (val, possibleValues) {
-    if (val) {
+    if (val !== null && angular.isDefined(val)) {
       var i = 0;
       for (i = 0; i < possibleValues.length; i++) {
         if (val >= possibleValues[i].from && val < possibleValues[i].to) {
@@ -186,9 +189,8 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     return self.indexOf(value) === index;
   };
 
-  var addFilterGroups = function (record, filters, scope) {
-    var field = scope.pivot.rows[0];
-    var values = record[field];
+  var addFilterGroups = function (record, filters, pivotRow, filterGroupName) {
+    var values = record[pivotRow];
     var grpValue = [];
 
     //TODO: what if series is single value field sex, age etc...
@@ -221,9 +223,8 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       return (v.name || v).join(', ');
     });
 
-    record.filterGroup = grpValue;
+    record[filterGroupName] = grpValue;
   };
-
 
   var flattenIndividualRecord = function (record, flatRecs, seriesFilters, scope) {
     //sort symptoms, diagnoses
@@ -239,7 +240,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     var groupFields = ['symptomsGroup', 'diagnosesGroup'];
     // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
     angular.forEach(groupFields, function (fld) {
-      if (record[fld]) {
+      if (angular.isArray(record[fld])) {
         record[fld] = record[fld].map(function (v) {
           return v.name;
         }).filter(uniqueStrings).sort().join(', ');
@@ -247,6 +248,9 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     });
 
     if (scope.pivot.rows && scope.pivot.rows.length > 0) {
+      var pivotRow = scope.pivot.rows[0] ;
+      var filterGroupName = scope.pivot.rows[0] + '*';
+
       // Create filter group
       // If filter id match series ==> fever and cough or fever and rash
       // group will have array of and filters [[fever, cough], [fever, rash]]
@@ -254,11 +258,11 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       // record may have multiple filterGroups
       // if we have filter Fever & (Cold or Rash) and record has Fever, Cold, Rash ==>
       // this record will be mapped to two filterGroups [[Fever, Cold], [Fever, Rash]]
-      addFilterGroups(record, seriesFilters, scope);
+      addFilterGroups(record, seriesFilters, pivotRow, filterGroupName);
 
       var tmpRecs = [];
 
-      flattenRecord(record, tmpRecs, ['filterGroup']);
+      flattenRecord(record, tmpRecs, [filterGroupName]);
 
       if (scope.pivot.cols && scope.pivot.cols.length > 0 && multiValueFields.indexOf(scope.pivot.cols[0]) > -1) {
         tmpRecs.forEach(function (rec) {
@@ -270,7 +274,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         });
       }
 
-      scope.pivotOptions.rows = ['filterGroup'];
+      scope.pivotOptions.rows = [filterGroupName];
     } else {
       flatRecs.push(record);
     }
@@ -318,7 +322,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         rec.visitWeek = moment(rec.visitDate).format('GGGG-WW'); //Week Year - Week (ISO)
         rec.visitMonth = moment(rec.visitDate).format('YYYY-MM');
         rec.visitQuarter = moment(rec.visitDate).format('YYYY-Q');
-        rec['patient.age'] = (null === rec['patient.age'].years) ? 'null' : rec['patient.age'].years.toString();
+        rec['patient.age'] = (null === rec['patient.age'].years) ? 'Missing-patient.age' : rec['patient.age'].years.toString();
 
         if (scope.form.dataType === 'aggregate') {
           //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
