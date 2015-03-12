@@ -317,6 +317,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         rec.visitWeek = moment(rec.visitDate).format('GGGG-WW'); //Week Year - Week (ISO)
         rec.visitMonth = moment(rec.visitDate).format('YYYY-MM');
         rec.visitQuarter = moment(rec.visitDate).format('YYYY-Q');
+        rec['patient.age'] = (null === rec['patient.age'].years) ? 'null' : rec['patient.age'].years.toString();
 
         if (scope.form.dataType === 'aggregate') {
           //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
