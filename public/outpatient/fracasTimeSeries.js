@@ -67,7 +67,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           });
 
           scope.data = [];
-          scope.tableData = []
+          scope.tableData = [];
 
           scope.chartConfig = {
             options: {
@@ -189,9 +189,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               visualization: {
                 name: 'line'
               },
-              pivot: {
-                cols: scope.series
-              },
+              pivot: scope.pivot,
               source: 'export'
             }));
           });
@@ -201,9 +199,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               visualization: {
                 name: 'line'
               },
-              pivot: {
-                cols: scope.series
-              }
+              pivot: scope.pivot
             }));
           });
 

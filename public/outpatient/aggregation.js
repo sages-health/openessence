@@ -309,10 +309,11 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     parseResults: function (data, scope) {
       var records = [];
       var seriesFilter = seriesFilters(scope);
+      var fields = scope.fields || scope.options.fields;
 
       //TODO add missing count, remove 0 from flattened records
       angular.forEach(data.results, function (r) {
-        var rec = crosstabifyRecord(r._source, scope.fields);
+        var rec = crosstabifyRecord(r._source, fields);
         rec.visitDate = moment(rec.visitDate).format('YYYY-MM-DD');
         rec.visitWeek = moment(rec.visitDate).format('GGGG-WW'); //Week Year - Week (ISO)
         rec.visitMonth = moment(rec.visitDate).format('YYYY-MM');
