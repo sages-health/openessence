@@ -111,10 +111,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               tooltip: {
                 shared: true,
                 crosshairs: [{
-                               width: 1.5,
-                               dashStyle: 'solid',
-                               color: 'black'
-                             }, false]
+                  width: 1.5,
+                  dashStyle: 'solid',
+                  color: 'black'
+                }, false]
               }
             },
             xAxis: {
@@ -127,7 +127,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 day: '%Y-%m-%d',
                 month: '%Y-%m-%d',
                 year: '%Y-%m-%d',
-                week: '%Y-%m-%d'
+                week: '%Y-%m-%d--%W'
+                //TODO: isoWeek: '%G-%V'
               },
               minTickInterval: 86400000,
               gridLineWidth: 1
@@ -215,7 +216,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           var reload = function () {
-            debounce(reloadDebounce, 1000).call();
+            //to switch: reloadDebounce = old aggregations, reloadDebounce2 = crosstabular
+            debounce(reloadDebounce2, 1000).call();
           };
 
           var queryData = function (resultFn) {
@@ -234,31 +236,75 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             queryData(function (records) {
               var opts = {
-                rows: angular.copy(scope.pivotOptions.rows) || [],
-                cols: angular.copy(scope.pivotOptions.cols) || []
+                rows: scope.pivotOptions.rows || [],
+                cols: scope.pivotOptions.cols || []
               };
 
               //TODO remove visitDate as option from timeseries view
               for (var x = 0; x < opts.cols.length; x++) {
-                if (opts.cols[x] === 'visitDate') {
+                if (['visitDate','visitDOY','visitWeek'].indexOf(opts.cols[x] !== -1)) {
                   opts.cols.splice(x, 1);
                 }
               }
-              opts.cols.unshift('visitDate');
-              //scope.colOverride = 'visitDate';
+              switch(scope.interval){
+                case 'week':
+                  opts.cols.unshift('visitWeek');
+                  break;
+                case 'isoWeek':
+                  opts.cols.unshift('visitISOWeek');
+                  break;
+                case 'month':
+                  opts.cols.unshift('visitMonth');
+                  break;
+                case 'quarter':
+                  opts.cols.unshift('visitQuarter');
+                  break;
+                case 'year':
+                  opts.cols.unshift('visitYear');
+                  break;
+                default:
+                  opts.cols.unshift('visitDOY');
+              }
 
-              var data = outpatientAggregation.getCrosstabularData(records, opts, scope);
-
-              //console.log(JSON.stringify(data));
+              scope.data = [];
+              var dataStore = outpatientAggregation.getCrosstabularData(records, opts, scope);
+              //fillZeros(dataStore);
+              //Currently the crosstab provides just dates with data, we need to zero fill, as well as meet the filter range?
+              calcPValues(dataStore, scope.options.algorithm);
             });
+          };
 
+          /**
+           *
+           * @param dataStore
+           * @param interval, one of 'day', 'week', 'month', 'quarter', 'year'
+           */
+          var fillZeros = function (dataStore, interval) {
+            if(dataStore && dataStore.length > 0) {
+              var fDataStore = {};//angular.copy(dataStore);
+              angular.forEach(dataStore, function (points, key) {
+                var filledPoints = [];
+                var counts = points.map(function (c) {
+                  return c.y;
+                });
+                //current assumption that crosstab returns days in order //TODO verify this
+                var dates = points.map(function (c) {
+                  return c.x;
+                });
 
-            //var counts = extractCounts(data.aggregations.date, null, null);
+                var minDate = dates[0];
+                var maxDate = dates[dates.length-1];
 
-            // dataStore[entry.key].push({x: d.key, y: count});
+                while (minDate < dates[0]) {
+                  //insert date by interval, add interval
 
-            //dataStore[gettextCatalog.getString('Outpatient visits')] = counts;
-            //calcPValues(dataStore, scope.options.algorithm);
+                  filledPoints.push({x: '', y: 0});
+                }
+
+                fDataStore[key] = filledPoints;
+              });
+            }
+              return dataStore;
           };
 
           var reloadDebounce = function () {
@@ -379,18 +425,19 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             // adapted from Kibana's algorithm,
             // see https://github.com/elasticsearch/kibana/blob/70ad6e27c137bf8f376e233d40c0c11385647625/src/app/panels/histogram/module.js#L510
-            var timespan = dateFilter.to.getTime() - dateFilter.from.getTime();
+            var timespan = moment(dateFilter.to).valueOf() - moment(dateFilter.from).valueOf();
             // TODO use endpoints of data instead, since they can't be undefined
             // TODO no way to get tick values from SVG we should just use d3 directly
 
-            var center = dateFilter.to.getTime() - timespan / 2;
+            var center = moment(dateFilter.to).valueOf() - timespan / 2;
             var to = center + timespan * factor / 2;
             var from = center - timespan * factor / 2;
 
+            var now = moment().valueOf();
             // don't look into the future unless we already are
-            if (to > Date.now() && dateFilter.to < Date.now()) {
-              from = from - (to - Date.now());
-              to = Date.now();
+            if (to > now && moment(dateFilter.to).valueOf() < now) {
+              from = from - (to - now);
+              to = now;
             }
 
             // When we first create a time series, it's OK if the x-axis limits are defined by the data, e.g. you
@@ -403,14 +450,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             if (factor > 1) {
               // replace existing date filter when we zoom out, action can be reversed by zooming in
-              dateFilter.from = new Date(from);
-              dateFilter.to = new Date(to);
+              dateFilter.from = moment(from, 'x');
+              dateFilter.to = moment(to,'x');
             } else {
               // add a new filter we we zoom in, action can be reversed by deleting this new filter
               scope.filters.push(
                 angular.extend({
-                  from: new Date(from),
-                  to: new Date(to)
+                  from: new moment(from, 'x'),
+                  to: moment(to, 'x')
                 }, possibleFilters.possibleFilters.visitDate)); // TODO filter panel needs to watch for changes to filters
             }
           };
@@ -483,15 +530,16 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           };
 
           var calcPValues = function (dataStore, algorithm) {
+            var counts, pValues, expectedValues;
             var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' :
-                                  (algorithm === 'CUSUM') ? '/detectors/cusum' : undefined;
+              (algorithm === 'CUSUM') ? '/detectors/cusum' : undefined;
             //$log.log('using algorithm' + algorithmString);
             angular.forEach(dataStore, function (points, key) {
-              var counts = points.map(function (c) {
+              counts = points.map(function (c) {
                 return c.y;
               });
-              var pValues = [];
-              var expectedValues = [];
+              pValues = [];
+              expectedValues = [];
 
               if (!algorithmString) {
                 scope.data.push({
@@ -500,11 +548,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 });
               }
               else {
-                var counts = points.map(function (c) {
+                counts = points.map(function (c) {
                   return c.y;
                 });
-                var pValues = [];
-                var expectedValues = [];
+                pValues = [];
+                expectedValues = [];
 
                 $http.post(algorithmString,
                   {
@@ -550,37 +598,52 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             createTableJSON();
           };
 
-          var generateRange = function () {
 
-            // Remove record outside of range
-            var filteredDate = null;
-            var minFound = false;
-            var maxFound = false;
+          /**
+           * Currently finds the narrowest range among all date filters.
+           * @returns dateRange = {from: -1, to: -1}  -1 if not found, time in millis if found
+           */
+          var findDateRangeFromFilter = function () {
+            var dateRange = {from: 0, to: 0};
+            var filteredDate;
+            var mins = [];
+            var maxs = [];
+
             for (var i = 0; i < scope.filters.length; i++) {
-              if (scope.filters[i].filterID == 'visitDate') {
+              if (scope.filters[i].filterID === 'visitDate') {
                 filteredDate = scope.filters[i];
-                if (scope.filters[i].from) {
-                  if (filteredDate.from) {
-                    scope.chartConfig.xAxis.min = moment(filteredDate.from).valueOf();
-                    minFound = true;
-                  }
+                if (filteredDate.from) {
+                  mins.push(moment(filteredDate.from).valueOf());
                 }
-                if (scope.filters[i].to) {
-                  if (filteredDate.to) {
-                    scope.chartConfig.xAxis.max = moment(filteredDate.to).valueOf();
-                    maxFound = true;
-                  }
+                if (filteredDate.to) {
+                  maxs.push(moment(filteredDate.to).valueOf());
                 }
               }
             }
+            dateRange.from = mins ? Math.min(mins) : 0;
+            dateRange.to = maxs ? Math.max(maxs) : 0;
+            return filteredDate;
+          };
 
+          var generateRange = function () {
+            var minFound = false;
+            var maxFound = false;
             var minDate = [];
             var maxDate = [];
-
+            var dateRange = findDateRangeFromFilter();
+              if (dateRange.from) {
+                scope.chartConfig.xAxis.min = moment(dateRange.from).valueOf();
+                minFound = true;
+            }
+              if (dateRange.to) {
+                scope.chartConfig.xAxis.max = moment(dateRange.to).valueOf();
+                maxFound = true;
+            }
+            // Remove record outside of range
             for (var x = 0; x < scope.data.length; x++) {
-              if (filteredDate) {
+              if (dateRange.from) {
                 if (typeof scope.data[x].data[0] !== 'undefined') {
-                  if (moment(scope.data[x].data[0].x).valueOf() < moment(filteredDate.from).valueOf()) {
+                  if (moment(scope.data[x].data[0].x, 'x').valueOf() < moment(dateRange.from).valueOf()) {
                     scope.data[x].data.splice(0, 1);
                     x--;
                   }
@@ -678,8 +741,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             counts: [], // hide page count control
             getData: function ($defer, params) {
               var orderedData = params.sorting() ?
-                                $filter('orderBy')(scope.tableData, params.orderBy()) :
-                                scope.tableData;
+                $filter('orderBy')(scope.tableData, params.orderBy()) :
+                scope.tableData;
               $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
             }
           });
@@ -707,7 +770,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
                 scope.tableData.push({
                   date: scope.data[i].data[j].x,
-                  dateView: moment(scope.data[i].data[j].x).format('MMM DD,YYYY'),
+                  dateView: moment(scope.data[i].data[j].x,'x').format('MMM DD,YYYY'),
                   value: scope.data[i].data[j].y,
                   series: scope.data[i].name,
                   expected: Math.round(scope.data[i].data[j].expected * 1000) / 1000,

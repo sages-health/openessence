@@ -32,7 +32,8 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function () 
           {
             // heatmaps are nice in theory but make it harder to read and the bar chart is kind of pointless
             renderer: $.pivotUtilities.renderers.Table,
-            aggregator: function (data, rowKey, colKey) {
+            aggregator: $.pivotUtilities.aggregators.count(),
+            aggregatorOut: function (data, rowKey, colKey) {
 
               return {
                 colk: colKey,

@@ -318,10 +318,14 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       //TODO add missing count, remove 0 from flattened records
       angular.forEach(data.results, function (r) {
         var rec = crosstabifyRecord(r._source, fields);
+        rec.visitMillis = moment(rec.visitDate).valueOf().toString();
+        rec.visitWeek = moment(rec.visitDate).startOf('week').valueOf().toString();
+        rec.visitISOWeek = moment(rec.visitDate).startOf('isoWeek').valueOf().toString();
+        rec.visitMonth = moment(rec.visitDate).startOf('month').valueOf().toString();
+        rec.visitQuarter = moment(rec.visitDate).startOf('quarter').valueOf().toString();
+        rec.visitYear = moment(rec.visitDate).startOf('year').valueOf().toString();
+        rec.visitDOY = moment(rec.visitDate).startOf('day').valueOf().toString();
         rec.visitDate = moment(rec.visitDate).format('YYYY-MM-DD');
-        rec.visitWeek = moment(rec.visitDate).format('GGGG-WW'); //Week Year - Week (ISO)
-        rec.visitMonth = moment(rec.visitDate).format('YYYY-MM');
-        rec.visitQuarter = moment(rec.visitDate).format('YYYY-Q');
         rec['patient.age'] = (null === rec['patient.age'].years) ? 'Missing-patient.age' : rec['patient.age'].years.toString();
 
         if (scope.form.dataType === 'aggregate') {
@@ -379,8 +383,9 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         filter: function () {
           return true;
         },
-        aggregator: sumcount,
-        //aggregator: $.pivotUtilities.aggregators.count(),
+        //TODO: should be using count field aggregator
+        //aggregator: sumcount,
+        aggregator: $.pivotUtilities.aggregators.count(),
         derivedAttributes: {},
         localeStrings: {
           renderError: "An error occurred rendering the PivotTable results.",
@@ -393,8 +398,9 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
 
       var barData = [];
       var pieData = [];
+      var lineData = {};
       var data = [];
-      var keyStr, aggregator, count, total, slice;
+      var keyStr, aggregator, count, total, slice, label;
 
       var rowField = pivotData.rowAttrs.join();
       var colField = pivotData.colAttrs.join();
@@ -405,6 +411,10 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         if (colKeys.length > 0) {//row and col
           angular.forEach(rowKeys, function (rowVal, rk) {
             data = [];
+            var label = gettextCatalog.getString(rowVal.join());
+            if (!lineData[label]) {
+              lineData[label] = [];
+            }
             angular.forEach(colKeys, function (colVal, ck) {
               aggregator = pivotData.getAggregator(rowVal, colVal);
               count = aggregator.value();
@@ -414,6 +424,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
               };
               data.push(slice);
               pieData.push(slice);
+              lineData[label].push({x: moment(colVal[0], 'x').valueOf(), y: count});// dataStore[entry.key].push({x: d.key, y: count});
             });
             barData.push({key: rowField, values: data, total: pivotData.getAggregator(rowVal, []).value()});
           });
@@ -431,6 +442,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
           });
         }
       } else if (colKeys.length > 0) {//just col
+        var dateValue = {};
         //single selected
         angular.forEach(colKeys, function (val, key) {
           keyStr = val.join();
@@ -441,12 +453,25 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
           slice = {col: colField, colName: keyStr, key: keyStr, value: count, total: total};
           pieData.push(slice);
           barData.push({col: colField, colName: keyStr, key: keyStr, values: [slice]});
+
+          //TODO: should be using count field in aggregation
+          //to sum counts across one time period we need to add
+          dateValue[moment(val[0], 'x').valueOf()] = count + (dateValue[moment(val[0], 'x').valueOf()] || 0);
+        });
+
+        //loop through and add time : count mapping as series for timeseries
+        label = gettextCatalog.getString(colField);
+        if (!lineData[label]) {
+          lineData[label] = [];
+        }
+        angular.forEach(dateValue, function(val, key){
+          lineData[label].push({x: key, y: val});
         });
       } else {//none
 
       }
       if (scope.visualization.name === 'line') {
-        return pieData;
+        return lineData;
       }else if (scope.visualization.name === 'bar') {
         return barData;
       } else if (scope.visualization.name === 'pie') {
