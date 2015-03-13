@@ -44,8 +44,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                 plotBackgroundColor: null,
                 plotShadow: false,
                 type: 'pie',
-                events: {},
-                animation: false
+                events: {}
               },
               tooltip: {
                 pointFormat: 'Count: <b>{point.y}</b>'
@@ -57,20 +56,18 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                   cursor: 'pointer'
                 },
                 series: {
+                  slicedOffset: 0,
                   point: {
                     events: {
                       click: function () {
 
                         var point = {
                           name: this.name,
-                          col: null
+                          col: this.series.name
                         };
 
-                        if (this.series.options.id === 'cols') {
-                          point.col = this.col;
-                        } else {
-                          point.col = this.series.name;
-                        }
+                        console.log(point);
+                        console.log(this.series);
 
                         narrowFilters(point);
                       }
@@ -107,6 +104,8 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
                 var innerData = scope.aggData.concat();
 
+                console.log(innerData);
+
                 var color = 0;
 
                 for (var i = 0; i < innerData.length; i++) {
@@ -140,10 +139,14 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     size: '80%',
                     dataLabels: {
                       formatter: function () {
-                        return this.y > 5 ? this.point.name : null;
+                        if (this.y > 5 || inner.length < 4) {
+                          return this.point.name
+                        } else {
+                          return null;
+                        }
                       },
                       color: 'white',
-                      distance: -30
+                      distance: -40
                     }
                   });
                 } else {
@@ -227,8 +230,17 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             ;
 
           var narrowFilters = function (point) {
+
+            var column = null;
+
+            if (point.col.lastIndexOf('*') > 0) {
+              column = point.col.substring(0, point.col.lastIndexOf('*'));
+            } else {
+              column = point.col;
+            }
+
             var filter = {
-              filterID: point.col,
+              filterID: column,
               value: point.name
             };
             $rootScope.$emit('filterChange', filter, true, true);
@@ -243,7 +255,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             });
           };
 
-          // Removing click functionality for clickthrough.
+          // Removing functionality for clickthrough.
           if (scope.source === 'dashboard') {
             scope.chartConfig.options.plotOptions.series.point.events = {
               click: chartToWorkbench
@@ -266,7 +278,8 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             scope.chartConfig.size.width = scope.options.width - 10;
           });
         }
-      };
+      }
+        ;
     }
   }
     ;
