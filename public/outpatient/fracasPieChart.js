@@ -151,9 +151,10 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     name: innerData[0].col,
                     data: inner,
                     size: '100%',
+                    innerSize: '0',
                     dataLabels: {
                       formatter: function () {
-                          return this.point.name
+                        return this.point.name
                       },
                       color: 'black',
                       distance: 30
@@ -233,6 +234,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     name: removeAsterix(scope.aggData[0].col),
                     data: outer,
                     size: '100%',
+                    innerSize: '0',
                     dataLabels: {
                       formatter: function () {
                         return this.point.name
