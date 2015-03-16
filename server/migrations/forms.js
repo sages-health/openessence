@@ -330,7 +330,7 @@ module.exports = [
         isGroup: true,
         values: [
           {name: 'Less than 1', value: '[0 TO 1}', from: 0, to: 1},
-          {name: '1 to 4', value: '[1 TO 5}', from: 2, to: 5},
+          {name: '1 to 4', value: '[1 TO 5}', from: 1, to: 5},
           {name: '5 to 11', value: '[5 TO 12}', from: 5, to: 12},
           {name: '12 to 17', value: '[12 TO 18}', from: 12, to: 18},
           {name: '18 to 44', value: '[18 TO 45}', from: 18, to: 45},

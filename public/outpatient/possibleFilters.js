@@ -102,7 +102,14 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'patient.age',
       type: 'numeric-range',
       field: 'patient.age.years',
-      name: gettextCatalog.getString('Age')
+      name: gettextCatalog.getString('Age'),
+      aggregation: {
+        terms: {
+          field: 'patient.age.years',
+          order: { '_term': 'asc' }
+        }
+      }
+
     },
     {
       filterID: 'patient.ageGroup',
