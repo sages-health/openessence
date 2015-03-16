@@ -424,7 +424,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
               };
               data.push(slice);
               pieData.push(slice);
-              lineData[label].push({x: moment(colVal[0], 'x').valueOf(), y: count});// dataStore[entry.key].push({x: d.key, y: count});
+              lineData[label].push({x: colVal[0], y: count});// dataStore[entry.key].push({x: d.key, y: count});
             });
             barData.push({key: rowField, values: data, total: pivotData.getAggregator(rowVal, []).value()});
           });
@@ -456,7 +456,8 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
 
           //TODO: should be using count field in aggregation
           //to sum counts across one time period we need to add
-          dateValue[moment(val[0], 'x').valueOf()] = count + (dateValue[moment(val[0], 'x').valueOf()] || 0);
+          dateValue[val[0]] = count + (dateValue[val[0]] || 0);
+
         });
 
         //loop through and add time : count mapping as series for timeseries
