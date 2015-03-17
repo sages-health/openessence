@@ -53,7 +53,11 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       if (angular.isArray(value)) {
         res = [];
         angular.forEach(value, function (val) {
-          res.push({count: val.count, name: valueToGroup(val.name, field.values)});
+          var name = valueToGroup(val.name, field.values);
+          if (name === null || angular.isUndefined(name)) {
+            name = 'Missing-' + field.name;
+          }
+          res.push({count: val.count, name: name});
         });
       }
       // medicalFacility
@@ -73,7 +77,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
   // Maps a value to a group
   // Note: if there are multiple groups having this value, it will return first group that has it
   var valueToGroup = function (val, possibleValues) {
-    if (val !== null && angular.isDefined(val)) {
+    if (possibleValues && val !== null && angular.isDefined(val)) {
       var i = 0;
       for (i = 0; i < possibleValues.length; i++) {
         if (possibleValues[i].value.indexOf(val) > -1) {
@@ -86,7 +90,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
 
   // Maps an age to an age group
   var getAgeGroup = function (val, possibleValues) {
-    if (val !== null && angular.isDefined(val)) {
+    if (possibleValues && val !== null && angular.isDefined(val)) {
       var i = 0;
       for (i = 0; i < possibleValues.length; i++) {
         if (val >= possibleValues[i].from && val < possibleValues[i].to) {
