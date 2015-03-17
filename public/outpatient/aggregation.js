@@ -424,7 +424,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
               };
               data.push(slice);
               pieData.push(slice);
-              lineData[label].push({x: colVal[0], y: count});// dataStore[entry.key].push({x: d.key, y: count});
+              lineData[label].push({x: parseInt(colVal[0]), y: count});// dataStore[entry.key].push({x: d.key, y: count});
             });
             barData.push({key: rowField, values: data, total: pivotData.getAggregator(rowVal, []).value()});
           });
@@ -466,7 +466,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
           lineData[label] = [];
         }
         angular.forEach(dateValue, function(val, key){
-          lineData[label].push({x: key, y: val});
+          lineData[label].push({x: parseInt(key), y: val});
         });
       } else {//none
 
