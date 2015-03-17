@@ -42,7 +42,7 @@ require('d3');
 require('leaflet');
 require('highcharts');
 require('exporting');
-//require('drilldown');
+require('drilldown');
 require('highcharts-ng');
 require('ng-table');
 require('infinite-scroll');
