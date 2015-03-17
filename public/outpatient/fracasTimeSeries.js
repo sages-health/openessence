@@ -2,7 +2,6 @@
 
 var angular = require('angular');
 var moment = require('moment');
-var _ = require('lodash');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, ngTableParams) {
@@ -268,9 +267,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
               scope.data = [];
               var dataStore = outpatientAggregation.getCrosstabularData(records, opts, scope);
-              //fillZeros(dataStore);
+              fillZeros(dataStore);
               //Currently the crosstab provides just dates with data, we need to zero fill, as well as meet the filter range?
               calcPValues(dataStore, scope.options.algorithm);
+
             });
           };
 
@@ -279,9 +279,29 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
            * @param dataStore
            * @param interval, one of 'day', 'week', 'month', 'quarter', 'year'
            */
-          var fillZeros = function (dataStore, interval) {
-            if(dataStore && dataStore.length > 0) {
-              var fDataStore = {};//angular.copy(dataStore);
+          var fillZeros = function (dataStore) {
+
+            console.log('**** Zero Fill ****');
+            var interval = 'd';
+            switch(scope.interval){
+              case 'week':
+                interval = 'w';
+                break;
+              case 'isoWeek':
+                interval = 'w';
+                break;
+              case 'month':
+                interval = 'M';
+                break;
+              case 'quarter':
+                interval = 'Q';
+                break;
+              case 'year':
+                interval = 'y';
+                break;
+            }
+
+            if (dataStore && Object.keys(dataStore).length > 0) {
               angular.forEach(dataStore, function (points, key) {
                 var filledPoints = [];
                 var counts = points.map(function (c) {
@@ -292,19 +312,25 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   return c.x;
                 });
 
-                var minDate = dates[0];
-                var maxDate = dates[dates.length-1];
-
-                while (minDate < dates[0]) {
-                  //insert date by interval, add interval
-
-                  filledPoints.push({x: '', y: 0});
+                var curDate = moment(dates[0]);
+                var maxDate = moment(dates[dates.length - 1]);
+                var ix = 0;
+                while (curDate.isBefore(maxDate) || curDate.isSame(maxDate)) {
+                  //console.log("minDate: " + minDate.format());
+                  //console.log("date[ix]: " + moment(dates[ix]).format());
+                  if (curDate.isSame(moment(dates[ix]))) {
+                    filledPoints.push({x: curDate.valueOf(), y: (counts[ix] || 0)});
+                    ix++;
+                  } else {
+                    filledPoints.push({x: curDate.valueOf(), y: 0});
+                  }
+                  curDate.add(1, interval);
                 }
-
-                fDataStore[key] = filledPoints;
+                dataStore[key] = filledPoints;
               });
+
             }
-              return dataStore;
+
           };
 
           var reloadDebounce = function () {
@@ -631,33 +657,35 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             var minDate = [];
             var maxDate = [];
             var dateRange = findDateRangeFromFilter();
+            if(dateRange) {
               if (dateRange.from) {
                 scope.chartConfig.xAxis.min = moment(dateRange.from).valueOf();
                 minFound = true;
-            }
+              }
               if (dateRange.to) {
                 scope.chartConfig.xAxis.max = moment(dateRange.to).valueOf();
                 maxFound = true;
-            }
-            // Remove record outside of range
-            for (var x = 0; x < scope.data.length; x++) {
-              if (dateRange.from) {
-                if (typeof scope.data[x].data[0] !== 'undefined') {
-                  if (moment(scope.data[x].data[0].x, 'x').valueOf() < moment(dateRange.from).valueOf()) {
-                    scope.data[x].data.splice(0, 1);
-                    x--;
-                  }
-                }
               }
             }
+            // Remove record outside of range
+            //for (var x = 0; x < scope.data.length; x++) {
+            //  if (dateRange.from) {
+            //    if (typeof scope.data[x].data[0] !== 'undefined') {
+            //      if (moment(scope.data[x].data[0].x, 'x').valueOf() < moment(dateRange.from).valueOf()) {
+            //        scope.data[x].data.splice(0, 1);
+            //        x--;
+            //      }
+            //    }
+            //  }
+            //}
+            var getX = function (o) {
+              return o.x;
+            };
+
             for (var x = 0; x < scope.data.length; x++) {
               if (scope.data[x].data.length > 0) {
-                minDate.push(Math.min.apply(Math, scope.data[x].data.map(function (o) {
-                  return o.x;
-                })));
-                maxDate.push(Math.max.apply(Math, scope.data[x].data.map(function (o) {
-                  return o.x;
-                })));
+                minDate.push(Math.min.apply(Math, scope.data[x].data.map(getX)));
+                maxDate.push(Math.max.apply(Math, scope.data[x].data.map(getX)));
               }
             }
 
@@ -758,7 +786,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             for (var i = 0; i < scope.data.length; i++) {
               for (var j = 0; j < scope.data[i].data.length; j++) {
 
-                var color = "";
+                var color = '';
 
                 if (typeof scope.data[i].data[j].marker !== 'undefined') {
                   if (scope.data[i].data[j].marker.fillColor == '#ffff00') {
@@ -770,7 +798,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
                 scope.tableData.push({
                   date: scope.data[i].data[j].x,
-                  dateView: moment(scope.data[i].data[j].x,'x').format('MMM DD,YYYY'),
+                  dateView: moment(scope.data[i].data[j].x).format('MMM DD,YYYY'),
                   value: scope.data[i].data[j].y,
                   series: scope.data[i].name,
                   expected: Math.round(scope.data[i].data[j].expected * 1000) / 1000,
