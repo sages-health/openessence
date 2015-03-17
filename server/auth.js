@@ -12,18 +12,18 @@ var User = require('./models/User');
 //var crypto = require('crypto');
 
 var setUserToken = function (user, callback) {
-//  logger.info('*************%s setting user token', user);
-//
-//  crypto.randomBytes(256, function (ex, buf) {
-//    if (ex) {
-//      callback(ex, null);
-//    } else {
-//      var token = buf.toString('hex');
-//      logger.info('*************%s successfuly assigned token: %s', user.doc.username, token);
-//      user.doc.tokens = [token];
-//      callback(null, user);
-//    }
-//  });
+  //  logger.info('*************%s setting user token', user);
+  //
+  //  crypto.randomBytes(256, function (ex, buf) {
+  //    if (ex) {
+  //      callback(ex, null);
+  //    } else {
+  //      var token = buf.toString('hex');
+  //      logger.info('*************%s successfuly assigned token: %s', user.doc.username, token);
+  //      user.doc.tokens = [token];
+  //      callback(null, user);
+  //    }
+  //  });
   callback(null, user);
 };
 
@@ -86,7 +86,7 @@ passport.use(new PersonaStrategy({
     logger.info({user: user}, '%s logged in using Persona', email);
     user.doc.authType = 'persona';
 
-    setUserToken(user, function(err, user) {
+    setUserToken(user, function (err, user) {
       if (err) {
         callback(err);
       } else {
@@ -133,7 +133,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
         logger.info({user: user}, '%s logged in using local auth', username);
         user.doc.authType = 'local';
 
-        setUserToken(user, function(err, user) {
+        setUserToken(user, function (err, user) {
           if (err) {
             callback(err);
           } else {
@@ -146,7 +146,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
   });
 }));
 
-passport.use(new BearerStrategy({}, function (token, done) {
+passport.use(new BearerStrategy(function (token, done) {
 
   if (!conf.users) {
     // "Demo" mode: give any user who logs in via Persona full admin rights
@@ -165,29 +165,33 @@ passport.use(new BearerStrategy({}, function (token, done) {
     localUser.email = token;
     localUser.authType = 'bearer';
     localUser.tokens = [token];
-    logger.info({user: localUser}, '%s logged in with bearer via file system whitelist', token);
+    logger.info('%s logged in with bearer via file system whitelist in auth.js', token, localUser);
     return done(null, new User(localUser));
   }
-  User.findByToken(token, function(err, user) {
+
+  User.findByToken(token, function (err, user) {
+
     if (err) {
       return done(err);
     }
 
     if (!user) {
       logger.info('Token:\n%s\ndid not match any users.', token);
-      return done(null, false, { message: 'Bearer token not found.'});
+      return done(null, false, {message: 'Bearer token not found.'});
     }
 
-    delete user.doc.password; // don't keep (hashed) password in memory any more than we have to
-
-    logger.info({user: user}, '%s logged in using bearer', user.doc.email || user.doc.username);
+    delete user.doc.password;
     user.doc.authType = 'bearer';
-    return done(null, user);
+
+    logger.info('%s logged in using bearer in auth.js', user.doc.email || user.doc.username, user.doc);
+
+    return done(null, new User(user.doc));
+
   });
+
 }));
 
-
-function denyAnonymousAccess (req, res, next) {
+function denyAnonymousAccess(req, res, next) {
   if (!req.user) {
     return next(Boom.unauthorized());
   } else {
@@ -224,7 +228,7 @@ function authenticate(strategy) {
             }
           });
         }
-        if (strategy === 'bearer')  {
+        if (strategy === 'bearer') {
           return next();
         }
         res.status(200)
