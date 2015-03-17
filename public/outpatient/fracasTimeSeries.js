@@ -476,14 +476,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             if (factor > 1) {
               // replace existing date filter when we zoom out, action can be reversed by zooming in
-              dateFilter.from = moment(from, 'x');
-              dateFilter.to = moment(to,'x');
+              dateFilter.from = moment(from, 'x').toDate();
+              dateFilter.to = moment(to,'x').toDate();
             } else {
               // add a new filter we we zoom in, action can be reversed by deleting this new filter
               scope.filters.push(
                 angular.extend({
-                  from: new moment(from, 'x'),
-                  to: moment(to, 'x')
+                  from: new moment(from, 'x').toDate(),
+                  to: moment(to, 'x').toDate()
                 }, possibleFilters.possibleFilters.visitDate)); // TODO filter panel needs to watch for changes to filters
             }
           };
