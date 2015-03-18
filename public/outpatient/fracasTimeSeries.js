@@ -26,6 +26,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
       return {
         pre: function (scope, element, attrs) {
 
+          Highcharts.setOptions({
+            global: {
+              useUTC: false
+            }
+          });
+
           var defaultLabels = {
             title: gettextCatalog.getString('Timeseries'),
             y: gettextCatalog.getString('Count'),
@@ -110,10 +116,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               tooltip: {
                 shared: true,
                 crosshairs: [{
-                  width: 1.5,
-                  dashStyle: 'solid',
-                  color: 'black'
-                }, false]
+                               width: 1.5,
+                               dashStyle: 'solid',
+                               color: 'black'
+                             }, false]
               }
             },
             xAxis: {
@@ -241,11 +247,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
               //TODO remove visitDate as option from timeseries view
               for (var x = 0; x < opts.cols.length; x++) {
-                if (['visitDate','visitDOY','visitWeek'].indexOf(opts.cols[x] !== -1)) {
+                if (['visitDate', 'visitDOY', 'visitWeek'].indexOf(opts.cols[x] !== -1)) {
                   opts.cols.splice(x, 1);
                 }
               }
-              switch(scope.interval){
+              switch (scope.interval) {
                 case 'week':
                   opts.cols.unshift('visitWeek');
                   break;
@@ -283,7 +289,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             console.log('**** Zero Fill ****');
             var interval = 'd';
-            switch(scope.interval){
+            switch (scope.interval) {
               case 'week':
                 interval = 'w';
                 break;
@@ -316,8 +322,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 var maxDate = moment(dates[dates.length - 1]);
                 var ix = 0;
                 while (curDate.isBefore(maxDate) || curDate.isSame(maxDate)) {
-                  //console.log("curDate: " + curDate.format());
-                  //console.log("date[ix]: " + moment(dates[ix]).format());
                   if (curDate.isSame(moment(dates[ix]))) {
                     filledPoints.push({x: curDate.valueOf(), y: (counts[ix] || 0)});
                     ix++;
@@ -330,97 +334,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               });
 
             }
-
-          };
-
-          var reloadDebounce = function () {
-            scope.series = scope.pivot.rows || scope.options.series || [];
-            var aggs = {};
-            var dateAgg = {
-              'date_histogram': {
-                field: 'visitDate',
-                interval: scope.interval,
-                'min_doc_count': 0
-              }
-            };
-            aggs.date = dateAgg;
-
-            if (scope.series.length > 0) {
-              aggs.date.aggs = {};
-              scope.series.forEach(function (s) {
-                //aggs.date.aggs[s] = outpatientAggregation.getAggregation(s, null, scope.form);
-                var query = outpatientAggregation.buildAggregationQuery([s], scope.pivot.cols || [], null, scope.form);
-                aggs.date.aggs[s] = query.query.first;
-              });
-            } else {
-              //no series to create, but we must count by the given field
-              if (scope.pivot.cols.length > 0) {
-                aggs.date.aggs = {};
-                var query = outpatientAggregation.buildAggregationQuery([], scope.pivot.cols, null, scope.form);
-                aggs.date.aggs.second = query.query.first;
-              } else {
-                //no columns selected.. no timeseries?
-              }
-            }
-
-            OutpatientVisitResource.search({
-                q: scope.queryString,
-                size: 0, // we only want aggregations
-                aggs: aggs
-              }, function (data) {
-                //expected scope.data = [ {aggKey, [ [dateMillis, count],.. ]},.. ]
-                if (data.aggregations.date) {
-                  scope.data = [];
-                  var dataStore = {};
-                  var ser = scope.series ? angular.copy(scope.series) : [];
-                  if (ser.length < 1 && scope.pivot.cols.length > 0) {
-                    ser.push('second');
-                  }
-
-                  if (ser.length > 0) {
-                    data.aggregations.date.buckets.map(function (d) {
-                      ser.forEach(function (s) {
-                        var buk = d[s].buckets || d[s]._name.buckets;
-                        buk = outpatientAggregation.toArray(buk);
-
-                        if (s === 'second') { //TODO future proof word use
-                          //they selected just a column, make sure we total by column.count if available
-                          var count = sumBucket(buk);
-                          var label = gettextCatalog.getString('Outpatient visits');
-                          if (!dataStore[label]) {
-                            dataStore[label] = [];
-                          }
-                          dataStore[label].push({x: d.key, y: count});
-                        } else {
-                          buk.map(function (entry) {
-                            /*jshint camelcase:false */
-                            // if we have filter on this field/series = s
-                            // only plot series meeting filter criteria
-                            if (plotSeries(entry.key, s)) {
-                              var count = entry.count ? entry.count.value : entry.doc_count;
-                              if (entry.second && entry.second._name) {
-                                count = sumBucket(entry.second._name.buckets);
-                              }
-                              if (!dataStore[entry.key]) {
-                                dataStore[entry.key] = [];
-                              }
-                              dataStore[entry.key].push({x: d.key, y: count});
-                            }
-                          });
-                        }
-                      });
-                    });
-                    calcPValues(dataStore, scope.options.algorithm);
-                    //scope.chartConfig.series = scope.data;
-                  } else {
-                    var counts = extractCounts(data.aggregations.date, null, null);
-                    dataStore[gettextCatalog.getString('Outpatient visits')] = counts;
-                    calcPValues(dataStore, scope.options.algorithm);
-                  }
-                }
-              }
-            )
-            ;
           };
 
           /**
@@ -477,7 +390,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             if (factor > 1) {
               // replace existing date filter when we zoom out, action can be reversed by zooming in
               dateFilter.from = moment(from, 'x').toDate();
-              dateFilter.to = moment(to,'x').toDate();
+              dateFilter.to = moment(to, 'x').toDate();
             } else {
               // add a new filter we we zoom in, action can be reversed by deleting this new filter
               scope.filters.push(
@@ -523,42 +436,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.$apply();
           };
 
-          /**
-           * @param agg
-           * @param pValues
-           * @param expectedValues
-           * @returns values: { [ {x: key, y: count, pValue: pValue, expected: expected} ],[{}]...}
-           */
-          var extractCounts = function (agg, pValues, expectedValues) {
-            /*jshint camelcase:false */
-            var bucket;
-            if (pValues === null) {
-              agg.counts = [];
-              bucket = agg.buckets || agg._name.buckets;
-              return bucket.map(function (b) {
-                /*jshint camelcase:false */
-                var count = b.count ? b.count.value : b.doc_count;
-                agg.counts.push(count);
-                //return [b.key, count];
-                return {x: b.key, y: count, pValue: null, expected: null};
-              });
-            } else {
-              bucket = agg.buckets || agg._name.buckets;
-              var values = [];
-              for (var i = 0; i < bucket.length && i < pValues.length; i++) {
-                var count = bucket[i].count ? bucket[i].count.value : bucket[i].doc_count;
-                var pValue = pValues[i] === null ? 1 : pValues[i];
-                var expected = expectedValues[i] === null ? 0 : expectedValues[i];
-                values.push(populatePValue(pValue, bucket[i].key, count, expected));
-              }
-              return values;
-            }
-          };
-
           var calcPValues = function (dataStore, algorithm) {
             var counts, pValues, expectedValues;
             var algorithmString = (algorithm === 'EWMA') ? '/detectors/ewma' :
-              (algorithm === 'CUSUM') ? '/detectors/cusum' : undefined;
+                                  (algorithm === 'CUSUM') ? '/detectors/cusum' : undefined;
             //$log.log('using algorithm' + algorithmString);
             angular.forEach(dataStore, function (points, key) {
               counts = points.map(function (c) {
@@ -624,7 +505,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             createTableJSON();
           };
 
-
           /**
            * Currently finds the narrowest range among all date filters.
            * @returns dateRange = {from: -1, to: -1}  -1 if not found, time in millis if found
@@ -659,7 +539,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             var min = scope.chartConfig.xAxis.min;
             var max = scope.chartConfig.xAxis.max;
             var dateRange = findDateRangeFromFilter();
-            if(dateRange) {
+            if (dateRange) {
               if (dateRange.from) {
                 min = moment(dateRange.from).valueOf();
                 minFound = true;
@@ -684,12 +564,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             if (!minFound) {
               scope.chartConfig.xAxis.min = Math.min.apply(Math, minDate);
             } else {
-              scope.chartConfig.xAxis.min = Math.min.apply(Math,[Math.min.apply(Math, minDate), min]);
+              scope.chartConfig.xAxis.min = Math.min.apply(Math, [Math.min.apply(Math, minDate), min]);
             }
             if (!maxFound) {
               scope.chartConfig.xAxis.max = Math.max.apply(Math, maxDate);
-            } else{
-              scope.chartConfig.xAxis.max= Math.max.apply(Math,[Math.max.apply(Math, maxDate), max]);
+            } else {
+              scope.chartConfig.xAxis.max = Math.max.apply(Math, [Math.max.apply(Math, maxDate), max]);
             }
 
             // consistent colors
@@ -727,22 +607,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             return pv;
           };
 
-          var plotSeries = function (seriesName, seriesType) {
-            var res = !scope.filters;
-            if (scope.filters) {
-              var filters = scope.filters.filter(function (filter) {
-                return filter.filterID === seriesType && filter.value.length > 0;
-              });
-
-              res = res || filters.length === 0;
-
-              for (var i = 0; i < filters.length; i++) {
-                res = res || filters[i].value.indexOf(seriesName) !== -1;
-              }
-            }
-            return res;
-          };
-
           /* ngTable options */
 
           scope.calculateRows = function () {
@@ -765,8 +629,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             counts: [], // hide page count control
             getData: function ($defer, params) {
               var orderedData = params.sorting() ?
-                $filter('orderBy')(scope.tableData, params.orderBy()) :
-                scope.tableData;
+                                $filter('orderBy')(scope.tableData, params.orderBy()) :
+                                scope.tableData;
               $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
             }
           });
@@ -812,17 +676,12 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           scope.$watchCollection('[pivot.rows, pivot.cols, queryString, options.algorithm]', function () {
             reload();
-            //scope.redraw();
           });
 
           scope.$watch('options.interval', function () {
             scope.interval = scope.options.interval;
             reload();
           });
-
-          /*scope.redraw = function () {
-           scope.$broadcast('highchartsng.reflow');
-           }*/
 
           scope.$watch('options.labels.title', function () {
             scope.chartConfig.title.text = scope.options.labels.title;
