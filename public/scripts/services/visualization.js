@@ -19,7 +19,9 @@ module.exports = function ($resource, $modal, $window, $location, $document, Vis
       });
       if (state.form) {
         state.form.fields.map(function (v) {
-          delete v.values;
+          // Do not remove values,
+          // This values are used when we display visualization on dashboard
+          //delete v.values;
           delete v.possibleValues;
           return v;
         });
