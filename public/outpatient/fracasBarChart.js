@@ -88,7 +88,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
                           }
                         } else {
                           point.name = this.series.name;
-                          point.col = scope.pivot.rows[0];
+                          point.col = scope.pivot.cols[0];
                         }
 
                         narrowFilters(point);
@@ -145,7 +145,8 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
               for (var i = 0; i < scope.aggData.length; i++) {
                 if (typeof scope.aggData[i].colName === 'undefined') {
-                  scope.chartConfig.xAxis.categories.push(scope.aggData[i].key);
+                  //scope.chartConfig.xAxis.categories.push(scope.aggData[i].key);
+                  scope.chartConfig.xAxis.categories.push(scope.aggData[i].values[0].colName || '');
                 } else {
                   scope.chartConfig.xAxis.categories.push(scope.aggData[i].colName);
                 }
@@ -168,7 +169,6 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
                   series[0].data.push(scope.aggData[i].values[0].value);
                 }
               } else {
-
                 scope.chartConfig.options.legend.enabled = true;
 
                 var subCats = [];
@@ -220,12 +220,13 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               }
 
               scope.chartConfig.series = series;
-            }
-            ;
+            };
 
           var narrowFilters = function (point) {
+            var column = removeAsterix(point.col);
+
             var filter = {
-              filterID: point.col,
+              filterID: column,
               value: point.name
             };
             $rootScope.$emit('filterChange', filter, true, true);
@@ -249,6 +250,17 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               click: chartToWorkbench
             };
           }
+
+          var removeAsterix = function (string) {
+            var response = null;
+            if (string.lastIndexOf('*') > 0) {
+              response = string.substring(0, string.lastIndexOf('*'));
+            } else {
+              response = string;
+            }
+
+            return response;
+          };
 
           scope.$watchCollection('[aggData]', function () {
             reload();

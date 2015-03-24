@@ -133,6 +133,7 @@
     "highcharts": "./bower_components/highcharts/highcharts.js",
     "exporting": "./bower_components/highcharts/modules/exporting.js",
     "drilldown": "./bower_components/highcharts/modules/drilldown.js",
+    "no-data-to-display": "./bower_components/highcharts/modules/no-data-to-display.js",
     "highcharts-ng": "./bower_components/highcharts-ng/dist/highcharts-ng.js",
     "ng-table": "./bower_components/ng-table/dist/ng-table.js",
     "infinite-scroll": "./bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js",

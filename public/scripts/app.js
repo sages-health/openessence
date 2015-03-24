@@ -43,6 +43,7 @@ require('leaflet');
 require('highcharts');
 require('exporting');
 require('drilldown');
+require('no-data-to-display');
 require('highcharts-ng');
 require('ng-table');
 require('infinite-scroll');

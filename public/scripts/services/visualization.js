@@ -10,7 +10,7 @@ module.exports = function ($resource, $modal, $window, $location, $document, Vis
     save: function (state1) {
       var state = angular.copy(state1);
       // Don't include es documents in our document. Elasticsearch throws a nasty exception if you do.
-      angular.forEach(['data', 'crosstabData', 'strings', 'chartConfig'], function (k) {
+      angular.forEach(['tableData', 'aggData', 'data', 'crosstabData', 'strings', 'chartConfig'], function (k) {
         delete state[k];
       });
       state.filters.map(function (v) {
@@ -19,7 +19,10 @@ module.exports = function ($resource, $modal, $window, $location, $document, Vis
       });
       if (state.form) {
         state.form.fields.map(function (v) {
-          delete v.values;
+          // Do not remove values,
+          // This values are used when we display visualization on dashboard
+          //delete v.values;
+          delete v.possibleValues;
           return v;
         });
       }

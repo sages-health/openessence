@@ -135,7 +135,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     dataLabels: {
                       formatter: function () {
                         if (this.y > 5 || inner.length < 4) {
-                          return this.point.name
+                          return this.point.name;
                         } else {
                           return null;
                         }
@@ -154,7 +154,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     innerSize: '0',
                     dataLabels: {
                       formatter: function () {
-                        return this.point.name
+                        return this.point.name;
                       },
                       color: 'black',
                       distance: 30
@@ -221,7 +221,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     innerSize: '80%',
                     dataLabels: {
                       formatter: function () {
-                        return this.point.name
+                        return this.point.name;
                       },
                       color: 'black',
                       distance: 30
@@ -237,7 +237,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     innerSize: '0',
                     dataLabels: {
                       formatter: function () {
-                        return this.point.name
+                        return this.point.name;
                       },
                       color: 'black',
                       distance: 30
@@ -246,8 +246,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                 }
               }
               scope.chartConfig.series = series;
-            }
-            ;
+            };
 
           var narrowFilters = function (point) {
 
@@ -288,7 +287,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             }
 
             return response;
-          }
+          };
 
           scope.$watchCollection('[aggData]', function () {
             reload();
