@@ -38,7 +38,7 @@
 
   <div class="panel-footer viz-drag-handle">
     <div class="clearfix">
-      
+
       <!-- don't wrap btn-group in col since we don't ever want it to wrap -->
       <div class="btn-group pull-right">
         <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'"
@@ -53,7 +53,8 @@
                 popover="{{'Time series' | translate}}" popover-trigger="mouseenter">
           <span class="icon-chart-line"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'yoy'">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'yoy'"
+                popover="{{'Year Over Year' | translate}}" popover-trigger="mouseenter">
           <span class="icon-calendar"></span>
         </button>
         <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'pie'"

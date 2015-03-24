@@ -119,7 +119,17 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                                width: 1.5,
                                dashStyle: 'solid',
                                color: 'black'
-                             }, false]
+                             }, false],
+                dateTimeLabelFormats: {
+                  millisecond: "%B %e",
+                  second: "%B %e",
+                  minute: "%B %e",
+                  hour: "%B %e",
+                  day: "%B %e",
+                  week: "%B %e",
+                  month: "%B %e",
+                  year: "%B %e"
+                }
               }
             },
             xAxis: {
@@ -158,13 +168,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               height: scope.options.height - 40
             }
           };
-
-          /*
-           //Activating built in highcharts export.
-           if (scope.source === 'export') {
-           scope.chartConfig.options.exporting.enabled = true;
-           }
-           */
 
           // Removing click functionality for clickthrough.
           if (scope.source === 'dashboard') {
@@ -208,17 +211,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               pivot: scope.pivot
             }));
           });
-
-          var sumBucket = function (bucket) {
-            if (!bucket) {
-              return 0;
-            }
-            var sum = bucket.reduce(function (prev, curr) {
-              var val = curr.count ? curr.count.value : curr.doc_count;
-              return prev + val;
-            }, 0);  //TODO make sure starting with 0 doesn't add data to normally empty values
-            return sum;
-          };
 
           var reload = function () {
             //to switch: reloadDebounce = old aggregations, reloadDebounce2 = crosstabular

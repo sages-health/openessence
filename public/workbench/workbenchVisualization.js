@@ -69,7 +69,7 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
               scope.options.width = scope.width = width;
 
               // adjust margins on a per chart basis
-              if (scope.visualization.name === 'line') {
+              if (scope.visualization.name === 'line' || scope.visualization.name === 'yoy') {
                 scope.options.height = scope.height -= 75;
                 scope.options.width = scope.width -= 50;
               }
