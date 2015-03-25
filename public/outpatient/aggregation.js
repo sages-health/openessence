@@ -242,12 +242,14 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     });
 
     var groupFields = ['symptomsGroup', 'diagnosesGroup'];
-    // grab distinct values, sort them and join using comma for symptomGroups and diagnosesGroup
+    // grab distinct values and sort them for symptomGroups and diagnosesGroup
     angular.forEach(groupFields, function (fld) {
       if (angular.isArray(record[fld])) {
         record[fld] = record[fld].map(function (v) {
           return v.name;
-        }).filter(uniqueStrings).sort().join(', ');
+        }).filter(uniqueStrings).sort();
+      } else if(typeof record[fld] === 'string'){
+        record[fld] = [record[fld]];
       }
     });
 
@@ -291,7 +293,19 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       var filters = scope.filters.filter(function (filter) {
         return filter.filterID !== 'visitDate' && filter.filterID === scope.pivot.rows[0] && filter.value.length > 0 && filter.value[0] !== '*';
       }).map(function (val) {
-        return val.value;
+        // if it is a group field (symptom group, diagnoses group),
+        // we have to map value to display value(fever or cough => symptomGroupABC)
+        if(val.type === 'group' && val.values){
+          return val.value.map(function(grpName){
+            for(var i = 0; i < val.values.length; i++){
+              if(val.values[i].value === grpName){
+                return val.values[i].name;
+              }
+            }
+          });
+        } else {
+          return val.value;
+        }
       });
 
       if (filters.length > 0) {

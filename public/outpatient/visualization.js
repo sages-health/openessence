@@ -76,7 +76,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         });
 
         scope.$on('exportVisualization', function () {
-          if (scope.visualization.name === 'line') {
+          if (scope.visualization.name === 'line' || scope.visualization.name === 'yoy') {
             // let timeSeries directive handle it
             return;
           } else if (scope.visualization.name === 'table') {
@@ -100,7 +100,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         });
 
         scope.$on('saveVisualization', function () {
-          if (scope.visualization.name === 'line') {
+          if (scope.visualization.name === 'line' || scope.visualization.name === 'yoy') {
             // let timeSeries directive handle it
             return;
           }
