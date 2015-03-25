@@ -310,11 +310,10 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
 
             //TODO remove visitDate as option from timeseries view
             for (var x = 0; x < opts.cols.length; x++) {
-              if (['visitDate', 'visitDOY', 'visitWeek'].indexOf(opts.cols[x] !== -1)) {
+              if (['visitDate', 'visitDOY', 'visitWeek', 'visitISOWeek', 'visitMonth', 'visitQuarter', 'visitYear'].indexOf(opts.cols[x]) !== -1) {
                 opts.cols.splice(x, 1);
               }
             }
-
             switch (scope.interval) {
               case 'week':
                 opts.cols.unshift('visitWeek');
