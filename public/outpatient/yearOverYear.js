@@ -228,12 +228,44 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
 
           var queryData = function (yearID, resultFn) {
 
-            var dateFrom = moment(scope.filters[0].from).subtract(yearID, 'year');
+            var dateFilters = scope.filters.filter(function (f) {
+              return f.type === 'date-range';
+            });
+
+            console.log(dateFilters);
+
+            var startDateExists = false;
+            var endDateExists = false;
+
+            var startDate = null;
+            var endDate = null;
+
+            if (dateFilters) {
+              for (var i = 0; i < dateFilters.length; i++) {
+                if (dateFilters[i].from && !startDateExists) {
+                  startDate = moment(dateFilters[i].from);
+                  startDateExists = true;
+                }
+                if (dateFilters[i].to && !endDateExists) {
+                  endDate = moment(dateFilters[i].to);
+                  endDateExists = true;
+                }
+              }
+            }
+
+            if (!startDateExists) {
+              startDate = moment().startOf('year');
+            }
+            if (!endDateExists) {
+              endDate = moment().endOf('year');
+            }
+
+            var dateFrom = moment(startDate).subtract(yearID, 'year');
             var lastFrom = dateFrom.format('YYYY-MM-DD');
-            var dateTo = moment(scope.filters[0].to).subtract(yearID, 'year');
+            var dateTo = moment(endDate).subtract(yearID, 'year');
             var lastTo = dateTo.format('YYYY-MM-DD');
 
-            var year = moment(scope.filters[0].to).subtract(yearID, 'year').year();
+            var year = moment(endDate).subtract(yearID, 'year').year();
 
             var queryString = 'visitDate: [' + lastFrom + ' TO ' + lastTo + ']';
 
@@ -264,6 +296,7 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
                 console.log(scope.data);
 
                 scope.chartConfig.series = scope.data;
+                generateRange();
 
               }
             });
@@ -305,7 +338,29 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
             var dataStore = outpatientAggregation.getCrosstabularData(records, opts, scope);
             fillZeros(dataStore);
 
-            var year = moment(scope.filters[0].to).subtract(yearID, 'year').year();
+            var dateFilters = scope.filters.filter(function (f) {
+              return f.type === 'date-range';
+            });
+
+            console.log(dateFilters);
+
+            var startDateExists = false
+
+            var year = null;
+
+            if (dateFilters) {
+              for (var i = 0; i < dateFilters.length; i++) {
+                if (dateFilters[i].to) {
+                  year = moment(dateFilters[i].to).subtract(yearID, 'year').year();
+                  startDateExists = true;
+                  break;
+                }
+              }
+            }
+
+            if (!startDateExists) {
+              year = moment().subtract(yearID, 'year').year();
+            }
 
             console.log(year);
             console.log(dataStore);
@@ -387,6 +442,80 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
               });
 
             }
+          };
+
+          /**
+           * Currently finds the narrowest range among all date filters.
+           * @returns dateRange = {from: -1, to: -1}  -1 if not found, time in millis if found
+           */
+          var findDateRangeFromFilter = function () {
+            var dateRange = {from: 0, to: 0};
+            var filteredDate;
+            var mins = [];
+            var maxs = [];
+
+            for (var i = 0; i < scope.filters.length; i++) {
+              if (scope.filters[i].filterID === 'visitDate') {
+                filteredDate = scope.filters[i];
+                if (filteredDate.from) {
+                  mins.push(moment(filteredDate.from).valueOf());
+                }
+                if (filteredDate.to) {
+                  maxs.push(moment(filteredDate.to).valueOf());
+                }
+              }
+            }
+            dateRange.from = mins ? Math.min(mins) : 0;
+            dateRange.to = maxs ? Math.max(maxs) : 0;
+            return filteredDate;
+          };
+
+          var generateRange = function () {
+            var minFound = false;
+            var maxFound = false;
+            var minDate = [];
+            var maxDate = [];
+            var min = scope.chartConfig.xAxis.min;
+            var max = scope.chartConfig.xAxis.max;
+            var dateRange = findDateRangeFromFilter();
+            if (dateRange) {
+              if (dateRange.from) {
+                min = moment(dateRange.from).valueOf();
+                minFound = true;
+              }
+              if (dateRange.to) {
+                max = moment(dateRange.to).valueOf();
+                maxFound = true;
+              }
+            }
+
+            var getX = function (o) {
+              return o.x;
+            };
+
+            for (var x = 0; x < scope.data.length; x++) {
+              if (scope.data[x].data.length > 0) {
+                minDate.push(Math.min.apply(Math, scope.data[x].data.map(getX)));
+                maxDate.push(Math.max.apply(Math, scope.data[x].data.map(getX)));
+              }
+            }
+
+            if (!minFound) {
+              scope.chartConfig.xAxis.min = Math.min.apply(Math, minDate);
+            } else {
+              scope.chartConfig.xAxis.min = Math.min.apply(Math, [Math.min.apply(Math, minDate), min]);
+            }
+            if (!maxFound) {
+              scope.chartConfig.xAxis.max = Math.max.apply(Math, maxDate);
+            } else {
+              scope.chartConfig.xAxis.max = Math.max.apply(Math, [Math.max.apply(Math, maxDate), max]);
+            }
+
+            // consistent colors
+            for (var x = 0; x < scope.data.length; x++) {
+              scope.data[x].color = scope.colors[x];
+            }
+            scope.chartConfig.series = scope.data;
           };
 
           /**
