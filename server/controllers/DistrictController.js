@@ -10,11 +10,7 @@ module.exports = codex.controller(District, {
   insert: true,
   preInsert: function (req, esRequest, callback) {
 
-    if (!req.user || !(req.user.isAdmin() || req.user.isAPIUser())) {
-      return callback(Boom.forbidden());
-    }
-
-    if (req.user && req.user.isAPIUser() && req.method === 'PUT') {
+    if (!req.user || !req.user.isAdmin()) {
       return callback(Boom.forbidden());
     }
 

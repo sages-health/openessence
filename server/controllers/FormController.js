@@ -34,9 +34,11 @@ module.exports = codex.controller(Form, {
   insert: true,
   replace: true,
   preInsert: function (req, esRequest, callback) {
+
     if (!req.user || !req.user.isAdmin()) {
       return callback(Boom.forbidden());
     }
+
 
     callback(null, esRequest);
   },
