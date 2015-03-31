@@ -1,5 +1,6 @@
 'use strict';
 
+var bodyParser = require('body-parser');
 var phantomCluster = require('phantom-cluster');
 var cluster = require('cluster');
 var path = require('path');
@@ -9,8 +10,6 @@ var mime = require('mime-types');
 var http = require('http');
 var url = require('url');
 var tmp = require('tmp');
-var passport = require('passport');
-var BearerStrategy = require('passport-http-bearer').Strategy;
 var Boom = require('boom');
 
 var conf = require('./conf');
@@ -19,11 +18,21 @@ var User = require('./models/User');
 
 var engine = phantomCluster.createQueued({
   workers: 2,
-  workerIterators: 4, // default of 100 is a little high when we might only get 1 report a day
+  workerIterations: 4, // default of 100 is a little high when we might only get 1 report a day
   phantomBasePort: conf.phantom.basePort,
 
   // Fixed in v1.9.8, see https://github.com/ariya/phantomjs/issues/12670
-  phantomArguments: ['--ssl-protocol=tlsv1']
+  phantomArguments: ['--ssl-protocol=tlsv1'],
+  messageTimeout: 60 * 1000, // 1 minute
+
+  onStdout: function (out) {
+    logger.info('PhantomClusterOut', out);
+  },
+
+  onStderr: function (err) {
+    logger.error('PhantomClusterErr', err);
+  }
+
 });
 
 engine.on('workerStarted', function (worker) {
@@ -32,6 +41,14 @@ engine.on('workerStarted', function (worker) {
 
 engine.on('workerDied', function (worker) {
   logger.info('Cluster worker %s died', worker.id);
+});
+
+engine.on('workerReady', function () {
+  logger.info('Worker Ready');
+});
+
+engine.on('started', function () {
+  logger.info('Cluster Started');
 });
 
 engine.on('stopped', function () {
@@ -43,7 +60,7 @@ engine.on('phantomStarted', function () {
 });
 
 engine.on('phantomDied', function () {
-  logger.info('Instance stopped');
+  logger.warn('Instance stopped');
 });
 
 var filenameToKey = function (filename) {
@@ -51,10 +68,12 @@ var filenameToKey = function (filename) {
 };
 
 engine.on('queueItemReady', function (options) {
+
   logger.info('Cluster received request for %s', options.url);
 
   var clusterClient = this;
   this.ph.createPage(function (page) {
+
     page.set('customHeaders', {
       Authorization: 'Bearer ' + options.user.doc.tokens[0]
     });
@@ -103,7 +122,7 @@ engine.on('queueItemReady', function (options) {
         } else {
           page.set('viewportSize', (function () {
             var pageWidth = parseInt(options.size, 10); // yes, parseInt works even with 'px' in the string
-            var pageHeight = parseInt(pageWidth * 3/4, 10);
+            var pageHeight = parseInt(pageWidth * 3 / 4, 10);
             return {
               width: pageWidth,
               height: pageHeight
@@ -196,43 +215,39 @@ engine.on('queueItemReady', function (options) {
       }, 3000);
     });
   });
+
 });
 
+engine.on('queueItemTimeout', function () {
+
+  logger.info('queueItemTimeout');
+
+});
 
 engine.start();
 
 if (cluster.isMaster) {
+
   // expose HTTP API for submitting requests to Phantom
   var app = express();
 
-  // log all requests
+  // log all requests in phantom.js
   app.use(require('morgan')('combined'));
 
+  app.use(bodyParser.json()); // for parsing application/json body
+
   // compressing already compressed formats (PNG, JPG, PDF) is counterproductive
-//  app.use(require('compression')());
-
-  passport.use(new BearerStrategy({}, function (token, done) {
-    // This means every request hits the DB, but these requests are pretty rare.
-    // If they become more frequent we can cache users in Redis, or somehow leverage our existing session store
-    User.findByToken(token, function (err, user) {
-      if (err) {
-        return done(err);
-      }
-
-      if (!user) {
-        return done(null, false);
-      }
-
-      return done(null, user);
-    });
-  }));
+  // app.use(require('compression')());
 
   // all requests have to have bearer tokens on them
-  app.use(passport.initialize());
-  app.use(passport.authenticate('bearer', {session: false}));
-  app.use(require('./auth').denyAnonymousAccess);
+  app.post('/:name', function (req, res, next) {
 
-  app.get('/:name', function (req, res, next) {
+    if (!req.body.user) {
+      return next(Boom.unauthorized());
+    }
+
+    var user = new User(req.body.user);
+
     // PDFs are often blank where PNGs work fine, so for now default to PNG
     // see https://github.com/ariya/phantomjs/issues/11968
     var contentType = req.accepts(['image/png', 'image/jpeg', 'image/gif', 'application/pdf']);
@@ -258,59 +273,64 @@ if (cluster.isMaster) {
       urlToRender.hostname = fracasUrl.hostname;
       urlToRender.port = fracasUrl.port;
 
-      var queueItem = engine.enqueue({
+      var item = {
         url: url.format(urlToRender),
         name: req.params.name,
-        user: req.user,
+        user: user,
         filename: filename,
         selector: req.query.selector,
         size: size
-      });
-      queueItem.on('response', function (err) {
-        if (err) {
-          return next(err);
-        }
+      };
 
-        var key = filenameToKey(filename);
+      var queueItem = engine.enqueue(item)
+        .on('timeout', function () {
+          next(Boom.serverTimeout('Timed out rendering page'));
+        })
+        .on('response', function (err) {
 
-        // using buffer as key tells node-redis to return a buffer to us
-        conf.redis.client.get(new Buffer(key), function (err, data) {
           if (err) {
             return next(err);
           }
 
-          // Asynchronously delete key
-          conf.redis.client.del(key, function (err) {
+          var key = filenameToKey(filename);
+
+          // using buffer as key tells node-redis to return a buffer to us
+          conf.redis.client.get(new Buffer(key), function (err, data) {
             if (err) {
-              logger.warn({err: err}, 'Error deleting snapshot %s from Redis', key);
+              return next(err);
             }
+
+            // Asynchronously delete key
+            conf.redis.client.del(key, function (err) {
+              if (err) {
+                logger.warn({err: err}, 'Error deleting snapshot %s from Redis', key);
+              }
+            });
+
+            if (!data) {
+              return next(new Error('Error generating snapshot'));
+            }
+
+            // TODO sanitize file name
+            res.attachment(req.params.name + '.' + extension);
+
+            res.set('Content-Type', contentType);
+            res.send(data);
+
           });
-
-          if (!data) {
-            return next(new Error('Error generating snapshot'));
-          }
-
-          // TODO sanitize file name
-          res.attachment(req.params.name + '.' + extension);
-
-          res.set('Content-Type', contentType);
-          res.send(data);
         });
-      });
-
-      queueItem.on('timeout', function () {
-        next(Boom.serverTimeout('Timed out rendering page'));
-      });
 
     });
 
   });
 
-  app.use(require('./error').middleware)
-    .use(require('./error').notFound); // this must be the last route
+  app.use(require('./error').middleware);
+
+  app.use(require('./error').notFound); // this must be the last route
 
   var phantomUrl = url.parse(conf.phantom.url);
   http.createServer(app).listen(phantomUrl.port, phantomUrl.hostname, function () {
     logger.info('PhantomJS HTTP proxy started at %s', conf.phantom.url);
   });
+
 }
