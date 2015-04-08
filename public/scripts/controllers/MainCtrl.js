@@ -1,8 +1,19 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($scope, $window, $location, $state, appName, user, visitsReportModal, aggregateReportModal, Workbench,//
-                           Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope) {
+module.exports = function ($scope, $window, $location, $state, appName, user, visitsReportModal, aggregateReportModal,//
+                           Workbench, Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope, locale) {
+  // ****** Start Locale
+  $scope.localeSelect2Options = [{value: 'en', label: 'English'}, {value: 'es', label: 'Spanish'}];
+  $scope.site = {locale: locale.getLocale()};
+  $scope.$watch('site.locale', function (newVal, oldVal) {
+    console.log('locale is:' + $scope.site.locale);
+    if (oldVal !== newVal) {
+      location.href =
+        location.origin + location.pathname.replace('/' + oldVal + '/', '/' + newVal + '/') + location.search;
+    }
+  });
+  // ****** End Locale
 
   $scope.navbar = {
     collapse: true

@@ -26,7 +26,9 @@
     "angular-ui-select": "~0.9.1",
     "ng-table": "~0.5.4",
     "ngInfiniteScroll": "~1.2.0",
-    "StickyTableHeaders": "~0.1.15"
+    "StickyTableHeaders": "~0.1.15",
+    "i18next": "^1.7.4",
+    "ng-i18next": "~0.3.6"
   },
   "devDependencies": {
     "angular-mocks": "1.2.27"

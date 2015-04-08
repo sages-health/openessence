@@ -356,6 +356,7 @@ var indexRequests = [
           'district',
           'facility',
           'form',
+          'locale',
           'symptom',
           'syndrome',
           'user',
@@ -529,6 +530,34 @@ var indexRequests = [
                     }
                   }
                 }
+              }
+            }
+          }),
+
+          // Saved visualizations
+          locale: addPaperTrail({
+            properties: {
+              lng: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              ns: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              translation: {
+                type: 'object',
+                index: 'no'
               }
             }
           }),

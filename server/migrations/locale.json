@@ -1,0 +1,52 @@
+[
+  {
+    "lng": "en",
+    "ns": "translation",
+    "translation": {
+      "Any": "Any",
+      "OpenESSENCE": "OpenESSENCE",
+      "navBar": {
+
+        "toggleNavigation": "Toggle navigation",
+
+        "dashboard": "DashboardEN",
+        "openDashboard": "Open dashboardEN",
+        "manageDashboards": "Manage dashboardsEN",
+        "recentDashboards": "Recent dashboardsEN",
+        "newDashboard": "New dashboardEN",
+
+        "workbench": "WorkbenchEN",
+        "openWorkbench": "Open workbenchEN",
+        "manageWorkbenches": "Manage workbenchesEN",
+        "recentWorkbenches": "Recent workbenchesEN",
+        "newWorkbench": "New workbenchEN",
+
+        "report": "ReportEN",
+        "outpatientVisitsReport": "Outpatient Visits ReportEN",
+
+        "edit": "EditEN",
+        "outpatientVisits": "Outpatient VisitsEN",
+        "configuration": "ConfigurationEN",
+        "translation": "TranslationEN",
+        "users": "UsersEN",
+        "visualizations": "VisualizationsEN",
+
+        "settings": "SettingsEN",
+        "logout": "LogoutEN"
+
+      }
+
+    }
+  },
+  {
+    "lng": "es",
+    "ns": "translation",
+    "translation": {
+      "dashboard": "DashboardES",
+      "workbench": "WorkbenchES",
+      "report": "ReportES",
+      "edit": "EditES",
+      "dashboards": "DashboardsES"
+    }
+  }
+]
