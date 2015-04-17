@@ -555,6 +555,16 @@ var indexRequests = [
                   }
                 }
               },
+              enabled: {
+                type: 'boolean'
+              },
+              displayName: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              order: {
+                type: 'double'
+              },
               translation: {
                 type: 'object',
                 index: 'no'

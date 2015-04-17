@@ -2,9 +2,29 @@
   {
     "lng": "en",
     "ns": "translation",
+    "default": true,
+    "order": 1,
+    "displayName": "English",
     "translation": {
-      "Any": "Any",
+
       "OpenESSENCE": "OpenESSENCE",
+      "app": {
+        "Any": "Any",
+        "Edit": "Edit",
+        "Cancel": "Cancel",
+        "Save": "Save",
+        "OK": "OK"
+
+      },
+      "locale": {
+        "Locale": "Locale",
+        "Key": "Key",
+        "From": "From",
+        "To": "To",
+        "Translation": "Translation",
+        "msgEnterValue": "Please enter a value"
+      },
+
       "navBar": {
 
         "toggleNavigation": "Toggle navigation",
@@ -41,12 +61,19 @@
   {
     "lng": "es",
     "ns": "translation",
+    "order": 2,
+    "displayName": "Spanish",
     "translation": {
-      "dashboard": "DashboardES",
-      "workbench": "WorkbenchES",
-      "report": "ReportES",
-      "edit": "EditES",
-      "dashboards": "DashboardsES"
+      "Any": "AnyES",
+      "OpenESSENCE": "OpenESSENCEES",
+      "navBar": {
+        "toggleNavigation": "Toggle navigationES",
+        "dashboard": "DashboardES",
+        "openDashboard": "Open dashboardES",
+        "manageDashboards": "Manage dashboardsES",
+        "recentDashboards": "Recent dashboardsES",
+        "newDashboard": "New dashboardES"
+      }
     }
   }
 ]
