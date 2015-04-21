@@ -16,12 +16,12 @@
         <div class="pull-left" style="font-size: 80%">
           <h4>
             {{report.name}}
-            <button ng-show="allowExport" class="btn btn-primary" ng-click="export()" title="Export to PNG">
+            <button ng-show="allowExport" class="btn btn-primary" ng-click="export()" ng-i18next="[title]pa.ExportToPNG">
               <span class="icon-export"></span>
             </button>
           </h4>
         </div>
-        <div class="pull-right" style="font-size: 80%">Year: {{report.year}} | Week: {{report.week}} | Ending on:
+        <div class="pull-right" style="font-size: 80%">{{'op.Year' | i18next}}: {{report.year}} | {{'op.Week' | i18next}}: {{report.week}} | {{'r.EndingOn' | i18next}}:
           {{report.endDateString}}
         </div>
       </div>
@@ -42,16 +42,15 @@
           </div>
         </div>
       </div>
-      <div class="container-fluid" style="font-size:80%;" translate>
-        Note: Number of reported cases are not comparable between countries. The purpose of the charts is to show
-        trends over time within each country/area.
+      <div class="container-fluid" style="font-size:80%;" ng-i18next>
+        r.msgTSReport
       </div>
     </div>
 
     <div class="panel-footer">
       <div class="clearfix">
-        <div class="pull-left" style="font-size: 80%" translate>Created by: {{username}}</div>
-        <div class="pull-right" style="font-size: 80%" translate>Date of report: {{dateString}}</div>
+        <div class="pull-left" style="font-size: 80%" >{{'r.CreatedBy' | i18next}}: {{username}}</div>
+        <div class="pull-right" style="font-size: 80%" >{{'r.DateOfReport' | i18next}}: {{dateString}}</div>
       </div>
     </div>
   </div>

@@ -1,41 +1,41 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Export to CSV</h4>
+  <h4 class="modal-title" ng-i18next>pa.ExportCSV</h4>
 </div>
 <div class="modal-body">
   <form class="form" role="form" novalidate name="visualizationForm">
     <fieldset>
       <div class="form-group" ng-class="{'has-error': yellAtUser}">
 
-        <label for="export-filename" translate>File Name</label>
+        <label for="export-filename" ng-i18next>pa.FileName</label>
         <input type="text" class="form-control" id="export-filename" name="filename" ng-model="params.filename">
 
-        <div class="help-block" ng-show="yellAtUser" translate>
-          Please select a file name
+        <div class="help-block" ng-show="yellAtUser" ng-i18next>
+          pa.msgFileName
         </div>
       </div>
 
       <div class="form-group" ng-class="{'has-error': yellAtUser}">
-        <label for="export-delimiter" translate>Delimiter</label>
+        <label for="export-delimiter" ng-i18next>pa.Delimiter</label>
         <select class="form-control" id="export-delimiter" name="delimiter"
                 ng-model="params.delimiter">
-          <option value=",">Comma</option>
-          <option value="^">Caret</option>
-          <option value="|">Pipe</option>
-          <option value=";">Semi-colon</option>
-          <option value="\t">Tab</option>
+          <option value="," ng-i18next>pa.Comma</option>
+          <option value="^" ng-i18next>pa.Caret</option>
+          <option value="|" ng-i18next>pa.Pipe</option>
+          <option value=";" ng-i18next>pa.Semicolon</option>
+          <option value="\t" ng-i18next>pa.Tab</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label translate>Format</label>
+        <label ng-i18next>pa.Format</label>
         <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
         <label class="radio-inline">
           <input type="radio" name="format" value="flat" ng-model="params.format">
-          <span translate>Flat</span>
+          <span ng-i18next>pa.Flat</span>
         </label>
         <label class="radio-inline">
           <input type="radio" name="format" value="expanded" ng-model="params.format">
-          <span translate>Expanded</span>
+          <span ng-i18next>pa.Expanded</span>
         </label>
 
       </div>
@@ -45,10 +45,10 @@
 <div class="modal-footer">
   <button class="btn btn-default" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-primary" ng-click="export(visualizationForm)">
     <span class="icon-export"></span>
-    <span translate>Export</span>
+    <span ng-i18next>pa.Export</span>
   </button>
 </div>

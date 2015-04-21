@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>User</h4>
+  <h4 class="modal-title" ng-i18next>entry.User</h4>
 </div>
 
 <div class="modal-body">
@@ -7,70 +7,66 @@
     <fieldset>
 
       <!-- TODO red text on white background instead of alert -->
-      <div class="alert alert-danger" ng-show="yellAtUser" translate>These fields are required</div>
+      <div class="alert alert-danger" ng-show="yellAtUser" ng-i18next>op.msgFieldsRequired</div>
       <conflict-message ng-show="conflictError"></conflict-message>
 
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.username) || uniqueConstraintViolation}">
-        <label for="entry-user-username" translate>Username</label>
+        <label for="entry-user-username" ng-i18next>entry.UserName</label>
         <input class="form-control" id="entry-user-username" name="username" ng-model="data.username" required>
-        <span ng-show="isInvalid(recordForm.username)" class="help-block" translate>
-          Please enter a valid user name
-        </span>
+        <span ng-show="isInvalid(recordForm.username)" class="help-block" ng-i18next>entry.msgEnterValidName</span>
         <span class="help-block" ng-show="uniqueConstraintViolation">
-          <span translate>Sorry, this name is already in use</span>
+          <span ng-i18next>entry.msgNameInUse</span>
         </span>
       </div>
 
       <div class="form-group" ng-if="!record._id"
            ng-class="{'has-error': isInvalid(recordForm.password) || isShort(recordForm.password) || !passwordMatch(recordForm.password, recordForm.passwordConfirm)}">
-        <label for="entry-user-password" translate>Password</label>
+        <label for="entry-user-password" ng-i18next>entry.Password</label>
         <input type="password" class="form-control" id="entry-user-password" name="password" ng-model="data.password"
                required>
-        <span ng-show="isInvalid(recordForm.password)" class="help-block" translate>
-          Please enter a password
-        </span>
+        <span ng-show="isInvalid(recordForm.password)" class="help-block" ng-i18next>entry.msgEnterPassword</span>
         <span ng-show="isShort(recordForm.password)" class="help-block">
-          <span translate>Password must be at least</span> {{minPasswordLength}} <span translate>characters</span>
+          <span ng-i18next>entry.msgPasswordLength</span> {{minPasswordLength}} <span ng-i18next>entry.characters</span>
         </span>
       </div>
 
       <div class="form-group" ng-if="!record._id"
            ng-class="{'has-error': !passwordMatch(recordForm.password, recordForm.passwordConfirm)}">
-        <label for="entry-user-passwordConfirm" translate>Confirm Password</label>
+        <label for="entry-user-passwordConfirm" ng-i18next>entry.ConfirmPassword</label>
         <input type="password" class="form-control" id="entry-user-passwordConfirm" name="passwordConfirm"
                ng-model="data.passwordConfirm" required>
-        <span ng-show="!passwordMatch(recordForm.password, recordForm.passwordConfirm)" class="help-block" translate>
-          Password and Confirm Password must match
+        <span ng-show="!passwordMatch(recordForm.password, recordForm.passwordConfirm)" class="help-block" ng-i18next>
+          entry.msgMatchPassword
         </span>
       </div>
 
       <div class="form-group" ng-class="{'has-error': isInvalid(recordForm.email)}">
-        <label for="entry-user-email" translate>Email</label>
+        <label for="entry-user-email" ng-i18next>entry.Email</label>
         <input type="email" class="form-control" id="entry-user-email" name="email" ng-model="data.email">
-        <span ng-show="isInvalid(recordForm.email)" class="help-block" translate>
-          Please enter a valid email address
+        <span ng-show="isInvalid(recordForm.email)" class="help-block" ng-i18next>
+          entry.msgEnterValidEmail
         </span>
       </div>
 
       <div class="form-group">
-        <label for="entry-user-name" translate>Name</label>
+        <label for="entry-user-name" ng-i18next>op.Name</label>
         <input type="text" class="form-control" id="entry-user-name" name="name" ng-model="data.name">
       </div>
 
       <div class="form-group">
-        <label for="entry-user-disabled" translate>Disabled</label>
+        <label for="entry-user-disabled" ng-i18next>entry.Disabled</label>
         <input type="checkbox" class="checkbox" id="entry-user-disabled" name="disabled" ng-model="data.disabled">
       </div>
 
       <div class="form-group">
-        <label for="entry-user-roles" translate>Roles</label>
+        <label for="entry-user-roles" ng-i18next>entry.Roles</label>
         <select class="form-control select2-multiple" id="entry-user-roles" multiple ui-select2 ng-model="data.roles">
           <option ng-repeat="role in roles" value="{{role}}">{{role}}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="entry-user-locations" translate>Locations</label>
+        <label for="entry-user-locations" ng-i18next>entry.Locations</label>
         <select class="form-control select2-multiple" id="entry-user-locations" multiple ui-select2
                 ng-model="data.locations">
           <option ng-repeat="location in locations" value="{{location}}">{{location}}</option>
@@ -85,10 +81,10 @@
   <!-- include i18n-friendly images -->
   <button class="btn btn-warning" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-primary" ng-click="submit(recordForm)">
     <span class="icon-ok"></span>
-    <span translate>Save</span>
+    <span ng-i18next>app.Save</span>
   </button>
 </div>

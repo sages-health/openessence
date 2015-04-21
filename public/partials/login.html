@@ -2,18 +2,18 @@
   <div class="row">
     <div class="col-md-5 col-md-offset-4">
       <header class="login-header">
-        <span class="h1" ng-bind="appName"></span>
-        <span class="h2 tagline"><small>&hellip;for disease surveillance</small></span>
+        <span class="h1" ng-bind="appName | i18next"></span>
+        <span class="h2 tagline"><small ng-i18next="[html]pa.msgApp"></small></span>
       </header>
-
       <div ng-show="persona">
-        <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()" translate>
-          Sign in
+        <button type="button" class="btn btn-lg btn-success btn-block" ng-click="promptForLogin()" ng-i18next>
+          pa.SignIn
         </button>
-        <em class="pull-right" translate>No registration required</em>
+        <em class="pull-right" ng-i18next>pa.msgNoRegistration</em>
       </div>
     </div>
   </div>
+
   <div class="row">
     <div class="col-md-5 col-md-offset-4">
       <div class="fade-in-up" ng-show="signInForm || !persona">
@@ -21,13 +21,13 @@
           <hr>
           <span class="hr-text text-muted">or</span>
         </div>
-        <p class="text-info" ng-show="persona" translate>
-          Did your administrator give you a local account? Sign in below!
+        <p class="text-info" ng-show="persona" ng-i18next>
+          pa.msgLocalAccount
         </p>
         <form name="loginForm" role="form" novalidate ng-submit="submit(loginForm)">
           <!-- username -->
           <div class="form-group" ng-class="{'has-error': isInvalid(loginForm.username)}">
-            <label for="login-username-email" translate>Username or email</label>
+            <label for="login-username-email" ng-i18next>pa.UserNameOrEmail</label>
             <input type="text" class="form-control" id="login-username-email" name="username"
                    ng-model="credentials.username" required>
           </div>
@@ -38,18 +38,18 @@
                  probably what's incorrect most of the time -->
 
             <!-- TODO implement password reset -->
-            <!--<a class="pull-right" translate>Forgot password?</a>-->
+            <!--<a class="pull-right" ng-i18next>Forgot password?</a>-->
 
-            <label for="login-password" translate>Password</label>
+            <label for="login-password" ng-i18next>pa.Password</label>
             <input type="password" class="form-control" id="login-password" name="password"
                    ng-model="credentials.password" required>
           </div>
 
-          <div class="help-block error-msg" ng-show="badCredentials" translate>
-            The username or password you entered is incorrect.
+          <div class="help-block error-msg" ng-show="badCredentials" ng-i18next>
+            pa.msgIncorrectCredentials
           </div>
 
-          <button type="submit" class="btn btn btn-primary pull-right" translate>Sign in</button>
+          <button type="submit" class="btn btn btn-primary pull-right" ng-i18next>pa.SignIn</button>
           <!-- TODO prompt user for required fields-->
         </form>
       </div>
@@ -62,7 +62,7 @@
     <div class="collapse navbar-collapse">
       <p class="navbar-text" ng-bind="version"></p>
       <ul class="nav navbar-nav navbar-right">
-        <li ng-show="persona"><a ng-click="showLocalSignInForm()" translate>Local sign in</a></li>
+        <li ng-show="persona"><a ng-click="showLocalSignInForm()" ng-i18next>pa.LocalSignIn</a></li>
         <!-- TODO more links -->
       </ul>
     </div>

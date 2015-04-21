@@ -1,27 +1,27 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Settings</h4>
+  <h4 class="modal-title" ng-i18next>pa.Settings</h4>
 </div>
 <div class="modal-body">
 <form class="form" role="form" novalidate name="editForm">
     <div class="form-group" ng-class="{'has-error': yellAtUser}">
-      <label for="edit-title" translate>Title</label>
+      <label for="edit-title" ng-i18next>pa.Title</label>
       <input type="text" class="form-control" id="edit-title" name="title" ng-model="labels.title" required>
-      <div class="help-block" ng-show="yellAtUser" translate>
-        Please enter title
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        pa.msgEnterTitle
       </div>
     </div>
     <div class="form-group" ng-if="vizType === 'line' || vizType === 'bar'" ng-class="{'has-error': yellAtUser}">
-      <label for="edit-x-label" translate>X-Axis Label</label>
+      <label for="edit-x-label" ng-i18next>pa.XLabel</label>
       <input type="text" class="form-control" id="edit-x-label" name="xLabel" ng-model="labels.x" required>
-      <div class="help-block" ng-show="yellAtUser" translate>
-        Please enter label for x-axis
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        pa.msgEnterXLabel
       </div>
     </div>
     <div class="form-group" ng-if="vizType === 'line' || vizType === 'bar'" ng-class="{'has-error': yellAtUser}">
-      <label for="edit-y-label" translate>Y-Axis Label</label>
+      <label for="edit-y-label" ng-i18next>pa.YLabel</label>
       <input type="text" class="form-control" id="edit-y-label" name="yLabel" ng-model="labels.y" required>
-      <div class="help-block" ng-show="yellAtUser" translate>
-        Please enter label for y-axis
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        pa.msgEnterYLabel
       </div>
     </div>
 </form>
@@ -30,10 +30,10 @@
 <div class="modal-footer">
   <button class="btn btn-default" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-primary" ng-click="ok()">
     <span class="icon-ok"></span>
-    <span translate>OK</span>
+    <span ng-i18next>app.OK</span>
   </button>
 </div>

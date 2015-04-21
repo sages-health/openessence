@@ -185,7 +185,6 @@ app.use('/detectors', express()
   .use(require('./detectors')()));
 
 app.use('/locales', express()
-  .use(auth.denyAnonymousAccess)
   .use(require('./locales')()));
 
 app.use('/csv', express()

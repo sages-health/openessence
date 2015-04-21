@@ -6,7 +6,7 @@
 
 <fieldset ng-show="page === 1 || !paging">
   <!-- TODO red text on white background instead of alert -->
-  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" ng-i18next>op.msgFieldsRequired</div>
   <conflict-message ng-show="conflictError"></conflict-message>
 
   <!--
@@ -18,7 +18,7 @@
   <div class="form-group" data-field="visitDate" ng-show="fields.visitDate.enabled"
        ng-class="{'has-error': isInvalid(visitForm.visitDate), 'has-warning': isInFuture(visit.visitDate)}">
 
-    <label for="entry-visit-date" translate>Visit date</label>
+    <label for="entry-visit-date" ng-i18next>op.VisitDate</label>
 
     <div class="input-group">
       <!-- TODO in angular-ui/bootstrap master they removed weeks -->
@@ -32,28 +32,28 @@
         </span>
     </div>
 
-      <span class="help-block" ng-show="isInFuture(visit.visitDate)" translate>
-        Are you sure? This date is in the future.
+      <span class="help-block" ng-show="isInFuture(visit.visitDate)" ng-i18next>
+        op.msgFutureDate
       </span>
   </div>
 
   <!-- Visit type -->
   <div class="form-group" data-field="visitType" ng-show="fields.visitType.enabled">
-    <label for="entry-visit-visitType" translate>Visit type</label>
+    <label for="entry-visit-visitType" ng-i18next>op.VisitType</label>
 
     <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
             ng-model="visit.visitType">
       <option ng-repeat="v in fields.visitType.values" value="{{v.name}}">{{v.name}}</option>
     </select>
 
-    <span ng-show="isInvalid(visitForm.visitType)" class="help-block" translate>Select visit type</span>
+    <span ng-show="isInvalid(visitForm.visitType)" class="help-block" ng-i18next>op.msgVisitType</span>
   </div>
 
   <!-- Symptom onset -->
   <div class="form-group" data-field="symptomOnsetDate" ng-show="fields.symptomOnsetDate.enabled"
        ng-class="{'has-error': isInvalid(visitForm.symptomOnsetDate), 'has-warning': isInFuture(visit.symptomOnsetDate)}">
 
-    <label for="entry-visit-onset" translate>Symptom onset</label>
+    <label for="entry-visit-onset" ng-i18next>op.SymptomOnset</label>
 
     <div class="input-group">
       <input id="entry-visit-onset" name="symptomOnsetDate" type="text" class="form-control"
@@ -67,14 +67,14 @@
         </span>
     </div>
 
-      <span class="help-block" ng-show="isInFuture(visit.symptomOnsetDate)" translate>
-        Are you sure? This date is in the future.
+      <span class="help-block" ng-show="isInFuture(visit.symptomOnsetDate)" ng-i18next>
+        op.msgFutureDate
       </span>
   </div>
 
   <!-- Facility -->
   <div class="form-group" data-field="medicalFacility" ng-show="fields.medicalFacility.enabled">
-    <label for="entry-visit-facility" translate>Facility</label>
+    <label for="entry-visit-facility" ng-i18next>op.Facility</label>
 
     <select class="form-control" id="entry-visit-facility" name="facility" ng-model="visit.medicalFacility">
       <option value=""></option>
@@ -90,13 +90,13 @@
       <!-- This is the Unicode horizontal box character, not ------ -->
       <!-- TODO label should be as long as longest option -->
       <optgroup label="──────────" ng-if="fields['medicalFacility.other'].enabled">
-        <option value="Other" translate>Other</option>
+        <option value="Other" ng-i18next>op.Other</option>
       </optgroup>
     </select>
   </div>
 
   <div class="form-group" ng-show="fields['medicalFacility.other'].enabled && includesOther(visit.medicalFacility)">
-    <label for="entry-other-facility" translate>Other facility not listed</label>
+    <label for="entry-other-facility" ng-i18next>op.msgOtherFacility</label>
 
     <!-- Notice how the model reference is a string, NOT a nested object. This is to map to the field on
          scope.visit -->
@@ -106,13 +106,13 @@
 
 
   <div class="form-group" ng-show="fields['medicalFacility.sites.total'].enabled">
-    <label for="entry-aggregate-sites-total" translate>Sites Total</label>
+    <label for="entry-aggregate-sites-total" ng-i18next>op.SitesTotal</label>
     <input class="form-control" type="number" id="entry-aggregate-sites-total" name="sitesTotal"
            ng-model="medicalFacility.sites.total">
   </div>
 
   <div class="form-group" ng-show="fields['medicalFacility.sites.reporting'].enabled">
-    <label for="entry-aggregate-sites-reporting" translate>Sites Reporting</label>
+    <label for="entry-aggregate-sites-reporting" ng-i18next>op.SitesReporting</label>
     <input class="form-control" type="number" id="entry-aggregate-sites-reporting" name="sitesReporting"
            ng-model="medicalFacility.sites.reporting">
   </div>
@@ -123,13 +123,13 @@
 <fieldset ng-show="page === 2 || !paging">
   <!-- Patient ID -->
   <div class="form-group" data-field="patient.id" ng-show="fields['patient.id'].enabled">
-    <label for="entry-patient-id" translate>Patient ID</label>
+    <label for="entry-patient-id" ng-i18next>op.PatientID</label>
     <input type="text" id="entry-patient-id" class="form-control" name="patientID" ng-model="visit.patient.id">
   </div>
 
   <!-- Name -->
   <div class="form-group" data-field="patient.name" ng-show="fields['patient.name'].enabled">
-    <label for="entry-patient-name" translate>Name</label>
+    <label for="entry-patient-name" ng-i18next>op.Name</label>
     <!-- Don't impose ANY restricts on name, e.g. don't assume First name, Last name. Naming varies widely among
          cultures. It's best to just have a single name field. -->
     <input type="text" id="entry-patient-name" class="form-control" name="patientName" ng-model="visit.patient.name">
@@ -144,19 +144,19 @@
 <fieldset ng-show="page === 3 || !paging">
   <!-- Sex, this should be on the same page as pregnancy since they're linked -->
   <div class="form-group" data-field="patient.sex" ng-show="fields['patient.sex'].enabled">
-    <label translate>Sex</label>
+    <label ng-i18next>op.Sex</label>
     <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
     <label class="radio-inline">
       <input type="radio" name="sex" value="male" ng-model="visit.patient.sex">
-      <span translate>Male</span>
+      <span ng-i18next>op.Male</span>
     </label>
     <label class="radio-inline">
       <input type="radio" name="sex" value="female" ng-model="visit.patient.sex">
-      <span translate>Female</span>
+      <span ng-i18next>op.Female</span>
     </label>
     <label class="radio-inline">
       <input type="radio" name="sex" value="" ng-model="visit.patient.sex">
-      <span translate>Unknown</span>
+      <span ng-i18next>op.Unknown</span>
     </label>
   </div>
 
@@ -164,7 +164,7 @@
   <div class="form-group" data-field="patient.phone" ng-show="fields['patient.phone'].enabled"
        ng-class="{'has-error': isInvalid(visitForm.patientPhone)}">
 
-    <label for="entry-patient-phone" translate>Telephone number</label>
+    <label for="entry-patient-phone" ng-i18next>op.TelephoneNumber</label>
     <!-- type="tel" doesn't actually enforce any syntax, but it will use the appropriate mobile keyboard and it's
          more semantically accurate -->
     <input type="tel" id="entry-patient-phone" class="form-control" name="patientPhone"
@@ -175,7 +175,7 @@
   <div class="form-group" data-field="patient.address" ng-show="fields['patient.address'].enabled"
        ng-class="{'has-error': isInvalid(visitForm.patientAddress)}">
 
-    <label for="entry-patient-address" translate>Address</label>
+    <label for="entry-patient-address" ng-i18next>op.Address</label>
     <!-- Addresses are way too complicated to try and impose any kind of semantics on them besides free text. This
          is more for followup in case a patient needs to be manually contacted anyway, so un-semanticness is fine. -->
     <textarea id="entry-patient-address" class="form-control" name="patientAddress" ng-model="visit.patient.address">
@@ -192,11 +192,11 @@
   <div class="form-group" data-field="patient.pulse" ng-show="fields['patient.pulse'].enabled"
        ng-class="{'has-error': isInvalid(visitForm.pulse)}">
 
-    <label for="entry-pulse" translate>Pulse</label>
+    <label for="entry-pulse" ng-i18next>op.Pulse</label>
 
     <div class="input-group">
       <input type="number" id="entry-pulse" class="form-control" name="pulse" ng-model="visit.patient.pulse">
-      <span class="input-group-addon" translate translate-comment="Beats per minute">BPM</span>
+      <span class="input-group-addon" ng-i18next>op.BPM</span>
     </div>
   </div>
 
@@ -204,11 +204,11 @@
   <div class="form-group" data-field="patient.weight" ng-show="fields['patient.weight'].enabled"
        ng-class="{'has-error': isInvalid(visitForm.weight)}">
 
-    <label for="entry-weight" translate>Weight</label>
+    <label for="entry-weight" ng-i18next>op.Weight</label>
 
     <div class="input-group">
       <input type="number" id="entry-weight" class="form-control" name="weight" ng-model="visit.patient.weight">
-      <span class="input-group-addon" translate>kg</span>
+      <span class="input-group-addon" ng-i18next>op.kg</span>
     </div>
   </div>
 
@@ -222,14 +222,14 @@
        ng-show="fields['patient.preExistingConditions'].enabled"
        ng-class="{'has-error': isInvalid(visitForm.preExistingConditions)}">
 
-    <label for="entry-pre-existing-conditions" translate>Pre-existing conditions</label>
+    <label for="entry-pre-existing-conditions" ng-i18next>op.PreExistingConditions</label>
     <select class="form-control select2-multiple" id="entry-pre-existing-conditions" name="preExistingConditions"
             multiple ui-select2 ng-model="visit.patient.preExistingConditions">
       <option ng-repeat="condition in fields['patient.preExistingConditions'].values" value="{{condition.name}}">
         {{condition.name}}
       </option>
       <optgroup label="──────────" ng-if="fields['patient.preExistingConditions.other'].enabled">
-        <option value="Other" translate>Other</option>
+        <option value="Other" ng-i18next>op.Other</option>
       </optgroup>
     </select>
   </div>
@@ -237,7 +237,7 @@
   <!-- Other pre-existing conditions -->
   <div class="form-group"
        ng-show="fields['patient.preExistingConditions'].enabled && includesOther(visit.patient.preExistingConditions)">
-    <label for="entry-other-pre-existing-conditions" translate>Other pre-existing conditions</label>
+    <label for="entry-other-pre-existing-conditions" ng-i18next>op.OtherPreExistingConditions</label>
 
     <input type="text" id="entry-other-pre-existing-conditions" class="form-control"
            name="otherPreExistingConditions" ng-model="others['patient.preExistingConditions']">
@@ -254,34 +254,34 @@
 
 <fieldset ng-show="page === 'last' || !paging">
   <!-- need this message for validation -->
-  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" ng-i18next>op.msgFieldsRequired</div>
 
   <!-- Symptoms -->
   <div class="form-group" data-field="symptoms" ng-show="fields.symptoms.enabled">
 
     <div ng-if="form.dataType === 'individual'">
-      <label for="entry-visit-symptoms" translate>Symptoms</label>
+      <label for="entry-visit-symptoms" ng-i18next>op.Symptoms</label>
       <select class="form-control select2-multiple" id="entry-visit-symptoms" name="symptoms" multiple ui-select2
               ng-model="visit.symptoms">
         <option ng-repeat="s in fields.symptoms.values" value="{{s.name}}">{{s.name}}</option>
         <optgroup label="──────────" ng-if="fields['symptoms.other'].enabled">
-          <option value="Other" translate>Other</option>
+          <option value="Other" ng-i18next>op.Other</option>
         </optgroup>
       </select>
     </div>
 
     <div ng-if="form.dataType === 'aggregate'">
-      <label for="entry-aggregate-symptoms" translate>Aggregate Symptoms</label>
+      <label for="entry-aggregate-symptoms" ng-i18next>op.AggregateSymptoms</label>
 
       <div id="entry-aggregate-symptoms" class="symptoms-edit-grid" ng-grid="symptomsGridOptions"></div>
     </div>
 
-    <span ng-show="isInvalid(visitForm.symptoms)" class="help-block" translate>Select symptom(s)</span>
+    <span ng-show="isInvalid(visitForm.symptoms)" class="help-block" ng-i18next>op.SelectSymptoms</span>
   </div>
 
   <!-- Other symptoms -->
   <div class="form-group" ng-show="fields['symptoms.other'].enabled && includesOther(visit.symptoms)">
-    <label for="entry-other-symptoms" translate>Other symptoms</label>
+    <label for="entry-other-symptoms" ng-i18next>op.OtherSymptoms</label>
 
     <input type="text" id="entry-other-symptoms" class="form-control" name="otherSymptoms" ng-model="others.symptoms">
   </div>
@@ -290,28 +290,28 @@
   <div class="form-group" data-field="diagnoses" ng-show="fields.diagnoses.enabled">
 
     <div ng-if="form.dataType === 'individual'">
-      <label for="entry-visit-diagnoses" translate>Diagnoses</label>
+      <label for="entry-visit-diagnoses" ng-i18next>op.Diagnoses</label>
 
       <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
               ng-model="visit.diagnoses">
         <option ng-repeat="d in fields.diagnoses.values" value="{{d.name}}">{{d.name}}</option>
         <optgroup label="──────────" ng-if="fields['diagnoses.other'].enabled">
-          <option value="Other" translate>Other</option>
+          <option value="Other" ng-i18next>op.Other</option>
         </optgroup>
       </select>
     </div>
 
     <div ng-if="form.dataType === 'aggregate'">
-      <label for="entry-aggregate-diagnoses" translate>Aggregate Diagnoses</label>
+      <label for="entry-aggregate-diagnoses" ng-i18next>op.AggregateDiagnoses</label>
       <div id="entry-aggregate-diagnoses" class="symptoms-edit-grid" ng-grid="diagnosesGridOptions"></div>
     </div>
 
-    <span ng-show="isInvalid(visitForm.diagnoses)" class="help-block" translate>Select diagnoses</span>
+    <span ng-show="isInvalid(visitForm.diagnoses)" class="help-block" ng-i18next>op.SelectDiagnoses</span>
   </div>
 
   <!-- Other diagnoses -->
   <div class="form-group" ng-show="fields['diagnoses.other'].enabled && includesOther(visit.diagnoses)">
-    <label for="entry-other-diagnoses" translate>Other diagnoses</label>
+    <label for="entry-other-diagnoses" ng-i18next>op.OtherDiagnoses</label>
 
     <input type="text" id="entry-other-diagnoses" class="form-control" name="otherdiagnoses"
            ng-model="others.diagnoses">
@@ -319,23 +319,23 @@
 
   <!-- Disposition -->
   <div class="form-group" data-field="disposition" ng-show="fields.disposition.enabled">
-    <label for="entry-visit-disposition" translate>Disposition</label>
+    <label for="entry-visit-disposition" ng-i18next>op.Disposition</label>
 
     <select class="form-control select2-multiple" id="entry-visit-disposition" name="disposition" multiple ui-select2
             ng-model="visit.disposition">
       <option ng-repeat="d in fields.disposition.values" value="{{d.name}}">{{d.name}}</option>
     </select>
 
-    <span ng-show="isInvalid(visitForm.disposition)" class="help-block" translate>Select a disposition type</span>
+    <span ng-show="isInvalid(visitForm.disposition)" class="help-block" ng-i18next>op.SelectDispositionType</span>
   </div>
 
   <!-- Notes -->
   <div class="form-group" data-field="notes" ng-show="fields.notes.enabled">
-    <label for="entry-visit-notes" translate>Notes</label>
+    <label for="entry-visit-notes" ng-i18next>op.Notes</label>
 
     <textarea class="form-control" id="entry-visit-notes" name="Notes"
               ng-model="visit.notes"></textarea>
-    <span class="help-block" translate>Anything else you want to add</span>
+    <span class="help-block" ng-i18next>op.msgAnythingElseToAdd</span>
   </div>
 </fieldset>
 

@@ -2,20 +2,26 @@
 <div class="form-group" data-field="patient.temperature" ng-show="fields['patient.temperature'].enabled"
      ng-class="{'has-error': isInvalid(visitForm.temperature), 'has-warning': warning}">
 
-  <label for="entry-temperature" translate>Temperature</label>
+  <label for="entry-temperature" ng-i18next>entry.Temperature</label>
 
   <div class="input-group">
     <input type="number" id="entry-temperature" class="form-control" name="temperature" min="0" max="100"
            ng-model="visit.patient.temperature">
-    <span class="input-group-addon" translate>°C</span>
+    <span class="input-group-addon" ng-i18next>entry.degreeC</span>
   </div>
 
-  <span ng-show="warning === 'low'"
-        class="help-block" translate>
-    {{visit.patient.temperature}} °C is quite low. Are you sure?
+  <span ng-show="warning === 'low'" class="help-block">
+    {{visit.patient.temperature}}
+  </span>
+  <span ng-show="warning === 'low'" class="help-block" ng-i18next>
+    entry.msgLowTemperature
   </span>
 
-  <span ng-show="warning === 'high'" class="help-block" translate>
-    {{visit.patient.temperature}} °C is quite high. Are you sure?
+
+  <span ng-show="warning === 'high'" class="help-block">
+    {{visit.patient.temperature}}
+  </span>
+  <span ng-show="warning === 'high'" class="help-block" ng-i18next>
+    entry.msgHighTemperature
   </span>
 </div>

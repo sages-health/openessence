@@ -3,7 +3,7 @@
   <div class="col-md-12">
     <form name="queryForm" class="query-string-form" role="form" novalidate ng-submit="submit(queryForm)">
       <div class="form-group" ng-class="{'has-error': isInvalid(queryForm.queryStrings), 'has-feedback': isInvalid(queryForm.queryStrings)}">
-        <label class="sr-only" for="query-string" translate>Query</label>
+        <label class="sr-only" for="query-string" ng-i18next>op.Query</label>
         <input type="text" class="form-control" id="query-string" name="queryStrings" spellcheck="false" ng-model="queryString">
         <span ng-show="isInvalid(queryForm.queryStrings)" class="icon-cancel form-control-feedback"></span>
       </div>
@@ -19,7 +19,7 @@
   <div class="col-md-1">
     <div class="btn-group">
       <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" type="button"
-              popover="{{'Add filter' | translate}}" popover-trigger="mouseenter">
+              popover="{{'op.AddFilter' | i18next}}" popover-trigger="mouseenter">
         <span class="icon-plus"></span>
       </button>
       <ul class="dropdown-menu" role="menu" aria-labelledby="add-filter-btn">
