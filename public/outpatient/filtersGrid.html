@@ -26,7 +26,7 @@
         <!-- The filters should be in a consistent order, and alphabetical order is as good as any
              (and easier to maintain) -->
         <li ng-repeat="filter in possibleFilters | orderObjectBy:'name'">
-          <a ng-click="addFilter(filter)">{{filter.name}}</a>
+          <a ng-click="addFilter(filter)" ng-i18next>{{filter.name}}</a>
         </li>
       </ul>
     </div>
