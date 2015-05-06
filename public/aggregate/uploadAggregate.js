@@ -6,7 +6,7 @@ var directives = require('../scripts/modules').directives;
 /**
  * A reusable outpatient upload form.
  */
-angular.module(directives.name).directive('aggregateUpload', /*@ngInject*/ function (gettextCatalog, OutpatientVisitResource,
+angular.module(directives.name).directive('aggregateUpload', /*@ngInject*/ function (OutpatientVisitResource,
                                                                        aggregateUtil, $rootScope) {
   return {
     restrict: 'E',

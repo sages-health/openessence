@@ -30,7 +30,7 @@ require('angular-ui-router');
 require('angular-ui-select');
 require('angular-ui-select2');
 require('angular-ui-sortable');
-require('angular-gettext');
+//require('angular-gettext');
 require('angular-gridster');
 require('angular-loading-bar');
 require('angular-order-object-by');
@@ -75,7 +75,7 @@ require('./filters');
 
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.select2', 'ui.sortable',
-                    'gettext', 'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+                    'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
                     'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll',
                     'jm.i18next', frable.name]
   .concat(Object.keys(modules).map(function (m) {
@@ -310,10 +310,10 @@ angular.module('jm.i18next').config(['$i18nextProvider', function ($i18nextProvi
 
 }]);
 
-app.run(function ($rootScope, $http, gettextCatalog, lang) {
-  gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
-  gettextCatalog.setCurrentLanguage(lang);
-  gettextCatalog.loadRemote('/public/translations/' + lang + '.json');
-});
+//app.run(function ($rootScope, $http,  lang) {
+//  gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
+//  gettextCatalog.setCurrentLanguage(lang);
+//  gettextCatalog.loadRemote('/public/translations/' + lang + '.json');
+//});
 
 module.exports = app;

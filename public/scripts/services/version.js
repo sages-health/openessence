@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($filter, gettextCatalog) {
+module.exports = function ($filter) {
   var string = angular.element('meta[name="_version"]').attr('content');
   var commit = angular.element('meta[name="_commit"]').attr('content');
   var date = parseInt(angular.element('meta[name="_deploy-date"]').attr('content'), 10);
@@ -13,7 +13,7 @@ module.exports = function ($filter, gettextCatalog) {
     description += '-' + commit.substr(0, 7);
   }
   if (date) {
-    description += ' ' + gettextCatalog.getString('deployed on') + ' ';
+    description += ' ' + $filter('i18next')('deployed on') + ' ';
     description += $filter('date')(date, 'yyyy-MM-dd @ HH:mm') + 'Z'; // add 'Z' since the timestamp is in UTC
   }
 

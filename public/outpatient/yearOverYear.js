@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, ngTableParams) {
+angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, ngTableParams) {
 
   return {
     restrict: 'E',
@@ -32,9 +32,9 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
           });
 
           var defaultLabels = {
-            title: gettextCatalog.getString('Year Over Year'),
-            y: gettextCatalog.getString('Count'),
-            x: gettextCatalog.getString('Date')
+            title: $filter('i18next')('Year Over Year'),
+            y: $filter('i18next')('Count'),
+            x: $filter('i18next')('Date')
           };
 
           scope.totalServerItems = 0;

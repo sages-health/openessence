@@ -5,7 +5,7 @@ var moment = require('moment');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientSmallTimeSeries', //
-  /*@ngInject*/ function ($timeout, $window, gettextCatalog, outpatientAggregation, visualization, //
+  /*@ngInject*/ function ($timeout, $window, outpatientAggregation, visualization, //
                           OutpatientVisitResource) {
     return {
       restrict: 'E',

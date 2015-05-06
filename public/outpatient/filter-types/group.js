@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/ function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/ function ($filter) {
   return {
     restrict: 'E',
     template: require('./group.html'),
@@ -14,7 +14,7 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
     link: {
       pre: function (scope) {
         scope.strings = {
-          any: gettextCatalog.getString('Any')
+          any: $filter('i18next')('Any')
         };
         scope.filter.value = scope.filter.value || '*';
 
@@ -28,7 +28,7 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
             }
             return {
               // NOTE: this will not mark the string for extraction
-              name: gettextCatalog.getString(v.name),
+              name: $filter('i18next')(v.name),
               value: value
             };
           });
@@ -64,7 +64,7 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
               return v.value === val;
             })) {
               scope.filter.values.push({
-                name: gettextCatalog.getString(val),
+                name: $filter('i18next')(val),
                 value: val
               });
             }

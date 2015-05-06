@@ -8,9 +8,9 @@ module.exports = function ($modal) {
     openWeeklyReport: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-weekly-report-dialog.html'),
-        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, gettextCatalog) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, $filter) {
           $scope.report = {};
-          $scope.report.name = gettextCatalog.getString('Reported Cases by Country - Weekly Report');
+          $scope.report.name = $filter('i18next')('Reported Cases by Country - Weekly Report');
           $scope.isInvalid = function (field) {
             if ($scope.yellAtUser) {
               // if the user has already tried to submit, show them all the fields they're required to submit
@@ -46,9 +46,9 @@ module.exports = function ($modal) {
     openTimeseriesReport: function (options) {
       options = angular.extend({
         template: require('../../../partials/reports/open-timeseries-report-dialog.html'),
-        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, gettextCatalog) {
+        controller: /*@ngInject*/ function ($scope, $modalInstance, $window, $filter) {
           $scope.report = {};
-          $scope.report.name = gettextCatalog.getString('Reported Cases by Country - Time Series');
+          $scope.report.name = $filter('i18next')('Reported Cases by Country - Time Series');
           $scope.isInvalid = function (field) {
             if ($scope.yellAtUser) {
               // if the user has already tried to submit, show them all the fields they're required to submit

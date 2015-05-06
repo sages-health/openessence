@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientAgeRangeFilter', /*@ngInject*/ function (gettextCatalog) {
+angular.module(directives.name).directive('outpatientAgeRangeFilter', /*@ngInject*/ function ($filter) {
   return {
     restrict: 'E',
     template: require('./age-range.html'),
@@ -14,14 +14,14 @@ angular.module(directives.name).directive('outpatientAgeRangeFilter', /*@ngInjec
     link: {
       pre: function (scope) {
         scope.strings = {
-          any: gettextCatalog.getString('Any')
+          any: $filter('i18next')('Any')
         };
         scope.filter.value = scope.filter.value || '*';
         if (scope.filter.values) {
           scope.filter.values = scope.filter.values.map(function (v) {
             return {
               // NOTE: this will not mark the string for extraction
-              name: gettextCatalog.getString(v.name),
+              name: $filter('i18next')(v.name),
               value: v.name
             };
           });
@@ -39,7 +39,7 @@ angular.module(directives.name).directive('outpatientAgeRangeFilter', /*@ngInjec
               return v.value === val;
             })) {
               scope.filter.values.push({
-                name: gettextCatalog.getString(val),
+                name: $filter('i18next')(val),
                 value: val
               });
             }

@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, gettextCatalog, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, ngTableParams) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, ngTableParams) {
 
   return {
     restrict: 'E',
@@ -33,9 +33,9 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           });
 
           var defaultLabels = {
-            title: gettextCatalog.getString('Timeseries'),
-            y: gettextCatalog.getString('Count'),
-            x: gettextCatalog.getString('Date')
+            title: $filter('i18next')('hinge.Timeseries'),//gettextCatalog.getString('Timeseries'),
+            y: $filter('i18next')('op.Count'),//gettextCatalog.getString('Count'),
+            x: $filter('i18next')('op.Date')//gettextCatalog.getString('Date')
           };
 
           scope.totalServerItems = 0;

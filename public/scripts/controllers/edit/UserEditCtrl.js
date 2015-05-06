@@ -3,13 +3,13 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, UserResource, FormResource, $location) {
+module.exports = function ($scope, $modal, tableUtil, crud, $filter, UserResource, FormResource, $location) {
   $scope.activeFilters = [
     {
       filterID: 'username',
       type: 'text',
       field: 'username',
-      name: gettextCatalog.getString('Username')
+      name: $filter('i18next')('Username')
     }
   ];
   $scope.possibleFilters = [
@@ -17,25 +17,25 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, User
       filterID: 'username',
       type: 'text',
       field: 'username',
-      name: gettextCatalog.getString('Username')
+      name: $filter('i18next')('Username')
     },
     {
       filterID: 'name',
       type: 'text',
       field: 'name',
-      name: gettextCatalog.getString('Name')
+      name: $filter('i18next')('Name')
     },
     {
       filterID: 'email',
       type: 'text',
       field: 'email',
-      name: gettextCatalog.getString('Email')
+      name: $filter('i18next')('Email')
     },
     {
       filterID: 'disabled',
       type: 'check-box',
       field: 'disabled',
-      name: gettextCatalog.getString('Disabled')
+      name: $filter('i18next')('Disabled')
     }
   ].reduce(function (filters, filter) {
       filters[filter.filterID] = filter;

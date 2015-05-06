@@ -82,7 +82,7 @@ angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ fun
 });
 
 angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ function ($scope, $modal, outpatientEditModal,
-                                                                            gettextCatalog, outpatientDeleteModal,
+                                                                            outpatientDeleteModal,
                                                                             outpatientCsvImportModal,
                                                                             possibleFilters, FormResource) {
   $scope.activeFilters = [

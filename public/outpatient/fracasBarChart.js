@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, $log, $location, $timeout, debounce,
-                                                                                        updateURL, gettextCatalog, EditSettings) {
+                                                                                        updateURL, $filter, EditSettings) {
   return {
     restrict: 'E',
     template: require('./bar-chart.html'),
@@ -23,9 +23,9 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
         pre: function (scope) {
 
           var defaultLabels = {
-            title: gettextCatalog.getString('Bar Chart'),
-            y: gettextCatalog.getString('Count'),
-            x: gettextCatalog.getString('Category')
+            title: $filter('i18next')('Bar Chart'),
+            y: $filter('i18next')('Count'),
+            x: $filter('i18next')('Category')
           };
 
           scope.options = scope.options || {};

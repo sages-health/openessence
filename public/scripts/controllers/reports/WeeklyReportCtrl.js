@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, $window, $location, $document, gettextCatalog, user, visualization, //
+module.exports = function ($scope, $window, $location, $document, user, visualization, //
                            OutpatientVisitResource) {
   $scope.export = function () {
     var title = $scope.report.name.replace(/ /g, '_');

@@ -164,7 +164,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'symptoms',
       type: 'multi-select',
       field: 'symptoms.name',
-      name: 'op.Symptom',
+      name: 'op.Symptoms',
       aggregation: {
         nested: {
           path: 'symptoms'
@@ -190,7 +190,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'symptomsGroup',
       type: 'group',
       field: 'symptoms.name',
-      name: 'op.SymptomGroup',
+      name: 'op.SymptomsGroup',
       aggregationField: 'symptoms.name.raw',
       aggregation: {
         nested: {
