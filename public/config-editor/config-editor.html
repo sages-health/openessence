@@ -32,11 +32,6 @@
                   </label>
                 </div>
 
-                <!--<label class="checkbox-inline" ng-repeat="(key, val) in templates">-->
-                <!--<input type="checkbox" name="template" checklist-value="key" checklist-model="siteTemplate.templates"-->
-                <!--ng-disabled="key !== 'Custom'">-->
-                <!--{{key}}-->
-                <!--</label>-->
               </div>
             </div>
           </div>
@@ -72,10 +67,20 @@
                     </div>
 
                     <div ng-if="field.enabled && field.values !== undefined">
-                      <config-multiselect field="field"></config-multiselect>
-                      <br>
-                      <div ng-if="field.groupName !== undefined">
+
+                      <!-- sex and antiviral.exposure fields have fixed number of rows.
+                      Admin cannot add or delete rows, he can only change displayValue -->
+                      <div ng-if="field.formFieldType === 'FixedLengthList'">
+                        <config-table field="field"></config-table>
+                      </div>
+
+                      <div ng-if="field.formFieldType === 'FixedLengthList'">
+                        <config-multiselect field="field"></config-multiselect>
+                        <br>
+
+                        <div ng-if="field.groupName !== undefined">
                           <config-group field="groupField(field)" possible-values="field.values"></config-group>
+                        </div>
                       </div>
                     </div>
                   </td>

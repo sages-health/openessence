@@ -17,7 +17,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       field: 'visitDate',
       name: 'op.VisitDate',
       aggregation: {
-        date_histogram: {
+        date_histogram: { // jshint ignore:line
           field: 'visitDate',
           interval: 'day',
           format : 'yyyy-MM-dd'
@@ -126,7 +126,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     },
     {
       filterID: 'patient.sex',
-      type: 'sex',
+      type: 'multi-select',//'sex',
       field: 'patient.sex',
       name: 'op.Sex',
       aggregation: {

@@ -301,7 +301,8 @@ var indexRequests = [
               antiviral: {
                 properties: {
                   exposure: {
-                    type: 'boolean'
+                    type: 'string',
+                    index: 'not_analyzed'
                   },
                   source: {
                     type: 'string',

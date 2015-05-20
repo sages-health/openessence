@@ -144,7 +144,18 @@
 <fieldset ng-show="page === 3 || !paging">
   <!-- Sex, this should be on the same page as pregnancy since they're linked -->
   <div class="form-group" data-field="patient.sex" ng-show="fields['patient.sex'].enabled">
-    <label ng-i18next>op.Sex</label>
+    <label for="entry-visit-patient-sex" ng-i18next>op.Sex</label>
+
+    <select class="form-control" id="entry-visit-patient-sex" name="patientSex"
+            ng-model="visit.patient.sex">
+
+      <option ng-repeat="f in fields['patient.sex'].values" value="{{f.value}}"
+              ng-selected="visit.patient.sex === f.value">
+        {{f.name}}
+      </option>
+    </select>
+
+
     <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
     <label class="radio-inline">
       <input type="radio" name="sex" value="male" ng-model="visit.patient.sex">

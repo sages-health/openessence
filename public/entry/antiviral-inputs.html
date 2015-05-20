@@ -1,55 +1,41 @@
 <!-- Antiviral exposure -->
 <div class="form-group" data-field="antiviral.exposure" ng-show="fields['antiviral.exposure'].enabled">
-  <label ng-i18next>
+  <label for="entry-visit-antiviral-exposure" ng-i18next>
     entry.ExposureDuringLast14Days
   </label>
-  <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
-  <label class="radio-inline">
-    <input type="radio" name="antiviralExposure" ng-value="true" ng-model="visit.antiviral.exposure">
-    <span ng-i18next>app.Yes</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralExposure" ng-value="false" ng-model="visit.antiviral.exposure">
-    <span ng-i18next>app.No</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralExposure" ng-value="" ng-model="visit.antiviral.exposure">
-    <span ng-i18next>app.Unknown</span>
-  </label>
+  <select class="form-control" id="entry-visit-antiviral-exposure" name="antiviralExposure"
+          ng-model="visit.antiviral.exposure">
+
+    <option ng-repeat="f in fields['antiviral.exposure'].values" value="{{f.value}}"
+            ng-selected="visit.antiviral.exposure === f.value">
+      {{f.name}}
+    </option>
+  </select>
 </div>
 
 <!-- Antiviral source -->
 <div class="form-group" data-field="antiviral.source"
-     ng-show="fields['antiviral.source'].enabled && visit.antiviral.exposure === true">
+     ng-show="fields['antiviral.source'].enabled && visit.antiviral.exposure === 'Y'">
 
-  <label ng-i18next>entry.AntiviralSource</label>
-  <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
-  <label class="radio-inline">
-    <input type="radio" name="antiviralSource" value="patient" ng-model="visit.antiviral.source">
-    <span ng-i18next>entry.Patient</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralSource" value="household" ng-model="visit.antiviral.source">
-    <span ng-i18next>entry.HouseholdContact</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralSource" value="" ng-model="visit.antiviral.source">
-    <span ng-i18next>app.Unknown</span>
-  </label>
+  <label for="entry-visit-antiviral-source" ng-i18next>entry.AntiviralSource</label>
+  <select class="form-control" id="entry-visit-antiviral-source" name="antiviralSource"
+          ng-model="visit.antiviral.source">
+    <option ng-repeat="f in fields['antiviral.source'].values" value="{{f.name}}"
+            ng-selected="visit.antiviral.source === f.name">
+      {{f.name}}
+    </option>
+  </select>
 </div>
 
 <!-- Antiviral name -->
 <div class="form-group" data-field="antiviral.name"
-     ng-show="fields['antiviral.name'].enabled && visit.antiviral.exposure === true">
+     ng-show="fields['antiviral.name'].enabled && visit.antiviral.exposure === 'Y'">
 
   <label for="entry-visit-antiviral-name" ng-i18next>entry.NameOfAntiviral</label>
   <select class="form-control" id="entry-visit-antiviral-name" name="antiviralName" ng-model="visit.antiviral.name">
-    <option value="oseltamivir" ng-i18next>entry.Oseltamivir</option>
-    <option value="zanamivir" ng-i18next>entry.Zanamivir</option>
-    <option value="rimantadine" ng-i18next>entry.Rimantadine</option>
-    <option value="amantadine" ng-i18next>entry.Amantadine</option>
-    <option value="umifenovir" ng-i18next>entry.Umifenovir</option>
-    <option value="laninamivir" ng-i18next>entry.Laninamivir</option>
-    <option value="peramivir" ng-i18next>entry.Peramivir</option>
+    <option ng-repeat="f in fields['antiviral.name'].values" value="{{f.name}}"
+            + ng-selected="visit.antiviral.name === f.name">
+      {{f.name}}
+    </option>
   </select>
 </div>

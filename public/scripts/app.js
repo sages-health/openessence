@@ -288,9 +288,8 @@ app.config(function ($httpProvider) {
 angular.module('jm.i18next').config(['$i18nextProvider', function ($i18nextProvider) {
   i18n.addPostProcessor('localePostProcessor', function (value, key, options) {
     if (value === '') {
-      console.log('key:' + key + '**' + value);
-      //return key;
-      return 'MISSING[' + key + ']';
+      console.log('key:MISSING[' + key + ']');
+      return key;
     }
     return value;
   });

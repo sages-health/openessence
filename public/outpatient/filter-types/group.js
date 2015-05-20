@@ -14,7 +14,7 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
     link: {
       pre: function (scope) {
         scope.strings = {
-          any: $filter('i18next')('Any')
+          any: $filter('i18next')('app.Any')
         };
         scope.filter.value = scope.filter.value || '*';
 
@@ -28,7 +28,7 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
             }
             return {
               // NOTE: this will not mark the string for extraction
-              name: $filter('i18next')(v.name),
+              name: v.name,
               value: value
             };
           });
@@ -64,7 +64,7 @@ angular.module(directives.name).directive('outpatientGroupFilter', /*@ngInject*/
               return v.value === val;
             })) {
               scope.filter.values.push({
-                name: $filter('i18next')(val),
+                name: val,
                 value: val
               });
             }

@@ -18,7 +18,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
 
           var temp = template._source;
           temp.fields.forEach(function (field) {
-            if (!field.isGroup && field.values) {
+            if (!field.isGroup && field.formFieldType !== 'FixedLengthList' && field.values) {
               field.values = field.values.map(function (val) {
                 return val.name;
               });
@@ -107,7 +107,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
 
     template.fields.forEach(function (field) {
       // Ensure values has same format as possibleValues
-      if (!field.isGroup &&  field.values) {
+      if (!field.isGroup && field.formFieldType !== 'FixedLengthList' &&  field.values) {
 
         var possibleValuesByName = field.possibleValues.reduce(function (values, v) {
           values[v.name] = v;
@@ -134,7 +134,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
 
     fields.forEach(function (field) {
       // if field is mot a group field and it has values ==> it is a single/multi-select field
-      if (!field.isGroup && field.values) {
+      if (!field.isGroup && field.formFieldType !== 'FixedLengthList' && field.values) {
         // field.possibleValues has all possible values
         // field.values has values admin wants to select for this site
         field.possibleValues = angular.copy(field.values);
@@ -159,32 +159,6 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
 
     addSiteTemplate($scope.siteTemplate.templates);
   });
-//  $scope.$watchCollection('siteTemplate.templates', function (newVals, oldVals) {
-//    if ($scope.siteTemplate._id !== undefined && oldVals === undefined) {
-//      return;
-//    }
-//    // first time loading config page
-//    if (newVals === undefined && oldVals === undefined) {
-//      return;
-//    }
-//
-//    // if adding first one
-//    if (oldVals === undefined) {
-//      addSiteTemplate(newVals[0]);
-//    }
-//    // if adding more templates
-//    else if (oldVals.length < newVals.length) {
-//      var newName = newVals.filter(function (val) {
-//        return oldVals.indexOf(val) === -1;
-//      });
-//
-//      updateSiteTemplate(newName, true);
-//    }
-//    // if selected template removed
-//    else if (oldVals.length > newVals.length) {
-//
-//    }
-//  });
 
   $scope.isNotGroupField = function (value) {
     return value.isGroup === undefined || value.isGroup === false;

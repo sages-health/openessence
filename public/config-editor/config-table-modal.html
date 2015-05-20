@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h3 class="modal-title">app.Edit</h3>
+</div>
+<div class="modal-body">
+  <form class="form" role="form" novalidate name="form">
+
+    <div class="form-group" ng-class="{'has-error': isInvalid(form.value)}">
+      <label ng-i18next>config.ID</label>
+      <input class="form-control" type="text" name="value" ng-model="row.value" disabled="true" required>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': isInvalid(form.name)}">
+      <label ng-i18next>config.Name</label>
+      <input class="form-control" type="text" name="name" ng-model="row.name" required>
+    </div>
+
+    <div class="help-block" ng-show="yellAtUser && !row.name" ng-i18next>
+      config.msgEnterAName
+    </div>
+    <div class="help-block" ng-show="nameInUse" ng-i18next>
+      config.msgNameInUse
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
+  <button class="btn btn-primary" ng-click="save(form)">Save</button>
+</div>

@@ -57,7 +57,11 @@
         "msgOneOrMoreValues": "Please select one or more values",
         "msgGroupInUse": "Group name is already in use, please select a different name.",
         "msgEnterAValue": "Please enter a value",
-        "NewValue": "Enter a new value"
+        "msgEnterAName": "Please enter a name",
+        "NewValue": "Enter a new value",
+        "ID": "ID",
+        "Name": "Name",
+        "msgNameInUse": "Sorry, this name is already in use"
       },
       "db": {
         "AddWidget": "Add Widget",

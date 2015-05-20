@@ -8,7 +8,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 require('../select2');
 
-angular.module(directives.name).directive('hinge', /*@ngInject*/ function () {
+angular.module(directives.name).directive('hinge', /*@ngInject*/ function ($filter) {
   return {
     restrict: 'E',
     transclude: true,
@@ -42,7 +42,7 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function () {
           data: scope.pivotOptions.map(function (o) {
             return {
               id: o.value,
-              text: o.label
+              text: $filter('i18next')(o.label)
             };
           }).sort(function(a, b){
             if (a.text > b.text) {

@@ -14,14 +14,14 @@ angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngIn
     link: {
       pre: function (scope) {
         scope.strings = {
-          any: $filter('i18next')('Any')
+          any: $filter('i18next')('app.Any')
         };
         scope.filter.value = scope.filter.value || '*';
         if (scope.filter.values) {
           scope.filter.values = scope.filter.values.map(function (v) {
             return {
               // NOTE: this will not mark the string for extraction
-              name: $filter('i18next')(v.name),
+              name: v.name,
               value: v.name
             };
           });
@@ -39,7 +39,7 @@ angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngIn
               return v.value === val;
             })) {
               scope.filter.values.push({
-                name: $filter('i18next')(val),
+                name: val,
                 value: val
               });
             }
