@@ -1,6 +1,7 @@
 <div class="table-responsive table-scroll-x">
-  <table id="tableWidget" class="table table-striped table-hover table-condensed" frable="tableParams">
+  <table id="tableWidget" class="table table-striped table-hover table-condensed" ng-table="tableParams">
     <tr ng-repeat="visit in $data">
+
       <!-- TODO: since this could be crowded, collapse like fields (> 1) into one column with a hover that then lets the user 'pin' other fields open-->
       <!-- Dates -->
       <td ng-show="fields.visitDate.enabled" data-title="'op.VisitDate' | i18next" data-sortable="'visitDate'">
@@ -125,6 +126,11 @@
         <a ng-click="tableFilter('antiviral.name', visit._source.antiviral.name)">
           {{visit._source.antiviral.name}}
         </a>
+      </td>
+
+      <td ng-repeat="field in autoFields"
+          ng-show="field.enabled" data-title="field.name" data-sortable="field.name">
+          {{printAggregate(getValueFromVisit(visit._source, field.name))}}
       </td>
 
       <!-- Edit controls -->

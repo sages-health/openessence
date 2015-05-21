@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ function ($rootScope, $timeout, orderByFilter, FrableParams, OutpatientVisitResource, sortString, stringUtil) {
+angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ function ($rootScope, $timeout, orderByFilter, ngTableParams, OutpatientVisitResource, sortString, stringUtil) {
   return {
     restrict: 'E',
     template: require('./table.html'),
@@ -22,6 +22,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
           scope.options = scope.options || {};
           scope.form = scope.form || {};
 
+
           scope.options.height = scope.options.height || 600;
 
           // index fields by name
@@ -30,11 +31,45 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
               return;
             }
 
+            //scope.cols = fields.reduce(function (fields, field) {
+            //  if(field.enabled) {
+            //    fields[field.name] = {
+            //      title: field.name,
+            //      sortable: field.name,
+            //      field: field.name
+            //    };
+            //  }
+            //  return fields;
+            //}, {});
+
+            //scope.cols = scope.cols.values();
+
+            scope.cols = [{
+              title:'Date',
+              field: 'visitDate'
+            }];
+
             scope.fields = fields.reduce(function (fields, field) {
               fields[field.name] = field;
               return fields;
             }, {});
+
+            //add all auto-gen fields
+            scope.autoFields = fields.reduce(function (fields, field) {
+              if(field.autogen) {
+                fields[field.name] = field;
+              }
+              return fields;
+            }, {});
+
           });
+
+          scope.getValueFromVisit = function (visit, field){
+            var value = field.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
+              return obj ? obj[i] : undefined;
+            }, visit);
+            return value;
+          };
 
           scope.editVisit = function (visit) {
             scope.$emit('outpatientEdit', visit);
@@ -52,7 +87,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             scope.tableParams.reload();
           });
 
-          scope.tableParams = new FrableParams({
+          scope.tableParams = new ngTableParams({ //FrableParams({
             page: 1, // page is 1-based
             count: 10,
             sorting: {
@@ -138,10 +173,12 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
           scope.printAggregate = function (field, showCount) {
             var includeCount = showCount || scope.form.dataType === 'aggregate';
             var print = [];
-            if (field) {
+            if (field && angular.isArray(field)) {
               field.sort(stringUtil.compare).map(function (val) {
                 print.push(val.name + (includeCount ? ('(' + val.count + ')') : ''));
               });
+            }else{
+              return field;
             }
             return print.join(',');
           };

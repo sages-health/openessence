@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, orderByFilter, $filter, FrableParams, VisualizationResource,
+module.exports = function ($scope, $modal, orderByFilter, ngTableParams, VisualizationResource,
                            sortString) {
 
   $scope.checkboxes = {items: []};
@@ -37,7 +37,7 @@ module.exports = function ($scope, $modal, orderByFilter, $filter, FrableParams,
 
   $scope.errorOnRecordSave = '';
 
-  $scope.tableParams = new FrableParams({
+  $scope.tableParams = new ngTableParams({
     page: 1,
     count: 10,
     sorting: {

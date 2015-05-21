@@ -12,7 +12,7 @@
         </div>
 
         <div class="table-responsive">
-          <table class="table table-striped table-hover" frable="tableParams">
+          <table class="table table-striped table-hover" ng-table="tableParams">
             <tr ng-repeat="record in $data">
               <!-- No linking for now since it's not useful for workbench names -->
               <td data-title="'op.Name' | i18next" data-sortable="'name.raw'" ng-bind="record._source.name"></td>
