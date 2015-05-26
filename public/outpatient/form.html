@@ -23,7 +23,9 @@
     <div class="input-group">
       <!-- TODO in angular-ui/bootstrap master they removed weeks -->
       <input id="entry-visit-date" name="visitDate" type="text" class="form-control" required
-             ng-model="visit.visitDate" datepicker-popup show-weeks="false" is-open="datePopupsOpen.visitDate">
+             ng-model="visit.visitDate" datepicker-popup
+             current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+             close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false" is-open="datePopupsOpen.visitDate">
 
         <span class="input-group-btn">
           <button class="btn btn-default" type="button" ng-click="openDatePopup('visitDate', $event)">
@@ -57,7 +59,9 @@
 
     <div class="input-group">
       <input id="entry-visit-onset" name="symptomOnsetDate" type="text" class="form-control"
-             ng-model="visit.symptomOnsetDate" datepicker-popup show-weeks="false"
+             ng-model="visit.symptomOnsetDate" datepicker-popup
+             current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+             close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false"
              is-open="datePopupsOpen.symptomOnsetDate">
 
         <span class="input-group-btn">

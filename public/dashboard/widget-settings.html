@@ -1,46 +1,57 @@
 <div>
-  <form name="_form" class="form-horizontal" >
-    <div class="modal-header">
-      <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
-      <h3 ng-i18next>db.Settings</h3>
-    </div>
+    <form name="_form" class="form-horizontal">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 ng-i18next>db.Settings</h3>
+        </div>
 
-    <div class="modal-body">
-      <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
-        <label class="control-label col-lg-3 col-md-3" ng-i18next>db.Name</label>
-        <div class="col-lg-9 col-md-9">
-          <input name="name" type="text" ng-model="form.name" class="form-control" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-6 col-md-6">
-          <div class="form-group">
-            <label for="start-date" class="control-label col-lg-6 col-md-6" ng-i18next>db.DateInterval</label>
-            <div class="col-lg-6 col-md-6">
-              <input id="start-date" name="startDate" class="form-control" ng-model="filter.from"  datepicker-popup show-weeks="false">
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 col-md-6">
-          <div class="form-group">
-            <label for="start-date" class="control-label pull-left">—</label>
-            <div class="col-lg-6 col-md-6">
-              <input id="end-date" name="endDate" class="form-control pull-left" ng-model="filter.to"  datepicker-popup show-weeks="false">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" ng-i18next>db.Name</label>
 
-    <div class="modal-footer">
-      <button class="btn btn-default" ng-click="dismiss()" >
-        <span class="icon-cancel"></span>
-        <span ng-i18next>app.Cancel</span>
-      </button>
-      <button class="btn btn-primary" ng-click="submit()">
-        <span class="icon-ok"></span>
-        <span ng-i18next>app.OK</span>
-      </button>
-    </div>
-  </form>
+                <div class="col-lg-9 col-md-9">
+                    <input name="name" type="text" ng-model="form.name" class="form-control"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="form-group">
+                        <label for="start-date" class="control-label col-lg-6 col-md-6"
+                               ng-i18next>db.DateInterval</label>
+
+                        <div class="col-lg-6 col-md-6">
+                            <input id="start-date" name="startDate" class="form-control" ng-model="filter.from"
+                                   datepicker-popup
+                                   current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+                                   close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}"
+                                   show-weeks="false">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="form-group">
+                        <label for="start-date" class="control-label pull-left">—</label>
+
+                        <div class="col-lg-6 col-md-6">
+                            <input id="end-date" name="endDate" class="form-control pull-left" ng-model="filter.to"
+                                   datepicker-popup
+                                   current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+                                   close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-default" ng-click="dismiss()">
+                <span class="icon-cancel"></span>
+                <span ng-i18next>app.Cancel</span>
+            </button>
+            <button class="btn btn-primary" ng-click="submit()">
+                <span class="icon-ok"></span>
+                <span ng-i18next>app.OK</span>
+            </button>
+        </div>
+    </form>
 </div>

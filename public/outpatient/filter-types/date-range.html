@@ -1,15 +1,20 @@
 <fracas-filter filter-name="{{filter.name}}" on-close="close()">
-  <form class="form-inline" role="form">
-    <div class="form-group">
-      <!-- TODO validation -->
-      <div class="col-sm-6 date-filter">
-        <input class="form-control" ng-model="filter.from" type="text" datepicker-popup show-weeks="false"
-               placeholder="{{'op.Start' | i18next}}">
-      </div>
-      <div class="col-sm-6 date-filter">
-        <input class="form-control" ng-model="filter.to" type="text" datepicker-popup show-weeks="false"
-               placeholder="{{'op.End' | i18next}}">
-      </div>
-    </div>
-  </form>
+    <form class="form-inline" role="form">
+        <div class="form-group">
+            <!-- TODO validation -->
+            <div class="col-sm-6 date-filter">
+                <input class="form-control" ng-model="filter.from" type="text" datepicker-popup
+                       current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+                       close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}"
+                       show-weeks="false"
+                       placeholder="{{'op.Start' | i18next}}">
+            </div>
+            <div class="col-sm-6 date-filter">
+                <input class="form-control" ng-model="filter.to" type="text" datepicker-popup
+                       current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+                       close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false"
+                       placeholder="{{'op.End' | i18next}}">
+            </div>
+        </div>
+    </form>
 </fracas-filter>

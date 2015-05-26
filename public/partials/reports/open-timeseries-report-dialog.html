@@ -15,7 +15,9 @@
     <div class="form-group" ng-class="{'has-error': isInvalid(openReportForm.endDate)}">
       <label for="report-week-end-date" ng-i18next>r.EndingOn</label>
       <input id="report-week-end-date" name="endDate" type="text" class="form-control" ng-model="report.endDate"
-             datepicker-popup show-weeks="true" required>
+             datepicker-popup
+             current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+             close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="true" required>
     </div>
   </form>
 </div>

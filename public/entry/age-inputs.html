@@ -6,7 +6,9 @@
 
   <div class="input-group">
     <input id="entry-visit-date-of-birth" name="dateOfBirth" type="text" class="form-control"
-           ng-model="visit.patient.dateOfBirth" datepicker-popup show-weeks="false"
+           ng-model="visit.patient.dateOfBirth" datepicker-popup
+           current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+           close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false"
            is-open="datePopupsOpen.dateOfBirth">
 
     <span class="input-group-btn">

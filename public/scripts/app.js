@@ -15,6 +15,7 @@ if (!Function.prototype.bind) {
 // Order matters! E.g. make sure you require('angular') before something that depends on angular, e.g. angular-animate.
 var angular = require('angular');
 
+require('angular-dynamic-locale');
 require('i18next');
 window.i18n = require('i18next');
 require('ng-i18next');
@@ -75,9 +76,9 @@ require('./filters');
 
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.select2', 'ui.sortable',
-                    'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll',
-                    'jm.i18next', frable.name]
+  'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+  'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll',
+  'jm.i18next', 'tmh.dynamicLocale', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -92,6 +93,24 @@ app.config(function ($httpProvider, csrfToken) {
     }
     $httpProvider.defaults.headers[method]['X-CSRF-TOKEN'] = csrfToken;
   });
+});
+
+angular.module('fracasApp').run(function ($rootScope) {
+  $rootScope.safeApply = function (fn) {
+    var phase = $rootScope.$$phase;
+    if (phase === '$apply' || phase === '$digest') {
+      if (fn && (typeof(fn) === 'function')) {
+        fn();
+      }
+    } else {
+      this.$apply(fn);
+    }
+  }
+});
+
+// Datepicker Config
+app.config(function (tmhDynamicLocaleProvider) {
+  tmhDynamicLocaleProvider.localeLocationPattern('/../locale/angular-locale_{{locale}}.js');
 });
 
 app.config(function (cfpLoadingBarProvider) {
@@ -308,11 +327,5 @@ angular.module('jm.i18next').config(['$i18nextProvider', function ($i18nextProvi
   };
 
 }]);
-
-//app.run(function ($rootScope, $http,  lang) {
-//  gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
-//  gettextCatalog.setCurrentLanguage(lang);
-//  gettextCatalog.loadRemote('/public/translations/' + lang + '.json');
-//});
 
 module.exports = app;

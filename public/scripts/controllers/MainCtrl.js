@@ -1,15 +1,29 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($scope, $window, $location, $state, appName, user, visitsReportModal, aggregateReportModal,//
-                           Workbench, Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope, locale) {
+module.exports = function ($timeout, $filter, $scope, $window, $location, $state, appName, user, visitsReportModal, aggregateReportModal,//
+                           Workbench, Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope, locale, tmhDynamicLocale, datepickerPopupConfig) {
   // ****** Start Locale
   $scope.localeSelect2Options = [{value: 'en', label: 'English'}, {value: 'es', label: 'Spanish'}];
   $scope.site = {locale: locale.getLocale()};
+
+  if ($scope.site.locale == 'es') {
+    tmhDynamicLocale.set('es-hn');
+  } else if ($scope.site.locale = 'en') {
+    tmhDynamicLocale.set('en-us');
+  }
+
   $scope.$watch('site.locale', function (newVal, oldVal) {
+    if ($scope.site.locale == 'es') {
+      tmhDynamicLocale.set('es-hn');
+    } else if ($scope.site.locale = 'en') {
+      tmhDynamicLocale.set('en-us');
+    }
+
     console.log('locale is:' + $scope.site.locale);
+
     if (oldVal !== newVal) {
-      location.href =
+      $window.location.href =
         location.origin + location.pathname.replace('/' + oldVal + '/', '/' + newVal + '/') + location.search;
     }
   });
