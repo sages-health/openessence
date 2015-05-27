@@ -98,4 +98,8 @@ gulp.task('scripts', function (done) {
         .on('error', done)
         .on('finish', done);
     });
+
+  //Copy internationalization files
+  gulp.src('bower_components/angular-i18n/*').pipe(gulp.dest('.tmp/locale/'));
+  gulp.src('bower_components/angular-i18n/*').pipe(gulp.dest('dist/locale/'));
 });

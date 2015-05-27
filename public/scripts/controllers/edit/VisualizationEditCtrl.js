@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, FrableParams, VisualizationResource,
+module.exports = function ($scope, $modal, orderByFilter, $filter, FrableParams, VisualizationResource,
                            sortString) {
 
   $scope.checkboxes = {items: []};
@@ -19,13 +19,13 @@ module.exports = function ($scope, $modal, orderByFilter, gettextCatalog, Frable
       filterID: 'name',
       type: 'text',
       field: 'name',
-      name: gettextCatalog.getString('Name')
+      name: $filter('i18next')('Name')
     },
     {
       filterID: 'type',
       type: 'text',
       field: 'visualization.name',
-      name: gettextCatalog.getString('Type')
+      name: $filter('i18next')('Type')
     }
   ].reduce(function (filters, filter) {
       filters[filter.filterID] = filter;

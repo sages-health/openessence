@@ -1,21 +1,21 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Are you sure you want to delete this record?</h4>
+  <h4 class="modal-title" ng-i18next>entry.msgDeleteRecord</h4>
 </div>
 <div class="modal-body">
   <!-- this is a generic display of the data: it displays JSON, e.g. medicalFacility is {"district": "District 1"}.
        We probably want a slightly friendlier, although non-universal, display of the record -->
   <dl class="dl-horizontal" ng-repeat="(key, value) in record._source">
-    <dt>{{key | translate}}</dt>
-    <dd>{{value | translate}}</dd>
+    <dt>{{key | i18next}}</dt>
+    <dd>{{value | i18next}}</dd>
   </dl>
 </div>
 <div class="modal-footer">
   <!-- include i18n-friendly images -->
   <button class="btn btn-default" ng-click="cancel()">
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-danger" ng-click="delete()">
     <span class="icon-trash"></span>
-    <span translate>Delete</span>
+    <span ng-i18next>app.Delete</span>
   </button>
 </div>

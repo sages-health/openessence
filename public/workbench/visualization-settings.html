@@ -2,12 +2,12 @@
   <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
     <div class="modal-header">
       <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
-      <h3>Widget Settings</h3>
+      <h3 ng-i18next>wb.WidgetSettings</h3>
     </div>
 
     <div class="modal-body">
       <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
-        <label class="control-label col-lg-3 col-md-3">Name</label>
+        <label class="control-label col-lg-3 col-md-3" ng-i18next>wb.Name</label>
         <div class="col-lg-9 col-md-9">
           <input name="name" type="text" ng-model="form.name" class="form-control" />
         </div>
@@ -15,7 +15,7 @@
       <div class="row">
         <div class="col-lg-6 col-md-6">
           <div class="form-group" ng-class="{error: _form.sizeX.$error && _form.submitted}">
-            <label class="control-label col-lg-6 col-md-6">Width</label>
+            <label class="control-label col-lg-6 col-md-6" ng-i18next>viz.Width</label>
             <div class="col-lg-6 col-md-6">
               <input name="sizeX" ng-model="form.sizeX" class="form-control" />
             </div>
@@ -23,7 +23,7 @@
         </div>
         <div class="col-lg-6 col-md-6">
           <div class="form-group">
-            <label class="control-label col-lg-6 col-md-6">Height</label>
+            <label class="control-label col-lg-6 col-md-6" ng-i18next>viz.Height</label>
             <div class="col-lg-6 col-md-6">
               <input name="sizeY" ng-model="form.sizeY" class="form-control" />
             </div>
@@ -33,7 +33,7 @@
       <div class="row">
         <div class="col-lg-6 col-md-6">
           <div class="form-group" ng-class="{error: _form.sizeX.$error && _form.submitted}">
-            <label class="control-label col-lg-6 col-md-6">Column</label>
+            <label class="control-label col-lg-6 col-md-6" ng-i18next>viz.Column</label>
             <div class="col-lg-6 col-md-6">
               <input name="col" ng-model="form.col" class="form-control" />
             </div>
@@ -41,7 +41,7 @@
         </div>
         <div class="col-lg-6 col-md-6">
           <div class="form-group">
-            <label class="control-label col-lg-6 col-md-6">Row</label>
+            <label class="control-label col-lg-6 col-md-6" ng-i18next>viz.Row</label>
             <div class="col-lg-6 col-md-6">
               <input name="row" ng-model="form.row" class="form-control" />
             </div>

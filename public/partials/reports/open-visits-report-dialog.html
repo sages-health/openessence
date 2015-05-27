@@ -1,39 +1,43 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Open Outpatient Visits Report</h4>
+  <h4 class="modal-title" ng-i18next>r.OpenOutpatientVisit</h4>
 </div>
 <div class="modal-body">
-  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
-  <div class="alert alert-danger alert-show-hide" ng-show="invalidDateRange" translate>Invalid date range</div>
+  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" ng-i18next>op.msgFieldsRequired</div>
+  <div class="alert alert-danger alert-show-hide" ng-show="invalidDateRange" ng-i18next>r.msgInvalidDateRange</div>
 
   <form class="form" role="form" name="openReportForm">
     <div class="form-group" ng-class="{'has-error': isInvalid(openReportForm.name)}">
-      <label for="modal-name">Name</label>
+      <label for="modal-name" ng-i18next>r.ReportName</label>
       <input id="modal-name" name="name" type="text" placeholder="Name" class="form-control" ng-model="report.name"
              required>
     </div>
 
     <div class="form-group"
          ng-class="{'has-error': isInvalid(openReportForm.startDate)}">
-      <label for="report-start-date">Start Date</label>
+      <label for="report-start-date" ng-i18next>r.StartDate</label>
       <input id="report-start-date" name="startDate" type="text" class="form-control" ng-model="report.startDate"
-             required datepicker-popup show-weeks="false">
+             required datepicker-popup
+             current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+             close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false">
     </div>
 
     <div class="form-group"
          ng-class="{'has-error': isInvalid(openReportForm.endDate)}">
-      <label for="report-end-date">End Date</label>
+      <label for="report-end-date">r.EndDate</label>
       <input id="report-end-date" name="endDate" type="text" class="form-control" ng-model="report.endDate" required
-             datepicker-popup show-weeks="false">
+             datepicker-popup
+             current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+             close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false">
     </div>
   </form>
 </div>
 <div class="modal-footer">
   <button class="btn btn-default" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-primary" ng-click="open(openReportForm)">
     <span class="icon-ok"></span>
-    <span translate>OK</span>
+    <span ng-i18next>app.OK</span>
   </button>
 </div>

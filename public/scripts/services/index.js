@@ -7,6 +7,7 @@ services.factory('aggregateReportModal', require('./reports/aggregateReportModal
   .factory('crud', require('./crud'))
   .factory('Dashboard', require('./Dashboard'))
   .factory('errorInterceptor', require('./errorInterceptor'))
+  .factory('locale', require('./locale'))
   .factory('notification', require('./notification'))
   .factory('Report', require('./Report'))
   .factory('scopeToJson', require('./scopeToJson'))

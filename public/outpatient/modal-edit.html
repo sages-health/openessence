@@ -1,9 +1,9 @@
 <div id="first" class="modal-header">
   <button type="button" class="close" ng-click="cancel()">
     <span class="icon-cancel" aria-hidden="true"></span>
-    <span class="sr-only" translate>Close</span>
+    <span class="sr-only" ng-i18next>app.Close</span>
   </button>
-  <h4 class="modal-title" translate>Edit record</h4>
+  <h4 class="modal-title" ng-i18next>op.EditRecord</h4>
 </div>
 <div class="modal-body">
   <outpatient-form form="form" record="record" paging="paging" page="page"
@@ -14,12 +14,12 @@
     <li class="previous" ng-class="{disabled: page === 1}">
       <a ng-click="previous()">
         <span class="icon-left-big"></span>
-        <span translate>Previous</span>
+        <span ng-i18next>op.Previous</span>
       </a>
     </li>
     <li class="next">
       <a ng-click="next()">
-        <span translate>Next</span>
+        <span ng-i18next>op.Next</span>
         <span class="icon-right-big"></span>
       </a>
     </li>
@@ -30,18 +30,18 @@
     <li class="previous">
       <a ng-click="previous()">
         <span class="icon-left-big"></span>
-        <span translate>Previous</span>
+        <span ng-i18next>op.Previous</span>
       </a>
     </li>
   </ul>
   <div>
     <button class="btn btn-default" ng-click="cancel()">
       <span class="icon-cancel"></span>
-      <span translate>Cancel</span>
+      <span ng-i18next>app.Cancel</span>
     </button>
     <button type="button" class="btn btn-primary" ng-click="save()">
       <span class="icon-ok"></span>
-      <span translate>Save</span>
+      <span ng-i18next>app.Save</span>
     </button>
   </div>
 </div>

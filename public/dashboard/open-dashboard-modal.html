@@ -1,15 +1,15 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Open Dashboard</h4>
+  <h4 class="modal-title" ng-i18next>db.OpenDashboard</h4>
 </div>
 <div class="modal-body">
   <form role="form" novalidate name="openDashboardForm">
     <div class="form-group" ng-class="{'has-error': yellAtUser}">
-      <label for="open-dashboard-id" translate>Dashboard</label>
+      <label for="open-dashboard-id" ng-i18next>db.Dashboard</label>
       <select class="form-control" id="open-dashboard-id" name="dashboard" ng-model="dashboard.dashboard"
               ng-options="d._source.name for d in dashboards" required>
       </select>
-      <div class="help-block" ng-show="yellAtUser" translate>
-        Please select a dashboard
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        db.msgSelectDashboard
       </div>
     </div>
   </form>
@@ -18,10 +18,10 @@
 <div class="modal-footer">
   <button class="btn btn-default" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-primary" ng-click="ok(dashboardForm)">
     <span class="icon-ok"></span>
-    <span translate>Open</span>
+    <span ng-i18next>app.Open</span>
   </button>
 </div>

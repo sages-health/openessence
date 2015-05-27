@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h3 class="modal-title">{{row.key}}</h3>
+</div>
+<div class="modal-body">
+  <form class="form" role="form" novalidate name="newValForm">
+    <div class="form-group" ng-class="{'has-error': yellAtUser}">
+      <label for="from" ng-i18next>locale.From</label>
+      <input class="form-control" id="from" name="from" type="text" ng-model="row.from" disabled>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': yellAtUser}">
+      <label for="to" ng-i18next>locale.To</label>
+      <input class="form-control" id="to" name="to" type="text" ng-model="row.to" required>
+
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        locale.msgEnterValue
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-warning" ng-click="closeModal()" ng-i18next>app.Cancel</button>
+  <button class="btn btn-primary" ng-click="save(newValForm)" ng-i18next>app.Save</button>
+</div>

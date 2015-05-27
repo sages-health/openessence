@@ -14,6 +14,12 @@ if (!Function.prototype.bind) {
 
 // Order matters! E.g. make sure you require('angular') before something that depends on angular, e.g. angular-animate.
 var angular = require('angular');
+
+require('angular-dynamic-locale');
+require('i18next');
+window.i18n = require('i18next');
+require('ng-i18next');
+
 require('angular-animate');
 require('angular-resource');
 require('angular-sanitize');
@@ -25,7 +31,7 @@ require('angular-ui-router');
 require('angular-ui-select');
 require('angular-ui-select2');
 require('angular-ui-sortable');
-require('angular-gettext');
+//require('angular-gettext');
 require('angular-gridster');
 require('angular-loading-bar');
 require('angular-order-object-by');
@@ -60,6 +66,7 @@ require('../workbench');
 require('../outpatient');
 require('../aggregate');
 require('../entry');
+require('../translation');
 
 var modules = require('./modules');
 require('./controllers');
@@ -67,9 +74,11 @@ require('./services');
 require('./directives');
 require('./filters');
 
+
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.select2', 'ui.sortable',
-                    'gettext', 'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
-                    'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll', frable.name]
+  'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
+  'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll',
+  'jm.i18next', 'tmh.dynamicLocale', frable.name]
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
@@ -84,6 +93,24 @@ app.config(function ($httpProvider, csrfToken) {
     }
     $httpProvider.defaults.headers[method]['X-CSRF-TOKEN'] = csrfToken;
   });
+});
+
+angular.module('fracasApp').run(function ($rootScope) {
+  $rootScope.safeApply = function (fn) {
+    var phase = $rootScope.$$phase;
+    if (phase === '$apply' || phase === '$digest') {
+      if (fn && (typeof(fn) === 'function')) {
+        fn();
+      }
+    } else {
+      this.$apply(fn);
+    }
+  }
+});
+
+// Datepicker Config
+app.config(function (tmhDynamicLocaleProvider) {
+  tmhDynamicLocaleProvider.localeLocationPattern('/../locale/angular-locale_{{locale}}.js');
 });
 
 app.config(function (cfpLoadingBarProvider) {
@@ -241,6 +268,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../outpatient/edit.html'),
       controller: 'OutpatientEditCtrl'
     })
+    .state('edit.translation', {
+      url: '/translation',
+      template: require('../translation/translation-editor.html'),
+      controller: 'TranslationEditCtrl'
+    })
     .state('edit.user', {
       url: '/user',
       template: require('../partials/edit/user.html'),
@@ -272,10 +304,28 @@ app.config(function ($httpProvider) {
   $httpProvider.interceptors.push('errorInterceptor');
 });
 
-app.run(function ($rootScope, $http, gettextCatalog, lang) {
-  gettextCatalog.debug = angular.element('meta[name="_environment"]').attr('content') === 'development';
-  gettextCatalog.setCurrentLanguage(lang);
-  gettextCatalog.loadRemote('/public/translations/' + lang + '.json');
-});
+angular.module('jm.i18next').config(['$i18nextProvider', function ($i18nextProvider) {
+  i18n.addPostProcessor('localePostProcessor', function (value, key, options) {
+    if (value === '') {
+      console.log('key:MISSING[' + key + ']');
+      return key;
+    }
+    return value;
+  });
+  $i18nextProvider.options = {
+    lng: angular.element('html').attr('lang') || 'en',
+    useCookie: false,
+    useLocalStorage: false,
+    fallbackLng: false, // do not use fall back lng so that we can see missing, may be set to true in production
+    //fallbackLng: 'en', // may be set this in production
+    //sendMissing: true, // if missing key, send that key to server. If set to true, resPostPath will be used to post missing key
+    resPostPath: '../locales/add?lng=__lng__&ns=__ns__', // if key/translation not found, send that key (lng and ns are part of URL)
+    resGetPath: '../locales?lng=__lng__&ns=__ns__', // get translation URL
+    defaultValue: '', // If key not found, set the value to ''
+    defaultLoadingValue: 'LOADING', // While loading, display LOADING text
+    postProcess: 'localePostProcessor' // once we translate keys, additional processing
+  };
+
+}]);
 
 module.exports = app;

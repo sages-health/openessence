@@ -1,6 +1,6 @@
 <form name="uploadAggregateForm" class="form" novalidate ng-submit="submit(uploadAggregateForm)" ng-cloak>
   <fieldset>
-    <div class="alert alert-danger alert-show-hide" ng-show="noData" translate>No data found</div>
+    <div class="alert alert-danger alert-show-hide" ng-show="noData" ng-i18next>aggregate.NoData</div>
     <csv-file-selector table-data="data.tableData" file-params="data.fileParams">
     </csv-file-selector>
   </fieldset>

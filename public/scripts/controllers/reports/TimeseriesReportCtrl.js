@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 
 // @ngInject
-module.exports = function ($scope, gettextCatalog, $location, visualization, user, FacilityResource, $document, //
+module.exports = function ($scope, $location, visualization, user, FacilityResource, $document, //
                            $window) {
   $scope.export = function () {
     var title = $scope.report.name.replace(/ /g, '_');
@@ -19,7 +19,7 @@ module.exports = function ($scope, gettextCatalog, $location, visualization, use
 
   $scope.username = user.getUser().username;
   $scope.dateString = moment().format('D MMMM YYYY');
-  
+
   $scope.params = JSON.parse(atob($location.search().params));
   $scope.allowExport = $scope.params.print === false ? false : true;
   $scope.report = angular.copy($scope.params);

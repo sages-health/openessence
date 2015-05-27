@@ -1,19 +1,17 @@
-
-
 <div class="modal-header">
-  <h4 class="modal-title" translate>Save this page</h4>
+  <h4 class="modal-title" ng-i18next>pa.msgSagePage</h4>
 </div>
 <div class="modal-body">
   <form class="form-horizontal" name="container.saveReportForm" novalidate>
     <fieldset>
       <div class="form-group">
-        <label class="col-md-4 control-label" for="srd-modal-name">Name</label>
+        <label class="col-md-4 control-label" for="srd-modal-name" ng-i18next>pa.Name</label>
 
         <div class="col-md-5">
           <input id="srd-modal-name" name="name" type="text" placeholder="Name"
                  class="form-control input-md invalidFilename-{{warnUserOfInvalidName(container.report.name)}}"
                  ng-model="container.report.name" required>
-          <span class="help-block">What to call this report</span>
+          <span class="help-block" ng-i18next>pa.msgReportName</span>
         </div>
       </div>
     </fieldset>
@@ -28,12 +26,12 @@
   </div>
   <button class="btn btn-warning cancelButton" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <!--container.saveReportForm.$invalid?-->
   <!--container.report.name-->
   <button class="btn btn-primary saveButton" ng-click="ok()" ng-disabled="filenameInvalid(container.report.name)">
     <span class="icon-ok"></span>
-    <span translate>Save</span>
+    <span ng-i18next>app.Save</span>
   </button>
 </div>

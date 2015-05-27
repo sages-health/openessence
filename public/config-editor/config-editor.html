@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="panel panel-default">
     <div class="panel-heading clearfix">
-      <h4 class="panel-title" translate>Site Configuration</h4>
+      <h4 class="panel-title" ng-i18next>config.SiteConfiguration</h4>
     </div>
     <div class="panel-body">
       <div class="row">
@@ -9,7 +9,7 @@
           <div class="panel panel-default">
             <div class="panel-body">
               <div class="form-group">
-                <label translate>Data Type</label>
+                <label ng-i18next>config.DataType</label>
                 <br>
                 <label class="radio-inline">
                   <input type="radio" name="data-type" value="individual" ng-model="siteTemplate.dataType">
@@ -22,7 +22,7 @@
               </div>
 
               <div class="form-group">
-                <label translate>Template</label>
+                <label ng-i18next>config.Template</label>
                 <br>
 
                 <div class="radio" ng-repeat="key in templateKeys">
@@ -32,11 +32,6 @@
                   </label>
                 </div>
 
-                <!--<label class="checkbox-inline" ng-repeat="(key, val) in templates">-->
-                <!--<input type="checkbox" name="template" checklist-value="key" checklist-model="siteTemplate.templates"-->
-                <!--ng-disabled="key !== 'Custom'">-->
-                <!--{{key}}-->
-                <!--</label>-->
               </div>
             </div>
           </div>
@@ -44,14 +39,14 @@
           <div ng-show="siteTemplate.fields" class="panel panel-default">
 
             <div class="panel-heading clearfix">
-              <label translate>Fields</label>
+              <label ng-i18next>config.Fields</label>
 
               <div class="pull-right">
                 <button class="btn btn-primary" ng-click="setEnabled(true)">
-                  <span translate>Select All</span>
+                  <span ng-i18next>config.SelectAll</span>
                 </button>
                 <button class="btn btn-primary" ng-click="setEnabled(false)">
-                  <span translate>Deselect All</span>
+                  <span ng-i18next>config.DeselectAll</span>
                 </button>
               </div>
             </div>
@@ -72,10 +67,20 @@
                     </div>
 
                     <div ng-if="field.enabled && field.values !== undefined">
-                      <config-multiselect field="field"></config-multiselect>
-                      <br>
-                      <div ng-if="field.groupName !== undefined">
+
+                      <!-- sex and antiviral.exposure fields have fixed number of rows.
+                      Admin cannot add or delete rows, he can only change displayValue -->
+                      <div ng-if="field.formFieldType === 'FixedLengthList'">
+                        <config-table field="field"></config-table>
+                      </div>
+
+                      <div ng-if="field.formFieldType === 'FixedLengthList'">
+                        <config-multiselect field="field"></config-multiselect>
+                        <br>
+
+                        <div ng-if="field.groupName !== undefined">
                           <config-group field="groupField(field)" possible-values="field.values"></config-group>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -91,11 +96,11 @@
         <!-- include i18n-friendly images -->
         <button class="btn btn-warning" ng-click="cancel()">
           <span class="icon-cancel"></span>
-          <span translate>Cancel</span>
+          <span ng-i18next>app.Cancel</span>
         </button>
         <button class="btn btn-primary" ng-click="save()">
           <span class="icon-ok"></span>
-          <span translate>Save</span>
+          <span ng-i18next>app.Save</span>
         </button>
       </div>
     </div>

@@ -1,19 +1,19 @@
 <div class="modal-header">
-  <h3 class="modal-title" translate>Edit Group</h3>
+  <h3 class="modal-title" ng-i18next>config.EditGroup</h3>
 </div>
 <div class="modal-body">
   <form class="form" role="form" novalidate name="groupForm">
     <div class="form-group" ng-class="{'has-error': yellAtUser}">
-      <label translate>Group Name</label>
+      <label ng-i18next>config.GroupName</label>
       <input class="form-control" type="text" name="name" ng-model="row.name" required>
     </div>
 
     <div class="form-group" ng-class="{'has-error': noValue}">
-      <label translate>Value</label>
+      <label ng-i18next>config.Value</label>
 
       <ui-select class="form-control" multiple ng-model="row.value" theam="select2"
                  ng-disabled="disabled" required>
-        <ui-select-match placeholder="Select...">{{$item}}</ui-select-match>
+        <ui-select-match placeholder="{{'app.Select' | i18next}}">{{$item}}</ui-select-match>
         <ui-select-choices ng-value="val"
                            repeat="val as val in possibleValues  | filter:$select.search">
           <div ng-bind-html="val | highlight: $select.search"></div>
@@ -21,20 +21,20 @@
       </ui-select>
     </div>
 
-    <div class="help-block" ng-show="yellAtUser" translate>
-      Please enter a group name
+    <div class="help-block" ng-show="yellAtUser" ng-i18next>
+      config.msgGroup
     </div>
-    <div class="help-block" ng-show="noValues" translate>
-      Please select one or more values
+    <div class="help-block" ng-show="noValues" ng-i18next>
+      config.msgOneOrMoreValues
     </div>
 
-    <div class="help-block" ng-show="nameInUse" translate>
-      Group name "{{row.name}}" is already in use, please select a different name.
+    <div class="help-block" ng-show="nameInUse" ng-i18next>
+      config.msgGroupInUse
     </div>
   </form>
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
-  <button class="btn btn-primary" ng-click="save(groupForm)">Save</button>
+  <button class="btn btn-warning" ng-click="closeModal()" ng-i18next>app.Cancel</button>
+  <button class="btn btn-primary" ng-click="save(groupForm)" ng-i18next>app.Save</button>
 </div>

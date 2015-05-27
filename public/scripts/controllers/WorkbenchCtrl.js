@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams, gettextCatalog,
+module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams,//
                            scopeToJson, FormResource, possibleFilters, outpatientAggregation, updateURL, Workbench) {
   var NUM_COLUMNS = 24,
     DEFAULT_SIZE_X = 12,

@@ -8,13 +8,13 @@
         <h3 class="panel-title pull-left">{{dashboard.name}}</h3>
 
         <div class="pull-right">
-          <a class="btn btn-primary" ng-click="addWidget()" popover="{{'Add widget' | translate}}"
+          <a class="btn btn-primary" ng-click="addWidget()" popover="{{'db.AddWidget' | i18next}}"
              popover-trigger="mouseenter">
-            <span class="icon-plus" translate>Add widget</span>
+            <span class="icon-plus" ng-i18next>db.AddWidget</span>
           </a>
-          <a class="btn btn-primary" ng-click="export()" popover="{{'Save dashboard' | translate}}"
+          <a class="btn btn-primary" ng-click="export()" popover="{{'db.SaveDashboard' | i18next}}"
              popover-trigger="mouseenter">
-            <span class="icon-floppy" translate>Save</span>
+            <span class="icon-floppy" ng-i18next>app.Save</span>
           </a>
         </div>
       </div>
@@ -28,11 +28,11 @@
 
                 <div class="pull-right">
                   <button type="button" class="btn btn-default" ng-click="openSettings(widget)"
-                          popover="{{'Settings' | translate}}" popover-trigger="mouseenter">
+                          popover="{{'db.Settings' | i18next}}" popover-trigger="mouseenter">
                     <span class="icon-cog"></span>
                   </button>
                   <button type="button" class="btn btn-default" ng-click="remove(widget)"
-                          popover="{{'Remove widget' | translate}}" popover-trigger="mouseenter">
+                          popover="{{'db.RemoveWidget' | i18next}}" popover-trigger="mouseenter">
                     <span class="icon-cancel"></span>
                   </button>
                 </div>

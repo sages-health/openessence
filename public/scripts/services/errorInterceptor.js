@@ -3,11 +3,11 @@
 // inspired by https://github.com/witoldsz/angular-http-auth
 
 // @ngInject
-module.exports = function ($q, $injector, $rootScope, notification) {
+module.exports = function ($q, $injector, $rootScope, $filter, notification) {
   // get around circular dependency, see
   // http://stackoverflow.com/questions/20647483/angularjs-injecting-service-into-a-http-interceptor-circular-dependency
   var $state;
-  var gettextCatalog;
+  //var gettextCatalog;
 
   return {
     responseError: function (rejection) {
@@ -17,10 +17,10 @@ module.exports = function ($q, $injector, $rootScope, notification) {
       }
 
       $state = $state || $injector.get('$state');
-      gettextCatalog = gettextCatalog || $injector.get('gettextCatalog'); // depends on $http for remote loading
+      //gettextCatalog = gettextCatalog || $injector.get('gettextCatalog'); // depends on $http for remote loading
 
       if (rejection.status >= 500) {
-        notification.error(gettextCatalog.getString('Something went wrong :('));
+        notification.error($filter('i18next')('Something went wrong :('));
       } else if (rejection.status === 403 || rejection.status === 401) {
         // TODO show a popup (not implemented because it's buggy)
         $state.go('login');

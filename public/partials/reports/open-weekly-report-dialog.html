@@ -1,32 +1,36 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Open Weekly Report</h4>
+    <h4 class="modal-title" ng-i18next>r.OpenWeekly</h4>
 </div>
 
 <div class="modal-body">
-  <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" translate>These fields are required</div>
+    <div class="alert alert-danger alert-show-hide" ng-show="yellAtUser" ng-i18next>op.msgFieldsRequired</div>
 
-  <form class="form" role="form" name="openReportForm">
-    <div class="form-group" ng-class="{'has-error': isInvalid(openReportForm.name)}">
-      <label for="modal-name" translate>Name</label>
-      <input id="modal-name" name="name" type="text" placeholder="Name" class="form-control" ng-model="report.name"
-             required>
-    </div>
+    <form class="form" role="form" name="openReportForm">
+        <div class="form-group" ng-class="{'has-error': isInvalid(openReportForm.name)}">
+            <label for="modal-name" ng-i18next>r.ReportName</label>
+            <input id="modal-name" name="name" type="text" placeholder="Name" class="form-control"
+                   ng-model="report.name"
+                   required>
+        </div>
 
-    <div class="form-group" ng-class="{'has-error': isInvalid(openReportForm.endDate)}">
-      <label for="report-week-end-date" translate>Week Ending Date</label>
-      <input id="report-week-end-date" name="endDate" type="text" class="form-control" ng-model="report.endDate"
-             datepicker-popup show-weeks="true" required>
-    </div>
-  </form>
+        <div class="form-group" ng-class="{'has-error': isInvalid(openReportForm.endDate)}">
+            <label for="report-week-end-date" ng-i18next>r.EndingOn</label>
+            <input id="report-week-end-date" name="endDate" type="text" class="form-control" ng-model="report.endDate"
+                   datepicker-popup
+                   current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+                   close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}"
+                   show-weeks="true" required>
+        </div>
+    </form>
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-default" ng-click="cancel()">
-    <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
-  </button>
-  <button class="btn btn-primary" ng-click="open(openReportForm)">
-    <span class="icon-ok"></span>
-    <span translate>OK</span>
-  </button>
+    <button class="btn btn-default" ng-click="cancel()">
+        <span class="icon-cancel"></span>
+        <span ng-i18next>app.Cancel</span>
+    </button>
+    <button class="btn btn-primary" ng-click="open(openReportForm)">
+        <span class="icon-ok"></span>
+        <span ng-i18next>app.OK</span>
+    </button>
 </div>

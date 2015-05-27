@@ -5,6 +5,7 @@ module.exports = [
   'District',
   'Facility',
   'Form',
+  'Locale',
   'User',
   'Visualization',
   'Workbench'

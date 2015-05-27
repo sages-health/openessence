@@ -3,13 +3,13 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, DashboardResource) {
+module.exports = function ($scope, $modal, tableUtil, crud, $filter, DashboardResource) {
   $scope.activeFilters = [
     {
       filterID: 'name',
       type: 'text',
       field: 'name',
-      name: gettextCatalog.getString('Name')
+      name: $filter('i18next')('Name')
     }
   ];
   $scope.possibleFilters = [
@@ -17,13 +17,13 @@ module.exports = function ($scope, $modal, tableUtil, crud, gettextCatalog, Dash
       filterID: 'name',
       type: 'text',
       field: 'name',
-      name: gettextCatalog.getString('Name')
+      name: $filter('i18next')('Name')
     },
     {
       filterID: 'description',
       type: 'text',
       field: 'description',
-      name: gettextCatalog.getString('Description')
+      name: $filter('i18next')('Description')
     }
   ];
 

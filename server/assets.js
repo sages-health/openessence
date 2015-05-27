@@ -29,6 +29,7 @@ if (env === 'development') {
     // these get written by bundle(), which should be called on server start
     app.use('/public/scripts/libs.js', express.static(__dirname + '/../.tmp/libs.js'));
     app.use('/js/app.js', express.static(__dirname + '/../.tmp/app.js'));
+    app.use('/locale', express.static(__dirname + '/../.tmp/locale'));
 
     app.use('/public/styles', less(__dirname + '/../public/styles', {
       compiler: {
@@ -66,6 +67,7 @@ if (env === 'development') {
     // this means all assets in /styles or /scripts need to be hashed, otherwise they'll be cached too long
     app.use('/public/styles', express.static(__dirname + '/../dist/public/styles', cacheOptions));
     app.use('/public/scripts', express.static(__dirname + '/../dist/public/scripts', cacheOptions));
+    app.use('/locale', express.static(__dirname + '/../dist/locale', cacheOptions));
 
     // Lato isn't going to change. And if it does, we can just change the font name.
     // TODO icon font does change a lot, so it's useful to hash that, and hashing Lato doesn't hurt
@@ -84,8 +86,8 @@ if (env === 'development') {
 // external is a NOOP for all the deps we don't actually use on the client, but it's easier and faster
 // than calculating the set of deps we actually use
 exports.externalLibs = Object.keys(packageJson.dependencies)
-    .concat(Object.keys(packageJson.devDependencies))
-    .concat(Object.keys(packageJson.browser));
+  .concat(Object.keys(packageJson.devDependencies))
+  .concat(Object.keys(packageJson.browser));
 
 exports.bundle = function () {
   // How this works:

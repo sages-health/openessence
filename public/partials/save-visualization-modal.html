@@ -1,13 +1,13 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Save this visualization</h4>
+  <h4 class="modal-title" ng-i18next>pa.msgSaveVisualization</h4>
 </div>
 <div class="modal-body">
 <form class="form" role="form" novalidate name="visualizationForm">
     <div class="form-group" ng-class="{'has-error': yellAtUser}">
-      <label for="save-viz-name" translate>Name</label>
+      <label for="save-viz-name" ng-i18next>pa.Name</label>
       <input type="text" class="form-control" id="save-viz-name" name="name" ng-model="viz.name" required>
-      <div class="help-block" ng-show="yellAtUser" translate>
-        Please name this visualization
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        pa.msgNameVisualization
       </div>
     </div>
 </form>
@@ -16,10 +16,10 @@
 <div class="modal-footer">
   <button class="btn btn-default" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-primary" ng-click="save(visualizationForm)">
     <span class="icon-ok"></span>
-    <span translate>Save</span>
+    <span ng-i18next>app.Save</span>
   </button>
 </div>

@@ -1,71 +1,71 @@
 <div class="container export-viz export-viz-gray">
   <div class="panel panel-primary">
     <div class="panel-heading">
-      <h3 class="panel-title">Image Export</h3>
+      <h3 class="panel-title" ng-i18next>pa.ImageExport</h3>
     </div>
     <div class="col-md-4 export-viz-gray">
       <div class="panel-body">
         <form class="form" role="form" novalidate name="exportForm">
           <div class="form-group" ng-class="{'has-error': yellAtUser}">
-            <label for="edit-title" translate>Title</label>
+            <label for="edit-title" ng-i18next>pa.Title</label>
             <input type="text" class="form-control" id="edit-title" name="title" ng-model="state.options.labels.title"
                    required>
 
-            <div class="help-block" ng-show="yellAtUser" translate>
-              Please enter title
+            <div class="help-block" ng-show="yellAtUser" ng-i18next>
+              pa.msgEnterTitle
             </div>
           </div>
           <div class="form-group" ng-if="state.visualization.name === 'line' || state.visualization.name === 'bar'"
                ng-class="{'has-error': yellAtUser}">
-            <label for="edit-x-label" translate>X-Axis Label</label>
+            <label for="edit-x-label" ng-i18next>pa.XLabel</label>
             <input type="text" class="form-control" id="edit-x-label" name="xLabel" ng-model="state.options.labels.x"
                    required>
 
-            <div class="help-block" ng-show="yellAtUser" translate>
-              Please enter label for x-axis
+            <div class="help-block" ng-show="yellAtUser" ng-i18next>
+              pa.msgEnterXLabel
             </div>
           </div>
           <div class="form-group" ng-if="state.visualization.name === 'line' || state.visualization.name === 'bar'"
                ng-class="{'has-error': yellAtUser}">
-            <label for="edit-y-label" translate>Y-Axis Label</label>
+            <label for="edit-y-label" ng-i18next>pa.YLabel</label>
             <input type="text" class="form-control" id="edit-y-label" name="yLabel" ng-model="state.options.labels.y"
                    required>
 
-            <div class="help-block" ng-show="yellAtUser" translate>
-              Please enter label for y-axis
+            <div class="help-block" ng-show="yellAtUser" ng-i18next>
+              pa.msgEnterYLabel
             </div>
           </div>
           <div class="form-group" ng-class="{'has-error': yellAtUser}">
-            <label for="edit-x-size" translate>Width (pixels)</label>
+            <label for="edit-x-size" ng-i18next>pa.WidthPixels</label>
             <input type="number" class="form-control" id="edit-x-size" name="xSize" ng-model="state.options.width"
                    required>
 
-            <div class="help-block" ng-show="yellAtUser" translate>
-              Please enter width
+            <div class="help-block" ng-show="yellAtUser" ng-i18next>
+              pa.msgWidthPixels
             </div>
           </div>
           <div class="form-group" ng-class="{'has-error': yellAtUser}">
-            <label for="edit-y-size" translate>Height (pixels)</label>
+            <label for="edit-y-size" ng-i18next>pa.HeightPixels</label>
             <input type="number" class="form-control" id="edit-y-size" name="ySize" ng-model="state.options.height"
                    required>
 
-            <div class="help-block" ng-show="yellAtUser" translate>
-              Please enter height
+            <div class="help-block" ng-show="yellAtUser" ng-i18next>
+              pa.msgHeightPixels
             </div>
           </div>
           <div class="form-group">
             <div class="row">
               <input type="checkbox" name="showNotes" ng-model="state.options.showNotes">
-              <label ng-show="state.options.showNotes" translate>Notes</label>
-              <label ng-hide="state.options.showNotes" translate>Include Notes</label>
+              <label ng-show="state.options.showNotes" ng-i18next>pa.Notes</label>
+              <label ng-hide="state.options.showNotes" ng-i18next>pa.IncludeNotes</label>
             </div>
             <div class="row" ng-show="state.options.showNotes">
               <div class="export-viz-white" id="export-viz-notes" text-angular
                    ta-toolbar="[['h4','h5','p','bold','italics','underline','ul']]"
                    ta-text-editor-class="form-content" ta-html-editor-class="form-content" ta-focussed-class="focussed"
                    name="notes" ng-model="state.options.labels.notes"></div>
-              <div class="help-block" ng-show="yellAtUser" translate>
-                Notes for this visualization.
+              <div class="help-block" ng-show="yellAtUser" ng-i18next>
+                pa.msgVisualizationNotes
               </div>
             </div>
           </div>
@@ -74,11 +74,11 @@
           <button class="btn btn-primary" ng-click="export(exportForm)"
                   ng-disabled="filenameInvalid(state.options.labels.title)">
             <span class="icon-ok"></span>
-            <span translate>Export to PNG</span>
+            <span ng-i18next>pa.ExportToPNG</span>
           </button>
           <button class="btn btn-default" ng-click="cancel()">
             <span class="icon-cancel"></span>
-            <span translate>Cancel</span>
+            <span ng-i18next>app.Cancel</span>
           </button>
         </div>
       </div>

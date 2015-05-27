@@ -1,41 +1,41 @@
 <div class="modal-header">
-  <h3 class="modal-title" translate>Edit Age Group</h3>
+  <h3 class="modal-title" ng-i18next>config.EditAgeGroup</h3>
 </div>
 <div class="modal-body">
   <form class="form" role="form" novalidate name="groupForm">
 
     <div class="form-group" ng-class="{'has-error': isInvalid(groupForm.name)}">
-      <label translate>Age Group Name</label>
+      <label ng-i18next>config.AgeGroupName</label>
       <input class="form-control" type="text" name="name" ng-model="row.name" required>
     </div>
 
     <div class="row">
       <div class="col-md-6 form-group" ng-class="{'has-error': isInvalid(groupForm.from)}">
-        <label translate>Starting At</label>
+        <label ng-i18next>config.StartingAt</label>
         <input class="form-control" type="number" name="from" ng-model="row.from" required>
 
       </div>
 
       <div class="col-md-6 form-group" ng-class="{'has-error': isInvalid(groupForm.to)}">
-        <label translate>Less Than</label>
+        <label ng-i18next>config.LessThan</label>
         <input class="form-control" type="number" name="to" ng-model="row.to" required>
       </div>
 
     </div>
-    <div class="help-block" ng-show="yellAtUser && !row.name" translate>
-      Please enter a age group name
+    <div class="help-block" ng-show="yellAtUser && !row.name" ng-i18next>
+      config.msgAgeGroup
     </div>
 
-    <div class="help-block" ng-show="nameInUse" translate>
-      Age group name "{{row.name}}" is already in use, please select a different name.
+    <div class="help-block" ng-show="nameInUse" ng-i18next>
+      config.msgAgeGroupInUse
     </div>
 
-    <div class="help-block" ng-show="yellAtUser && (!row.from || !row.to)" translate>
-      Define age range.
+    <div class="help-block" ng-show="yellAtUser && (!row.from || !row.to)" ng-i18next>
+      config.msgAgeRange
     </div>
 
-    <div class="help-block" ng-show="row.from > row.to" translate>
-      Invalid age range.
+    <div class="help-block" ng-show="row.from > row.to" ng-i18next>
+      config.msgInvalidAgeRange
     </div>
 
   </form>

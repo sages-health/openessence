@@ -5,6 +5,5 @@ module.exports = {
   group: require('./group'),
   multiSelect: require('./multi-select'),
   numericRange: require('./numeric-range'),
-  sex: require('./sex'),
   text: require('./text')
 };

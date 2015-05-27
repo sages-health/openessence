@@ -3,7 +3,7 @@
 var angular = require('angular');
 var services = require('../scripts/modules').services;
 
-angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function (gettextCatalog) {
+angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function () {
 // All possible filters for a data set
   var possibleFilters = [
     // indexed by filterID for ease of toggling on/off, e.g. forms that don't track antiviral use can disable
@@ -15,9 +15,9 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'visitDate',
       type: 'date-range',
       field: 'visitDate',
-      name: gettextCatalog.getString('Visit date'),
+      name: 'op.VisitDate',
       aggregation: {
-        date_histogram: {
+        date_histogram: { // jshint ignore:line
           field: 'visitDate',
           interval: 'day',
           format : 'yyyy-MM-dd'
@@ -28,19 +28,19 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'symptomOnsetDate',
       type: 'date-range',
       field: 'symptomOnsetDate',
-      name: gettextCatalog.getString('Symptom onset date')
+      name: 'op.SymptomOnsetDate'
     },
     {
       filterID: 'submissionDate',
       type: 'date-range',
       field: 'submissionDate',
-      name: gettextCatalog.getString('Form submission date')
+      name: 'op.FormSubmissionDate'
     },
     {
       filterID: 'medicalFacility',
       type: 'multi-select',
       field: 'medicalFacility.name',
-      name: gettextCatalog.getString('Facility'),
+      name: 'op.Facility',
       aggregation: {
         terms: {
           field: 'medicalFacility.name.raw',
@@ -52,7 +52,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'medicalFacilityGroup',
       type: 'group',
       field: 'medicalFacility.name',
-      name: gettextCatalog.getString('Facility Group'),
+      name: 'op.FacilityGroup',
       aggregationField: 'medicalFacility.name.raw',
       aggregation: {
         filters : {
@@ -65,7 +65,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'medicalFacility.location.district',
       type: 'multi-select',
       field: 'medicalFacility.location.district',
-      name: gettextCatalog.getString('District'),
+      name: 'op.District',
       aggregation: {
         terms: {
           field: 'medicalFacility.location.district.raw',
@@ -78,7 +78,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'medicalFacility.location.country',
       type: 'multi-select',
       field: 'medicalFacility.location.country',
-      name: gettextCatalog.getString('Country'),
+      name: 'op.Country',
       aggregation: {
         terms: {
           field: 'medicalFacility.location.country.raw',
@@ -90,7 +90,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'patient.id',
       type: 'text',
       field: 'patient.id',
-      name: gettextCatalog.getString('Id'),
+      name: 'op.Id',
       aggregation: {
         terms: {
           field: 'patient.id',
@@ -102,7 +102,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'patient.age',
       type: 'numeric-range',
       field: 'patient.age.years',
-      name: gettextCatalog.getString('Age'),
+      name: 'op.Age',
       aggregation: {
         terms: {
           field: 'patient.age.years',
@@ -115,7 +115,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'patient.ageGroup',
       type: 'group',
       field: 'patient.age.years',
-      name: gettextCatalog.getString('Age Group'),
+      name: 'op.AgeGroup',
       sortBy: 'from', // sort possible values by this property
       aggregation: {
         range: { // age is actually an age group, b/c that's almost always what you actually want
@@ -126,9 +126,9 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     },
     {
       filterID: 'patient.sex',
-      type: 'sex',
+      type: 'multi-select',//'sex',
       field: 'patient.sex',
-      name: gettextCatalog.getString('Sex'),
+      name: 'op.Sex',
       aggregation: {
         terms: {
           field: 'patient.sex',
@@ -140,7 +140,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'patient.pregnant.is',
       type: 'check-box',
       field: 'patient.pregnant.is',
-      name: gettextCatalog.getString('Pregnant'),
+      name: 'op.Pregnant',
       aggregation: {
         terms: {
           field: 'patient.pregnant.is',
@@ -152,7 +152,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'patient.preExistingConditions',
       type: 'multi-select',
       field: 'patient.preExistingConditions.name',
-      name: gettextCatalog.getString('Pre-existing conditions'),
+      name: 'op.PreExistingConditions',
       aggregation: {
         terms: {
           field: 'patient.preExistingConditions.name.raw',
@@ -164,7 +164,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'symptoms',
       type: 'multi-select',
       field: 'symptoms.name',
-      name: gettextCatalog.getString('Symptom'),
+      name: 'op.Symptoms',
       aggregation: {
         nested: {
           path: 'symptoms'
@@ -190,7 +190,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'symptomsGroup',
       type: 'group',
       field: 'symptoms.name',
-      name: gettextCatalog.getString('Symptom Group'),
+      name: 'op.SymptomsGroup',
       aggregationField: 'symptoms.name.raw',
       aggregation: {
         nested: {
@@ -216,7 +216,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'syndromes',
       type: 'multi-select',
       field: 'syndromes.name',
-      name: gettextCatalog.getString('Syndromes'),
+      name: 'op.Syndromes',
       aggregation: {
         nested: {
           path: 'syndromes'
@@ -242,7 +242,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'diagnoses',
       type: 'multi-select',
       field: 'diagnoses.name',
-      name: gettextCatalog.getString('Diagnoses'),
+      name: 'op.Diagnoses',
       aggregation: {
         nested: {
           path: 'diagnoses'
@@ -268,7 +268,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'diagnosesGroup',
       type: 'group',
       field: 'diagnoses.name',
-      name: gettextCatalog.getString('Diagnoses Group'),
+      name: 'op.DiagnosesGroup',
       aggregationField: 'diagnoses.name.raw',
       aggregation: {
         nested: {
@@ -294,7 +294,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'specimen.id',
       type: 'multi-select',
       field: 'specimen.id',
-      name: gettextCatalog.getString('Specimen'),
+      name: 'op.Specimen',
       aggregation: {
         terms: {
           field: 'specimen.id',
@@ -306,7 +306,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'antiviral.name',
       type: 'multi-select',
       field: 'antiviral.name',
-      name: gettextCatalog.getString('Antiviral'),
+      name: 'op.Antiviral',
       aggregation: {
         terms: {
           field: 'antiviral.name',
@@ -318,7 +318,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'visitType',
       type: 'multi-select',
       field: 'visitType.name',
-      name: gettextCatalog.getString('VisitType'),
+      name: 'op.VisitType',
       aggregation: {
         terms: {
           field: 'visitType.name',
@@ -330,7 +330,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'disposition',
       type: 'multi-select',
       field: 'disposition.name',
-      name: gettextCatalog.getString('Disposition'),
+      name: 'op.Disposition',
       aggregation: {
         terms: {
           field: 'disposition.name',

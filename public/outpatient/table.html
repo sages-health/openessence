@@ -3,30 +3,30 @@
     <tr ng-repeat="visit in $data">
       <!-- TODO: since this could be crowded, collapse like fields (> 1) into one column with a hover that then lets the user 'pin' other fields open-->
       <!-- Dates -->
-      <td ng-show="fields.visitDate.enabled" data-title="'Visit' | translate" data-sortable="'visitDate'">
+      <td ng-show="fields.visitDate.enabled" data-title="'op.VisitDate' | i18next" data-sortable="'visitDate'">
         <a ng-click="tableFilter('visitDate', visit._source.visitDate)">{{visit._source.visitDate | date}}</a>
       </td>
 
-      <td ng-show="fields.week.enabled || false" data-title="'Week' | translate" data-sortable="'visitDate'">
+      <td ng-show="fields.week.enabled || false" data-title="'op.Week' | i18next" data-sortable="'visitDate'">
         <a>{{getWeek(visit._source.reportDate)}}</a>
       </td>
-      <td ng-show="fields.year.enabled || false" data-title="'Year' | translate" data-sortable="'visitDate'">
+      <td ng-show="fields.year.enabled || false" data-title="'op.Year' | i18next" data-sortable="'visitDate'">
         <a>{{getYear(visit._source.reportDate)}}</a>
       </td>
 
-      <td ng-show="fields.symptomOnsetDate.enabled" data-title="'SymptomOnsetDate' | translate" data-sortable="'symptomOnsetDate'">
+      <td ng-show="fields.symptomOnsetDate.enabled" data-title="'op.SymptomOnset' | i18next" data-sortable="'symptomOnsetDate'">
         <a ng-click="tableFilter('symptomOnsetDate', visit._source.symptomOnsetDate)">{{visit._source.symptomOnsetDate | date}}</a>
       </td>
 
       <!-- Unlike other fields which can be seen via the form, this one can't be since it's non-editable -->
       <!-- TODO combine edit form and "record investigation" usecase into coherent UI -->
-      <td ng-show="fields.submissionDate.enabled" data-title="'Submitted' | translate" data-sortable="'submissionDate'">
+      <td ng-show="fields.submissionDate.enabled" data-title="'op.Submitted' | i18next" data-sortable="'submissionDate'">
         <a ng-click="tableFilter('submissionDate', visit._source.submissionDate)">
           {{visit._source.submissionDate | date}}
         </a>
       </td>
 
-      <td ng-show="fields['medicalFacility'].enabled" data-title="'Facility' | translate"
+      <td ng-show="fields['medicalFacility'].enabled" data-title="'op.Facility' | i18next"
           data-sortable="'medicalFacility.name'">
         <a ng-click="tableFilter('medicalFacility', visit._source.medicalFacility.name)"
            popover="{{visit._source.medicalFacility.name}}" popover-trigger="mouseenter">
@@ -34,7 +34,7 @@
         </a>
       </td>
 
-      <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="'District' | translate"
+      <td ng-show="fields['medicalFacility.location.district'].enabled" data-title="'op.District' | i18next"
           data-sortable="'medicalFacility.location.district'">
         <a ng-click="tableFilter('medicalFacility.location.district', visit._source.medicalFacility.location.district)"
            popover="{{visit._source.medicalFacility.location.district}}" popover-trigger="mouseenter">>
@@ -42,85 +42,85 @@
         </a>
       </td>
 
-      <td ng-show="fields['medicalFacility.sites.total'].enabled" data-title="'Total sites' | translate"
+      <td ng-show="fields['medicalFacility.sites.total'].enabled" data-title="'op.SitesTotal' | i18next"
           data-sortable="'medicalFacility.sites.total'">
         {{visit._source.medicalFacility.sites.total}}
       </td>
-      <td ng-show="fields['medicalFacility.sites.reporting'].enabled" data-title="'Sites reporting' | translate" data-sortable="'medicalFacility.sites.reporting'">
+      <td ng-show="fields['medicalFacility.sites.reporting'].enabled" data-title="'op.SitesReporting' | i18next" data-sortable="'medicalFacility.sites.reporting'">
         {{visit._source.medicalFacility.sites.reporting}}
       </td>
 
       <!-- Patient Info -->
-      <td ng-show="fields['patient.id'].enabled" data-title="'Id' | translate" data-sortable="'patient.id'">
+      <td ng-show="fields['patient.id'].enabled" data-title="'op.PatientID' | i18next" data-sortable="'patient.id'">
         <a ng-click="tableFilter('patient.id', visit._source.patient.id)">{{visit._source.patient.id}}</a>
       </td>
-      <td ng-show="fields['patient.name'].enabled" data-title="'Name' | translate" data-sortable="'patient.name'">
+      <td ng-show="fields['patient.name'].enabled" data-title="'op.Name' | i18next" data-sortable="'patient.name'">
         <a ng-click="tableFilter('patient.name', visit._source.patient.name)">{{visit._source.patient.name}}</a>
       </td>
-      <td ng-show="fields['patient.sex'].enabled" data-title="'Sex' | translate" data-sortable="'patient.sex'">
+      <td ng-show="fields['patient.sex'].enabled" data-title="'op.Sex' | i18next" data-sortable="'patient.sex'">
         <a ng-click="tableFilter('patient.sex', visit._source.patient.sex)">{{visit._source.patient.sex}}</a>
       </td>
-      <td ng-show="fields['patient.age'].enabled" data-title="'Age' | translate"
+      <td ng-show="fields['patient.age'].enabled" data-title="'op.Age' | i18next"
           data-sortable="'patient.age.years'">
         <a ng-click="tableFilter('patient.age', visit._source.patient.age.years)">
           {{visit._source.patient.age.years}}
         </a>
       </td>
-      <td ng-show="fields['patient.phone'].enabled" data-title="'Phone' | translate" data-sortable="'patient.phone'">
+      <td ng-show="fields['patient.phone'].enabled" data-title="'op.TelephoneNumber' | i18next" data-sortable="'patient.phone'">
         {{visit._source.patient.phone}}
       </td>
-      <td ng-show="fields['patient.address'].enabled" data-title="'Address' | translate" data-sortable="'patient.address'">
+      <td ng-show="fields['patient.address'].enabled" data-title="'op.Address' | i18next" data-sortable="'patient.address'">
         {{visit._source.patient.address}}
       </td>
-      <td ng-show="fields['patient.weight'].enabled" data-title="'Weight' | translate" data-sortable="'patient.weight'">
+      <td ng-show="fields['patient.weight'].enabled" data-title="'op.Weight' | i18next" data-sortable="'patient.weight'">
         {{visit._source.patient.weight}}
       </td>
-      <td ng-show="fields['patient.temperature'].enabled" data-title="'Temperature' | translate" data-sortable="'patient.temperature'">
+      <td ng-show="fields['patient.temperature'].enabled" data-title="'entry.Temperature' | i18next" data-sortable="'patient.temperature'">
         {{visit._source.patient.temperature}}
       </td>
-      <td ng-show="fields['patient.pulse'].enabled" data-title="'Pulse' | translate" data-sortable="'patient.pulse'">
+      <td ng-show="fields['patient.pulse'].enabled" data-title="'op.Pulse' | i18next" data-sortable="'patient.pulse'">
         {{visit._source.patient.pulse}}
       </td>
-      <td ng-show="fields['patient.bloodPressure'].enabled" data-title="'BloodPressure' | translate" data-sortable="'patient.bloodPressure'">
+      <td ng-show="fields['patient.bloodPressure'].enabled" data-title="'op.BloodPressure' | i18next" data-sortable="'patient.bloodPressure'">
         {{visit._source.patient.bloodPressure.diastolic}} / {{visit._source.patient.bloodPressure.systolic}}
       </td>
-      <td ng-show="fields['patient.pregnant.is'].enabled" data-title="'Pregnant' | translate" data-sortable="'patient.pregnant.is'">
+      <td ng-show="fields['patient.pregnant.is'].enabled" data-title="'entry.Pregnant' | i18next" data-sortable="'patient.pregnant.is'">
         <a ng-click="tableFilter('patient.pregnant.is', visit._source.patient.pregnant.is)">{{visit._source.patient.pregnant.is}}</a>
       </td>
 
-      <td ng-show="fields.['patient.preExistingConditions'].enabled" data-title="'PreExistingConditions' | translate">
+      <td ng-show="fields.['patient.preExistingConditions'].enabled" data-title="'op.PreExistingConditions' | i18next">
         <a ng-click="tableFilter('patient.preExistingConditions', visit._source.patient.preExistingConditions)"
            popover="{{printAggregate(visit._source.patient.preExistingConditions, true) | truncate:500}}" popover-trigger="mouseenter">
           {{printAggregate(visit._source.patient.preExistingConditions) | truncate:30}}
         </a>
       </td>
 
-      <td ng-show="fields.symptoms.enabled" data-title="'Symptoms' | translate">
+      <td ng-show="fields.symptoms.enabled" data-title="'op.Symptoms' | i18next">
         <a ng-click="tableFilter('symptoms', visit._source.symptoms)"
            popover="{{printAggregate(visit._source.symptoms, true) | truncate:500}}" popover-trigger="mouseenter">
           {{printAggregate(visit._source.symptoms) | truncate:30}}
         </a>
       </td>
-      <td ng-show="fields.syndromes.enabled" data-title="'Syndromes' | translate">
+      <td ng-show="fields.syndromes.enabled" data-title="'op.Syndromes' | i18next">
         <a ng-click="tableFilter('syndromes', visit._source.syndromes)"
            popover="{{printAggregate(visit._source.syndromes, true) | truncate:500}}" popover-trigger="mouseenter">
           {{printAggregate(visit._source.syndromes) | truncate:30}}
         </a>
       </td>
-      <td ng-show="fields.diagnoses.enabled" data-title="'Diagnoses' | translate">
+      <td ng-show="fields.diagnoses.enabled" data-title="'op.Diagnoses' | i18next">
         <a ng-click="tableFilter('diagnoses', visit._source.diagnoses)"
            popover="{{printAggregate(visit._source.diagnoses, true) | truncate:500}}" popover-trigger="mouseenter">
           {{printAggregate(visit._source.diagnoses) | truncate:30}}
         </a>
       </td>
 
-      <td ng-show="fields.disposition.enabled" data-title="'Disposition' | translate">
+      <td ng-show="fields.disposition.enabled" data-title="'op.Disposition' | i18next">
         <a ng-click="tableFilter('disposition', visit._source.disposition)">
           {{visit._source.disposition | pluck:'name' | join | truncate:30}}
         </a>
       </td>
 
-      <td ng-show="fields['antiviral.name'].enabled" data-title="'Antiviral' | translate"
+      <td ng-show="fields['antiviral.name'].enabled" data-title="'op.Antiviral' | i18next"
           data-sortable="'antiviral'">
         <a ng-click="tableFilter('antiviral.name', visit._source.antiviral.name)">
           {{visit._source.antiviral.name}}
@@ -130,11 +130,11 @@
       <!-- Edit controls -->
       <td>
         <div class="btn-group btn-group-xs edit-controls pull-right">
-          <button type="button" class="btn btn-default" ng-click="editVisit(visit)" popover="{{'Edit' | translate}}"
+          <button type="button" class="btn btn-default" ng-click="editVisit(visit)" popover="{{'app.Edit' | i18next}}"
                   popover-trigger="mouseenter">
             <span class="icon-pencil"></span>
           </button>
-          <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)" popover="{{'Delete' | translate}}"
+          <button type="button" class="btn btn-danger" ng-click="deleteVisit(visit)" popover="{{'app.Delete' | i18next}}"
                   popover-trigger="mouseenter">
             <span class="icon-cancel"></span>
           </button>

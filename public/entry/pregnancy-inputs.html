@@ -4,9 +4,9 @@
   <div class="form-group" data-field="patient.pregnant.is"
        ng-show="fields['patient.pregnant.is'].enabled && visit.patient.sex === 'female'">
 
-    <label for="entry-pregnant" translate>Pregnant</label>
+    <label for="entry-pregnant" ng-i18next>entry.Pregnant</label>
     <br>
-    <input type="checkbox" id="entry-pregnant" ng-model="visit.patient.pregnant.is" translate>&nbsp;-Patient pregnant?</input>
+    <input type="checkbox" id="entry-pregnant" ng-model="visit.patient.pregnant.is" ng-i18next>entry.isPregnant</input>
   </div>
 
   <!-- Trimester -->
@@ -14,7 +14,7 @@
        ng-show="fields['patient.pregnant.trimester'].enabled && visit.patient.pregnant.is"
        ng-class="{'has-error': isInvalid(visitForm.trimester)}">
 
-    <label for="entry-trimester" translate>Trimester</label>
+    <label for="entry-trimester" ng-i18next>entry.Trimester</label>
     <input type="number" class="form-control" id="entry-trimester" name="trimester" min="1" max="3"
            ng-model="visit.patient.pregnant.trimester">
   </div>

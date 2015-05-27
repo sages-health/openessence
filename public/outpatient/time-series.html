@@ -1,29 +1,29 @@
 <div class="row viz-toolbar">
   <div class="col-md-2 padding-zoom-out">
-    <a class="icon-zoom-out" ng-click="zoom(2)" translate>Zoom out</a>
+    <a class="icon-zoom-out" ng-click="zoom(2)" ng-i18next>op.ZoomOut</a>
   </div>
 
   <div class="col-md-2 nopadding">
     <button type="button" class="btn btn-default btn-sm" ng-show="!tsTable.enabled" ng-model="tsTable.enabled"
-            btn-checkbox translate>
-      <span class="icon-table" aria-hidden="true"></span> View Table
+            btn-checkbox>
+      <span class="icon-table" aria-hidden="true"></span> {{'op.ViewTable' | i18next}}
     </button>
     <button type="button" class="btn btn-default btn-sm" ng-show="tsTable.enabled" ng-model="tsTable.enabled"
-            btn-checkbox translate>
-      <span class="icon-chart-line" aria-hidden="true"></span> View Chart
+            btn-checkbox>
+      <span class="icon-chart-line" aria-hidden="true"></span> {{'op.ViewChart' | i18next}}
     </button>
   </div>
 
   <div class="col-md-4 nopadding">
     <form class="form-inline" role="form">
       <div class="form-group pull-right">
-        <label translate>Algorithm</label>
+        <label ng-i18next>op.Algorithm</label>
         &nbsp;
         <select class="form-control input-sm" ng-model="options.algorithm">
           <!-- descending order from day, since day is most popular (probably) -->
-          <option value="" translate></option>
-          <option value="CUSUM" translate>CUSUM</option>
-          <option value="EWMA" translate>EWMA</option>
+          <option value=""></option>
+          <option value="CUSUM" ng-i18next>op.CUSUM</option>
+          <option value="EWMA" ng-i18next>op.EWMA</option>
         </select>
       </div>
     </form>
@@ -32,26 +32,26 @@
   <div class="col-md-4 nopadding-right">
     <form class="form-inline" role="form">
       <!-- time series options --><!--<label class="checkbox-inline">--><!--<input type="checkbox" checked>-->
-      <!--<span translate>Lines</span>--><!--</label>-->
+      <!--<span ng-i18next>op.Lines</span>--><!--</label>-->
       <!-- TODO bars, stack, percent, legend options, like Kibana has -->
       <!-- might have to forgo nvd3 and use d3 or flot directly to draw lines + bars on same graph -->
 
       <!-- interval -->
       <div class="form-group pull-left">
-        <label translate>Interval</label>
+        <label ng-i18next>op.Interval</label>
         &nbsp;
 
         <select class="form-control input-sm" ng-model="options.interval">
           <!-- descending order from day, since day is most popular (probably) -->
-          <option value="day" translate>day</option>
-          <option value="week" translate>week</option>
-          <option value="isoWeek" translate>isoWeek</option>
-          <option value="month" translate>month</option>
-          <option value="year" translate>year</option>
-          <option value="quarter" translate>quarter</option>
+          <option value="day" ng-i18next>op.day</option>
+          <option value="week" ng-i18next>op.week</option>
+          <option value="isoWeek" ng-i18next>op.isoWeek</option>
+          <option value="month" ng-i18next>op.month</option>
+          <option value="year" ng-i18next>op.year</option>
+          <option value="quarter" ng-i18next>op.quarter</option>
           <!-- elasticsearch also supports smaller intervals, but they're not that useful for our data and are
-               expensive to calculate --><!--<option translate>hour</option>--><!--<option translate>minute</option>-->
-          <!--<option translate>second</option>-->
+               expensive to calculate --><!--<option ng-i18next>op.hour</option>--><!--<option ng-i18next>op.minute</option>-->
+          <!--<option ng-i18next>op.second</option>-->
         </select>
       </div>
 
@@ -74,14 +74,14 @@
       <table ng-table="tableParams" class="table table-striped table-condensed"
              fixed-table-headers="scrollable-area">
         <tr ng-repeat="point in $data">
-          <td data-title="'Date'" sortable="'date'">{{point.dateView}}</td>
-          <td data-title="'Series'" sortable="'series'">{{point.series}}</td>
-          <td data-title="'Count'" sortable="'value'">{{point.value}}</td>
-          <td data-title="'P-Value'" sortable="'pValue'"
+          <td data-title="'op.Date' | i18next" sortable="'date'">{{point.dateView}}</td>
+          <td data-title="'op.Series' | i18next" sortable="'series'">{{point.series}}</td>
+          <td data-title="'op.Count' | i18next" sortable="'value'">{{point.value}}</td>
+          <td data-title="'op.PValue' | i18next" sortable="'pValue'"
               ng-class="{'markedYellow': point.color == 'yellow', 'markedRed': point.color == 'red'}">
             {{point.pValue}}
           </td>
-          <td data-title="'Expected'" sortable="'expected'"
+          <td data-title="'op.Expected' | i18next" sortable="'expected'"
               ng-class="{'markedYellow': point.color == 'yellow', 'markedRed': point.color == 'red'}">
             {{point.expected}}
           </td>

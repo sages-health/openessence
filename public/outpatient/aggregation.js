@@ -8,7 +8,7 @@ var $ = require('jquery');
 require('../crosstab/pivot');
 
 
-angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function (gettextCatalog, possibleFilters, stringUtil) {
+angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function ($filter, possibleFilters, stringUtil) {
 
   var aggs = [];
   angular.forEach(possibleFilters.possibleFilters, function (value) {
@@ -429,7 +429,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         if (colKeys.length > 0) {//row and col
           angular.forEach(rowKeys, function (rowVal, rk) {
             data = [];
-            var label = gettextCatalog.getString(rowVal.join());
+            var label = $filter('i18next')(rowVal.join());//gettextCatalog.getString(rowVal.join());
             if (!lineData[label]) {
               lineData[label] = [];
             }
@@ -479,7 +479,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         });
 
         //loop through and add time : count mapping as series for timeseries
-        label = gettextCatalog.getString(colField);
+        label = $filter('i18next')(colField);//gettextCatalog.getString(colField);
         if (!lineData[label]) {
           lineData[label] = [];
         }

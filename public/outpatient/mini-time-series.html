@@ -1,33 +1,33 @@
 <div class="row viz-toolbar">
   <div class="col-md-3">
-    <a class="icon-zoom-out" ng-click="zoom(2)" translate>Zoom out</a>
+    <a class="icon-zoom-out" ng-click="zoom(2)" ng-i18next>op.ZoomOut</a>
   </div>
   <div class="col-md-9">
     <form class="form-inline" role="form">
       <!-- time series options -->
       <!--<label class="checkbox-inline">-->
       <!--<input type="checkbox" checked>-->
-      <!--<span translate>Lines</span>-->
+      <!--<span ng-i18next>op.Lines</span>-->
       <!--</label>-->
       <!-- TODO bars, stack, percent, legend options, like Kibana has -->
       <!-- might have to forgo nvd3 and use d3 or flot directly to draw lines + bars on same graph -->
 
       <!-- interval -->
       <div class="form-group pull-right">
-        <label translate>Interval</label>&nbsp;
+        <label ng-i18next>op.Interval</label>&nbsp;
 
         <select class="form-control" ng-model="interval">
           <!-- descending order from day, since day is most popular (probably) -->
-          <option value="day" translate>day</option>
-          <option value="week" translate>week</option>
-          <option value="month" translate>month</option>
-          <option value="year" translate>year</option>
-          <option value="quarter" translate>quarter</option>
+          <option value="day" ng-i18next>op.day</option>
+          <option value="week" ng-i18next>op.week</option>
+          <option value="month" ng-i18next>op.month</option>
+          <option value="year" ng-i18next>op.year</option>
+          <option value="quarter" ng-i18next>op.quarter</option>
           <!-- elasticsearch also supports smaller intervals, but they're not that useful for our data and are
                expensive to calculate -->
-          <!--<option translate>hour</option>-->
-          <!--<option translate>minute</option>-->
-          <!--<option translate>second</option>-->
+          <!--<option ng-i18next>op.hour</option>-->
+          <!--<option ng-i18next>op.minute</option>-->
+          <!--<option ng-i18next>op.second</option>-->
         </select>
       </div>
 

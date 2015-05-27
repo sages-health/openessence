@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope, debounce, updateURL, //
-                                                                                        gettextCatalog, EditSettings, $location) {
+                                                                                        $filter, EditSettings, $location) {
   return {
     restrict: 'E',
     template: require('./pie-chart.html'),
@@ -25,7 +25,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
         pre: function (scope, element) {
 
           scope.options = scope.options || {};
-          scope.options.labels = scope.options.labels || {title: gettextCatalog.getString('Pie Chart')};
+          scope.options.labels = scope.options.labels || {title: $filter('i18next')('Pie Chart')};
 
           scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('pie', scope.options.labels)

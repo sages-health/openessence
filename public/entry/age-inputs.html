@@ -2,11 +2,13 @@
 <div class="form-group" data-field="patient.dateOfBirth" ng-show="fields['patient.dateOfBirth'].enabled"
      ng-class="{'has-error': isInvalid(visitForm.dateOfBirth), 'has-warning': isInFuture(visit.patient.dateOfBirth)}">
 
-  <label for="entry-visit-date-of-birth" translate>Date of birth</label>
+  <label for="entry-visit-date-of-birth" ng-i18next>entry.DOB</label>
 
   <div class="input-group">
     <input id="entry-visit-date-of-birth" name="dateOfBirth" type="text" class="form-control"
-           ng-model="visit.patient.dateOfBirth" datepicker-popup show-weeks="false"
+           ng-model="visit.patient.dateOfBirth" datepicker-popup
+           current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
+           close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false"
            is-open="datePopupsOpen.dateOfBirth">
 
     <span class="input-group-btn">
@@ -16,8 +18,8 @@
     </span>
   </div>
 
-  <span class="help-block" ng-show="isInFuture(visit.patient.dateOfBirth)" translate>
-    Are you sure? This date is in the future.
+  <span class="help-block" ng-show="isInFuture(visit.patient.dateOfBirth)" ng-i18next>
+    entry.msgFutureDate
   </span>
 </div>
 
@@ -25,7 +27,7 @@
 <div class="form-group" data-field="patient.age" ng-show="fields['patient.age'].enabled">
 
   <!-- label should target first input on the line, which is years -->
-  <label for="entry-visit-years" translate>Age</label>
+  <label for="entry-visit-years" ng-i18next>entry.Age</label>
 
   <!-- years -->
   <div class="row">
@@ -36,41 +38,45 @@
 
         <!-- Don't disable age even though date of birth is set. This way, the user can tweak the number -->
 
-        <span class="input-group-addon" translate>years</span>
+        <span class="input-group-addon" ng-i18next>entry.years</span>
       </div>
-
-      <span ng-show="warnings.years === 'old'" class="help-block" translate
-            translate-comment="{{visit.patient.age.years}} is a variable">
-        {{visit.patient.age.years}} years is quite old. Are you sure?
+      <span ng-show="warnings.years === 'old'" class="help-block">{{visit.patient.age.years}}</span>
+      <span ng-show="warnings.years === 'old'" class="help-block" ng-i18next>
+         entry.msgTooOld
       </span>
-      <span ng-show="warnings.years === '999'" class="help-block" translate>
-        Leave this field blank if you don't know the patient's age
+      <span ng-show="warnings.years === '999'" class="help-block" ng-i18next>
+        entry.msgUnknownAge
       </span>
       <span ng-show="warnings.years === 'dateOfBirthMismatch'" class="help-block">
-        <span ng-show="expectedAge.years" translate translate-comment="{{expectedAge.years}} is a variable">
-          Are you sure? According to the patient's date of birth, they should be {{expectedAge.years}} years old.
+        <span ng-show="expectedAge.years">{{expectedAge.years}}</span>
+        <span ng-show="expectedAge.years" ng-i18next>entry.msgExpectedAge1</span>
+        <span ng-show="!expectedAge.years" ng-i18next>
+          entry.msgExpectedAge2
         </span>
-        <span ng-show="!expectedAge.years" translate translate-comment="{{expectedAge.months}} is a variable">
-          Are you sure? According to the patient's date of birth, they should be {{expectedAge.months}} months old.
-        </span>
+        <span ng-show="!expectedAge.years">{{expectedAge.months}}</span>
+        <span ng-show="!expectedAge.years" ng-i18next> entry.msgExpectedAge3</span>
       </span>
     </div>
 
     <!-- months -->
     <div class="col-md-6" ng-class="{'has-error': isInvalid(visitForm.months), 'has-warning': warnings.months}">
-      <label for="entry-visit-months" class="sr-only" translate>months</label>
+      <label for="entry-visit-months" class="sr-only" ng-i18next>entry.months</label>
 
       <div class="input-group">
         <input class="form-control" id="entry-visit-months" name="months" ng-model="visit.patient.age.months"
                type="number" step="1" min="0" max="12">
 
-        <span class="input-group-addon" translate>months</span>
+        <span class="input-group-addon" ng-i18next>entry.months</span>
       </div>
 
-      <span ng-show="warnings.months === 'dateOfBirthMismatch'" class="help-block" translate
-            translate-comment="{{expectedAge.months}} is a variable">
-        Are you sure? According to the patient's date of birth, they should be {{expectedAge.months}} months old.
+      <span ng-show="warnings.months === 'dateOfBirthMismatch'" class="help-block" ng-i18next>
+        entry.msgExpectedAge2
       </span>
+      <span ng-show="warnings.months === 'dateOfBirthMismatch'" class="help-block">{{expectedAge.months}} </span>
+      <span ng-show="warnings.months === 'dateOfBirthMismatch'" class="help-block"
+            ng-i18next>entry.msgExpectedAge3
+      </span>
+
     </div>
   </div>
 </div>

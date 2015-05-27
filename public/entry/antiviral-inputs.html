@@ -1,55 +1,41 @@
 <!-- Antiviral exposure -->
 <div class="form-group" data-field="antiviral.exposure" ng-show="fields['antiviral.exposure'].enabled">
-  <label translate>
-    Exposure to influenza antiviral drugs during the last 14 days?
-  </label>
-  <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
-  <label class="radio-inline">
-    <input type="radio" name="antiviralExposure" ng-value="true" ng-model="visit.antiviral.exposure">
-    <span translate>Yes</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralExposure" ng-value="false" ng-model="visit.antiviral.exposure">
-    <span translate>No</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralExposure" ng-value="" ng-model="visit.antiviral.exposure">
-    <span translate>Unknown</span>
-  </label>
+    <label for="entry-visit-antiviral-exposure" ng-i18next>
+        entry.ExposureDuringLast14Days
+    </label>
+    <select class="form-control" id="entry-visit-antiviral-exposure" name="antiviralExposure"
+            ng-model="visit.antiviral.exposure">
+
+        <option ng-repeat="f in fields['antiviral.exposure'].values" value="{{f.value}}"
+                ng-selected="visit.antiviral.exposure === f.value">
+            {{f.name}}
+        </option>
+    </select>
 </div>
 
 <!-- Antiviral source -->
 <div class="form-group" data-field="antiviral.source"
-     ng-show="fields['antiviral.source'].enabled && visit.antiviral.exposure === true">
+     ng-show="fields['antiviral.source'].enabled && visit.antiviral.exposure === 'Y'">
 
-  <label translate>Source of antiviral exposure</label>
-  <br> <!-- By default, Bootstrap puts the label on the same line as the inline radio controls -->
-  <label class="radio-inline">
-    <input type="radio" name="antiviralSource" value="patient" ng-model="visit.antiviral.source">
-    <span translate>Patient</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralSource" value="household" ng-model="visit.antiviral.source">
-    <span translate>Household contact</span>
-  </label>
-  <label class="radio-inline">
-    <input type="radio" name="antiviralSource" value="" ng-model="visit.antiviral.source">
-    <span translate>Unknown</span>
-  </label>
+    <label for="entry-visit-antiviral-source" ng-i18next>entry.AntiviralSource</label>
+    <select class="form-control" id="entry-visit-antiviral-source" name="antiviralSource"
+            ng-model="visit.antiviral.source">
+        <option ng-repeat="f in fields['antiviral.source'].values" value="{{f.name}}"
+                ng-selected="visit.antiviral.source === f.name">
+            {{f.name}}
+        </option>
+    </select>
 </div>
 
 <!-- Antiviral name -->
 <div class="form-group" data-field="antiviral.name"
-     ng-show="fields['antiviral.name'].enabled && visit.antiviral.exposure === true">
+     ng-show="fields['antiviral.name'].enabled && visit.antiviral.exposure === 'Y'">
 
-  <label for="entry-visit-antiviral-name" translate>Name of antiviral</label>
-  <select class="form-control" id="entry-visit-antiviral-name" name="antiviralName" ng-model="visit.antiviral.name">
-    <option value="oseltamivir" translate>Oseltamivir (Tamiflu®)</option>
-    <option value="zanamivir" translate>Zanamivir (Relenza®)</option>
-    <option value="rimantadine" translate>Rimantadine (Flumadine®)</option>
-    <option value="amantadine" translate>Amantadine (Symmetrel®)</option>
-    <option value="umifenovir" translate>Umifenovir (Arbidol®)</option>
-    <option value="laninamivir" translate>Laninamivir</option>
-    <option value="peramivir" translate>Peramivir</option>
-  </select>
+    <label for="entry-visit-antiviral-name" ng-i18next>entry.NameOfAntiviral</label>
+    <select class="form-control" id="entry-visit-antiviral-name" name="antiviralName" ng-model="visit.antiviral.name">
+        <option ng-repeat="f in fields['antiviral.name'].values" value="{{f.name}}"
+                ng-selected="visit.antiviral.name === f.name">
+            {{f.name}}
+        </option>
+    </select>
 </div>

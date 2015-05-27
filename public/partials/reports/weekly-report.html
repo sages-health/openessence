@@ -17,17 +17,21 @@
     <div class="panel-heading">
       <h3>{{report.name}}</h3>
 
-      <div translate>Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report.endDateString}}</div>
+      <div>
+        {{'op.Year' | i18next}}: {{report.year}} | {{'op.Week' | i18next}}: {{report.week}} | {{'r.EndingOn' | i18next}}:
+        {{report.endDateString}}
+      </div>
       <div class="clearfix">
         <div class="pull-left" style="font-size: 80%">
           <h4>
             {{report.name}}
-            <button ng-show="allowExport" class="btn btn-primary" ng-click="export()" title="Export to PNG">
+            <button ng-show="allowExport" class="btn btn-primary" ng-click="export()" ng-i18next="[title]pa.ExportToPNG">
               <span class="icon-export"></span>
             </button>
           </h4>
         </div>
-        <div class="pull-right" style="font-size: 80%">Year: {{report.year}} | Week: {{report.week}} | Ending on:
+        <div class="pull-right" style="font-size: 80%">
+          {{'op.Year' | i18next}}: {{report.year}} | {{'op.Week' | i18next}}: {{report.week}} | {{'r.EndingOn' | i18next}}:
           {{report.endDateString}}
         </div>
       </div>
@@ -37,13 +41,13 @@
       <table class="table table-striped table-hover table-condensed">
         <thead>
         <tr>
-          <th style="border-right: 1px solid #000000;" translate>Country / Area</th>
-          <th style="border-right: 1px solid #000000;" translate>Date of report</th>
-          <th style="border-right: 1px solid #000000;" translate>Number of <br>sites reporting</th>
-          <th style="border-right: 1px solid #000000;" translate>Acute Fever and Rash</th>
-          <th style="border-right: 1px solid #000000;" translate>Diarrhoea</th>
-          <th style="border-right: 1px solid #000000;" translate>Influenza-like Illness</th>
-          <th translate>Prolonged Fever</th>
+          <th style="border-right: 1px solid #000000;" ng-i18next>r.CountryArea</th>
+          <th style="border-right: 1px solid #000000;" ng-i18next>r.DateOfReport</th>
+          <th style="border-right: 1px solid #000000;" ng-i18next="[html]r.SitesReporting"></th>
+          <th style="border-right: 1px solid #000000;" ng-i18next>r.AcuteFeverAndRash</th>
+          <th style="border-right: 1px solid #000000;" ng-i18next>r.Diarrhoea</th>
+          <th style="border-right: 1px solid #000000;" ng-i18next>r.InfluenzalikeIllness</th>
+          <th ng-i18next>r.ProlongedFever</th>
         </tr>
         </thead>
         <tbody style="border:2px solid #000000;">
@@ -70,8 +74,8 @@
 
     <div class="panel-footer">
       <div class="clearfix">
-        <div class="pull-left" style="font-size: 80%" translate>Created by: {{username}}</div>
-        <div class="pull-right" style="font-size: 80%" translate>Date of report: {{dateString}}</div>
+        <div class="pull-left" style="font-size: 80%">{{'r.CreatedBy' | i18next}}: {{username}}</div>
+        <div class="pull-right" style="font-size: 80%">{{'r.DateOfReport' | i18next}}: {{dateString}}</div>
       </div>
     </div>
   </div>

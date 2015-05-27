@@ -1,22 +1,22 @@
 <div class="row viz-toolbar">
   <div class="col-md-2 padding-zoom-out">
-    <a class="icon-zoom-out" ng-click="zoom(2)" translate>Zoom out</a>
+    <a class="icon-zoom-out" ng-click="zoom(2)" ng-i18next>op.ZoomOut</a>
   </div>
   <div class="col-md-2"></div>
 
   <div class="col-md-5 nopadding">
     <form class="form-inline" role="form">
       <div class="form-group pull-right">
-        <label translate>Years</label>
+        <label ng-i18next>op.Years</label>
         &nbsp;
 
         <select class="form-control input-sm" ng-model="options.range">
           <!-- descending order from day, since day is most popular (probably) -->
-          <option value=1 translate>1</option>
-          <option value=2 translate>2</option>
-          <option value=3 translate>3</option>
-          <option value=4 translate>4</option>
-          <option value=5 translate>5</option>
+          <option value=1 ng-i18next>op.1</option>
+          <option value=2 ng-i18next>op.2</option>
+          <option value=3 ng-i18next>op.3</option>
+          <option value=4 ng-i18next>op.4</option>
+          <option value=5 ng-i18next>op.5</option>
         </select>
       </div>
     </form>
@@ -26,16 +26,16 @@
     <form class="form-inline" role="form">
       <!-- interval -->
       <div class="form-group pull-right">
-        <label translate>Interval</label>
+        <label ng-i18next>op.Interval</label>
         &nbsp;
 
         <select class="form-control input-sm" ng-model="options.interval">
           <!-- descending order from day, since day is most popular (probably) -->
-          <option value="day" translate>day</option>
-          <option value="week" translate>week</option>
-          <option value="month" translate>month</option>
-          <option value="year" translate>year</option>
-          <option value="quarter" translate>quarter</option>
+          <option value="day" ng-i18next>op.day</option>
+          <option value="week" ng-i18next>op.week</option>
+          <option value="month" ng-i18next>op.month</option>
+          <option value="year" ng-i18next>op.year</option>
+          <option value="quarter" ng-i18next>op.quarter</option>
         </select>
       </div>
 

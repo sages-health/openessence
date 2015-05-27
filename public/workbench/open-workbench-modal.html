@@ -1,15 +1,15 @@
 <div class="modal-header">
-  <h4 class="modal-title" translate>Open Workbench</h4>
+  <h4 class="modal-title" ng-i18next>wb.OpenWorkbench</h4>
 </div>
 <div class="modal-body">
   <form role="form" novalidate name="workbenchForm">
     <div class="form-group" ng-class="{'has-error': yellAtUser}">
-      <label for="open-workbench-id" translate>Workbench</label>
+      <label for="open-workbench-id" ng-i18next>wb.Workbench</label>
       <select class="form-control" id="open-workbench-id" name="workbench" ng-model="workbench.workbench"
               ng-options="w._source.name for w in workbenches" required>
       </select>
-      <div class="help-block" ng-show="yellAtUser" translate>
-        Please select a workbench
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        wb.msgSelectWorkbench
       </div>
     </div>
   </form>
@@ -18,10 +18,10 @@
 <div class="modal-footer">
   <button class="btn btn-default" ng-click="cancel()">
     <span class="icon-cancel"></span>
-    <span translate>Cancel</span>
+    <span ng-i18next>app.Cancel</span>
   </button>
   <button class="btn btn-primary" ng-click="ok(workbenchForm)">
     <span class="icon-ok"></span>
-    <span translate>Open</span>
+    <span ng-i18next>app.OK</span>
   </button>
 </div>

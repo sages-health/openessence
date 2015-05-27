@@ -5,6 +5,7 @@ var helmet = require('helmet');
 var locale = require('locale');
 var useragent = require('useragent');
 var express = require('express');
+
 var bodyParser = require('body-parser');
 
 var conf = require('./conf');
@@ -13,6 +14,16 @@ var assets = require('./assets');
 var auth = require('./auth');
 
 var app = express();
+//var i18n = require('i18next');
+//app.use(i18n.handle);
+
+//i18n.init({
+//  cookieName: 'lang',
+//  fallbackLng: 'dev',
+//  debug: 'true',
+//  setJqueryExt: false
+//});
+
 var https = url.parse(conf.url).protocol === 'https:';
 
 var views = require('./views');
@@ -172,6 +183,9 @@ app.use('/reports', express()
 app.use('/detectors', express()
   .use(auth.denyAnonymousAccess)
   .use(require('./detectors')()));
+
+app.use('/locales', express()
+  .use(require('./locales')()));
 
 app.use('/csv', express()
   .use(auth.denyAnonymousAccess)

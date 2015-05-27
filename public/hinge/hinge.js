@@ -8,7 +8,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 require('../select2');
 
-angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gettextCatalog) {
+angular.module(directives.name).directive('hinge', /*@ngInject*/ function ($filter) {
   return {
     restrict: 'E',
     transclude: true,
@@ -33,8 +33,8 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
 
         // TODO think of visualization-independent name, e.g. 'Grouping', but better, or change placeholder depending
         // on the selected visualization
-        scope.pivotRowsPlaceholder = gettextCatalog.getString('Report Rows');
-        scope.pivotColsPlaceholder = gettextCatalog.getString('Attribute Columns');
+        scope.pivotRowsPlaceholder = 'hinge.ReportRows';
+        scope.pivotColsPlaceholder = 'hinge.AttributeColumns';
 
         scope.select2Options = {
           sortable: true,
@@ -42,7 +42,7 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function (gette
           data: scope.pivotOptions.map(function (o) {
             return {
               id: o.value,
-              text: o.label
+              text: $filter('i18next')(o.label)
             };
           }).sort(function(a, b){
             if (a.text > b.text) {

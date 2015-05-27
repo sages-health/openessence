@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('dashboard', /*@ngInject*/ function (gettextCatalog, $modal, visualization, Dashboard,
+angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($modal, visualization, Dashboard,
                                                                                $location, dateFilter, updateURL) {
   return {
     restrict: 'E',

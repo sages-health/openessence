@@ -301,7 +301,8 @@ var indexRequests = [
               antiviral: {
                 properties: {
                   exposure: {
-                    type: 'boolean'
+                    type: 'string',
+                    index: 'not_analyzed'
                   },
                   source: {
                     type: 'string',
@@ -356,6 +357,7 @@ var indexRequests = [
           'district',
           'facility',
           'form',
+          'locale',
           'symptom',
           'syndrome',
           'user',
@@ -529,6 +531,44 @@ var indexRequests = [
                     }
                   }
                 }
+              }
+            }
+          }),
+
+          // Saved visualizations
+          locale: addPaperTrail({
+            properties: {
+              lng: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              ns: {
+                type: 'string',
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
+              },
+              enabled: {
+                type: 'boolean'
+              },
+              displayName: {
+                type: 'string',
+                index: 'not_analyzed'
+              },
+              order: {
+                type: 'double'
+              },
+              translation: {
+                type: 'object',
+                index: 'no'
               }
             }
           }),

@@ -4,7 +4,7 @@
     <div class="panel-heading">
       <h3>
         {{report.name}}
-        <button ng-show="allowExport" class="btn btn-primary" ng-click="export()" title="Export to PNG">
+        <button ng-show="allowExport" class="btn btn-primary" ng-click="export()" ng-i18next="[title]pa.ExportToPNG">
           <span class="icon-export"></span>
         </button>
       </h3>
@@ -13,7 +13,7 @@
       <div class="row">
         <div class="col-md-8">
           <div class="panel panel-default report-panel">
-            <div class="panel-heading" translate>Daily Time Series</div>
+            <div class="panel-heading" ng-i18next>r.DailyTimeSeries</div>
             <outpatient-visualization visualization="viz.visualization" query-string="viz.queryString"
                                       filters="viz.filters" pivot="viz.pivot" options="viz">
             </outpatient-visualization>
@@ -31,7 +31,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="panel panel-default report-panel">
-            <div class="panel-heading" translate>Bar Chart - Sex</div>
+            <div class="panel-heading" ng-i18next>r.BarChartSex</div>
             <outpatient-visualization visualization="viz1.visualization" query-string="viz1.queryString"
                                       filters="viz1.filters" pivot="viz1.pivot" options="viz1">
             </outpatient-visualization>
@@ -40,7 +40,7 @@
 
         <div class="col-md-6">
           <div class="panel panel-default report-panel">
-            <div class="panel-heading" translate>Pie Chart - Symptoms</div>
+            <div class="panel-heading" ng-i18next>r.PieChartSymptoms</div>
             <outpatient-visualization visualization="viz2.visualization" query-string="viz2.queryString"
                                       filters="viz2.filters" pivot="viz2.pivot" options="viz2">
             </outpatient-visualization>

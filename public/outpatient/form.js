@@ -54,7 +54,11 @@ module.exports = function ($parse, OutpatientVisitResource) {
               // form will list this field as blank when it really isn't
               var existingValues = field.expression(scope.visit);
               if (existingValues) {
-                if (Array.isArray(existingValues)) {
+                if(field.name === 'antiviral.exposure' || field.name === 'patient.sex'){
+                  if(angular.isString(existingValues)){
+                    existingValues = valuesByName[existingValues] ? valuesByName[existingValues].value : '';
+                  }
+                } else if (Array.isArray(existingValues)) {
                   existingValues = existingValues.map(function (v) {
                     valuesByName[v.name] = v; // side effect inside map!
 
@@ -214,7 +218,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
               }
 
               // trimester -> pregnant -> female
-              if (recordToSubmit.patient.sex !== 'female') {
+              if (recordToSubmit.patient.sex !== 'F') {
                 // can't be pregnant without being female, modus tollens FTW!
                 delete recordToSubmit.patient.pregnant;
               } else if (recordToSubmit.patient.pregnant && !recordToSubmit.patient.pregnant.is) {
@@ -222,7 +226,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
               }
 
               // antiviral name || antiviral source -> antiviral exposure
-              if (recordToSubmit.antiviral && !recordToSubmit.antiviral.exposure) {
+              if (recordToSubmit.antiviral && recordToSubmit.antiviral.exposure === 'N') {
                 delete recordToSubmit.antiviral.name;
                 delete recordToSubmit.antiviral.source;
               }
@@ -292,24 +296,35 @@ module.exports = function ($parse, OutpatientVisitResource) {
                   return;
                 }
 
-                if (Array.isArray(selectedValues)) {
-                  // multi-select
-                  selectedValues = selectedValues.map(function (v) {
-                    if (v.name) {
-                      // already an object
-                      return v;
-                    } else {
-                      // won't be in field.valuesByName if it's an "Other"
-                      return field.valuesByName[v] || {name: v};
+                // map id(value) to displayValue(name)
+                if (field.name === 'antiviral.exposure' || field.name === 'patient.sex') {
+                  angular.forEach(field.valuesByName, function (val) {
+                    if (val.value === selectedValues) {
+                      selectedValues = val.name;
                     }
                   });
+
+                } else if (field.name === 'antiviral.source' || field.name === 'antiviral.name') {
+                  //no-op
                 } else {
-                  // single-select
-                  if (!selectedValues.name) {
-                    selectedValues = field.valuesByName[selectedValues] || {name: selectedValues};
+                  if (Array.isArray(selectedValues)) {
+                    // multi-select
+                    selectedValues = selectedValues.map(function (v) {
+                      if (v.name) {
+                        // already an object
+                        return v;
+                      } else {
+                        // won't be in field.valuesByName if it's an "Other"
+                        return field.valuesByName[v] || {name: v};
+                      }
+                    });
+                  } else {
+                    // single-select
+                    if (!selectedValues.name) {
+                      selectedValues = field.valuesByName[selectedValues] || {name: selectedValues};
+                    }
                   }
                 }
-
                 field.expression.assign(recordToSubmit, selectedValues);
               }
             });

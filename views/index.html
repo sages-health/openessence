@@ -1,30 +1,30 @@
 <!doctype html>
 <html lang="[[= lang ]]"> <!-- lang is locale supported by server -->
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="description" content="OpenESSENCE, for disease surveillance">
-  <meta name="viewport" content="width=device-width">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="OpenESSENCE, for disease surveillance">
+    <meta name="viewport" content="width=device-width">
 
-  <!-- you can also use ng-init, but that won't get populated until after angular bootstraps -->
-  <meta name="_user" content="[[= user ? JSON.stringify(user) : '' ]]">
-  <meta name="_csrf" content="[[= csrfToken ]]">
-  <meta name="_persona" content="[[= persona ]]">
-  <meta name="_environment" content="[[= environment ]]">
-  <meta name="_version" content="[[= version ]]">
-  <meta name="_commit" content="[[= commit ]]">
-  <meta name="_deploy-date" content="[[= deployDate ]]">
-  <meta name="_app-name" content="[[= appName ]]">
+    <!-- you can also use ng-init, but that won't get populated until after angular bootstraps -->
+    <meta name="_user" content="[[= user ? JSON.stringify(user) : '' ]]">
+    <meta name="_csrf" content="[[= csrfToken ]]">
+    <meta name="_persona" content="[[= persona ]]">
+    <meta name="_environment" content="[[= environment ]]">
+    <meta name="_version" content="[[= version ]]">
+    <meta name="_commit" content="[[= commit ]]">
+    <meta name="_deploy-date" content="[[= deployDate ]]">
+    <meta name="_app-name" content="[[= appName ]]">
 
-  <!-- Could have Angular template this, but that would be flicker-tastic -->
-  <title>[[= appName ]]</title>
+    <!-- Could have Angular template this, but that would be flicker-tastic -->
+    <title>[[= appName ]]</title>
 
-  <!-- tell angular not to remove locale from URL when html5Mode is active -->
-  <base href="[[= baseHref ]]">
+    <!-- tell angular not to remove locale from URL when html5Mode is active -->
+    <base href="[[= baseHref ]]">
 
-  <!-- inject:css -->
-  <link rel="stylesheet" href="/public/styles/main.css">
-  <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <!-- endinject -->
 </head>
 
 <!-- ng-strict-di requires Angular 1.3 which is still rough around the edges, so for now it's a no-op -->
@@ -32,7 +32,7 @@
 
 <!--[if lt IE 9]>
 <p>You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> to better
-  experience this site.</p>
+    experience this site.</p>
 <![endif]-->
 
 <div ui-view></div>
