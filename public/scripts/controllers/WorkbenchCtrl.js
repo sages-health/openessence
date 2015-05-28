@@ -57,20 +57,11 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     var form = response.results[0]._source;
     $scope.form = form; // need to pass to visualizations
 
-    $scope.possibleFilters = form.fields.reduce(function (filters, field) {
-      if (!field.enabled) {
-        return filters;
-      }
+    $scope.possibleFilters = possibleFilters.getPossibleFilters(form.fields);
 
-      var possibleFilter = possibleFilters.possibleFilters[field.name];
-      if (possibleFilter) {
-        filters[field.name] = angular.extend({values: field.values}, possibleFilter);
-      }
-      return filters;
-    }, {});
-
-    $scope.pivotOptions = outpatientAggregation.getAggregables().filter(function (value) {
-      var formField = form.fields.filter(function (fValue) {
+    $scope.pivotOptions = possibleFilters.getAggregables().filter(function (value) {
+      var formField = $scope.possibleFilters.filter(function (fValue) {
+        //TODO check this filter after rework
         return value.value === fValue.name;
       });
       var enabled = formField[0] && formField[0].enabled;

@@ -4,6 +4,7 @@ var angular = require('angular');
 var services = require('../scripts/modules').services;
 
 angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function () {
+
 // All possible filters for a data set
   var possibleFilters = [
     // indexed by filterID for ease of toggling on/off, e.g. forms that don't track antiviral use can disable
@@ -344,14 +345,44 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     filters[filter.filterID] = angular.copy(filter);
     return filters;
   }, {});
+
+  var getPossibleFilters = function(fields) {
+    var reduced = fields.reduce(function (filters, field) {
+      if (!field.enabled) {
+        return filters;
+      }
+
+      var possibleFilter = possibles[field.name];
+      if (possibleFilter) {
+        filters[field.name] = angular.extend({values: field.values}, possibleFilter);
+      }
+      return filters;
+    }, {});
+    return reduced;
+  };
+
+
 //TODO, make every reference receive an object ID:OBJ
   var pivotArray = [];
   angular.forEach(possibleFilters, function (value, key) {
     pivotArray.push({value: value.filterID, label: value.name});
   });
 
+  var aggs = [];
+  angular.forEach(possibles, function (value) {
+    if (value.aggregation) {
+      aggs.push({value: value.filterID, label: value.name});
+    }
+  });
+
+  var getAggregablesFn = function () {
+    return angular.copy(aggs);
+  };
+
   return {
     possibleFilters: possibles,
-    pivotable: pivotArray
+    pivotable: pivotArray,
+    getPossibleFilters: getPossibleFilters,
+    getAggregables: getAggregablesFn  //TODO this needs to be based on a flag in config since aggregation is going away
   };
 });

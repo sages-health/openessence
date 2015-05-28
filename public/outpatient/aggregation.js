@@ -8,19 +8,12 @@ var $ = require('jquery');
 require('../crosstab/pivot');
 
 
-angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function ($filter, possibleFilters, stringUtil) {
+angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ function ($filter, stringUtil) {
 
-  var aggs = [];
-  angular.forEach(possibleFilters.possibleFilters, function (value) {
-    if (value.aggregation) {
-      aggs.push({value: value.filterID, label: value.name});
-    }
-  });
-
-  var getFormField = function (form, fieldName) {
+  var getFormField = function (possibleFields, fieldName) {
     var field;
-    if (form && form.fields) {
-      angular.forEach(form.fields, function (fld) {
+    if (possibleFields) {
+      angular.forEach(possibleFields, function (fld) {
         if (fld.name === fieldName) {
           field = angular.copy(fld);
         }
@@ -499,17 +492,14 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         return pieData;
       }
     },
-    getAggregables: function () {
-      return angular.copy(aggs);
-    },
-    getAggregation: function (name, limit, form) {
-      var filter = possibleFilters.possibleFilters[name];
+    getAggregation: function (name, limit, possibleFields) {
+      var filter = possibleFields[name];
       var copy = angular.copy(filter.aggregation);
       if (limit && copy.terms) {
         copy.terms.size = limit;
       }
-      else if (filter.filterID === 'patient.ageGroup' && form && copy.range) {
-        var fld = getFormField(form, name);
+      else if (filter.filterID === 'patient.ageGroup' && possibleFields && copy.range) {
+        var fld = getFormField(possibleFields, name);
         var rangeDef = fld.values;
         var ranges = [];
         angular.forEach(rangeDef, function (group) {
@@ -529,8 +519,8 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }
 
       // if filter is medicalFacilityGroup, symptomsGroup, diagnosesGroup, ect.
-      else if (filter.type === 'group' && form) {
-        var formField = getFormField(form, name);
+      else if (filter.type === 'group' && possibleFields) {
+        var formField = getFormField(possibleFields, name);
         var groups = formField.values;
         var buckets = {};
         angular.forEach(groups, function (group) {
@@ -563,9 +553,8 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
      * @param series == series / first order bucket
      * @param cols == aggregation field/attribute (symptoms.count) / second order bucket
      * @param limit
-     * @param form
      */
-    buildAggregationQuery: function (series, cols, limit, form) {
+    buildAggregationQuery: function (series, cols, limit, possibleFields) {
       var first, second;
       var query = {};
       if (series[0]) {
@@ -579,12 +568,12 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }
       //build first aggregation
       if (first && second) {
-        query.first = this.getAggregation(first, limit, form);
+        query.first = this.getAggregation(first, limit, possibleFields);
         //if a second exists, add to first aggregation object
         query.first.aggs = {};
-        query.first.aggs.second = this.getAggregation(second, limit, form);
+        query.first.aggs.second = this.getAggregation(second, limit, possibleFields);
       } else if (first) {
-        query.first = this.getAggregation(first, limit, form);
+        query.first = this.getAggregation(first, limit, possibleFields);
       }
       return {query: query, first: first, second: second};
     },
