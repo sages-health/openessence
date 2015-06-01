@@ -4,7 +4,7 @@ var angular = require('angular');
 
 // @ngInject
 module.exports = function ($resource, $scope, $location, $timeout, $modal, $window, $state, $stateParams,//
-                           scopeToJson, FormResource, possibleFilters, outpatientAggregation, updateURL, Workbench) {
+                           scopeToJson, FormResource, possibleFilters, updateURL, Workbench) {
   var NUM_COLUMNS = 24,
     DEFAULT_SIZE_X = 12,
     DEFAULT_SIZE_Y = 8;
@@ -59,14 +59,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
 
     $scope.possibleFilters = possibleFilters.getPossibleFilters(form.fields);
 
-    $scope.pivotOptions = possibleFilters.getAggregables().filter(function (value) {
-      var formField = $scope.possibleFilters.filter(function (fValue) {
-        //TODO check this filter after rework
-        return value.value === fValue.name;
-      });
-      var enabled = formField[0] && formField[0].enabled;
-      return enabled;
-    });
+    $scope.pivotOptions = possibleFilters.getAggregables(form.fields);
 
     var workbenchId = $stateParams.workbenchId;
     var state = updateURL.getState();
@@ -123,7 +116,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
         angular.extend({
           from: from,
           to: new Date()
-        }, possibleFilters.possibleFilters.visitDate)
+        }, possibleFilters.getPossibleFilters($scope.form.fields).visitDate)
       ];
 
       // TODO don't do this

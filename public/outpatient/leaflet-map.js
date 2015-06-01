@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
-angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function ($q, DistrictResource, OutpatientVisitResource, outpatientAggregation,
+angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function ($q, DistrictResource, OutpatientVisitResource,
                                                                   $timeout, $rootScope, debounce) {
 
   return {

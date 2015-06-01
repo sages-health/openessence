@@ -7,6 +7,7 @@ module.exports = [
     fields: [
       {
         name: 'visitDate',
+        aggregable: true,
         enabled: false
       },
       {
@@ -26,7 +27,8 @@ module.exports = [
         // It's not `medicalFacility.name` because the user is selecting the entire medical facility, not just the name
         // (even though the name is what's displayed and queried on).
         name: 'medicalFacility',
-        enabled: true,
+        enabled: false,
+        aggregable: true,
         groupName: 'medicalFacilityGroup',
         // can't do this with JSON
         values: require('./facilities.json')
@@ -37,7 +39,8 @@ module.exports = [
         // Outpatient model does not have grouping fields, so this field will not be populated on data entry page
         // when this field is selected as a filter on workbench, it will expand query to medicalFacility
         name: 'medicalFacilityGroup',
-        enabled: true,
+        enabled: false,
+        aggregable: true,
         isGroup: true,
         possibleValuesFrom: 'medicalFacility'
       },
@@ -97,11 +100,13 @@ module.exports = [
       {
         name: 'patient.age',
         groupName: 'patient.ageGroup',
-        enabled: true
+        enabled: false,
+        aggregable: true
       },
       {
         name: 'patient.ageGroup',
-        enabled: true,
+        enabled: false,
+        aggregable: true,
         isGroup: true,
         values: [
           {name: 'Less than 1', value: '[0 TO 1}', from: 0, to: 1},
@@ -116,6 +121,7 @@ module.exports = [
       {
         name: 'patient.sex',
         enabled: false,
+        aggregable: true,
         formFieldType: 'FixedLengthList',
         values: [
           {value:'M', name:'Male'},
@@ -185,7 +191,8 @@ module.exports = [
 
       {
         name: 'symptoms',
-        enabled: true,
+        enabled: false,
+        aggregable: true,
         groupName: 'symptomsGroup',
         values: require('./symptom.json')
       },
@@ -195,13 +202,15 @@ module.exports = [
       },
       {
         name: 'symptomsGroup',
-        enabled: true,
+        enabled: false,
+        aggregable: true,
         isGroup: true,
         possibleValuesFrom: 'symptoms'
       },
       {
         name: 'syndromes',
         enabled: false,
+        aggregable: true,
         values: require('./syndrome.json')
       },
       {
@@ -210,13 +219,15 @@ module.exports = [
       },
       {
         name: 'diagnoses',
-        enabled: true,
+        enabled: false,
+        aggregable: true,
         groupName: 'diagnosesGroup',
         values: require('./diagnosis.json')
       },
       {
         name: 'diagnosesGroup',
-        enabled: true,
+        enabled: false,
+        aggregable: true,
         isGroup: true,
         possibleValuesFrom: 'diagnoses'
       },

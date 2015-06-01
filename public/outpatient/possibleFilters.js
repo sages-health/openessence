@@ -4,7 +4,7 @@ var angular = require('angular');
 var services = require('../scripts/modules').services;
 
 angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function () {
-
+//TODO move type & field? to forms.js
 // All possible filters for a data set
   var possibleFilters = [
     // indexed by filterID for ease of toggling on/off, e.g. forms that don't track antiviral use can disable
@@ -16,14 +16,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'visitDate',
       type: 'date-range',
       field: 'visitDate',
-      name: 'op.VisitDate',
-      aggregation: {
-        date_histogram: { // jshint ignore:line
-          field: 'visitDate',
-          interval: 'day',
-          format : 'yyyy-MM-dd'
-        }
-      }
+      name: 'op.VisitDate'
     },
     {
       filterID: 'symptomOnsetDate',
@@ -41,303 +34,118 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'medicalFacility',
       type: 'multi-select',
       field: 'medicalFacility.name',
-      name: 'op.Facility',
-      aggregation: {
-        terms: {
-          field: 'medicalFacility.name.raw',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Facility'
     },
     {
       filterID: 'medicalFacilityGroup',
       type: 'group',
       field: 'medicalFacility.name',
-      name: 'op.FacilityGroup',
-      aggregationField: 'medicalFacility.name.raw',
-      aggregation: {
-        filters : {
-          // Buckets/filters will be added here...
-        }
-      }
+      name: 'op.FacilityGroup'
     },
     {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.district',
       type: 'multi-select',
       field: 'medicalFacility.location.district',
-      name: 'op.District',
-      aggregation: {
-        terms: {
-          field: 'medicalFacility.location.district.raw',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.District'
     },
     {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.country',
       type: 'multi-select',
       field: 'medicalFacility.location.country',
-      name: 'op.Country',
-      aggregation: {
-        terms: {
-          field: 'medicalFacility.location.country.raw',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Country'
     },
     {
       filterID: 'patient.id',
       type: 'text',
       field: 'patient.id',
-      name: 'op.Id',
-      aggregation: {
-        terms: {
-          field: 'patient.id',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Id'
     },
     {
       filterID: 'patient.age',
       type: 'numeric-range',
       field: 'patient.age.years',
-      name: 'op.Age',
-      aggregation: {
-        terms: {
-          field: 'patient.age.years',
-          order: { '_term': 'asc' }
-        }
-      }
-
+      name: 'op.Age'
     },
     {
       filterID: 'patient.ageGroup',
       type: 'group',
       field: 'patient.age.years',
       name: 'op.AgeGroup',
-      sortBy: 'from', // sort possible values by this property
-      aggregation: {
-        range: { // age is actually an age group, b/c that's almost always what you actually want
-          field: 'patient.age.years',
-          keyed: true
-        }
-      }
+      sortBy: 'from' // sort possible values by this property
     },
     {
       filterID: 'patient.sex',
       type: 'multi-select',//'sex',
       field: 'patient.sex',
-      name: 'op.Sex',
-      aggregation: {
-        terms: {
-          field: 'patient.sex',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Sex'
     },
     {
       filterID: 'patient.pregnant.is',
       type: 'check-box',
       field: 'patient.pregnant.is',
-      name: 'op.Pregnant',
-      aggregation: {
-        terms: {
-          field: 'patient.pregnant.is',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Pregnant'
     },
     {
       filterID: 'patient.preExistingConditions',
       type: 'multi-select',
       field: 'patient.preExistingConditions.name',
-      name: 'op.PreExistingConditions',
-      aggregation: {
-        terms: {
-          field: 'patient.preExistingConditions.name.raw',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.PreExistingConditions'
     },
     {
       filterID: 'symptoms',
       type: 'multi-select',
       field: 'symptoms.name',
-      name: 'op.Symptoms',
-      aggregation: {
-        nested: {
-          path: 'symptoms'
-        },
-        aggs: {
-          _name: { //double check that using an underscore is kosher
-            terms: {
-              field: 'symptoms.name.raw',
-              order: { '_term': 'asc' }
-            },
-            aggs: {
-              count: {
-                sum: {
-                  field: 'symptoms.count'
-                }
-              }
-            }
-          }
-        }
-      }
+      name: 'op.Symptoms'
     },
     {
       filterID: 'symptomsGroup',
       type: 'group',
       field: 'symptoms.name',
-      name: 'op.SymptomsGroup',
-      aggregationField: 'symptoms.name.raw',
-      aggregation: {
-        nested: {
-          path: 'symptoms'
-        },
-        aggs: {
-          _name: { //double check that using an underscore is kosher
-            filters : {
-              // Buckets/filters will be added here...
-            },
-            aggs: {
-              count: {
-                sum: {
-                  field: 'symptoms.count'
-                }
-              }
-            }
-          }
-        }
-      }
+      name: 'op.SymptomsGroup'
     },
     {
       filterID: 'syndromes',
       type: 'multi-select',
       field: 'syndromes.name',
-      name: 'op.Syndromes',
-      aggregation: {
-        nested: {
-          path: 'syndromes'
-        },
-        aggs: {
-          _name: { //double check that using an underscore is kosher
-            terms: {
-              field: 'syndromes.name.raw',
-              order: { '_term': 'asc' }
-            },
-            aggs: {
-              count: {
-                sum: {
-                  field: 'syndromes.count'
-                }
-              }
-            }
-          }
-        }
-      }
+      name: 'op.Syndromes'
     },
     {
       filterID: 'diagnoses',
       type: 'multi-select',
       field: 'diagnoses.name',
-      name: 'op.Diagnoses',
-      aggregation: {
-        nested: {
-          path: 'diagnoses'
-        },
-        aggs: {
-          _name: { //double check that using an underscore is kosher
-            terms: {
-              field: 'diagnoses.name.raw',
-              order: { '_term': 'asc' }
-            },
-            aggs: {
-              count: {
-                sum: {
-                  field: 'diagnoses.count'
-                }
-              }
-            }
-          }
-        }
-      }
+      name: 'op.Diagnoses'
     },
     {
       filterID: 'diagnosesGroup',
       type: 'group',
       field: 'diagnoses.name',
-      name: 'op.DiagnosesGroup',
-      aggregationField: 'diagnoses.name.raw',
-      aggregation: {
-        nested: {
-          path: 'diagnoses'
-        },
-        aggs: {
-          _name: { //double check that using an underscore is kosher
-            filters : {
-              // Buckets/filters will be added here...
-            },
-            aggs: {
-              count: {
-                sum: {
-                  field: 'diagnoses.count'
-                }
-              }
-            }
-          }
-        }
-      }
+      name: 'op.DiagnosesGroup'
     },
     {
       filterID: 'specimen.id',
       type: 'multi-select',
       field: 'specimen.id',
-      name: 'op.Specimen',
-      aggregation: {
-        terms: {
-          field: 'specimen.id',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Specimen'
     },
     {
       filterID: 'antiviral.name',
       type: 'multi-select',
       field: 'antiviral.name',
-      name: 'op.Antiviral',
-      aggregation: {
-        terms: {
-          field: 'antiviral.name',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Antiviral'
     },
     {
       filterID: 'visitType',
       type: 'multi-select',
       field: 'visitType.name',
-      name: 'op.VisitType',
-      aggregation: {
-        terms: {
-          field: 'visitType.name',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.VisitType'
     },
     {
       filterID: 'disposition',
       type: 'multi-select',
       field: 'disposition.name',
-      name: 'op.Disposition',
-      aggregation: {
-        terms: {
-          field: 'disposition.name',
-          order: { '_term': 'asc' }
-        }
-      }
+      name: 'op.Disposition'
     }
   ];
 
@@ -346,43 +154,32 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     return filters;
   }, {});
 
-  var getPossibleFilters = function(fields) {
+  var getPossibleFiltersFn = function(fields) {
     var reduced = fields.reduce(function (filters, field) {
-      if (!field.enabled) {
-        return filters;
-      }
-
-      var possibleFilter = possibles[field.name];
-      if (possibleFilter) {
-        filters[field.name] = angular.extend({values: field.values}, possibleFilter);
+      if (field.enabled) {
+        var possibleFilter = possibles[field.name];
+        if (possibleFilter) {
+          filters[field.name] = angular.extend({values: field.values}, possibleFilter);
+        }
       }
       return filters;
     }, {});
     return reduced;
   };
 
-
-//TODO, make every reference receive an object ID:OBJ
-  var pivotArray = [];
-  angular.forEach(possibleFilters, function (value, key) {
-    pivotArray.push({value: value.filterID, label: value.name});
-  });
-
-  var aggs = [];
-  angular.forEach(possibles, function (value) {
-    if (value.aggregation) {
-      aggs.push({value: value.filterID, label: value.name});
-    }
-  });
-
-  var getAggregablesFn = function () {
-    return angular.copy(aggs);
+  var getAggregablesFn = function(fields) {
+    var aggs = [];
+    angular.forEach(fields, function (field) {
+      if (field.enabled && field.aggregable) {
+        aggs.push({value: field.name, label: field.name});
+      }
+    });
+    return aggs;
   };
 
   return {
     possibleFilters: possibles,
-    pivotable: pivotArray,
-    getPossibleFilters: getPossibleFilters,
+    getPossibleFilters: getPossibleFiltersFn,
     getAggregables: getAggregablesFn  //TODO this needs to be based on a flag in config since aggregation is going away
   };
 });

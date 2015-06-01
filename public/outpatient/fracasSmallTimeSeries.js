@@ -118,6 +118,7 @@ angular.module(directives.name).directive('outpatientSmallTimeSeries', //
                 if (scope.series.length > 0) {
                   aggs.date.aggs = {};
                   scope.series.forEach(function (s) {
+                    //TODO removed getAggregation, needs updated to match big timeseries
                     aggs.date.aggs[s] = outpatientAggregation.getAggregation(s, null, scope.form);
                   });
                 }
