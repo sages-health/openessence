@@ -497,7 +497,7 @@ app.directive('frable', ['$compile', '$q', '$parse', function ($compile, $q, $pa
         }
         var parsedAttribute = function (attr, defaultValue) {
           return function (scope) {
-            return $parse(el.attr('x-data-' + attr) || el.attr('data-' + attr) || el.attr('dynamic-' + attr) || el.attr(attr))(scope, {
+            return $parse(el.attr('x-data-' + attr) || el.attr('data-' + attr) || el.attr(attr))(scope, {
               $columns: columns
             }) || defaultValue;
           };

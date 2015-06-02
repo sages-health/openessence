@@ -31,19 +31,6 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
               return;
             }
 
-            //scope.cols = fields.reduce(function (fields, field) {
-            //  if(field.enabled) {
-            //    fields[field.name] = {
-            //      title: field.name,
-            //      sortable: field.name,
-            //      field: field.name
-            //    };
-            //  }
-            //  return fields;
-            //}, {});
-
-            //scope.cols = scope.cols.values();
-
             scope.cols = [{
               title:'Date',
               field: 'visitDate'
@@ -87,7 +74,7 @@ angular.module(directives.name).directive('outpatientTable', /*@ngInject*/ funct
             scope.tableParams.reload();
           });
 
-          scope.tableParams = new ngTableParams({ //FrableParams({
+          scope.tableParams = new ngTableParams({
             page: 1, // page is 1-based
             count: 10,
             sorting: {

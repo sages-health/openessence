@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, orderByFilter, ngTableParams, VisualizationResource,
+module.exports = function ($scope, $modal, orderByFilter, $filter, ngTableParams, VisualizationResource,
                            sortString) {
 
   $scope.checkboxes = {items: []};
