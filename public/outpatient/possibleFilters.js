@@ -16,136 +16,136 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'visitDate',
       type: 'date-range',
       field: 'visitDate',
-      name: 'op.VisitDate'
+      name: 'visitDate'
     },
     {
       filterID: 'symptomOnsetDate',
       type: 'date-range',
       field: 'symptomOnsetDate',
-      name: 'op.SymptomOnsetDate'
+      name: 'symptomOnsetDate'
     },
     {
       filterID: 'submissionDate',
       type: 'date-range',
       field: 'submissionDate',
-      name: 'op.FormSubmissionDate'
+      name: 'submissionDate'
     },
     {
       filterID: 'medicalFacility',
       type: 'multi-select',
       field: 'medicalFacility.name',
-      name: 'op.Facility'
+      name: 'medicalFacility'
     },
     {
       filterID: 'medicalFacilityGroup',
       type: 'group',
       field: 'medicalFacility.name',
-      name: 'op.FacilityGroup'
+      name: 'medicalFacilityGroup'
     },
     {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.district',
       type: 'multi-select',
       field: 'medicalFacility.location.district',
-      name: 'op.District'
+      name: 'medicalFacility.location.district'
     },
     {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.country',
       type: 'multi-select',
       field: 'medicalFacility.location.country',
-      name: 'op.Country'
+      name: 'medicalFacility.location.country'
     },
     {
       filterID: 'patient.id',
       type: 'text',
       field: 'patient.id',
-      name: 'op.Id'
+      name: 'patient.id'
     },
     {
       filterID: 'patient.age',
       type: 'numeric-range',
       field: 'patient.age.years',
-      name: 'op.Age'
+      name: 'patient.age'
     },
     {
       filterID: 'patient.ageGroup',
       type: 'group',
       field: 'patient.age.years',
-      name: 'op.AgeGroup',
+      name: 'patient.ageGroup',
       sortBy: 'from' // sort possible values by this property
     },
     {
       filterID: 'patient.sex',
       type: 'multi-select',//'sex',
       field: 'patient.sex',
-      name: 'op.Sex'
+      name: 'patient.sex'
     },
     {
       filterID: 'patient.pregnant.is',
       type: 'check-box',
       field: 'patient.pregnant.is',
-      name: 'op.Pregnant'
+      name: 'patient.pregnant.is'
     },
     {
       filterID: 'patient.preExistingConditions',
       type: 'multi-select',
       field: 'patient.preExistingConditions.name',
-      name: 'op.PreExistingConditions'
+      name: 'patient.preExistingConditions'
     },
     {
       filterID: 'symptoms',
       type: 'multi-select',
       field: 'symptoms.name',
-      name: 'op.Symptoms'
+      name: 'symptoms'
     },
     {
       filterID: 'symptomsGroup',
       type: 'group',
       field: 'symptoms.name',
-      name: 'op.SymptomsGroup'
+      name: 'symptomsGroup'
     },
     {
       filterID: 'syndromes',
       type: 'multi-select',
       field: 'syndromes.name',
-      name: 'op.Syndromes'
+      name: 'syndromes'
     },
     {
       filterID: 'diagnoses',
       type: 'multi-select',
       field: 'diagnoses.name',
-      name: 'op.Diagnoses'
+      name: 'diagnoses'
     },
     {
       filterID: 'diagnosesGroup',
       type: 'group',
       field: 'diagnoses.name',
-      name: 'op.DiagnosesGroup'
+      name: 'diagnosesGroup'
     },
     {
       filterID: 'specimen.id',
       type: 'multi-select',
       field: 'specimen.id',
-      name: 'op.Specimen'
+      name: 'specimen.id'
     },
     {
       filterID: 'antiviral.name',
       type: 'multi-select',
       field: 'antiviral.name',
-      name: 'op.Antiviral'
+      name: 'antiviral.name'
     },
     {
       filterID: 'visitType',
       type: 'multi-select',
       field: 'visitType.name',
-      name: 'op.VisitType'
+      name: 'visitType'
     },
     {
       filterID: 'disposition',
       type: 'multi-select',
       field: 'disposition.name',
-      name: 'op.Disposition'
+      name: 'disposition'
     }
   ];
 
@@ -180,6 +180,6 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
   return {
     possibleFilters: possibles,
     getPossibleFilters: getPossibleFiltersFn,
-    getAggregables: getAggregablesFn  //TODO this needs to be based on a flag in config since aggregation is going away
+    getAggregables: getAggregablesFn
   };
 });

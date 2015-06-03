@@ -245,21 +245,6 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             $rootScope.$emit('filterChange', filter, true, true);
           }
         });
-
-        scope.tableFilter = function (field, value) {
-          //TODO multiselect if value.length > ?
-          if (value || value === false) {
-            var a = [].concat(value);
-            angular.forEach(a, function (v) {
-              var filter = {
-                filterID: field,
-                value: ((typeof v) === 'object' ? v.name : v)
-              };
-              $rootScope.$emit('filterChange', filter, true, false);
-            });
-          }
-        };
-
       }
     }
   };
