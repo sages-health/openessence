@@ -16,136 +16,136 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'visitDate',
       type: 'date-range',
       field: 'visitDate',
-      name: 'visitDate'
+      name: 'op.VisitDate'
     },
     {
       filterID: 'symptomOnsetDate',
       type: 'date-range',
       field: 'symptomOnsetDate',
-      name: 'symptomOnsetDate'
+      name: 'op.SymptomOnsetDate'
     },
     {
       filterID: 'submissionDate',
       type: 'date-range',
       field: 'submissionDate',
-      name: 'submissionDate'
+      name: 'op.FormSubmissionDate'
     },
     {
       filterID: 'medicalFacility',
       type: 'multi-select',
       field: 'medicalFacility.name',
-      name: 'medicalFacility'
+      name: 'op.Facility'
     },
     {
       filterID: 'medicalFacilityGroup',
       type: 'group',
       field: 'medicalFacility.name',
-      name: 'medicalFacilityGroup'
+      name: 'op.FacilityGroup'
     },
     {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.district',
       type: 'multi-select',
       field: 'medicalFacility.location.district',
-      name: 'medicalFacility.location.district'
+      name: 'op.District'
     },
     {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.country',
       type: 'multi-select',
       field: 'medicalFacility.location.country',
-      name: 'medicalFacility.location.country'
+      name: 'op.Country'
     },
     {
       filterID: 'patient.id',
       type: 'text',
       field: 'patient.id',
-      name: 'patient.id'
+      name: 'op.Id'
     },
     {
       filterID: 'patient.age',
       type: 'numeric-range',
       field: 'patient.age.years',
-      name: 'patient.age'
+      name: 'op.Age'
     },
     {
       filterID: 'patient.ageGroup',
       type: 'group',
       field: 'patient.age.years',
-      name: 'patient.ageGroup',
+      name: 'op.AgeGroup',
       sortBy: 'from' // sort possible values by this property
     },
     {
       filterID: 'patient.sex',
       type: 'multi-select',//'sex',
       field: 'patient.sex',
-      name: 'patient.sex'
+      name: 'op.Sex'
     },
     {
       filterID: 'patient.pregnant.is',
       type: 'check-box',
       field: 'patient.pregnant.is',
-      name: 'patient.pregnant.is'
+      name: 'op.Pregnant'
     },
     {
       filterID: 'patient.preExistingConditions',
       type: 'multi-select',
       field: 'patient.preExistingConditions.name',
-      name: 'patient.preExistingConditions'
+      name: 'op.PreExistingConditions'
     },
     {
       filterID: 'symptoms',
       type: 'multi-select',
       field: 'symptoms.name',
-      name: 'symptoms'
+      name: 'op.Symptoms'
     },
     {
       filterID: 'symptomsGroup',
       type: 'group',
       field: 'symptoms.name',
-      name: 'symptomsGroup'
+      name: 'op.SymptomsGroup'
     },
     {
       filterID: 'syndromes',
       type: 'multi-select',
       field: 'syndromes.name',
-      name: 'syndromes'
+      name: 'op.Syndromes'
     },
     {
       filterID: 'diagnoses',
       type: 'multi-select',
       field: 'diagnoses.name',
-      name: 'diagnoses'
+      name: 'op.Diagnoses'
     },
     {
       filterID: 'diagnosesGroup',
       type: 'group',
       field: 'diagnoses.name',
-      name: 'diagnosesGroup'
+      name: 'op.DiagnosesGroup'
     },
     {
       filterID: 'specimen.id',
       type: 'multi-select',
       field: 'specimen.id',
-      name: 'specimen.id'
+      name: 'op.Specimen'
     },
     {
       filterID: 'antiviral.name',
       type: 'multi-select',
       field: 'antiviral.name',
-      name: 'antiviral.name'
+      name: 'op.Antiviral'
     },
     {
       filterID: 'visitType',
       type: 'multi-select',
       field: 'visitType.name',
-      name: 'visitType'
+      name: 'op.VisitType'
     },
     {
       filterID: 'disposition',
       type: 'multi-select',
       field: 'disposition.name',
-      name: 'disposition'
+      name: 'op.Disposition'
     }
   ];
 
