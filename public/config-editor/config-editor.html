@@ -74,7 +74,7 @@
                         <config-table field="field"></config-table>
                       </div>
 
-                      <div ng-if="field.formFieldType === 'FixedLengthList'">
+                      <div ng-if="field.formFieldType !== 'FixedLengthList'">
                         <config-multiselect field="field"></config-multiselect>
                         <br>
 
