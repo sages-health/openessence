@@ -337,7 +337,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         rec.visitYear = moment(rec.visitDate).startOf('year').valueOf().toString();
         rec.visitDOY = moment(rec.visitDate).startOf('day').valueOf().toString();
         rec.visitDate = moment(rec.visitDate).format('YYYY-MM-DD');
-        rec['patient.age'] = (null === rec['patient.age'].years) ? 'Missing-patient.age' : rec['patient.age'].years.toString();
+        rec['patient.age'] = (rec['patient.age'] && (null === rec['patient.age'].years)) ? 'Missing-patient.age' : rec['patient.age'].years.toString();
 
         if (scope.form.dataType === 'aggregate') {
           //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup

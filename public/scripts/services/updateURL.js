@@ -87,7 +87,12 @@ module.exports = function ($location) {
      */
     updateFilters: function (filters) {
       var state = getState();
-      state.filters = filters;
+      var filters1 = angular.copy(filters);
+      filters1.map(function (v) {
+        delete v.values;
+        return v;
+      });
+      state.filters = filters1;
       setState(state);
     },
     getState: getState,

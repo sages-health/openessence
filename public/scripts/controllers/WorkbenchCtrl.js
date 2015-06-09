@@ -92,11 +92,13 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
         $scope.activeFilters.push(angular.extend({}, $scope.possibleFilters[filter.filterID], filter));
       });
 
-//      $scope.activeFilters = viz.filters;
       $scope.addVisualization(viz.visualization.name, options);
       $scope.vizMenuOpen = false;
     } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
-      $scope.activeFilters = state.filters || [];
+      state.filters.forEach(function(filter){
+        $scope.activeFilters.push(angular.extend({}, $scope.possibleFilters[filter.filterID], filter));
+      })
+      //$scope.activeFilters = state.filters || [];
       if (Array.isArray(state.visualizations)) {
         state.visualizations.sort(sortVisualizations);
 
