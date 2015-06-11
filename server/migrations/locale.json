@@ -210,6 +210,7 @@
         "BPM": "BPM",
         "Weight": "Weight",
         "kg": "kg",
+        "Temperature": "Temperature",
         "PreExistingConditions": "Pre-existing conditions",
         "OtherPreExistingConditions": "Other pre-existing conditions",
         "Symptoms": "Symptoms",

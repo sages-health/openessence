@@ -12,7 +12,7 @@
                 |
                 date}}</a>
             </div>
-            <div class="animation-switch" ng-switch-when="pluckName">
+            <div class="animation-switch" ng-switch-when="multi-select">
               <a ng-click="tableFilter(col.field, getValue(row._source, col.field + '.name'))">
                 {{getValue(row._source, col.field + '.name') | truncate:15}}</a>
             </div>
@@ -38,12 +38,12 @@
             </div>
             <div class="animation-switch" ng-switch-when="action">
               <div class="btn-group btn-group-xs edit-controls pull-right">
-                <button type="button" class="btn btn-default" ng-click="editVisit(row)" popover="{{'Edit' | translate}}"
+                <button type="button" class="btn btn-default" ng-click="editVisit(row)" popover="{{'app.Edit' | i18next}}"
                         popover-trigger="mouseenter">
                   <span class="icon-pencil"></span>
                 </button>
                 <button type="button" class="btn btn-danger" ng-click="deleteVisit(row)"
-                        popover="{{'Delete' | translate}}"
+                        popover="{{'app.Delete' | i18next}}"
                         popover-trigger="mouseenter">
                   <span class="icon-cancel"></span>
                 </button>

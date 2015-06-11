@@ -5,7 +5,7 @@ var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientTable',
   /*@ngInject*/ function ($rootScope, $timeout, orderByFilter, ngTableParams, OutpatientVisitResource, sortString,//
-                          stringUtil) {
+                          stringUtil, $filter) {
     return {
       restrict: 'E',
       template: require('./table.html'),
@@ -40,35 +40,38 @@ angular.module(directives.name).directive('outpatientTable',
               }, {});
 
               var columns = [
-                {title: 'Visit Date', sortable: 'visitDate', field: 'visitDate', type: 'date'},
+                {title: 'op.VisitDate', sortable: 'visitDate', field: 'visitDate', type: 'date'},
                 //{title: 'Week', sortable:'visitDate', field:'visitDate', type:'week'},
                 //{title: 'Year', sortable:'visitDate', field:'visitDate', type:'year'},
-                {title: 'Symptom Onset Date', sortable: 'symptomOnsetDate', field: 'symptomOnsetDate', type: 'date'},
-                {title: 'Submitted', sortable: 'submissionDate', field: 'submissionDate', type: 'date'},
-                {title: 'Facility', sortable: 'medicalFacility', field: 'medicalFacility', type: 'pluckName'},
-                {title: 'District', sortable: 'medicalFacility.location.district', field: 'medicalFacility.location.district', type: 'shortString'},
-                {title: 'Total sites', sortable: 'medicalFacility.sites.total', field: 'medicalFacility.sites.total'},
-                {title: 'Sites reporting', sortable: 'medicalFacility.sites.reporting', field: 'medicalFacility.sites.reporting'},
-                {title: 'ID', sortable: 'patient.id', field: 'patient.id'},
-                {title: 'Name', sortable: 'patient.name', field: 'patient.name'},
-                {title: 'Sex', sortable: 'patient.sex', field: 'patient.sex'},
-                {title: 'Age', sortable: 'patient.age', field: 'patient.age', type: 'age'},
-                {title: 'Phone', sortable: 'patient.phone', field: 'patient.phone'},
-                {title: 'Address', sortable: 'patient.address', field: 'patient.address'},
-                {title: 'Weight', sortable: 'patient.weight', field: 'patient.weight'},
-                {title: 'Temperature', sortable: 'patient.temperature', field: 'patient.temperature'},
-                {title: 'Pulse', sortable: 'patient.pulse', field: 'patient.pulse'},
-                {title: 'BloodPressure', sortable: 'patient.bloodPressure.diastolic', field: 'patient.bloodPressure', type: 'pressure'},
-                {title: 'Pregnant', sortable: 'patient.pregnant.is', field: 'patient.pregnant.is'},
-                {title: 'PreExistingConditions', sortable: 'patient.preExistingConditions', field: 'patient.preExistingConditions', type: 'mediumString'},
-                {title: 'Symptoms', field: 'symptoms', type: 'agg'},
-                {title: 'Syndromes', field: 'syndromes', type: 'agg'},
-                {title: 'Diagnoses', field: 'diagnoses', type: 'agg'},
-                {title: 'Disposition', field: 'disposition', type: 'disposition'},
-                {title: 'Antiviral', sortable: 'antiviral.name', field: 'antiviral.name'}
+                {title: 'op.SymptomOnset', sortable: 'symptomOnsetDate', field: 'symptomOnsetDate', type: 'date'},
+                {title: 'op.Submitted', sortable: 'submissionDate', field: 'submissionDate', type: 'date'},
+                {title: 'op.Facility', sortable: 'medicalFacility', field: 'medicalFacility', type: 'multi-select'},
+                {title: 'op.District', sortable: 'medicalFacility.location.district', field: 'medicalFacility.location.district', type: 'shortString'},
+                {title: 'op.SitesTotal', sortable: 'medicalFacility.sites.total', field: 'medicalFacility.sites.total'},
+                {title: 'op.SitesReporting', sortable: 'medicalFacility.sites.reporting', field: 'medicalFacility.sites.reporting'},
+                {title: 'op.PatientID', sortable: 'patient.id', field: 'patient.id'},
+                {title: 'op.Name', sortable: 'patient.name', field: 'patient.name'},
+                {title: 'op.Sex', sortable: 'patient.sex', field: 'patient.sex'},
+                {title: 'op.Age', sortable: 'patient.age', field: 'patient.age', type: 'age'},
+                {title: 'op.TelephoneNumber', sortable: 'patient.phone', field: 'patient.phone'},
+                {title: 'op.Address', sortable: 'patient.address', field: 'patient.address'},
+                {title: 'op.Weight', sortable: 'patient.weight', field: 'patient.weight'},
+                {title: 'op.Temperature', sortable: 'patient.temperature', field: 'patient.temperature'},
+                {title: 'op.Pulse', sortable: 'patient.pulse', field: 'patient.pulse'},
+                {title: 'op.BloodPressure', sortable: 'patient.bloodPressure.diastolic', field: 'patient.bloodPressure', type: 'pressure'},
+                {title: 'op.Pregnant', sortable: 'patient.pregnant.is', field: 'patient.pregnant.is'},
+                {title: 'op.PreExistingConditions', sortable: 'patient.preExistingConditions', field: 'patient.preExistingConditions', type: 'mediumString'},
+                {title: 'op.Symptoms', field: 'symptoms', type: 'agg'},
+                {title: 'op.Syndromes', field: 'syndromes', type: 'agg'},
+                {title: 'op.Diagnoses', field: 'diagnoses', type: 'agg'},
+                {title: 'op.Disposition', field: 'disposition', type: 'disposition'},
+                {title: 'op.Antiviral', sortable: 'antiviral.name', field: 'antiviral.name'}
               ];
 
               angular.forEach(columns, function (column) {
+                //Translate column headers
+                column.title = $filter('i18next')(column.title);
+
                 if (fieldsMap[column.field]) {
                   column.show = fieldsMap[column.field] && fieldsMap[column.field].enabled;
                 } else if (column.field === 'patient.bloodPressure') { // column name is bloodPressure vs form fields are diastolic and systolic
@@ -83,7 +86,7 @@ angular.module(directives.name).directive('outpatientTable',
               // Append auto-generated fields
               scope.form.fields.reduce(function (fields, field) {
                 if (field.autogen && field.enabled) {
-                  columns.push({title: field.name, sortable: field.name, field: field.name});
+                  columns.push({title: $filter('i18next')(field.name), sortable: field.name, field: field.name});
                 }
                 return fields;
               }, {});
@@ -91,9 +94,6 @@ angular.module(directives.name).directive('outpatientTable',
               // Add a column for edit/delete buttons
               columns.push({title: '', type: 'action'});
               scope.columns = columns;
-
-
-
 
               scope.tableParams = new ngTableParams({ //FrableParams({
                 page: 1, // page is 1-based
