@@ -6,13 +6,14 @@ var directives = require('../scripts/modules').directives;
 angular.module(directives.name).directive('dashboardWidget', /*@ngInject*/ function ($timeout, updateURL) {
   return {
     restrict: 'E',
-    template: '<outpatient-visualization options="options" height="height" width="width" filters="options.filters" query-string="options.queryString" source="source" widget="widget"></outpatient-visualization>',
+    template: '<outpatient-visualization options="options" height="height" width="width" filters="options.filters" form="form" query-string="options.queryString" source="source" widget="widget"></outpatient-visualization>',
     scope: {
       options: '=',
       sizeX: '=',
       sizeY: '=',
       row: '=',
       col: '=',
+      form: '=',
       source: '=?',
       widget: '=?'
     },
