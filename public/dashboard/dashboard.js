@@ -3,8 +3,9 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($modal, visualization, Dashboard,
-                                                                               $location, dateFilter, updateURL) {
+angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($modal, visualization, Dashboard, //
+                                                                               $location, dateFilter, updateURL, //
+                                                                               FormResource) {
   return {
     restrict: 'E',
     template: require('./dashboard.html'),
@@ -101,43 +102,54 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
             nextVizId: 0
           };
 
-          var state = updateURL.getState();
-          // set dashboard data and make the date window rolling
-          if (scope.dashboardId) {
-            Dashboard.get(scope.dashboardId, function (data) {
-              scope.dashboard = data._source;
+          FormResource.get({size: 1, q: 'name:site'}, function (response) {
+            if (response.results.length === 0) {
+              console.error('No configured forms');
+              $location.path('/edit/config');
+              return;
+            }
+
+            var form = response.results[0]._source;
+            scope.form = form; // need to pass to visualizations
+
+            var state = updateURL.getState();
+            // set dashboard data and make the date window rolling
+            if (scope.dashboardId) {
+              Dashboard.get(scope.dashboardId, function (data) {
+                scope.dashboard = data._source;
+                scope.dashboard.widgets.forEach(updateDateRange);
+              });
+            } else if (state.visualizations || state.filters) {
+              var widgets = [];
+
+              // Set nextVizId to be max id value
+              state.visualizations.forEach(function (viz) {
+                var id = viz.id ? parseInt(viz.id.substring(4)) : 0;
+                scope.dashboard.nextVizId = scope.dashboard.nextVizId >= id ? scope.dashboard.nextVizId : id;
+              });
+
+              state.visualizations.forEach(function (viz) {
+
+                var id = viz.options.id;
+                if (!id) {
+                  id = 'viz-' + getNextVizId();
+                }
+                angular.extend(viz.options, {
+                  id: id // assign element a new id on insert to match the Fracas grid
+                });
+                widgets.push({
+                  name: viz.name,
+                  sizeX: viz.sizeX,
+                  sizeY: viz.sizeY,
+                  row: viz.row,
+                  col: viz.col,
+                  content: viz.options
+                });
+              });
+              scope.dashboard.widgets = widgets;
               scope.dashboard.widgets.forEach(updateDateRange);
-            });
-          } else if (state.visualizations || state.filters) {
-            var widgets = [];
-
-            // Set nextVizId to be max id value
-            state.visualizations.forEach(function (viz) {
-              var id = viz.id ? parseInt(viz.id.substring(4)) : 0;
-              scope.dashboard.nextVizId = scope.dashboard.nextVizId >= id ? scope.dashboard.nextVizId : id;
-            });
-
-            state.visualizations.forEach(function (viz) {
-
-              var id = viz.options.id;
-              if (!id) {
-                id = 'viz-' + getNextVizId();
-              }
-              angular.extend(viz.options, {
-                id: id // assign element a new id on insert to match the Fracas grid
-              });
-              widgets.push({
-                name: viz.name,
-                sizeX: viz.sizeX,
-                sizeY: viz.sizeY,
-                row: viz.row,
-                col: viz.col,
-                content: viz.options
-              });
-            });
-            scope.dashboard.widgets = widgets;
-            scope.dashboard.widgets.forEach(updateDateRange);
-          }
+            }
+          });
 
           scope.addWidget = function () {
             // TODO we don't need a modal with a single field
@@ -215,10 +227,18 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
           };
 
           scope.export = function () {
+            var state = angular.copy(scope.dashboard);
+            delete state.form;
+            state.widgets.forEach(function(w){
+              if(w.content){
+                delete w.content.fields;
+                delete w.content.form;
+              }
+            });
             if (scope.dashboardId) {
-              Dashboard.update(Dashboard.state(scope.dashboard), scope.dashboardId);
+              Dashboard.update(Dashboard.state(state), scope.dashboardId);
             } else {
-              Dashboard.save(Dashboard.state(scope.dashboard));
+              Dashboard.save(Dashboard.state(state));
             }
           };
 
