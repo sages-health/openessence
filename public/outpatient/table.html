@@ -8,19 +8,18 @@
         <td ng-repeat="col in $columns">
           <div class="animate-switch-container" ng-switch on="col.type">
             <div class="animation-switch" ng-switch-when="date">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">{{getValue(row._source, col.field)
-                |
-                date}}</a>
+              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+                {{getValue(row._source, col.field) | date}}</a>
             </div>
             <div class="animation-switch" ng-switch-when="multi-select">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field + '.name'))">
-                {{getValue(row._source, col.field + '.name') | truncate:15}}</a>
+              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+                {{getNamedValue(row._source, col.field) | truncate:30}}</a>
             </div>
             <div class="animation-switch" ng-switch-when="shortString">
               <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getValue(row._source, col.field) | truncate:15}}</a>
             </div>
-            <div class="animation-switch" ng-switch-when="mediumString">
+            <div class="animation-switch" ng-switch-when="text">
               <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getValue(row._source, col.field) | truncate:30}}</a>
             </div>

@@ -160,6 +160,15 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
         var possibleFilter = possibles[field.name];
         if (possibleFilter) {
           filters[field.name] = angular.extend({values: field.values}, possibleFilter);
+        } else {
+          //dynamic field
+          filters[field.name] =  {
+            filterID: field.name,
+            type: field.type || 'text',
+            field: field.field || field.name,
+            name: field.name,
+            values: field.values
+          };
         }
       }
       return filters;

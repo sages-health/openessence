@@ -60,7 +60,7 @@ angular.module(directives.name).directive('outpatientTable',
                 {title: 'op.Pulse', sortable: 'patient.pulse', field: 'patient.pulse'},
                 {title: 'op.BloodPressure', sortable: 'patient.bloodPressure.diastolic', field: 'patient.bloodPressure', type: 'pressure'},
                 {title: 'op.Pregnant', sortable: 'patient.pregnant.is', field: 'patient.pregnant.is'},
-                {title: 'op.PreExistingConditions', sortable: 'patient.preExistingConditions', field: 'patient.preExistingConditions', type: 'mediumString'},
+                {title: 'op.PreExistingConditions', sortable: 'patient.preExistingConditions', field: 'patient.preExistingConditions', type: 'text'},
                 {title: 'op.Symptoms', field: 'symptoms', type: 'agg'},
                 {title: 'op.Syndromes', field: 'syndromes', type: 'agg'},
                 {title: 'op.Diagnoses', field: 'diagnoses', type: 'agg'},
@@ -86,7 +86,7 @@ angular.module(directives.name).directive('outpatientTable',
               // Append auto-generated fields
               scope.form.fields.reduce(function (fields, field) {
                 if (field.autogen && field.enabled) {
-                  columns.push({title: $filter('i18next')(field.name), sortable: field.name, field: field.name});
+                  columns.push({title: $filter('i18next')(field.name), sortable: field.name, field: field.name, type: field.type || 'text'});
                 }
                 return fields;
               }, {});
@@ -184,9 +184,9 @@ angular.module(directives.name).directive('outpatientTable',
             scope.getNamedValue = function (row, field) {
               var val = scope.getValue(row, field)
               if (angular.isArray(val)) {
-                return scope.printAggregate(scope.getValue(row._source, field));
+                return scope.printAggregate(val);
               }
-              return scope.getValue(row, field + '.name') || scope.getValue(row, field);
+              return scope.getValue(row, field + '.name') || val;
             };
 
             scope.getValue = function (row, field) {
