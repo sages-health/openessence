@@ -100,7 +100,7 @@ async.parallel([
   //  bulkInsert(require('../models/Syndrome'), require('./syndrome.json'), callback);
   //},
 
-  function visualizations (callback) {
+  function locales (callback) {
     bulkInsert(require('../models/Locale'), require('./locale.json'), callback);
   },
 
