@@ -1,12 +1,18 @@
-<div ng-show="visit.patient.sex === 'female'">
+<div ng-show="visit.patient.sex === 'F'">
 
   <!-- Pregnancy --> <!-- TODO this lonely checkbox doesn't look good -->
   <div class="form-group" data-field="patient.pregnant.is"
-       ng-show="fields['patient.pregnant.is'].enabled && visit.patient.sex === 'female'">
+       ng-show="fields['patient.pregnant.is'].enabled && visit.patient.sex === 'F'">
 
     <label for="entry-pregnant" ng-i18next>entry.Pregnant</label>
-    <br>
-    <input type="checkbox" id="entry-pregnant" ng-model="visit.patient.pregnant.is" ng-i18next>entry.isPregnant</input>
+    <select class="form-control" id="entry-pregnant" name="pregnantIs"
+            ng-model="visit.patient.pregnant.is">
+
+      <option ng-repeat="f in fields['patient.pregnant.is'].values" value="{{f.value}}"
+              ng-selected="visit.patient.pregnant.is === f.value">
+        {{f.name}}
+      </option>
+    </select>
   </div>
 
   <!-- Trimester -->

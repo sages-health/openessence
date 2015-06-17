@@ -54,7 +54,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
               // form will list this field as blank when it really isn't
               var existingValues = field.expression(scope.visit);
               if (existingValues) {
-                if(field.name === 'antiviral.exposure' || field.name === 'patient.sex'){
+                if(field.name === 'antiviral.exposure' || field.name === 'patient.sex' || field.name === 'patient.pregnant.is'){
                   if(angular.isString(existingValues)){
                     existingValues = valuesByName[existingValues] ? valuesByName[existingValues].value : '';
                   }
@@ -297,7 +297,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
                 }
 
                 // map id(value) to displayValue(name)
-                if (field.name === 'antiviral.exposure' || field.name === 'patient.sex') {
+                if (field.name === 'antiviral.exposure' || field.name === 'patient.sex' || field.name === 'patient.pregnant.is') {
                   angular.forEach(field.valuesByName, function (val) {
                     if (val.value === selectedValues) {
                       selectedValues = val.name;

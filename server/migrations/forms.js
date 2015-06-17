@@ -157,7 +157,13 @@ module.exports = [
       // pregnancy status
       {
         name: 'patient.pregnant.is',
-        enabled: false
+        enabled: false,
+        formFieldType: 'FixedLengthList',
+        values: [
+          {value:'Y', name:'Yes'},
+          {value:'N',name:'No'},
+          {value:'UNK',name:'Unknown'}
+        ]
       },
       {
         name: 'patient.pregnant.trimester',
