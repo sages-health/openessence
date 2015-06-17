@@ -286,6 +286,36 @@
     <input type="text" id="entry-other-symptoms" class="form-control" name="otherSymptoms" ng-model="others.symptoms">
   </div>
 
+  <!-- Syndromes -->
+  <div class="form-group" data-field="syndromes" ng-show="fields.syndromes.enabled">
+
+    <div ng-if="form.dataType === 'individual'">
+      <label for="entry-visit-syndromes" ng-i18next>op.Syndromes</label>
+      <select class="form-control select2-multiple" id="entry-visit-syndromes" name="syndromes" multiple ui-select2
+              ng-model="visit.syndromes">
+        <option ng-repeat="s in fields.syndromes.values" value="{{s.name}}">{{s.name}}</option>
+        <optgroup label="──────────" ng-if="fields['syndromes.other'].enabled">
+          <option value="Other" ng-i18next>op.Other</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div ng-if="form.dataType === 'aggregate'">
+      <label for="entry-aggregate-syndromes" ng-i18next>op.AggregateSyndromes</label>
+
+      <div id="entry-aggregate-syndromes" class="syndromes-edit-grid" ng-grid="syndromesGridOptions"></div>
+    </div>
+
+    <span ng-show="isInvalid(visitForm.syndromes)" class="help-block" ng-i18next>op.SelectSyndromes</span>
+  </div>
+
+  <!-- Other syndromes -->
+  <div class="form-group" ng-show="fields['syndromes.other'].enabled && includesOther(visit.syndromes)">
+    <label for="entry-other-syndromes" ng-i18next>op.OtherSyndromes</label>
+
+    <input type="text" id="entry-other-syndromes" class="form-control" name="otherSyndromes" ng-model="others.syndromes">
+  </div>
+
   <!-- Diagnoses -->
   <div class="form-group" data-field="diagnoses" ng-show="fields.diagnoses.enabled">
 

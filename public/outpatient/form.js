@@ -33,7 +33,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
 
           // Fields that have count: X. We need to add count: 1 to them on individual form
           //TODO use possibleFilters[field].aggregation.nested
-          var aggregateFields = ['symptoms', 'diagnoses'];
+          var aggregateFields = ['symptoms', 'syndromes', 'diagnoses'];
 
           // convert array of fields to object indexed by field name
           // TODO keep order of fields
@@ -139,6 +139,9 @@ module.exports = function ($parse, OutpatientVisitResource) {
           scope.allSymptoms = scope.fields.symptoms ? scope.fields.symptoms.values.map(function (v) {
             return {name: v.name};
           }) : [];
+          scope.allSyndromes = scope.fields.syndromes ? scope.fields.syndromes.values.map(function (v) {
+            return {name: v.name};
+          }) : [];
           scope.allDiagnoses = scope.fields.diagnoses ? scope.fields.diagnoses.values.map(function (v) {
             return {name: v.name};
           }) : [];
@@ -158,6 +161,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
 
           if (scope.form.dataType === 'aggregate') {
             scope.visit.symptoms = addDefaultFieldsToDataField(scope.visit.symptoms, scope.allSymptoms);
+            scope.visit.syndromes = addDefaultFieldsToDataField(scope.visit.syndromes, scope.allSyndromes);
             scope.visit.diagnoses = addDefaultFieldsToDataField(scope.visit.diagnoses, scope.allDiagnoses);
           }
 
@@ -171,6 +175,18 @@ module.exports = function ($parse, OutpatientVisitResource) {
               {field: 'count', displayName: 'Count'}
             ]
           };
+
+          scope.syndromesGridOptions = {
+            data: 'visit.syndromes',
+            enableRowSelection: false,
+            enableCellSelection: true,
+            enableCellEditOnFocus: true,
+            columnDefs: [
+              {field: 'name', displayName: 'Name', cellEditableCondition: 'false'},
+              {field: 'count', displayName: 'Count'}
+            ]
+          };
+
           scope.diagnosesGridOptions = {
             data: 'visit.diagnoses',
             enableRowSelection: false,
