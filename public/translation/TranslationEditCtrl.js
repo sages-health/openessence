@@ -41,8 +41,10 @@ module.exports = function ($scope, $modal, $window, $filter, LocaleResource, ngT
                           $filter('orderBy')(filteredData, params.orderBy()) :
                           $scope.$data;
 
-        params.total(orderedData.length); // set total for recalc pagination
-        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        if(angular.isDefined(orderedData)) {
+          params.total(orderedData.length); // set total for recalc pagination
+          $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
       }
     });
   };
