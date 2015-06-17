@@ -10,15 +10,17 @@ module.exports = [
         aggregable: true,
         enabled: false
       },
+
       {
-        name: 'symptomOnsetDate',
-        enabled: false
+        name: 'visitType',
+        // we have this field in case anyone wants it, but doing this right means totally changing the form,
+        // e.g. a "Well Baby" visit makes the rest of the form nonsensical
+        enabled: false,
+        values: require('./visit-type.json')
       },
 
-      // this is always collected automatically when the form is submitted (because why not?), but only displayed
-      // if this field is enabled
       {
-        name: 'submissionDate',
+        name: 'symptomOnsetDate',
         enabled: false
       },
 
@@ -34,6 +36,14 @@ module.exports = [
         values: require('./facilities.json')
       },
 
+      // Allow user-supplied values for medical facility.
+      // NOTE: "other" fields MUST be named "$base_field" + ".other". Otherwise we'd have no idea what model to append
+      // the user submitted value to.
+      {
+        name: 'medicalFacility.other',
+        enabled: false
+      },
+
       {
         // medicalFacilities are grouped as medicalFacilityGroup for query purpose
         // Outpatient model does not have grouping fields, so this field will not be populated on data entry page
@@ -43,14 +53,6 @@ module.exports = [
         aggregable: true,
         isGroup: true,
         possibleValuesFrom: 'medicalFacility'
-      },
-
-      // Allow user-supplied values for medical facility.
-      // NOTE: "other" fields MUST be named "$base_field" + ".other". Otherwise we'd have no idea what model to append
-      // the user submitted value to.
-      {
-        name: 'medicalFacility.other',
-        enabled: false
       },
 
       // geographic fields, these are collected via medical facility, so users don't have to input them separately
@@ -89,20 +91,24 @@ module.exports = [
         name: 'patient.id',
         enabled: false
       },
+
       {
         name: 'patient.name',
         enabled: false
       },
+
       {
         name: 'patient.dateOfBirth',
         enabled: false
       },
+
       {
         name: 'patient.age',
         groupName: 'patient.ageGroup',
         enabled: false,
         aggregable: true
       },
+
       {
         name: 'patient.ageGroup',
         enabled: false,
@@ -118,6 +124,7 @@ module.exports = [
           {name: '65+', value: '[65 TO 999}', from: 65, to: 999}
         ]
       },
+
       {
         name: 'patient.sex',
         enabled: false,
@@ -135,22 +142,24 @@ module.exports = [
         name: 'patient.phone',
         enabled: false
       },
+
       {
         name: 'patient.address',
         enabled: false
       },
 
-      // patient vitals
-      {
-        name: 'patient.weight',
-        enabled: false
-      },
       {
         name: 'patient.temperature',
         enabled: false
       },
+
       {
         name: 'patient.pulse',
+        enabled: false
+      },
+
+      {
+        name: 'patient.weight',
         enabled: false
       },
 
@@ -165,6 +174,7 @@ module.exports = [
           {value:'UNK',name:'Unknown'}
         ]
       },
+
       {
         name: 'patient.pregnant.trimester',
         enabled: false
@@ -190,55 +200,9 @@ module.exports = [
             };
           })
       },
-      {
-        name: 'patient.preExistingConditions.other',
-        enabled: false
-      },
 
       {
-        name: 'symptoms',
-        enabled: false,
-        aggregable: true,
-        groupName: 'symptomsGroup',
-        values: require('./symptom.json')
-      },
-      {
-        name: 'symptoms.other',
-        enabled: false
-      },
-      {
-        name: 'symptomsGroup',
-        enabled: false,
-        aggregable: true,
-        isGroup: true,
-        possibleValuesFrom: 'symptoms'
-      },
-      {
-        name: 'syndromes',
-        enabled: false,
-        aggregable: true,
-        values: require('./syndrome.json')
-      },
-      {
-        name: 'syndromes.other',
-        enabled: false
-      },
-      {
-        name: 'diagnoses',
-        enabled: false,
-        aggregable: true,
-        groupName: 'diagnosesGroup',
-        values: require('./diagnosis.json')
-      },
-      {
-        name: 'diagnosesGroup',
-        enabled: false,
-        aggregable: true,
-        isGroup: true,
-        possibleValuesFrom: 'diagnoses'
-      },
-      {
-        name: 'diagnoses.other',
+        name: 'patient.preExistingConditions.other',
         enabled: false
       },
 
@@ -247,6 +211,7 @@ module.exports = [
         name: 'specimen.collectionDate',
         enabled: false
       },
+
       {
         name: 'specimen.id',
         enabled: false
@@ -263,6 +228,7 @@ module.exports = [
           {value:'UNK',name:'Unknown'}
         ]
       },
+
       {
         name: 'antiviral.name',
         enabled: false,
@@ -276,6 +242,7 @@ module.exports = [
           {name: 'Peramivir'}
         ]
       },
+
       {
         name: 'antiviral.source',
         enabled: false,
@@ -287,21 +254,76 @@ module.exports = [
       },
 
       {
-        name: 'visitType',
-        // we have this field in case anyone wants it, but doing this right means totally changing the form,
-        // e.g. a "Well Baby" visit makes the rest of the form nonsensical
+        name: 'symptoms',
         enabled: false,
-        values: require('./visit-type.json')
+        aggregable: true,
+        groupName: 'symptomsGroup',
+        values: require('./symptom.json')
       },
+
+      {
+        name: 'symptoms.other',
+        enabled: false
+      },
+
+      {
+        name: 'symptomsGroup',
+        enabled: false,
+        aggregable: true,
+        isGroup: true,
+        possibleValuesFrom: 'symptoms'
+      },
+
+      {
+        name: 'syndromes',
+        enabled: false,
+        aggregable: true,
+        values: require('./syndrome.json')
+      },
+
+      {
+        name: 'syndromes.other',
+        enabled: false
+      },
+
+      {
+        name: 'diagnoses',
+        enabled: false,
+        aggregable: true,
+        groupName: 'diagnosesGroup',
+        values: require('./diagnosis.json')
+      },
+
+      {
+        name: 'diagnoses.other',
+        enabled: false
+      },
+
+      {
+        name: 'diagnosesGroup',
+        enabled: false,
+        aggregable: true,
+        isGroup: true,
+        possibleValuesFrom: 'diagnoses'
+      },
+
       {
         name: 'disposition',
         enabled: false,
         values: require('./disposition.json')
       },
+
       {
         name: 'notes',
+        enabled: false
+      },
+
+      // this is always collected automatically when the form is submitted (because why not?), but only displayed
+      // if this field is enabled
+      {
+        name: 'submissionDate',
         enabled: false
       }
     ]
   }
-  ];
+];
