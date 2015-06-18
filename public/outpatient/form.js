@@ -320,7 +320,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
                     }
                   });
 
-                } else if (field.name === 'antiviral.source' || field.name === 'antiviral.name') {
+                } else if (field.name === 'medicalFacility.location.district' || field.name === 'antiviral.source' || field.name === 'antiviral.name') {
                   //no-op
                 } else {
                   if (Array.isArray(selectedValues)) {
