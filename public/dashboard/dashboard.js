@@ -229,12 +229,14 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
           scope.export = function () {
             var state = angular.copy(scope.dashboard);
             delete state.form;
-            state.widgets.forEach(function(w){
-              if(w.content){
-                delete w.content.fields;
-                delete w.content.form;
-              }
-            });
+            if(state.widgets) {
+              state.widgets.forEach(function (w) {
+                if (w.content) {
+                  delete w.content.fields;
+                  delete w.content.form;
+                }
+              });
+            }
             if (scope.dashboardId) {
               Dashboard.update(Dashboard.state(state), scope.dashboardId);
             } else {

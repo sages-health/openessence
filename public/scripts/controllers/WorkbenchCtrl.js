@@ -186,9 +186,13 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
   };
 
   $scope.saveWorkbench = function () {
+    var scopeJson = scopeToJson($scope);
+    delete scopeJson.form;
+    delete scopeJson.possibleFilters;
+
     var state = {
       name: $scope.workbenchName || '',
-      state: scopeToJson($scope)
+      state: scopeJson
     };
     if ($scope.workbenchId) {
       Workbench.update(state, $scope.workbenchId);
