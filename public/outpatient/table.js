@@ -41,6 +41,7 @@ angular.module(directives.name).directive('outpatientTable',
 
               var columns = [
                 {title: 'op.VisitDate', sortable: 'visitDate', field: 'visitDate', type: 'date'},
+                {title: 'op.VisitType', sortable: 'visitType', field: 'visitType', type: 'multi-select'},
                 //{title: 'Week', sortable:'visitDate', field:'visitDate', type:'week'},
                 //{title: 'Year', sortable:'visitDate', field:'visitDate', type:'year'},
                 {title: 'op.SymptomOnset', sortable: 'symptomOnsetDate', field: 'symptomOnsetDate', type: 'date'},
@@ -76,7 +77,7 @@ angular.module(directives.name).directive('outpatientTable',
                   column.show = fieldsMap[column.field] && fieldsMap[column.field].enabled;
                 } else if (column.field === 'patient.bloodPressure') { // column name is bloodPressure vs form fields are diastolic and systolic
                   column.show = (fieldsMap['patient.diastolic'] && fieldsMap['patient.diastolic'].enabled) ||
-                  (fieldsMap['patient.systolic'] && fieldsMap['patient.systolic'].enabled);
+                  (fieldsMap['patient.systolic'] && fieldsMap['patient.systolic'].enabled) || false;
                 } else {
                   console.log(column.field + ' - table column is not part of form.fields');
                   column.show = false;
