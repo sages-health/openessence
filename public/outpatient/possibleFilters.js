@@ -60,7 +60,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       filterID: 'patient.id',
       type: 'text',
       field: 'patient.id',
-      name: 'op.Id'
+      name: 'op.PatientID'
     },
     {
       filterID: 'patient.age',

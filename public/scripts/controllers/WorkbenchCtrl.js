@@ -169,7 +169,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       visualization: {
         name: name || 'table'
       },
-      pivotOptions: $scope.pivotOptions,
+      //pivotOptions: $scope.pivotOptions,
       pivot: options.pivot || {
         rows: [],
         cols: []
@@ -189,6 +189,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     var scopeJson = scopeToJson($scope);
     delete scopeJson.form;
     delete scopeJson.possibleFilters;
+    delete scopeJson.pivotOptions;
 
     var state = {
       name: $scope.workbenchName || '',

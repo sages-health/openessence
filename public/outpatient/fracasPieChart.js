@@ -231,7 +231,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
                   series.push({
                     id: 'rows',
-                    name: removeAsterix(scope.aggData[0].col),
+                    name: removeAsterix(scope.aggData[0] ? scope.aggData[0].col:  ''),
                     data: outer,
                     size: '100%',
                     innerSize: '0',
@@ -302,10 +302,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             scope.chartConfig.size.width = scope.options.width - 10;
           });
         }
-      }
-        ;
+      };
     }
-  }
-    ;
-})
-;
+  };
+});
