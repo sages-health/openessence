@@ -124,18 +124,7 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     var form = response.results[0]._source;
     $scope.form = form; // need to pass to visualizations
 
-    $scope.possibleFilters = form.fields.reduce(function (filters, field) {
-      if (!field.enabled) {
-        return filters;
-      }
-
-      var possibleFilter = possibleFilters.possibleFilters[field.name];
-      if (possibleFilter) {
-        filters[field.name] = angular.extend({values: field.values}, possibleFilters.possibleFilters[field.name]);
-      }
-
-      return filters;
-    }, {});
+    $scope.possibleFilters = possibleFilters.getPossibleFilters(form.fields);
 
     $scope.editVisit = function (visit) {
       outpatientEditModal.open({record: visit, form: form}).result
