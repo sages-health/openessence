@@ -73,14 +73,9 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function ($filt
       },
       post: function (scope, element) {
         var updateViz = function (rows, cols) {
-          if (rows.length === 0 && cols.length === 0 && scope.visualization.name === 'crosstab') {
-            // crosstab doesn't make sense with no pivots (unless they wanted to see aggregations...)
-            scope.visualization.name = 'table';
-          } else {
-            if (scope.visualization.name === 'table') {
-              // table doesn't make sense so switch to crosstab
-              scope.visualization.name = 'crosstab';
-            }
+          if (scope.visualization.name === 'table' && (rows.length !== 0 || cols.length !== 0)) {
+            // table doesn't make sense so switch to crosstab
+            scope.visualization.name = 'crosstab';
           }
         };
 

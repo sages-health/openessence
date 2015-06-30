@@ -3,7 +3,7 @@
 var angular = require('angular');
 var services = require('../scripts/modules').services;
 
-angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function () {
+angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function ($filter) {
 //TODO move type & field? to forms.js
 // All possible filters for a data set
   var possibleFilters = [
@@ -166,7 +166,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
             filterID: field.name,
             type: field.type || 'text',
             field: field.field || field.name,
-            name: field.name,
+            name: $filter('i18next')(field.name),
             values: field.values
           };
         }
@@ -180,7 +180,9 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     var aggs = [];
     angular.forEach(fields, function (field) {
       if (field.enabled && field.aggregable) {
-        aggs.push({value: field.name, label: field.name});
+        var display = possibles[field.name] ? possibles[field.name] : field;
+        display = $filter('i18next')(display.name);
+        aggs.push({value: field.name, label: display});
       }
     });
     return aggs;
