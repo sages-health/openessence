@@ -131,6 +131,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         var aggReload2 = function () {
           queryData(function (records) {
             //scope.crosstabData = records;
+
             var opts = {
               rows: angular.copy(scope.pivotOptions.rows) || [],
               cols: angular.copy(scope.pivotOptions.cols) || []
