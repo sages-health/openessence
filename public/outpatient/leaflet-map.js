@@ -52,8 +52,8 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
       // don't wait for data to build map and fetch base layer tiles
       var map = L.map(element.children()[0], {
-        center: new L.LatLng(41.4289788, -96.8634425),
-        zoom: 7,
+        center: new L.LatLng(15.68848,-88.19824),
+        zoom: 6,
         layers: [baseLayer]
       });
       L.control.scale().addTo(map);

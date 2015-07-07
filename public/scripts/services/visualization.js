@@ -17,6 +17,8 @@ module.exports = function ($resource, $modal, $window, $location, $document, Vis
         delete v.values;
         return v;
       });
+      delete state.form;
+      delete state.fields;
       if (state.form) {
         state.form.fields.map(function (v) {
           // Do not remove values,
