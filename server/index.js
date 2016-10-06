@@ -134,13 +134,14 @@ app.use(function (req, res, next) {
     'style-src': [self, "'unsafe-inline'"],
     'img-src': [self, 'data:', 'https://otile1-s.mqcdn.com', 'https://otile2-s.mqcdn.com', 'https://otile3-s.mqcdn.com',
                 'https://otile4-s.mqcdn.com', 'https://developer.mapquest.com/content/osm/mq_logo.png'],
-    'frame-src': ['https://login.persona.org'],
+    'child-src': ['https://login.persona.org'],
     'object-src': [none] // I really hope we never need Flash or any other plugins
   })(req, res, next);
 });
 
 // CSRF tokens
-app.use(function (req, res, next) {
+app.use(require('csurf')());
+/*app.use(function (req, res, next) {
   // Test if request starts with /api/ using regex (best performance)
   if (/^\/api\//.test(req.path)) {
     next(); // Don't use CSRF if its /api/
@@ -148,7 +149,7 @@ app.use(function (req, res, next) {
   else {
     require('csurf')()(req, res, next);
   }
-});
+});*/
 
 app.use(locale(require('./locale').supportedLocales)); // adds req.locale based on best matching locale
 app.get('/', function (req, res) {
@@ -192,7 +193,7 @@ app.use('/csv', express()
   .use(require('./csv/export')()));
 
 app.use('/api', express()
-  .use(auth.bearer)
+  .use(auth.denyAnonymousAccess)
   .use(require('./resources')()));
 
 app.use(require('./error').middleware);
