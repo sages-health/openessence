@@ -5,7 +5,7 @@ var angular = require('angular');
 // @ngInject
 module.exports = function ($resource, $modal) {
   return {
-    openSettingsModal: function (vizType, labels) {
+    openSettingsModal: function (vizType, labels, displayNumber) {
       return $modal.open({
         template: require('../../partials/edit-settings-modal.html'),
         controller: /*ngInject*/ function ($scope, $modalInstance) {

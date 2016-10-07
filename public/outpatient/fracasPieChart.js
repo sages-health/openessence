@@ -26,6 +26,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
           scope.options = scope.options || {};
           scope.options.labels = scope.options.labels || {title: $filter('i18next')('Pie Chart')};
+          scope.options.labels.displayNumber = scope.options.labels.displayNumber || 5;
 
           scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('pie', scope.options.labels)
@@ -100,7 +101,10 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
               if (scope.pivot.cols.length > 0) {
 
                 var innerData = scope.aggData.concat();
-
+                innerData = innerData.sort(function(a, b){
+                  return b.value - a.value;
+                });
+                innerData = innerData.slice(0, scope.options.labels.displayNumber);
                 var color = 0;
 
                 for (var i = 0; i < innerData.length; i++) {
@@ -295,6 +299,10 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
           scope.$watch('options.labels.title', function () {
             scope.chartConfig.title.text = scope.options.labels.title;
+          });
+
+          scope.$watch('options.labels.displayNumber', function () {
+            reload();
           });
 
           scope.$watchCollection('[options.height, options.width]', function () {

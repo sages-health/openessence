@@ -24,6 +24,13 @@
         pa.msgEnterYLabel
       </div>
     </div>
+    <div class="form-group" ng-if="vizType === 'pie' || vizType == 'bar'" ng-class="{'has-error': yellAtUser}">
+      <label for="edit-display-number" ng-i18next>pa.DisplayNumber</label>
+      <input type="number" class="form-control" id="edit-display-number" name="labels.displayNumber" ng-model="labels.displayNumber" required>
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        pa.msgDisplayNumber
+      </div>
+    </div>
 </form>
 
 </div>

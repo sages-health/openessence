@@ -31,6 +31,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
           scope.options = scope.options || {};
 
           scope.options.labels = scope.options.labels || defaultLabels;
+          scope.options.labels.displayNumber = scope.options.labels.displayNumber || 5;
 
           scope.$on('editVisualizationSettings', function () {
             EditSettings.openSettingsModal('bar', scope.options.labels)
@@ -143,7 +144,13 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               scope.chartConfig.series = [];
               scope.chartConfig.xAxis.categories = [];
 
-              for (var i = 0; i < scope.aggData.length; i++) {
+              scope.aggData = scope.aggData.sort(function(a,b){
+                return b.values[0].value - a.values[0].value;
+              });
+              
+              var length = scope.aggData.length < scope.options.labels.displayNumber ? scope.aggData.length : scope.options.labels.displayNumber;
+
+              for (var i = 0; i < length; i++) {
                 if (typeof scope.aggData[i].colName === 'undefined') {
                   //scope.chartConfig.xAxis.categories.push(scope.aggData[i].key);
                   scope.chartConfig.xAxis.categories.push(scope.aggData[i].values[0].colName || '');
@@ -165,7 +172,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
                                 data: [],
                                 color: colors[0]
                               }];
-                for (var i = 0; i < scope.aggData.length; i++) {
+                for (var i = 0; i < length; i++) {
                   series[0].data.push(scope.aggData[i].values[0].value);
                 }
               } else {
@@ -173,7 +180,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
                 var subCats = [];
 
-                for (var i = 0; i < scope.aggData.length; i++) {
+                for (var i = 0; i < length; i++) {
                   for (var y = 0; y < scope.aggData[i].values.length; y++) {
                     var found = false;
                     for (var x = 0; x < subCats.length; x++) {
@@ -197,7 +204,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
                     color: colors[x]
                   };
 
-                  for (var i = 0; i < scope.aggData.length; i++) {
+                  for (var i = 0; i < length; i++) {
 
                     var found = false;
 
@@ -270,6 +277,10 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             scope.chartConfig.title.text = scope.options.labels.title;
             scope.chartConfig.xAxis.title.text = scope.options.labels.x;
             scope.chartConfig.yAxis.title.text = scope.options.labels.y;
+          });
+
+          scope.$watch('options.labels.displayNumber', function () {
+            reload();
           });
 
           scope.$watchCollection('[options.height, options.width]', function () {

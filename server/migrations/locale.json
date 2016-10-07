@@ -274,6 +274,8 @@
         "YLabel": "Y-Axis Label",
         "msgEnterXLabel": "Please enter label for x-axis",
         "msgEnterYLabel": "Please enter label for y-axis",
+        "DisplayNumber": "Number of items to display",
+        "msgDisplayNumber": "Please enter the number of items to display",
         "WidthPixels": "Width (pixels)",
         "msgWidthPixels": "Please enter width",
         "HeightPixels": "Height (pixels)",
