@@ -168,7 +168,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
           flatRecs.push(r);
         });
       } else {
-        flatRecs.push(rec);
+        //flatRecs.push(rec);
       }
     });
     if (allNull) {
