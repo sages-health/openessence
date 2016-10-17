@@ -256,12 +256,26 @@ aggregatorTemplates = {
 };
 
 aggregators = {
-  count: function () {
-    return function () {
+  count: function (record) {
+    return function (record) {
       return {
         count: 0,
-        push: function () {
-          return this.count++;
+        push: function (record) {
+          var explodeFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
+          var tmpCount = 0;
+          explodeFields.forEach(function(fld){
+            if (record[fld] && angular.isArray(record[fld])) {
+              var data = record[fld];
+              angular.forEach(data, function (v) {
+                var count = (v.count !== undefined) ? v.count : 1;
+                
+                 tmpCount += parseInt(v.count);
+              });
+            } 
+
+          });
+          
+          return this.count += tmpCount;
         },
         value: function () {
           return this.count;
