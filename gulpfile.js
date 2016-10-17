@@ -1,12 +1,18 @@
 'use strict';
 
 var gulp = require('gulp');
+var replace = require('gulp-replace');
+var rename= require('gulp-rename');
 var gutil = require('gulp-util');
 var del = require('del');
 var _ = require('lodash');
+var fs = require('fs');
+var defaults = require('./server/conf/defaults');
 
 // load all tasks in tasks directory
 require('require-dir')('./tasks');
+
+var settings = defaults;
 
 // TODO use gulp-changed
 
@@ -19,11 +25,21 @@ require('require-dir')('./tasks');
 gulp.task('clean', function (callback) {
   del([
     'dist',
-    '.tmp'
+    '.tmp',
+    'public/outpatient/leaflet-map.js'
   ], callback);
 });
 
-gulp.task('build', ['images', 'fonts', 'views', 'translations']);
+gulp.task('setVariables', function(){
+  gulp.src(['public/templates/leaflet-map.template.js'])
+  .pipe(replace(/%%baseMapURL%%/g, settings.MAP_URL))
+  .pipe(replace(/%%baseLatitude%%/g, settings.MAP_LATITUDE))
+  .pipe(replace(/%%baseLongitude%%/g, settings.MAP_LONGITUDE))
+  .pipe(rename("public/outpatient/leaflet-map.js"))
+  .pipe(gulp.dest('./'));
+});
+
+gulp.task('build', ['setVariables', 'images', 'fonts', 'views', 'translations']);
 
 // alias for now, but could be more in the future
 gulp.task('lint', ['jshint']);
@@ -35,7 +51,7 @@ gulp.task('server', ['build'], function (callback) {
   var fork = require('child_process').fork;
   var open = require('open');
   var env = _.clone(process.env);
-  env.NODE_ENV = 'production';
+  env.NODE_ENV = 'development';
 
   var child = fork(__dirname + '/server.js', [], {
     env: env

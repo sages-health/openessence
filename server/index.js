@@ -133,7 +133,8 @@ app.use(function (req, res, next) {
     // way too many things use inline styles (ngAnimate, ng-ui-bootstrap, ...)
     'style-src': [self, "'unsafe-inline'"],
     'img-src': [self, 'data:', 'https://otile1-s.mqcdn.com', 'https://otile2-s.mqcdn.com', 'https://otile3-s.mqcdn.com',
-                'https://otile4-s.mqcdn.com', 'https://developer.mapquest.com/content/osm/mq_logo.png'],
+                'https://otile4-s.mqcdn.com', 'https://developer.mapquest.com/content/osm/mq_logo.png', 
+                'http://localhost:8080'],
     'child-src': ['https://login.persona.org'],
     'object-src': [none] // I really hope we never need Flash or any other plugins
   })(req, res, next);
