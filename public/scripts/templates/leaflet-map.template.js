@@ -5,7 +5,7 @@ var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
 angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function ($q, DistrictResource, OutpatientVisitResource,
-                                                                  $timeout, $rootScope, debounce) {
+                                                                  $timeout, $rootScope, debounce, $http) {
 
   return {
     restrict: 'E',
@@ -19,6 +19,17 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
       // if they ever shut down the HTTPs version, here's the HTTP url:
       //var baseMapURL = 'http://ttiles0{s}.mqcdn.com/tiles/1.0.0/vy/map/{z}/{x}/{y}.png';
 
+      function getColor(d) {
+          return d > 100  ? '#800026' :
+                 d > 75   ? '#BD0026' :
+                 d > 50   ? '#E31A1C' :
+                 d > 20   ? '#FC4E2A' :
+                 d > 10   ? '#FD8D3C' :
+                 d > 5    ? '#FEB24C' :
+                 d > 2    ? '#FED976' :
+                            '#FFEDA0' ;
+      }
+
       var getOverlayStyle = function (count) {
         var style = {
           weight: 1,
@@ -28,20 +39,18 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
           fillOpacity: 0.7,
           fillColor: '#FFEDA0'
         };
+
+
+
         if (arguments.length !== 0) {
           // TODO dynamic quartiles, maybe using d3's palette?
-          style.fillColor = count > 100 ? '#800026' :
-                   count > 75 ? '#BD0026' :
-                   count > 50 ? '#E31A1C' :
-                   count > 20 ? '#FC4E2A' :
-                   count > 10 ? '#FD8D3C' :
-                   count > 5 ? '#FEB24C' :
-                   count > 2 ? '#FED976' :
-                   '#FFEDA0';
+          style.fillColor = getColor(count);
         }
 
         return style;
       };
+
+
 
       var baseLayer = L.tileLayer(baseMapURL, {
         subdomains: '1234',
@@ -50,11 +59,47 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
       // don't wait for data to build map and fetch base layer tiles
       var map = L.map(element.children()[0], {
-        center: new L.LatLng(%%baseLatitude%%,%%baseLongitude%%),
-        zoom: 6,
-        layers: [baseLayer]
+          center: new L.LatLng(%%baseLatitude%%,%%baseLongitude%%),
+          zoom: 6
       });
-      L.control.scale().addTo(map);
+
+      var info = L.control();
+
+      info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+
+        return this._div;
+      };
+
+      // method that we will use to update the control based on feature properties passed
+      info.update = function (props) {
+        this._div.innerHTML = '<h4>Total Case Count by Region</h4>' +  (props ?
+                               '<b>' + props.oeName + '</b><br />' + (props.oeCount  !== undefined ? props.oeCount : 0) + ''
+                              : 'Hover over a region');
+      };
+
+      info.addTo(map);
+
+      var legend = L.control({position: 'bottomright'});
+
+      legend.onAdd = function (map) {
+
+      var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 2, 5, 10, 20, 50, 75, 100],
+        labels = [];
+
+      // loop through our density intervals and generate a label with a colored square for each interval
+      for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+
+        return div;
+      };
+
+      legend.addTo(map);
 
       //separating out the polygon request
       var getLayerPolys = function () {
@@ -74,6 +119,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
                 return L.latLng(lonlat[1], lonlat[0]);
               });
               var layer = L.polygon(coordinates, getOverlayStyle());
+              layer.oeName = current._source.name;
               layer.oeName = current._source.name;
 
               // inspired by http://leafletjs.com/examples/choropleth.html
@@ -97,9 +143,11 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
                   fillOpacity: 0.7
                 });
 
-                if (!L.Browser.ie && !L.Browser.opera) {
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
                   layer.bringToFront();
                 }
+
+                info.update(layer);
               });
               layer.on('mouseout', function (e) {
                 var layer = e.target;
@@ -113,6 +161,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
                 if (!L.Browser.ie && !L.Browser.opera) {
                   layer.bringToBack();
                 }
+                info.update();
               });
 
               layers[current._source.name] = layer;
@@ -159,6 +208,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
               var district = districts[bucket.key];
               if (district) { // not all districts have geometries
                 district.setStyle(getOverlayStyle(bucket.doc_count));
+                district.oeCount = bucket.doc_count;
               }
             });
           });

@@ -31,7 +31,7 @@ gulp.task('clean', function (callback) {
 });
 
 gulp.task('setVariables', function(){
-  gulp.src(['public/templates/leaflet-map.template.js'])
+  gulp.src(['public/scripts/templates/leaflet-map.template.js'])
   .pipe(replace(/%%baseMapURL%%/g, settings.MAP_URL))
   .pipe(replace(/%%baseLatitude%%/g, settings.MAP_LATITUDE))
   .pipe(replace(/%%baseLongitude%%/g, settings.MAP_LONGITUDE))
