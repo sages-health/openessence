@@ -26,8 +26,8 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
                  d > 20   ? '#FC4E2A' :
                  d > 10   ? '#FD8D3C' :
                  d > 5    ? '#FEB24C' :
-                 d > 2    ? '#FED976' :
-                            '#FFEDA0' ;
+                 d > 0    ? '#FED976' :
+                            '#C0C0C0' ;
       }
 
       var getOverlayStyle = function (count) {
@@ -37,7 +37,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
           color: 'white',
           dashArray: '1',
           fillOpacity: 0.7,
-          fillColor: '#FFEDA0'
+          fillColor: '#C0C0C0'
         };
 
 
@@ -86,7 +86,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
       legend.onAdd = function (map) {
 
       var div = L.DomUtil.create('div', 'info legend'),
-        grades = [0, 2, 5, 10, 20, 50, 75, 100],
+        grades = [1, 5, 10, 20, 50, 75, 100],
         labels = [];
 
       // loop through our density intervals and generate a label with a colored square for each interval
