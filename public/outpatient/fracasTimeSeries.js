@@ -220,7 +220,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           var queryData = function (resultFn) {
 
             OutpatientVisitResource.get({
-              size: 999999,
+              size: 10000,
               q: scope.queryString
             }, function (data) {
               var records = outpatientAggregation.parseResults(data, scope);

@@ -111,7 +111,13 @@ var indexRequests = [
 
                   // The only way to support names across cultures is with a single "name" field
                   name: {
-                    type: 'string'
+                    type: 'string',
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
                   },
 
 
@@ -204,8 +210,14 @@ var indexRequests = [
                   preExistingConditions: {
                     properties: {
                       name: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                        fields: {
+                           raw: {
+                             type: 'string',
+                             index: 'not_analyzed'
+                          }
+                        }
+                      },
                       // room for other data
                     }
                   }
@@ -310,7 +322,12 @@ var indexRequests = [
                   },
                   name: {
                     type: 'string',
-                    index: 'not_analyzed'
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
                   }
                 }
               },
@@ -319,7 +336,12 @@ var indexRequests = [
                 properties: {
                   name: {
                     type: 'string',
-                    index: 'not_analyzed'
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
                   }
                 }
               },
@@ -328,7 +350,12 @@ var indexRequests = [
                 properties: {
                   name: {
                     type: 'string',
-                    index: 'not_analyzed'
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
                   }
                 }
               },
@@ -375,15 +402,19 @@ var indexRequests = [
             properties: {
               name: {
                 type: 'string',
-                index: 'not_analyzed'
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
               description: {
                 type: 'string',
                 index: 'not_analyzed'
               },
               widgets: {
-                type: 'object',
-                index: 'no'
+                type: 'object'
               }
             }
           }),
@@ -513,7 +544,13 @@ var indexRequests = [
               fields: {
                 properties: {
                   name: {
-                    type: 'string'
+                    type: 'string',
+                    fields: {
+                      raw: {
+                        type: 'string',
+                        index: 'not_analyzed'
+                      }
+                    }
                   },
                   enabled: {
                     type: 'boolean'
@@ -567,8 +604,7 @@ var indexRequests = [
                 type: 'double'
               },
               translation: {
-                type: 'object',
-                index: 'no'
+                type: 'object'
               }
             }
           }),
@@ -629,7 +665,12 @@ var indexRequests = [
               },
               name: {
                 type: 'string',
-                index: 'not_analyzed'
+                fields: {
+                  raw: {
+                    type: 'string',
+                    index: 'not_analyzed'
+                  }
+                }
               },
               tokens: {
                 type: 'string',
@@ -688,8 +729,7 @@ var indexRequests = [
                 }
               },
               state: {
-                type: 'object',
-                index: 'no'
+                type: 'object'
               }
             }
           }),
@@ -707,8 +747,7 @@ var indexRequests = [
                 }
               },
               state: {
-                type: 'object',
-                index: 'no'
+                type: 'object'
               }
             }
           })

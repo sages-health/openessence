@@ -82,7 +82,7 @@ module.exports = function reportsMiddleware () {
     }
 
     var searchParams = {
-      size: 9999999
+      size: 10000
     };
     if (requestParams.query && requestParams.query.length > 0) {
       searchParams.q = requestParams.query;

@@ -272,7 +272,7 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
             console.log(queryString);
 
             OutpatientVisitResource.get({
-              size: 999999,
+              size: 10000,
               q: queryString
             }, function (data) {
               var records = outpatientAggregation.parseResults(data, scope);
