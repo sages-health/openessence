@@ -1,20 +1,4 @@
-    ___________
-    \_   _____/______ _____    ____ _____    ______
-     |    __/ \_  __ \\__  \ /  ___\\__  \  /  ___/
-     |   |     |  | \/ / __ \\  \___ / __ \_\___ \
-     |_ _|     |__|   /______/\_____/______/______|
-
-A front-end for disease surveillance  
-
-## Name
-
-The name __Fracas__ is inspired by
- [Girolamo Fracastoro](http://en.wikipedia.org/wiki/Girolamo_Fracastoro), a
- 15<sup>th</sup>-century Italian physician important in the
- [history of epidemiology](http://en.wikipedia.org/wiki/Epidemiology#History).
-
-If you really need __Fracas__ to be an acronym, it can stand for <strong>FR</strong>ont-end for
- the <strong>A</strong>nalysis and <strong>C</strong>ontrol of Outbre<strong>A</strong>k<strong>S</strong>.
+# OpenESSENCE
 
 ## Requirements
 
@@ -24,7 +8,7 @@ If you really need __Fracas__ to be an acronym, it can stand for <strong>FR</str
 
 ## Building
 
-To build Fracas, you first need to install [`gulp`](http://gulpjs.com) and [`bower`](http://bower.io) globally:
+To build OpenESSENCE, you first need to install [`gulp`](http://gulpjs.com) and [`bower`](http://bower.io) globally:
 
     npm install -g gulp bower
 
@@ -32,7 +16,7 @@ The quickest way to get started is to then run
 
     npm start
 
-This will install all necessary dependencies, run a build, start the server, and launch Fracas in your web browser.
+This will install all necessary dependencies, run a build, start the server, and launch OpenESSENCE in your web browser.
 
 ## Installation
 
@@ -55,14 +39,14 @@ Feel free to tweak any of the environment variables, although the defaults shoul
 
 ## Deploying to other PaaS providers
 
-Since we support running Fracas in a Docker container, we support any PaaS provider that supports Docker. This includes:
+Since we support running OpenESSENCE in a Docker container, we support any PaaS provider that supports Docker. This includes:
 
  * [AWS Elastic Beanstalk](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_eb.html)
  * [Google Compute Engine](https://developers.google.com/compute/docs/containers)
  * [Microsoft Azure](http://azure.microsoft.com/blog/2014/06/09/docker-and-azure-coolness)
 
 just to name a few. Additionally, any IaaS or VPS that supports new-ish versions of Linux can run Docker, and thus
- should run Fracas fine. This includes:
+ should run OpenESSENCE fine. This includes:
 
  * [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-docker-application)
  * [Linode](https://www.linode.com/docs/applications/containers/docker)
