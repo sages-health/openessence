@@ -31,7 +31,7 @@ to get started.
 
 Just click this button:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/gabegorelick/fracas)
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/sages-health/openessence)
 
 Feel free to tweak any of the environment variables, although the defaults should mostly be fine. One setting you do
  need to set though is `URL`, which should be set to whatever URL clients will use to connect to your site. If you're
