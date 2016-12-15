@@ -2,12 +2,10 @@
 # Dockerfile for Fracas. Inspired by https://github.com/docker-library/node.
 ###############################################################################
 
-FROM debian:jessie
+FROM node:0.10 
 
-MAINTAINER Gabe Gorelick, "https://github.com/gabegorelick"
+MAINTAINER Gabe Gorelick, "https://github.com/sages-health"
 
-ENV NODE_VERSION 0.10.32
-ENV NPM_VERSION 2.1.4
 
 RUN mkdir /code
 WORKDIR /code
@@ -30,15 +28,7 @@ RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev lib
     phantomDeps='libfreetype6 libfontconfig1'; \
     set -x; \
     apt-get update && apt-get install -y $buildDeps $phantomDeps --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/* \
-    && gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7937DFD2AB06298B2293C3187D33FF9D0246406D \
-    && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
-    && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-    && gpg --verify SHASUMS256.txt.asc \
-    && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
-    && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
-    && rm "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
-    && npm install -g npm@"$NPM_VERSION" \
+    && npm update -g npm \
     && npm install -g gulp bower \
     && npm install \
     && bower install --allow-root \
