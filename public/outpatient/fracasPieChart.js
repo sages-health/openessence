@@ -187,7 +187,9 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                 var color = 0;
                 var brightScale = 10;
 
-                for (var x = 0; x < scope.aggData.length; x++) {
+                var length = scope.aggData.length < scope.options.labels.displayNumber ? scope.aggData.length : scope.options.labels.displayNumber;
+
+                for (var x = 0; x < length; x++) {
 
                   if (scope.pivot.cols.length > 0) {
                     var brightness = 0.2 - (x / brightScale) / 5;
