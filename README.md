@@ -6,6 +6,34 @@
  * [Elasticsearch](http://elasticsearch.org), which depends on Java
  * [Redis](http://redis.io)
 
+## Vagrant
+
+After installing [Vagrant](https://www.vagrantup.com) and [VirtualBox](https://www.virtualbox.org/) (or any other
+virtualization platform that Vagrant supports), just run
+
+    vagrant up
+
+to get started. 
+
+### Windows Users
+
+Unless you have rsync configured for your environment, you'll want to checkout out and build the code in a new folder inside of the VM instead 
+of using the /vagrant synced folder due to issues npm sometimes has with writing node_modules out to Windows paths. If you develop in the VM, make sure 
+to update your git configurations appropriately. 
+
+## Elasticsearch and Redis Setup
+
+Make sure your Docker service is up and run the following commands to start Elasticsearch where {DIR} is your specified directory on the host
+
+    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v {DIR}/data:/usr/share/elasticsearch/data --privileged --name elasticsearch elasticsearch:2.4 
+    sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
+
+## Initializing Elasticsearch with data
+
+If you are running your own Elasticsearch instance or you launched a Docker instance, use the following command to initialize ES with default data
+
+    node server/migrations/reseed
+
 ## Building
 
 To build OpenESSENCE, you first need to install [`gulp`](http://gulpjs.com) and [`bower`](http://bower.io) globally:
@@ -16,16 +44,7 @@ The quickest way to get started is to then run
 
     npm start
 
-This will install all necessary dependencies, run a build, start the server, and launch OpenESSENCE in your web browser.
-
-## Installation
-
-After installing [Vagrant](https://www.vagrantup.com) and [VirtualBox](https://www.virtualbox.org/) (or any other
-virtualization platform that Vagrant supports), just run
-
-    vagrant up
-
-to get started.
+This will install all necessary dependencies, run a build, start the server, and launch OpenESSENCE in your web browser. Default credentials are admin/admin.
 
 ## Deploying to Heroku
 

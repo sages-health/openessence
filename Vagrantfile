@@ -23,6 +23,7 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
+
   config.vm.network "forwarded_port", guest: 9000, host: 9000
   config.vm.network "forwarded_port", guest: 9200, host: 9200
   config.vm.network "forwarded_port", guest: 9300, host: 9300
@@ -67,36 +68,7 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", privileged:false, inline: <<-SHELL
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
-	source ~/.bashrc
-	nvm install  0.10.38
-	npm update -g npm
-	sudo yum install -y make
-	sudo yum install -y gcc-c++
-	sudo yum install -y python
-	sudo yum install -y docker-engine
-	sudo curl -L "https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-	sudo chmod +x /usr/local/bin/docker-compose
-	sudo yum install -y git
-	
-	git clone https://github.com/sages-health/openessence.git
-	cd openessence
-	
-	npm install -g gulp bower
-	npm install
-	
-	bower cache clean
-	bower install --force
-	bower prune
-	
-	sudo service docker start
-	sudo docker run -d -p 9200:9200 -p 9300:9300 -v /home/vagrant/data:/usr/share/elasticsearch/data --privileged --name elasticsearch elasticsearch:2.4 
-	sudo docker run -d -p 6379:6379 redis:alpine
-	node server/migrations/reseed
-	
-	gulp server
-	#sudo docker run -p 9000:9000 --link elasticsearch:elasticsearch openessence
-  SHELL
-end
+  
+  config.vm.provision :shell, privileged:false, path: "vagrant/1_setup.sh"
 
+end

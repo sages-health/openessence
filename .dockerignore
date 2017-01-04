@@ -2,7 +2,6 @@
 .tmp
 .vagrant
 bower_components
-config
 logs
 node_modules
 test
