@@ -5,7 +5,7 @@
       <div class="panel-heading clearfix">
 
         <!-- TODO make this editable with something like http://vitalets.github.io/angular-xeditable -->
-        <h3 class="panel-title pull-left">{{dashboard.name}}</h3>
+        <h3 class="panel-title pull-left">{{dashboard.name}} <span ng-if='dashboard.name' ng-i18next>navBar.dashboard</span></h3> 
 
         <div class="pull-right">
           <a class="btn btn-primary" ng-click="addWidget()" popover="{{'db.AddWidget' | i18next}}"

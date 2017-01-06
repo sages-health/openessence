@@ -38,3 +38,6 @@ bower_components/
 *.crt
 *.der
 *.pem
+
+# Built files
+public/outpatient/leaflet-map.js

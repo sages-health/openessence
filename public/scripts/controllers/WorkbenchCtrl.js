@@ -202,6 +202,20 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
   };
 
+  $scope.saveAsWorkbench = function () {
+    var scopeJson = scopeToJson($scope);
+    delete scopeJson.form;
+    delete scopeJson.possibleFilters;
+    delete scopeJson.pivotOptions;
+
+    var state = {
+      name: $scope.workbenchName || '',
+      state: scopeJson
+    };
+    Workbench.save(state);
+  };
+
+
   $scope.sortableOptions = {
     cursor: 'move',
     opacity: 0.9,

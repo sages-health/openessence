@@ -1,8 +1,10 @@
-<div class="container-fluid">
-  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString">
-    <!-- TODO these buttons are in a weird place -->
+<div class="panel panel-default">
+  <div class="panel-heading clearfix">
+
+    <!-- TODO make this editable with something like http://vitalets.github.io/angular-xeditable -->
+    <h3 class="panel-title pull-left">{{workbenchName}} <span ng-if='workbenchName' ng-i18next>navBar.workbench</span></h3>
+
     <div class="col-md-3 pull-right">
-      <div class="well text-center">
         <button class="btn btn-primary" ng-click="addVisualization()" popover="{{'wb.AddWidget' | i18next}}"
                 popover-trigger="mouseenter">
           <span class="icon-plus"></span>
@@ -13,8 +15,18 @@
           <span class="icon-floppy"></span>
           <span ng-i18next>app.Save</span>
         </button>
-      </div>
+        <button class="btn btn-default" ng-click="saveAsWorkbench()" popover="{{'wb.SaveAsWorkbench' | i18next}}"
+                popover-trigger="mouseenter">
+          <span class="icon-floppy"></span>
+          <span ng-i18next>app.SaveAs</span>
+        </button>
     </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString">
+
   </outpatient-filters-grid>
 </div>
 

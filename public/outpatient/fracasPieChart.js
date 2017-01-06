@@ -189,6 +189,10 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
                 var length = scope.aggData.length < scope.options.labels.displayNumber ? scope.aggData.length : scope.options.labels.displayNumber;
 
+                scope.aggData = scope.aggData.sort(function(a,b){
+                  return b.value - a.value;
+                });
+
                 for (var x = 0; x < length; x++) {
 
                   if (scope.pivot.cols.length > 0) {
