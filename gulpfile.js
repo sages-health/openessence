@@ -8,6 +8,7 @@ var del = require('del');
 var _ = require('lodash');
 var fs = require('fs');
 var defaults = require('./server/conf/defaults');
+var git = require('git-rev-sync');
 
 // load all tasks in tasks directory
 require('require-dir')('./tasks');
@@ -26,17 +27,25 @@ gulp.task('clean', function (callback) {
   del([
     'dist',
     '.tmp',
-    'public/outpatient/leaflet-map.js'
+    'public/outpatient/leaflet-map.js',
+    'public/partials/home.html'
   ], callback);
 });
 
 gulp.task('setVariables', function(){
+  gulp.src('public/partials/templates/home.template.html')
+    .pipe(replace('{{git-commit-hash}}', git.short()))
+    .pipe(rename('public/partials/home.html'))
+    .pipe(gulp.dest('./'));
+    
   gulp.src(['public/scripts/templates/leaflet-map.template.js'])
   .pipe(replace(/%%baseMapURL%%/g, settings.MAP_URL))
   .pipe(replace(/%%baseLatitude%%/g, settings.MAP_LATITUDE))
   .pipe(replace(/%%baseLongitude%%/g, settings.MAP_LONGITUDE))
   .pipe(rename("public/outpatient/leaflet-map.js"))
   .pipe(gulp.dest('./'));
+
+
 });
 
 gulp.task('build', ['setVariables', 'images', 'fonts', 'views', 'translations']);

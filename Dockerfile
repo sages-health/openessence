@@ -20,7 +20,6 @@ ADD bower.json /code/bower.json
 ADD gulpfile.js /code/gulpfile.js
 ADD package.json /code/package.json
 ADD server.js /code/server.js
-ADD config /code/config
 
 # Hopefully once Docker-in-Docker becomes easier we can build the app in a separate container and not have to
 # worry about all the extra setup and tear down building inside the container entails
@@ -48,6 +47,7 @@ RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev lib
     && rm -f /code/bower.json \
     && rm -f /code/gulpfile.js
 
+ADD config /code/config
 
 EXPOSE 9000 9001
 ENV NODE_ENV production

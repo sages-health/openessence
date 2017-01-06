@@ -1,0 +1,15 @@
+FROM sageshealth/openessence
+
+ADD po /code/po
+ADD public /code/public
+ADD server /code/server
+ADD tasks /code/tasks
+ADD views /code/views
+ADD bower.json /code/bower.json
+ADD gulpfile.js /code/gulpfile.js
+ADD package.json /code/package.json
+ADD server.js /code/server.js
+
+WORKDIR /code
+
+CMD ["node", "/code/server/migrations/reseed"]
