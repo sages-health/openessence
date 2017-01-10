@@ -92,7 +92,7 @@
       <ul class="nav navbar-nav navbar-right">
         <form class="navbar-form navbar-left" role="search">
           <div class="form-group">
-            <select class="form-control" ng-model="site.locale" ng-i18next="[placeholder]app.Any">
+            <select class="form-control" ng-model="site.locale" ng-i18next="[placeholder]app.Any"> 
               <option ng-repeat="item in localeSelect2Options" value="{{item.value}}"
                       ng-selected="site.locale === item.value">{{item.label}}</option>
             </select>
@@ -103,9 +103,12 @@
             {{user.getUser().name || user.getUser().username}}<b class="caret"></b>
           </a>
           <ul class="dropdown-menu">
+            <li ng-show="user.isAdmin()">
+              <a href="https://github.com/sages-health/openessence/commit/49ff962">Version: 49ff962</git>
+            </li>
             <li>
               <!--<a ui-sref="settings" ng-i18next>navBar.settings</a>-->
-              <a ng-click="logout()" ng-i18next>navBar.logout</a>
+              <a ng-click="logout()" ng-i18next>navBar.logout</a> {{git}}
             </li>
           </ul>
         </li>
