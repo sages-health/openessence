@@ -70,6 +70,7 @@
         "Visualization": "Visualization",
         "msgDashboardUpdated": "Dashboard Updated",
         "SaveDashboard": "Save Dashboard",
+        "SaveAsDashboard": "Save dashboard under a specific name",
         "Settings": "Widget Settings",
         "RemoveWidget": "Remove Widget",
         "OpenDashboard": "Open Dashboard",

@@ -244,6 +244,21 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
             }
           };
 
+          scope.saveAs = function () {
+            var state = angular.copy(scope.dashboard);
+            delete state.form;
+            if(state.widgets) {
+              state.widgets.forEach(function (w) {
+                if (w.content) {
+                  delete w.content.fields;
+                  delete w.content.form;
+                }
+              });
+            }
+
+            Dashboard.save(Dashboard.state(state));
+          };
+
           scope.clickthrough = function (widget) {
             var savedWidget = {};
             savedWidget[widget.name] = widget.content;
