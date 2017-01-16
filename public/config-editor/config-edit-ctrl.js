@@ -121,7 +121,11 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
 
     // Update form if it has an id
     if (template._id) {
-      FormResource.update({id: template._id}, template, onSuccess);
+      //FormResource.delete({id: template._id, type:'form', index: 'form"'}, onSuccess);
+      var templateId = template._id;
+      delete template._id;
+      FormResource.update({id: templateId}, template, onSuccess);
+      //FormResource.save(template, onSuccess);
     }
     // create/save a new site form
     else {
