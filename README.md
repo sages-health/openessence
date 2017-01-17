@@ -28,11 +28,26 @@ Make sure your Docker service is up and run the following commands to start Elas
     sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v {DIR}/data:/usr/share/elasticsearch/data --privileged --name elasticsearch elasticsearch:2.4 
     sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
 
+## OpenESSENCE Docker Container
+If you want to get things up and running with just docker, you can start the web app with
+
+    sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis sageshealth/openessence
+
+If you need to modify the settings.js for a specific host name, you can include it in the docker container by adding -v conf/settings.js:/code/config/settings.js .
+The config file will get added automatically it you build the container image manually via
+
+    sudo docker build -t sageshealth/openessence .
+
 ## Initializing Elasticsearch with data
 
-If you are running your own Elasticsearch instance or you launched a Docker instance, use the following command to initialize ES with default data
+If you are developing locally with own Elasticsearch instance or you launched a container, use the following command to initialize ES with default data
 
     node server/migrations/reseed
+
+If you need to initialize ES on a CoreOS instance, you can build a docker image to do that. Run these after you get OpenESSENCE, Elasticsearch, and Redis containers running
+
+    sudo docker build -t oe_init-db -f vagrant/Dockerfile.init_db .
+    sudo docker run oe_init-db
 
 ## Building
 
