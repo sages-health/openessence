@@ -113,7 +113,7 @@
     "karma-mocha-reporter": "^0.3.1",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-sourcemap-loader": "^0.2.0",
-    "leaflet": ">=0.7.3",
+    "leaflet": "^1.0.2",
     "less-middleware": "^1.0.3",
     "lesshat": "^3.0.2",
     "mkdirp": "^0.5.0",

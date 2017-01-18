@@ -9,7 +9,7 @@ module.exports = function (settings) {
     }
   };
 
-  settings.MAP_URL = "'http://localhost:8080/styles/bright-v9/?vector#{z}/{x}/{y}'"
+  settings.MAP_URL = "'http://localhost:8080/styles/klokantech-basic/rendered/{z}/{x}/{y}.png'"
   settings.MAP_LATITUDE = '41.4925'
   settings.MAP_LONGITUDE = '-99.9018'
 

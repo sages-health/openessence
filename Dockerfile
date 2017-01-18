@@ -4,7 +4,7 @@
 
 FROM node:0.10 
 
-MAINTAINER Gabe Gorelick, "https://github.com/sages-health"
+MAINTAINER Miles Stewart, "https://github.com/sages-health"
 
 
 RUN mkdir /code

@@ -53,8 +53,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
 
       var baseLayer = L.tileLayer(baseMapURL, {
-        subdomains: '1234',
-        attribution: '<a href=\'https://www.mapbox.com/about/maps/\' target=\'_blank\'>&copy; Mapbox</a> <a href=\'https://openstreetmap.org/about/\' target=\'_blank\'>&copy; OpenStreetMap</a> <a class=\'mapbox-improve-map\' href=\'https://www.mapbox.com/map-feedback/\' target=\'_blank\'>Improve this map</a>'
+        attribution: '&#169; OpenMapTiles &#169; OpenStreetMap contributors'
       });
 
       // don't wait for data to build map and fetch base layer tiles
@@ -71,6 +70,8 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
         return this._div;
       };
+
+      baseLayer.addTo(map);
 
       // method that we will use to update the control based on feature properties passed
       info.update = function (props) {
@@ -125,7 +126,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
               // inspired by http://leafletjs.com/examples/choropleth.html
               layer.on('click', function (e) {
                 // TODO this leaves the map with a lot of 0 count districts that should be unshaded
-                map.fitBounds(e.target.getBounds());
+                //map.fitBounds(e.target.getBounds());
                 var filter = {
                   filterID: 'medicalFacility',
                   value: layer.oeName
