@@ -20,6 +20,9 @@ bower_components/
 *.ipr
 *.iws
 
+# VSCode settings
+.vscode/
+
 # Eclipse settings
 .classpath
 .project
