@@ -5,6 +5,7 @@
  * [Node.js](http://nodejs.org)
  * [Elasticsearch](http://elasticsearch.org), which depends on Java
  * [Redis](http://redis.io)
+ * [Docker](https://www.docker.com/)
 
 ## Vagrant
 
