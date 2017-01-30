@@ -39,7 +39,7 @@ RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev lib
     && npm uninstall -g gulp bower \
     && npm cache clear \
     && apt-get purge -y $buildDeps \
-    && apt-get autoremove -y \
+    && apt-get autoremove -y
     && rm -rf /code/bower_components \
     && rm -rf /code/po \
     && rm -rf /code/public \
@@ -47,7 +47,11 @@ RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev lib
     && rm -rf /code/views \
     && rm -f /code/bower.json \
     && rm -f /code/gulpfile.js \
-    && rm -rf /code/.git 
+    && rm -rf /code/.git \
+    && dd if=/dev/zero of=/EMPTY bs=1M \
+    && rm -f /EMPTY \
+    && rm -rf /tmp/* \
+    && sync
 
 ADD config /code/config
 

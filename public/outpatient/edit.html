@@ -16,7 +16,12 @@
               <span class="icon-plus" ng-i18next>op.NewVisit</span>
             </a>
             <!-- disable import -->
-            <a class="btn btn-primary" ng-click="importVisits()" 
+            <a ng-show=" scope.form.datatype  !== 'aggregate'" class="btn btn-primary" ng-click="importVisits()" 
+                    popover="{{'op.ImportCSV' | i18next}}" popover-trigger="mouseenter">
+              <i class="fa fa-upload"></i><span ng-i18next>op.Import</span>
+            </a>
+
+            <a ng-show=" scope.form.datatype  === 'aggregate'" class="btn btn-primary" ng-click="importAggVisits()" 
                     popover="{{'op.ImportCSV' | i18next}}" popover-trigger="mouseenter">
               <i class="fa fa-upload"></i><span ng-i18next>op.Import</span>
             </a>

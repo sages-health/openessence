@@ -38,4 +38,15 @@
   <label ng-i18next>op.Data</label>
 
   <div class="preview-grid" ng-grid="gridOptions"></div>
+
+  <label ng-i18next>op.MapTo</label>
+  <div>
+    <div ng-repeat="column in columnDefs">
+      {{column.field}}
+    <select name="mappings" id="mappings-{{column.field}}" ng-change="updateMapping('{{column.field}}', field.name)" 
+            ng-options="field.name for field in form.fields" ng-model="field.name">
+      <!-- <option ng-repeat="field in form.fields" value="{{field.name}}">{{field.name}}</option> -->
+    </select>
+    </div>
+  </div>
 </div>

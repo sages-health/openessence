@@ -8,7 +8,7 @@ angular.module(services.name).factory('outpatientImportModal', /*@ngInject*/ fun
     // Create or edit a record. If record is null, a new record will be created
     open: function (record, resource, template, options) {
       return $modal.open({
-        template: template,
+        template: require('./modal-upload.html'),
         controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
           $scope.uniqueConstraintViolation = false;
           $scope.record = record || {};
