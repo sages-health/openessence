@@ -40,13 +40,18 @@
   <div class="preview-grid" ng-grid="gridOptions"></div>
 
   <label ng-i18next>op.MapTo</label>
-  <div>
-    <div ng-repeat="column in columnDefs">
-      {{column.field}}
-    <select name="mappings" id="mappings-{{column.field}}" ng-change="updateMapping('{{column.field}}', field)" 
-            ng-options="field for field in recordFields" ng-model="field">
-      <!-- <option ng-repeat="field in form.fields" value="{{field.name}}">{{field.name}}</option> -->
-    </select>
-    </div>
+  <div class="col-md-12 form-group preview-grid-wrapper">
+    <table> 
+      <tr>
+        <th>Source Column</th>
+                <th>Destination Column</th>
+      </tr>
+      <tr ng-repeat="column in columnDefs">
+        <td>{{column.field | i18next}}</td>
+        <td><select name="mappings" id="mappings-{{column.field}}" ng-change="updateMapping('{{column.field}}', field)" 
+              ng-options="field for field in recordFields" ng-model="field"></select>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>

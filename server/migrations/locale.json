@@ -181,6 +181,7 @@
         "OutpatientVisits": "Outpatient visits",
         "NewVisit": "New visit",
         "Import": "Import",
+        "MapTo": "Column Mappings",
         "CreateNewVisit": "Create new visit",
         "ImportCSV": "Import CSV",
         "Query": "Query",
