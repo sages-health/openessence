@@ -86,7 +86,7 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
               if (row.visitDate) {
                 var mappedData = {};
                 for(var column in row){
-                    mappedData[$scope.data.mapping[column].name] = row[column];
+                    mappedData[$scope.data.mapping[column]] = row[column];
                 } 
 
                 // csvUtil will process one record at a time, remove id prop if it is there

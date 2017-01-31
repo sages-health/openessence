@@ -18,8 +18,34 @@ angular.module(services.name).factory('csvUtil', function () {
       if (record[field[0]]) {
         return fieldValue(record[field[0]], field.slice(1), newValue);
       }
+
       return undefined;
     }
+  };
+
+  /* Below implementation found here: 
+   * http://stackoverflow.com/questions/28058519/javascript-convert-dot-delimited-strings-to-nested-object-value
+   * 
+   * Modified to check for existence of and create missing properties
+   * 
+   */
+  var assignProperty = function assignProperty(obj, path, value) {
+    var props = path.split(".")
+        , i = 0
+        , prop;
+
+    for(; i < props.length - 1; i++) {
+        prop = props[i];
+
+        if(obj[prop] === undefined){
+          obj[prop] = {};
+        }
+
+        obj = obj[prop];
+    }
+
+    obj[props[i]] = value;
+
   };
 
   return {
@@ -29,10 +55,11 @@ angular.module(services.name).factory('csvUtil', function () {
         // Let's not delete rec.id, it may help user to locate not imported records.
         rec.importId = rec.id;
         delete rec.id;
-
+        var checkedFields = [];
         // format data
         Object.keys(csvExportConfig.dataTypes).forEach(function (dataType) {
           csvExportConfig.dataTypes[dataType].fields.forEach(function (fld) {
+            checkedFields.push(fld);
             var val = fieldValue(rec, fld);
             if (val) {
               val = (typeof val === 'string') ? val.trim() : val;
@@ -44,6 +71,17 @@ angular.module(services.name).factory('csvUtil', function () {
             }
           });
         });
+
+        Object.keys(rec).forEach(function (fld){
+          if(checkedFields.indexOf(fld) < 0){
+            assignProperty(rec, fld, rec[fld]);
+
+            if(fld.indexOf('.') > -1){
+              delete rec[fld];
+            }
+          }
+        });
+
         return rec;
       }
     }

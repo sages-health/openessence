@@ -6,6 +6,7 @@ var directives = require('../scripts/modules').directives;
 var $ = require('jquery');
 var flat = require('flat');
 require('jquery-csv');
+var csvExportConfig = require('csv-export');
 
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
@@ -27,6 +28,48 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
         pre: function (scope) {
 
           scope.form = scope.form || {};
+          var recordFields = [];
+
+          var collectFields = function (collectedFields, fields, parentField) {
+            
+            Object.keys(fields).forEach(function (field) {
+              var fieldName = "";
+              if(parentField !== ""){
+                fieldName = parentField + "." + field;
+              }
+              else{
+                fieldName = field;
+              }
+
+              if(fields[field]){
+                collectFields(collectedFields, fields[field], fieldName);
+              }
+              else{
+
+                collectedFields.push(fieldName);
+              }
+            });
+          };
+          
+
+          /*Object.keys(csvExportConfig.template).forEach(function (field) {
+
+            if(csvExportConfig.template[field]){
+              csvExportConfig.template[field].forEach(function (subfld) {
+                var fullField = field + '.' + subfld;
+                recordFields.push(fullField);
+              });
+            }
+            else{
+              recordFields.push(field);
+            }
+            
+          });*/
+
+          collectFields(recordFields, csvExportConfig.template, "");
+
+          scope.recordFields = recordFields;
+
           scope.model = scope.mapping || "";
           scope.model = scope.model || "";
           scope.fileParams = scope.fileParams || {};
