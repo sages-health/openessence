@@ -97,7 +97,7 @@ var dataTypes = {
           var arr = str.split(':');
           res.push({
             name: arr[0].replace(/'/g, '').trim(),
-            count: parseInt(arr[1])
+            count: parseInt(arr[1] !== undefined && arr[1] !== null ? arr[1] : 1)
           });
         });
       }

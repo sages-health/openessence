@@ -2,8 +2,19 @@
 <div class="col-md-12 form-group">
   <label ng-i18next>aggregate.CSVFile</label>
 
-  <input id="csv-file" name="csvFile" type="file" ng-model="fileParams.file" ng-file-select="onFileSelect($files)"
-         accept=".csv" required>
+
+  <div style="position:relative;">
+    <a class='btn btn-primary' href='javascript:;'>
+      {{'op.ChooseFile' | i18next}}
+      <input type="file"
+             style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;'
+             name="csvFile" size="40" ng-model="fileParams.file" ng-file-select="onFileSelect($files)" accept=".csv"
+             required>
+    </a>
+    &nbsp;
+    <!-- place holder for selected file name -->
+    <span id="upload-file-info"></span>
+  </div>
   <span class="help-block" ng-show="badFile" ng-i18next>aggregate.msgCSVFile</span>
 </div>
 

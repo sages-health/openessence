@@ -10,10 +10,17 @@
   <form name="importForm" class="form" novalidate ng-submit="submit(importForm)" ng-cloak>
     <fieldset>
       <div class="alert alert-danger alert-show-hide" ng-show="noData" ng-i18next>op.msgNoDataFound</div>
-      <outpatient-csv-file-selector table-data="data.tableData" file-params="data.fileParams">
+      <outpatient-csv-file-selector table-data="data.tableData" file-params="data.fileParams" mapping="data.mapping" form="form">
+        
       </outpatient-csv-file-selector>
     </fieldset>
   </form>
+
+  <div ng-show="validationErrors">
+    <progressbar class="progress-striped" value="progress">
+      {{validationError}}
+    </progressbar>
+  </div>
 
   <div ng-show="uploading && !importCompleted">
     <progressbar class="progress-striped" value="progress">

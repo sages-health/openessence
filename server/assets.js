@@ -46,6 +46,8 @@ if (env === 'development') {
 
     app.use('/public/fonts', express.static(__dirname + '/../bower_components/fracas-fonts'));
 
+    app.use('/public/fonts', express.static(__dirname + '/../bower_components/font-awesome/fonts'));
+
     // only assets that are actually requested from here are images and source maps
     app.use('/public', express.static(__dirname + '/../public'));
 
@@ -73,6 +75,7 @@ if (env === 'development') {
     // TODO icon font does change a lot, so it's useful to hash that, and hashing Lato doesn't hurt
     // TODO figure out a non-ugly way to pass the hashes into less files
     app.use('/public/fonts/lato', express.static(__dirname + '/../dist/public/fonts/lato', cacheOptions));
+    app.use('/public/fonts/', express.static(__dirname + '/../dist/public/font-awesome', cacheOptions));
 
     // don't set Cache-Control on anything else
     app.use('/public', express.static(__dirname + '/../dist/public'));

@@ -2,10 +2,11 @@
 
 ## Requirements
 
- * [Node.js](http://nodejs.org)
+ * [Node.js 0.10.38](http://nodejs.org)
  * [Elasticsearch](http://elasticsearch.org), which depends on Java
  * [Redis](http://redis.io)
  * [Docker](https://www.docker.com/)
+ * [Python 2.7]()
 
 ## Vagrant
 

@@ -13,8 +13,10 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
             data: {
               tableData: [],
               tableParams: {},
-              uploading: false
-            }
+              uploading: false,
+              mapping: {}
+            },
+            form: '=?'
           }, scope);
 
           // the save button on the modal
@@ -45,7 +47,7 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
             };
 
             var addColumns = function (rec) {
-              var flatRec = flat.flat(rec);
+              var flatRec = flat.flatten(rec);
               var props = Object.keys(flatRec);
               if (props && props.length > 0) {
                 props.forEach(function (prop) {
@@ -80,11 +82,17 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
             $scope.goodRecCount = 0;
             $scope.total = $scope.data.tableData.length;
             $scope.uploading = true;
-            $scope.data.tableData.forEach(function (row) {
+            $scope.data.tableData.forEach(function (row) { 
               if (row.visitDate) {
+                var mappedData = {};
+                for(var column in row){
+                    mappedData[$scope.data.mapping[column]] = row[column];
+                } 
+
                 // csvUtil will process one record at a time, remove id prop if it is there
                 // format dates, int, double, array, etc...
-                var record = csvUtil.toRecord(row);
+                var record = csvUtil.toRecord(mappedData);
+                //var record = csvUtil.toRecord(row);
                 //TODO: bulk insert
                 // Ignore ids, always insert record. Once we expand our GUI, we may prove option to insert/update
                 OutpatientVisitResource.save(record, onSuccess, onError);
@@ -106,7 +114,7 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
         }
       }, modalOptions);
 
-      return $modal.open(modalOptions);
+      return $modal.open(modalOptions, {form: scope.form, mapping: scope.mapping});
     }
   };
 });

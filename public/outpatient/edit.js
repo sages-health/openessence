@@ -84,6 +84,7 @@ angular.module(services.name).factory('outpatientDeleteModal', /*@ngInject*/ fun
 angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ function ($scope, $modal, outpatientEditModal,
                                                                             outpatientDeleteModal,
                                                                             outpatientCsvImportModal,
+                                                                            outpatientImportModal,
                                                                             possibleFilters, FormResource) {
   $scope.activeFilters = [
     angular.extend({
@@ -143,7 +144,15 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     };
 
     $scope.importVisits = function () {
+      $scope.form.fields;
       outpatientCsvImportModal.open({form: form}).result
+        .then(function () {
+          reload();
+        });
+    };
+
+    $scope.importAggVisits = function () {
+      outpatientImportModal.open({form: form}).result
         .then(function () {
           reload();
         });

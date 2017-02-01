@@ -6,6 +6,7 @@ var directives = require('../scripts/modules').directives;
 var $ = require('jquery');
 var flat = require('flat');
 require('jquery-csv');
+var csvExportConfig = require('csv-export');
 
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
@@ -17,11 +18,60 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
     transclude: true,
     scope: {
       tableData: '=?',
-      fileParams: '=?'
+      fileParams: '=?',
+      form: '=?',
+      model: '=?',
+      mapping: '=?'
     },
     compile: function () {
       return {
         pre: function (scope) {
+
+          scope.form = scope.form || {};
+          var recordFields = [];
+
+          var collectFields = function (collectedFields, fields, parentField) {
+            
+            Object.keys(fields).forEach(function (field) {
+              var fieldName = "";
+              if(parentField !== ""){
+                fieldName = parentField + "." + field;
+              }
+              else{
+                fieldName = field;
+              }
+
+              if(fields[field]){
+                collectFields(collectedFields, fields[field], fieldName);
+              }
+              else{
+
+                collectedFields.push(fieldName);
+              }
+            });
+          };
+          
+
+          /*Object.keys(csvExportConfig.template).forEach(function (field) {
+
+            if(csvExportConfig.template[field]){
+              csvExportConfig.template[field].forEach(function (subfld) {
+                var fullField = field + '.' + subfld;
+                recordFields.push(fullField);
+              });
+            }
+            else{
+              recordFields.push(field);
+            }
+            
+          });*/
+
+          collectFields(recordFields, csvExportConfig.template, "");
+
+          scope.recordFields = recordFields;
+
+          scope.model = scope.mapping || "";
+          scope.model = scope.model || "";
           scope.fileParams = scope.fileParams || {};
           scope.fileParams.delimiter = scope.fileParams.delimiter || '"';
           scope.fileParams.separator = scope.fileParams.separator || ',';
@@ -47,11 +97,13 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             scope.fileParams.file = $files[0];
             parseCsvFile();
           };
+          
 
           var parseCsvFile = function () {
             if (!scope.fileParams.file) {
               return;
             }
+
             var reader = new FileReader();
             reader.readAsText(scope.fileParams.file);
             reader.onload = function (event) {
@@ -100,6 +152,10 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             parseCsvFile();
           });
 
+          scope.updateMapping = function(fromColumn, toColumn) {
+            scope.mapping[fromColumn] = toColumn;
+            
+          };
         }
       };
     }

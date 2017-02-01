@@ -10,16 +10,21 @@
         <div class="panel-heading clearfix">
           <h4 class="panel-title pull-left" ng-i18next>op.OutpatientVisits</h4>
 
-          <div class="btn-group  pull-right" role="group">
-            <button type="button" class="btn btn-primary" ng-click="createVisit()" ng-i18next
+          <div class="pull-right" >
+            <a class="btn btn-primary" ng-click="createVisit()" 
                     popover="{{'op.CreateNewVisit' | i18next}}" popover-trigger="mouseenter">
-              op.NewVisit
-            </button>
+              <span class="icon-plus" ng-i18next>op.NewVisit</span>
+            </a>
             <!-- disable import -->
-            <button type="button" class="btn btn-default" ng-click="importVisits()" ng-i18next>
-                    <popover="{{'op.ImportCSV' | i18next}}" popover-trigger="mouseenter">
-              op.Import
-            </button>
+            <a ng-show=" scope.form.datatype  !== 'aggregate'" class="btn btn-primary" ng-click="importVisits()" 
+                    popover="{{'op.ImportCSV' | i18next}}" popover-trigger="mouseenter">
+              <i class="fa fa-upload"></i><span ng-i18next>op.Import</span>
+            </a>
+
+            <a ng-show=" scope.form.datatype  === 'aggregate'" class="btn btn-primary" ng-click="importAggVisits()" 
+                    popover="{{'op.ImportCSV' | i18next}}" popover-trigger="mouseenter">
+              <i class="fa fa-upload"></i><span ng-i18next>op.Import</span>
+            </a>
           </div>
 
           <span upload-aggregate></span>

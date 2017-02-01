@@ -4,7 +4,7 @@
 
   <div style="position:relative;">
     <a class='btn btn-primary' href='javascript:;'>
-      {{op.ChooseFile | i18next}}
+      {{'op.ChooseFile' | i18next}}
       <input type="file"
              style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;'
              name="csvFile" size="40" ng-model="fileParams.file" ng-file-select="onFileSelect($files)" accept=".csv"
@@ -38,4 +38,20 @@
   <label ng-i18next>op.Data</label>
 
   <div class="preview-grid" ng-grid="gridOptions"></div>
+
+  <label ng-i18next>op.MapTo</label>
+  <div class="col-md-12 form-group preview-grid-wrapper">
+    <table> 
+      <tr>
+        <th>Source Column</th>
+        <th>Destination Column</th>
+      </tr>
+      <tr ng-repeat="column in columnDefs">
+        <td>{{column.field | i18next}}</td>
+        <td><select name="mappings" id="mappings-{{column.field}}" ng-change="updateMapping('{{column.field}}', field)" 
+              ng-options="field for field in recordFields" ng-model="field"></select>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>
