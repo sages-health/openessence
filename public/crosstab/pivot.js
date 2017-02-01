@@ -285,23 +285,21 @@ aggregators = {
       };
     };
   },
-  countUnique: function (_arg) {
-    var attr;
-    attr = _arg[0];
-    return function () {
+  countUnique: function (record) {
+    return function (record) {
       return {
-        uniq: [],
+        count: 0,
         push: function (record) {
-          var _ref;
-          if (_ref = record[attr], __indexOf.call(this.uniq, _ref) < 0) {
-            return this.uniq.push(record[attr]);
-          }
+          var tmpCount = 1;
+   
+          
+          return this.count += tmpCount;
         },
         value: function () {
-          return this.uniq.length;
+          return this.count;
         },
         format: numberFormat(0),
-        label: "Count Unique " + attr
+        label: "Count"
       };
     };
   },

@@ -396,7 +396,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         },
         //TODO: should be using count field aggregator
         //aggregator: sumcount,
-        aggregator: $.pivotUtilities.aggregators.count(),
+        aggregator: scope.form.dataType === 'aggregate' ?  $.pivotUtilities.aggregators.count() : $.pivotUtilities.aggregators.countUnique(),
         derivedAttributes: {},
         localeStrings: {
           renderError: "An error occurred rendering the PivotTable results.",
