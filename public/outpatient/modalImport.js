@@ -95,6 +95,7 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
                 //var record = csvUtil.toRecord(row);
                 //TODO: bulk insert
                 // Ignore ids, always insert record. Once we expand our GUI, we may prove option to insert/update
+                // Double check that unique id (based on fields )
                 OutpatientVisitResource.save(record, onSuccess, onError);
 
               }

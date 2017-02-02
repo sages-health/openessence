@@ -61,9 +61,15 @@ angular.module(services.name).factory('csvUtil', function () {
           csvExportConfig.dataTypes[dataType].fields.forEach(function (fld) {
             checkedFields.push(fld);
             var val = fieldValue(rec, fld);
+
             if (val) {
               val = (typeof val === 'string') ? val.trim() : val;
-              fieldValue(rec, fld, csvExportConfig.dataTypes[dataType].importFormat(val));
+              if(rec.count && csvExportConfig.dataTypes.arrayOfObjects.fields.indexOf(fld) > -1){
+                fieldValue(rec, fld, csvExportConfig.dataTypes[dataType].importFormat(val, rec.count));
+              }
+              else{
+                fieldValue(rec, fld, csvExportConfig.dataTypes[dataType].importFormat(val));
+              }
             }
             // if field does not have value and data type is array or array of object
             else if (dataType === 'array' || dataType === 'arrayOfObjects') {

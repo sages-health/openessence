@@ -50,6 +50,10 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
               }
             });
           };
+
+          if(scope.form.dataType === 'aggregate'){
+            recordFields.push('count');
+          }
           
 
           /*Object.keys(csvExportConfig.template).forEach(function (field) {

@@ -90,11 +90,14 @@ var dataTypes = {
   },
   arrayOfObjects: {
     fields: ['symptoms', 'diagnoses', 'disposition'],
-    importFormat: function (val) {
+    importFormat: function (val, newCount) {
       var res = [];
       if (val && val.length > 0) {
         val.split(';').forEach(function (str) {
           var arr = str.split(':');
+          if(newCount){
+            arr[1] = newCount;
+          }
           res.push({
             name: arr[0].replace(/'/g, '').trim(),
             count: parseInt(arr[1] !== undefined && arr[1] !== null ? arr[1] : 1)
