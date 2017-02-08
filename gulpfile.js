@@ -38,13 +38,13 @@ gulp.task('setVariables', function(){
     .pipe(rename('public/partials/home.html'))
     .pipe(gulp.dest('./'));
     
+
   gulp.src(['public/scripts/templates/leaflet-map.template.js'])
-  .pipe(replace(/%%baseMapURL%%/g, settings.MAP_URL))
-  .pipe(replace(/%%baseLatitude%%/g, settings.MAP_LATITUDE))
-  .pipe(replace(/%%baseLongitude%%/g, settings.MAP_LONGITUDE))
+  .pipe(replace(/%%baseMapURL%%/g, settings.MAP_URL !== undefined ? settings.MAP_URL : "''"))
+  .pipe(replace(/%%baseLatitude%%/g, settings.MAP_LATITUDE !== undefined ? settings.MAP_LATITUDE : '41.4925'))
+  .pipe(replace(/%%baseLongitude%%/g, settings.MAP_LATITUDE !== undefined ? settings.MAP_LATITUDE : '-99.9018'))
   .pipe(rename("public/outpatient/leaflet-map.js"))
   .pipe(gulp.dest('./'));
-
 
 });
 
