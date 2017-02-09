@@ -45,3 +45,5 @@ bower_components/
 # Templated files
 public/outpatient/leaflet-map.js
 public/partials/home.html
+
+data/

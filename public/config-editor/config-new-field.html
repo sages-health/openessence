@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h3 class="modal-title" ng-i18next>config.NewField</h3>
+</div>
+<div class="modal-body">
+  <form class="form" role="form" novalidate name="newValForm">
+    <div class="form-group" ng-class="{'has-error': yellAtUser}">
+      <label for="value" mg-i18next>op.EnterNewFieldName</label>
+      <input class="form-control" type="text" id="value" name="value" ng-model="data.value" required>
+
+      <div class="help-block" ng-show="yellAtUser" ng-i18next>
+        config.msgEnterAValue
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-warning" ng-click="closeModal()" ng-i18next>app.Cancel</button>
+  <button class="btn btn-primary" ng-click="save(newValForm)" ng-i18next>app.Save</button>
+</div>

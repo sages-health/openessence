@@ -11,7 +11,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
     };
     $scope.templateKeys = [];
 
-    FormResource.get({size: 99}, function (response) {
+    FormResource.get({ size: 99 }, function (response) {
 
       $scope.templates = response.results.reduce(function (templates, template) {
         if (template._source.name === 'site') {
@@ -107,14 +107,14 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
 
     template.fields.forEach(function (field) {
       // Ensure values has same format as possibleValues
-      if (!field.isGroup && field.formFieldType !== 'FixedLengthList' &&  field.values) {
+      if (!field.isGroup && field.formFieldType !== 'FixedLengthList' && field.values) {
 
         var possibleValuesByName = field.possibleValues.reduce(function (values, v) {
           values[v.name] = v;
           return values;
         }, {});
         field.values = field.values.map(function (val) {
-          return possibleValuesByName[val] || {name: val};
+          return possibleValuesByName[val] || { name: val };
         }).sort(stringUtil.compare);
       }
     });
@@ -124,7 +124,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
       //FormResource.delete({id: template._id, type:'form', index: 'form"'}, onSuccess);
       var templateId = template._id;
       delete template._id;
-      FormResource.update({id: templateId}, template, onSuccess);
+      FormResource.update({ id: templateId }, template, onSuccess);
       //FormResource.save(template, onSuccess);
     }
     // create/save a new site form
@@ -168,11 +168,41 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
     return value.isGroup === undefined || value.isGroup === false;
   };
 
-  $scope.groupField = function(field){
-    var groupField = $scope.siteTemplate.fields.filter(function(fld){
+  $scope.groupField = function (field) {
+    var groupField = $scope.siteTemplate.fields.filter(function (fld) {
       return field.groupName === fld.name;
     });
     return groupField.length > 0 ? groupField[0] : null;
+  };
+
+  $scope.openAddNewFieldModal = function () {
+    return $modal.open({
+      template: require('./config-new-field.html'),
+      backdrop: 'static',
+      controller: ['$scope', '$modalInstance', function (scope, modalInstance) {
+        scope.noValues = false;
+        scope.possibleValues = scope.possibleValues;
+
+        scope.save = function (form) {
+          // check if form is valid
+          scope.yellAtUser = form.$invalid;
+          if (scope.yellAtUser) {
+            return;
+          }
+          // check if atleast one value selected
+          if (scope.noValues) {
+            return;
+          }
+          //POST /resource/form/{id}/_update {field:name other:attributes}
+
+
+        };
+
+        scope.closeModal = function () {
+          modalInstance.dismiss('cancel');
+        };
+      }]
+    });
   };
 
   init();
