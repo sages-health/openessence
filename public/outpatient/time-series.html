@@ -1,9 +1,9 @@
 <div class="row viz-toolbar">
-  <div class="col-md-2 padding-zoom-out">
+  <div class="col-md-2 padding-zoom-out hidden-xs">
     <a class="icon-zoom-out" ng-click="zoom(2)" ng-i18next>op.ZoomOut</a>
   </div>
 
-  <div class="col-md-2 nopadding">
+  <div class="col-md-2 col-xs-4">
     <button type="button" class="btn btn-default btn-sm" ng-show="!tsTable.enabled" ng-model="tsTable.enabled"
             btn-checkbox>
       <span class="icon-table" aria-hidden="true"></span> {{'op.ViewTable' | i18next}}
@@ -14,7 +14,7 @@
     </button>
   </div>
 
-  <div class="col-md-4 nopadding">
+  <div class="col-md-4 col-xs-4 nopadding">
     <form class="form-inline" role="form">
       <div class="form-group pull-right">
         <label ng-i18next>op.Algorithm</label>
@@ -29,7 +29,7 @@
     </form>
   </div>
 
-  <div class="col-md-4 nopadding-right">
+  <div class="col-md-4 col-xs-4 col-sm-4 nopadding-right">
     <form class="form-inline" role="form">
       <!-- time series options --><!--<label class="checkbox-inline">--><!--<input type="checkbox" checked>-->
       <!--<span ng-i18next>op.Lines</span>--><!--</label>-->

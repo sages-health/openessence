@@ -66,12 +66,22 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
 
               scope.options = scope.options || {};
               scope.options.height = scope.height = height - (header[0].offsetHeight + footer[0].offsetHeight) - 5;
+
               scope.options.width = scope.width = width;
 
               // adjust margins on a per chart basis
               if (scope.visualization.name === 'line' || scope.visualization.name === 'yoy') {
                 scope.options.height = scope.height -= 75;
                 scope.options.width = scope.width -= 50;
+              }
+
+              if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                if(scope.height >= 400)
+                  scope.options.height = scope.height = 400;
+                
+              }
+              if( /iPad/i.test(navigator.userAgent) ) {
+                scope.options.height = scope.height += 67;
               }
             }, 25);
           });
