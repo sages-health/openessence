@@ -3,7 +3,7 @@
 var angular = require('angular');
 //var $ = require('jquery');
 // @ngInject
-module.exports = function ($scope, $window, $rootScope, FormResource, $modal, stringUtil) {
+module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $http, stringUtil) {
 
   var init = function () {
     $scope.siteTemplate = {
@@ -176,6 +176,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
   };
 
   $scope.openAddNewFieldModal = function () {
+    
     return $modal.open({
       template: require('./config-new-field.html'),
       backdrop: 'static',
@@ -184,6 +185,8 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
         scope.possibleValues = scope.possibleValues;
 
         scope.save = function (form) {
+      
+
           // check if form is valid
           scope.yellAtUser = form.$invalid;
           if (scope.yellAtUser) {
@@ -194,8 +197,11 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, st
             return;
           }
           //POST /resource/form/{id}/_update {field:name other:attributes}
+          $scope.siteTemplate.name = 'site';
+          var template = angular.copy($scope.siteTemplate);
+          template.fields.push({enabled: true, name: form.$modalValue});
 
-
+          FormResource.save(template);
         };
 
         scope.closeModal = function () {
