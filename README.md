@@ -30,7 +30,7 @@ to update your git configurations appropriately.
 
 Make sure your Docker service is up and run the following commands to start Elasticsearch where {DIR} is your specified directory on the host
 
-    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v {DIR}/data:/usr/share/elasticsearch/data --privileged --name elasticsearch elasticsearch:2.4 
+    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v {DIR}/data:/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config":/usr/share/elasticsearch/config --privileged --name elasticsearch elasticsearch:2.4 
     sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
 
 
