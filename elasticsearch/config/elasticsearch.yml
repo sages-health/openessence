@@ -1,3 +1,7 @@
 network.host: 0.0.0.0
 script.update: true
 script.stored: true
+index.max_result_window: 500000
+
+index.number_of_shards: 1
+index.number_of_replicas: 0

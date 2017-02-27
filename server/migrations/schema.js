@@ -51,11 +51,19 @@ var indexRequests = [
             properties: {
               // date of first presentation to healthcare system
               visitDate: {
-                type: 'date'
+                type: 'date',
+                fields: {
+                  raw: {
+                    type: 'date',
+                    index: 'not_analyzed'
+                  }
+                }
+                
               },
 
               symptomOnsetDate: {
-                type: 'date'
+                type: 'date',
+                index: 'not_analyzed'
               },
 
               // AKA the clinic, hospital, military treatment center, etc. where the patient was processed.
