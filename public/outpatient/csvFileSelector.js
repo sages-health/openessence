@@ -11,7 +11,7 @@ var csvExportConfig = require('csv-export');
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInject*/ function () {
+angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInject*/ function (CsvMappingResource) {
   return {
     restrict: 'E',
     template: require('./csv-file-selector.html'),
@@ -70,11 +70,12 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             
           });*/
 
+
+
           collectFields(recordFields, csvExportConfig.template, "");
 
           scope.recordFields = recordFields;
 
-          scope.model = scope.mapping || "";
           scope.model = scope.model || "";
           scope.fileParams = scope.fileParams || {};
           scope.fileParams.delimiter = scope.fileParams.delimiter || '"';
@@ -126,7 +127,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
                   tableData.push(flat.unflatten(obj));
                 } else {
                   row.forEach(function (v) {
-                    columnDefs.push({field: v, width: '100'});
+                    columnDefs.push({field: v, width: '100', mapping: ''});
                   });
                 }
               });
@@ -136,6 +137,21 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
                 scope.tableData = tableData;
               });
             };
+
+            CsvMappingResource.get({size: 1}, function(response){
+
+              scope.mapping = response.results[0]._source.mapping ? response.results[0]._source.mapping : scope.mapping ;
+
+              scope.columnDefs.forEach(function(column){
+                if(scope.mapping[column.field]){
+                  var select = document.getElementById('mappings-' + column.field);
+                  select.value = scope.mapping[column.field];
+                }
+              });
+              
+            });
+
+            
           };
 
           scope.columnDefs = [];
@@ -160,6 +176,19 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             scope.mapping[fromColumn] = toColumn;
             
           };
+
+          scope.saveMapping = function(){
+            CsvMappingResource.get({size: 1}, function(response){
+              //new mapping
+              var mappingId = '';
+              var mapping = {'mapping': scope.mapping};
+              if(response.results.length === 0){
+                CsvMappingResource.save(mapping);
+              }else{
+                CsvMappingResource.update({id: response.results[0]._id}, mapping);
+              }
+            });
+          }
         }
       };
     }

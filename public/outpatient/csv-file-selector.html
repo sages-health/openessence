@@ -38,20 +38,26 @@
   <label ng-i18next>op.Data</label>
 
   <div class="preview-grid" ng-grid="gridOptions"></div>
-
+  <div style="margin-top: 20px"></div>
   <label ng-i18next>op.MapTo</label>
+  <button type="button" class="btn btn-primary pull-right" ng-click="saveMapping()">
+    <span class="fa fa-save" title="{{op.SaveMapping | i18next}}"></span>
+  </button>
+  <div style="margin-top: 20px"></div>
   <div class="col-md-12 form-group preview-grid-wrapper">
     <table> 
       <tr>
         <th>Source Column</th>
         <th>Destination Column</th>
       </tr>
+      <fieldset id="mappings">
       <tr ng-repeat="column in columnDefs">
-        <td>{{column.field | i18next}}</td>
-        <td><select name="mappings" id="mappings-{{column.field}}" ng-change="updateMapping('{{column.field}}', field)" 
-              ng-options="field for field in recordFields" ng-model="field"></select>
+        <td><label for="mappings-{{column.field}}">{{column.field | i18next}}</label></td>
+        <td><select name="mappings-{{column.field}}" id="mappings-{{column.field}}" ng-change="updateMapping('{{column.field}}', field)" 
+              ng-options="field for field in recordFields track by field" ng-model="field"></select>
         </td>
       </tr>
+      </fieldset>
     </table>
   </div>
 </div>

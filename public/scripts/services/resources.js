@@ -8,7 +8,8 @@ module.exports = [
   'Locale',
   'User',
   'Visualization',
-  'Workbench'
+  'Workbench',
+  'CsvMapping'
 ].reduce(function (resources, resourceName) {
     var resourceUrl = '/resources/' + resourceName.toLowerCase();
 

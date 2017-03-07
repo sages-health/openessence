@@ -386,6 +386,7 @@ var indexRequests = [
         // Make aliases for each type in our index so that clients are abstracted from our storage topology
         aliases: [
           'dashboard',
+          'csvmapping',
           'date-shift',
           'diagnosis',
           'disposition',
@@ -616,7 +617,14 @@ var indexRequests = [
               }
             }
           }),
-
+          csvmapping: addPaperTrail({
+            properties: {
+              mapping: {
+                type: 'object',
+                enabled: false
+              }
+            }
+          }),
           symptom: addPaperTrail({
             properties: {
               name: {
