@@ -11,7 +11,7 @@ var csvExportConfig = require('csv-export');
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInject*/ function (CsvMappingResource) {
+angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInject*/ function ($modal, CsvMappingResource) {
   return {
     restrict: 'E',
     template: require('./csv-file-selector.html'),
@@ -178,16 +178,31 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
           };
 
           scope.saveMapping = function(){
-            CsvMappingResource.get({size: 1}, function(response){
-              //new mapping
-              var mappingId = '';
-              var mapping = {'mapping': scope.mapping};
-              if(response.results.length === 0){
-                CsvMappingResource.save(mapping);
-              }else{
-                CsvMappingResource.update({id: response.results[0]._id}, mapping);
-              }
-            });
+              $modal.open({
+                template: require('../partials/save-csv-mapping-modal.html'),
+                controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+                $scope.viz = {};
+                $scope.save = function (form) {
+                  CsvMappingResource.get({size: 1}, function(response){
+                    //new mapping
+                    var mappingId = '';
+                    var mapping = {'mapping': scope.mapping};
+                    if(response.results.length === 0){
+                      CsvMappingResource.save(mapping);
+                    }else{
+                      CsvMappingResource.update({id: response.results[0]._id}, mapping);
+                    }
+                  });
+
+                  $modalInstance.close($scope.viz.name);
+                };
+
+                $scope.cancel = function () {
+                  $modalInstance.dismiss('cancel');
+                };
+              }]
+            })
+            
           }
         }
       };
