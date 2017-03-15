@@ -14,6 +14,7 @@ module.exports = function (settings) {
   settings.MAP_LONGITUDE = '-99.9018'
 
   settings.session.secret = '!superDuperSecretSe$$i@nKey!';
+  settings.session.store = 'redis';
 
   return settings;
 };

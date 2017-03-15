@@ -65,7 +65,7 @@ module.exports = function ($scope, $modal, tableUtil, crud, $filter, UserResourc
     delete result.passwordConfirm;
     return result;
   };
-  editOptions.roles = ['admin', 'data_entry', 'all_locations'];
+  editOptions.roles = ['admin', 'data_entry', 'all_locations', 'api_user'];
   editOptions.minPasswordLength = 4; // TODO don't use this on the client
   editOptions.isShort = function (field) {
     return field.$modelValue && field.$modelValue.length < $scope.minPasswordLength;

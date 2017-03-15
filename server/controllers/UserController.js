@@ -3,6 +3,7 @@
 var codex = require('../codex');
 var Boom = require('boom');
 var User = require('../models/User');
+var uuidV4 = require('uuid/v4');
 
 module.exports = codex.controller(User, {
   get: true,
@@ -22,6 +23,9 @@ module.exports = codex.controller(User, {
   search: true,
   preSearch: function (req, esRequest, callback) {
     if (!req.user || !req.user.isAdmin()) {
+      return callback(Boom.forbidden());
+    }
+    if(!req.user.isAdmin() && req.user.isAPIUser()){
       return callback(Boom.forbidden());
     }
 
@@ -44,12 +48,15 @@ module.exports = codex.controller(User, {
     // TODO figure out what access control to enforce
     // maybe anyone can create users in demo mode, but only admins can create users in non demo mode
     // or maybe anyone can create users any time but they're quarantined until an admin approves them?
-    if (!user || !user.canCreateUser(esRequest.body)) {
+    if (!user || !user.canCreateUser(esRequest.body) || (!user.isAdmin() && user.isAPIUser())) {
       return callback(Boom.forbidden());
     }
 
     // TODO: define a user token that will be used for bearer auth
-    esRequest.body.tokens = [esRequest.body.username];
+    if(!esRequest.body.tokens){
+      var newToken = uuidV4();
+      esRequest.body.tokens = [newToken];
+    }
 
     if (esRequest.id) {
       if (esRequest.id !== user.id && !user.isAdmin()) {
