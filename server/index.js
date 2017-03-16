@@ -193,9 +193,11 @@ app.use('/csv', express()
   .use(auth.denyAnonymousAccess)
   .use(require('./csv/export')()));
 
-app.use('/api', express()
-  .use(auth.bearer)
-  .use(require('./resources')()));
+if(conf.apiEnabled){
+  app.use('/api', express()
+    .use(auth.bearer)
+    .use(require('./resources')()));
+}
 
 app.use(require('./error').middleware);
 

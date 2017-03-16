@@ -180,6 +180,11 @@ passport.use(new BearerStrategy(function (token, done) {
       return done(null, false, {message: 'Bearer token not found.'});
     }
 
+    if (!user.isAPIUser()){
+      logger.info('Token:\n%s not authorized for API usage.', token);
+      return done(null, false, {message: 'User not authorized for API usage.'});
+    }
+
     delete user.doc.password;
     user.doc.authType = 'bearer';
 
