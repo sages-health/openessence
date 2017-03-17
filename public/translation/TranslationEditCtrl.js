@@ -3,7 +3,7 @@
 var angular = require('angular');
 var flat = require('flat');
 // @ngInject
-module.exports = function ($scope, $modal, $window, $filter, LocaleResource, ngTableParams) {
+module.exports = function ($scope, $modal, $window, $filter, LocaleResource, NgTableParams) {
 
   var init = function () {
     LocaleResource.get({size: 99}, function (response) {
@@ -25,7 +25,7 @@ module.exports = function ($scope, $modal, $window, $filter, LocaleResource, ngT
 
     });
 
-    $scope.tableParams = new ngTableParams({
+    $scope.tableParams = new NgTableParams({
       page: 1,            // show first page
       count: 100000,           // count per page
       sorting: {
@@ -33,7 +33,7 @@ module.exports = function ($scope, $modal, $window, $filter, LocaleResource, ngT
       }
     }, {
       counts: [], // hide page count control
-      getData: function ($defer, params) {
+      getData: function (params) {
         var filteredData = params.filter() ?
                            $filter('filter')($scope.$data, params.filter()) :
                            $scope.$data;
@@ -43,7 +43,7 @@ module.exports = function ($scope, $modal, $window, $filter, LocaleResource, ngT
 
         if(angular.isDefined(orderedData)) {
           params.total(orderedData.length); // set total for recalc pagination
-          $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+          return orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
         }
       }
     });

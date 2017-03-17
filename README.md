@@ -40,7 +40,7 @@ If you want to get things up and running with just docker, you can start the web
     sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis sageshealth/openessence
 
 If you need to modify the settings.js for a specific host name, you can include it in the docker container by adding -v conf/settings.js:/code/config/settings.js .
-The config file will get added automatically it you build the container image manually via
+The config file will get added automatically if you build the container image manually via
 
     sudo docker build -t sageshealth/openessence .
 

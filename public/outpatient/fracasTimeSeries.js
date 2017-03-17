@@ -4,7 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, ngTableParams) {
+angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, NgTableParams) {
 
   return {
     restrict: 'E',
@@ -611,7 +611,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }
           };
 
-          scope.tableParams = new ngTableParams({
+          scope.tableParams = new NgTableParams({
             page: 1,            // show first page
             count: scope.calculateRows,           // count per page
             sorting: {
@@ -619,11 +619,11 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             }
           }, {
             counts: [], // hide page count control
-            getData: function ($defer, params) {
+            getData: function (params) {
               var orderedData = params.sorting() ?
                                 $filter('orderBy')(scope.tableData, params.orderBy()) :
                                 scope.tableData;
-              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+              return orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
             }
           });
 

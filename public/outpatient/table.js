@@ -4,7 +4,7 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
 angular.module(directives.name).directive('outpatientTable',
-  /*@ngInject*/ function ($rootScope, $timeout, orderByFilter, ngTableParams, OutpatientVisitResource, sortString,//
+  /*@ngInject*/ function ($rootScope, $timeout, orderByFilter, NgTableParams, OutpatientVisitResource, sortString,//
                           stringUtil, $filter) {
     return {
       restrict: 'E',
@@ -96,7 +96,7 @@ angular.module(directives.name).directive('outpatientTable',
               columns.push({title: '', type: 'action'});
               scope.columns = columns;
 
-              scope.tableParams = new ngTableParams({ //FrableParams({
+              scope.tableParams = new NgTableParams({ //FrableParams({
                 page: 1, // page is 1-based
                 count: 10,
                 sorting: {
@@ -109,19 +109,19 @@ angular.module(directives.name).directive('outpatientTable',
                   $data: {}
                 },
 
-                getData: function ($defer, params) {
+                getData: function (params) {
                   if (scope.records) {
                     var orderedData = params.sorting() ? orderByFilter(scope.records, params.orderBy()) : scope.records;
-                    $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                    return orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
                   } else {
                     if (!angular.isDefined(scope.queryString)) {
                       // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
                       // If you really don't want a filter, set queryString='' or null
                       // TODO there's probably a more Angular-y way to do this
-                      $defer.resolve([]);
-                      return;
+                      return [];
+
                     }
-                    OutpatientVisitResource.get(
+                    return  OutpatientVisitResource.get(
                       {
                         q: scope.queryString,
                         from: (params.page() - 1) * params.count(),
@@ -130,12 +130,16 @@ angular.module(directives.name).directive('outpatientTable',
                       },
                       function (response) {
                         params.total(response.total);
-                        $defer.resolve(response.results);
-
+                        return response.results;
                       },
                       function error (response) {
                         $rootScope.$broadcast('filterError', response);
+
+                      }).$promise.then(function(data){
+                        scope.data = data.results;
+                        return data.results;
                       });
+                      return scope.data;
                   }
                 }
               });
