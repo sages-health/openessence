@@ -1,5 +1,16 @@
 # OpenESSENCE
 
+* [Vagrant](#vagrant)
+* [Windows users](#windows-users)
+* [Elastic Search and Redis Setup](#elasticsearch-and-redis-setup)
+* [Building](#building)
+* [Initializing Elasticsearch with data](#initializing-elasticsearch-with-data)
+* [Map Setup](#map-setup)
+* [OpenESSENCE Docker Container](#openessence-docker-container)
+* [Deploying to Heroku](#deploying-to-heroku)
+* [Deploying to other PaaS providers](#deploying-to-other-paas-providers)
+
+
 ## Requirements
 
 These requirements are only needed where you will be running Node. If you are going to be developing side a VM, you can jump down to the Vagrant portion. 
@@ -18,9 +29,17 @@ After installing [Vagrant](https://www.vagrantup.com) and [VirtualBox](https://w
 virtualization platform that Vagrant supports), just run
 
     vagrant up
+    vagrant ssh
 
 to get started. 
 
+You'll want to clone the repository to the directory of your choice with
+
+    git clone https://r1l-gitlab/sages/openessence.git
+
+You made need to run the following instead if you get SSL errors
+
+    env GIT_SSL_NO_VERIFY=true git clone https://r1l-gitlab/sages/openessence.git
 
 ### Windows Users
 
@@ -35,17 +54,6 @@ Make sure your Docker service is up and run the following commands to start Elas
 
     sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v "$PWD/data":/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config":/usr/share/elasticsearch/config --privileged --name elasticsearch elasticsearch:2.4
     sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
-
-
-## OpenESSENCE Docker Container
-If you want to get things up and running with just docker, you can start the web app with
-
-    sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis sageshealth/openessence
-
-If you need to modify the settings.js for a specific host name, you can include it in the docker container by adding -v conf/settings.js:/code/config/settings.js .
-The config file will get added automatically it you build the container image manually via
-
-    sudo docker build -t sageshealth/openessence .
 
 
 ## Building
@@ -85,6 +93,8 @@ If you need to initialize ES on a CoreOS instance, you can build a docker image 
 
 ## Map Setup
 
+THIS IS COMPLETELY OPTIONAL
+
 By default we do not use a background map layer. However, we do use [Leaflet](http://leafletjs.com/) for our mapping. If you want to set up a proper GIS base layer, use the 
 [following guide from OpenMapTiles](https://openmaptiles.org/docs/) to set up the tile server. 
 
@@ -98,6 +108,15 @@ You can then edit the settings.js file to center on the correct lat/lon and set 
     settings.MAP_LATITUDE = '41.4925'
     settings.MAP_LONGITUDE = '-99.9018'
 
+## OpenESSENCE Docker Container
+If you want to get things up and running with just docker, you can start the web app with
+
+    sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis sageshealth/openessence
+
+If you need to modify the settings.js for a specific host name, you can include it in the docker container by adding -v conf/settings.js:/code/config/settings.js .
+The config file will get added automatically it you build the container image manually via
+
+    sudo docker build -t sageshealth/openessence .
 
 ## Deploying to Heroku
 

@@ -12,6 +12,3 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.9.0/docker-c
 sudo chmod +x /usr/bin/docker-compose
 sudo systemctl enable docker.service
 sudo yum install -y git
-
-git clone https://r1l-gitlab/sages/openessence.git
-cd openessence
