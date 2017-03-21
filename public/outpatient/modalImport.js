@@ -83,11 +83,12 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
             $scope.total = $scope.data.tableData.length;
             $scope.uploading = true;
             $scope.data.tableData.forEach(function (row) { 
-              if (row.visitDate) {
-                var mappedData = {};
+              var mappedData = {};
                 for(var column in row){
                     mappedData[$scope.data.mapping[column]] = row[column];
                 } 
+              if ('visitDate' in mappedData) {
+
 
                 // csvUtil will process one record at a time, remove id prop if it is there
                 // format dates, int, double, array, etc...

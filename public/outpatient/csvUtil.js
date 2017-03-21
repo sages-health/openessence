@@ -10,6 +10,12 @@ angular.module(services.name).factory('csvUtil', function () {
   var fieldValue = function fieldValue (record, field, newValue) {
     if (typeof field === 'string') {
       return fieldValue(record, field.split('.'), newValue);
+    } else if(field.length == 3 && record[field.join('.')]){
+      record[field[0]] = {};
+      record[field[0]][field[1]] = {};
+      record[field[0]][field[1]][field[2]] = record[field.join('.')];
+
+      delete record[field.join('.')];
     } else if (field.length === 1 && newValue !== undefined) {
       record[field[0]] = newValue;
     } else if (field.length === 0) {
