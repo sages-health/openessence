@@ -2,6 +2,9 @@
 
 ## Requirements
 
+These requirements are only needed where you will be running Node. If you are going to be developing side a VM, you can jump down to the Vagrant portion. 
+If developing locally, you'll want to make sure the below pre-requisites are present.
+
  * [Node.js 0.10.38](http://nodejs.org), [nvm](https://github.com/creationix/nvm) recommended for installing this version
  * [Elasticsearch](http://elasticsearch.org), which depends on Java
  * [Redis](http://redis.io)
@@ -53,9 +56,19 @@ To build OpenESSENCE, you first need to install [`gulp`](http://gulpjs.com) and 
 
 The quickest way to get started is to then run
 
-    npm start
+    npm install
+    bower install
 
 This will install all necessary dependencies, run a build, start the server, and launch OpenESSENCE in your web browser. Default credentials are admin/admin.
+
+If the bower install fails due to a file being locked, try the following commands
+
+    bower cache clean
+    bower install --force
+    bower prune
+
+Run gulp build at least once. You can run gulp server to re-build script everytime, or you can simply run node server.js to quickly start the server and 
+still have auto-refresh on HTML,javascript, and css changes.
 
 
 ## Initializing Elasticsearch with data

@@ -13,5 +13,5 @@ sudo chmod +x /usr/bin/docker-compose
 sudo systemctl enable docker.service
 sudo yum install -y git
 
-git clone https://github.com/sages-health/openessence.git
+git clone https://r1l-gitlab/sages/openessence.git
 cd openessence
