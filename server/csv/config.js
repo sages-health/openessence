@@ -61,7 +61,7 @@ var dataTypes = {
   date: {
     fields: ['visitDate', 'symptomOnsetDate', 'submissionDate', 'patient.dateOfBirth', 'specimen.collectionDate'],
     importFormat: function (val) {
-      return moment(val, outputDateFormat).format('YYYY-MM-DDThh:mm:ss.SSS') + 'Z';
+      return moment(val).format('YYYY-MM-DDThh:mm:ss.SSS') + 'Z';
     }
   },
   integer: {
