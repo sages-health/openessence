@@ -3,7 +3,7 @@
 var angular = require('angular');
 
 // @ngInject
-module.exports = function ($scope, $modal, orderByFilter, $filter, ngTableParams, VisualizationResource,
+module.exports = function ($scope, $modal, $q, orderByFilter, $filter, NgTableParams, VisualizationResource,
                            sortString) {
 
   $scope.checkboxes = {items: []};
@@ -37,7 +37,7 @@ module.exports = function ($scope, $modal, orderByFilter, $filter, ngTableParams
 
   $scope.errorOnRecordSave = '';
 
-  $scope.tableParams = new ngTableParams({
+  $scope.tableParams = new NgTableParams({
     page: 1,
     count: 10,
     sorting: {
@@ -49,26 +49,39 @@ module.exports = function ($scope, $modal, orderByFilter, $filter, ngTableParams
     $scope: {
       $data: {}
     },
-    getData: function ($defer, params) {
+    getData: function (params) {
       if (!angular.isDefined($scope.queryString)) {
         // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
         // If you really don't want a filter, set queryString='' or null
         // TODO there's probably a more Angular-y way to do this
-        $defer.resolve([]);
+        return [];
         return;
       }
 
-      VisualizationResource.get({
+      var promise = queryForData(params);
+
+      var results = promise.$promise.then(function(data){
+        return data.results;
+      });
+      return results;
+
+    }
+
+  });
+
+  var queryForData = function(params){
+      var promise = VisualizationResource.get({
         q: $scope.queryString,
         from: (params.page() - 1) * params.count(),
         size: params.count(),
         sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting
       }, function (data) {
         params.total(data.total);
-        $defer.resolve(data.results);
+        return data.results;
       });
-    }
-  });
+
+      return promise;
+    };
 
   var reload = function () {
     $scope.tableParams.reload();

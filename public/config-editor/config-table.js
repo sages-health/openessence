@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('configTable', /*@ngInject*/ function ($modal, orderByFilter, ngTableParams) {
+angular.module(directives.name).directive('configTable', /*@ngInject*/ function ($modal, orderByFilter, NgTableParams) {
   return {
     restrict: 'E',
     template: require('./config-table.html'),
@@ -16,7 +16,7 @@ angular.module(directives.name).directive('configTable', /*@ngInject*/ function 
           scope.field = scope.field || {};
           scope.field.values = scope.field.values || [];
 
-          scope.tableParams = new ngTableParams({
+          scope.tableParams = new NgTableParams({
             page: 1, // page is 1-based
             count: 999,
             sorting: {
@@ -25,9 +25,9 @@ angular.module(directives.name).directive('configTable', /*@ngInject*/ function 
           }, {
             total: scope.field.values ? scope.field.values.length : 0,
             counts: [], // hide page count control
-            getData: function ($defer, params) {
+            getData: function (params) {
               var orderedData = params.sorting() ? orderByFilter(scope.field.values, params.orderBy()) : scope.field.values;
-              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+              return orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
             }
           });
 

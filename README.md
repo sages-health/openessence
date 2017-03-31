@@ -56,6 +56,17 @@ Make sure your Docker service is up and run the following commands to start Elas
     sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
 
 
+## OpenESSENCE Docker Container
+If you want to get things up and running with just docker, you can start the web app with
+
+    sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis sageshealth/openessence
+
+If you need to modify the settings.js for a specific host name, you can include it in the docker container by adding -v conf/settings.js:/code/config/settings.js .
+The config file will get added automatically if you build the container image manually via
+
+    sudo docker build -t sageshealth/openessence .
+
+
 ## Building
 
 To build OpenESSENCE, you first need to install [`gulp`](http://gulpjs.com) and [`bower`](http://bower.io) globally:

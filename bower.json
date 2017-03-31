@@ -24,7 +24,7 @@
     "highcharts": "~4.0.3",
     "highcharts-ng": "~0.0.8",
     "angular-ui-select": "~0.9.1",
-    "ng-table": "~0.5.4",
+    "ng-table": "1.0.0",
     "ngInfiniteScroll": "~1.2.0",
     "StickyTableHeaders": "~0.1.15",
     "i18next": "^1.7.4",
