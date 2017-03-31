@@ -11,6 +11,8 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
     };
     $scope.templateKeys = [];
 
+    $scope.getLocaleValue = stringUtil.getLocaleValue;
+
     FormResource.get({ size: 99 }, function (response) {
 
       $scope.templates = response.results.reduce(function (templates, template) {

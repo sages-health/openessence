@@ -11,7 +11,7 @@ var csvExportConfig = require('csv-export');
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
  */
-angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInject*/ function ($modal, CsvMappingResource) {
+angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInject*/ function ($modal, CsvMappingResource, stringUtil) {
   return {
     restrict: 'E',
     template: require('./csv-file-selector.html'),
@@ -29,6 +29,8 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
 
           scope.form = scope.form || {};
           var recordFields = [];
+
+          scope.getLocaleValue = stringUtil.getLocaleValue;
 
           var collectFields = function (collectedFields, fields, parentField) {
             
@@ -176,7 +178,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             scope.mapping[fromColumn] = toColumn;
             
           };
-
+          
           scope.saveMapping = function(){
               $modal.open({
                 template: require('../partials/save-csv-mapping-modal.html'),

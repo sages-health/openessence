@@ -52,9 +52,9 @@
       </tr>
       <fieldset id="mappings">
       <tr ng-repeat="column in columnDefs">
-        <td><label for="mappings-{{column.field}}">{{column.field | i18next}}</label></td>
+        <td><label for="mappings-{{column.field}}">{{column.field}}</label></td>
         <td><select name="mappings-{{column.field}}" id="mappings-{{column.field}}" ng-change="updateMapping('{{column.field}}', field)" 
-              ng-options="field for field in recordFields track by field" ng-model="field"></select>
+              ng-options="'op.' + getLocaleValue(field) | i18next for field in recordFields track by field" ng-model="field"></select>
         </td>
       </tr>
       </fieldset>
