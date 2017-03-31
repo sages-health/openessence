@@ -60,7 +60,7 @@
         </li>
 
         <!-- Open TODO make this reports -->
-        <li class="dropdown" ng-class="{ active: isActive('/report')}">
+        <!-- <li class="dropdown" ng-class="{ active: isActive('/report')}">
           <a class="dropdown-toggle" data-toggle="dropdown">
             <span class="icon-folder-open"></span>{{'navBar.report' | i18next}}
           </a>
@@ -68,8 +68,8 @@
             <li><a ng-click="visitsReport()" ng-i18next>navBar.outpatientVisitsReport</a></li>
             <!--<li><a ng-click="weeklyReport()" ng-i18next>Reported Cases by Country - Table</a></li>-->
             <!--<li><a ng-click="timeseriesReport()" ng-i18next>Reported Cases by Country - Time Series</a></li>-->
-          </ul>
-        </li>
+          <!-- </ul>
+        </li>-->
 
         <!-- Edit -->
         <li class="dropdown" ng-class="{ active: isActive('/edit')}" ng-show="user.isDataEnterer() || user.isAdmin()">

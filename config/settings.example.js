@@ -16,5 +16,7 @@ module.exports = function (settings) {
   settings.session.secret = '!superDuperSecretSe$$i@nKey!';
   settings.session.store = 'redis';
 
+  settings.apiEnabled = false;
+
   return settings;
 };
