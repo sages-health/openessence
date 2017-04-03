@@ -781,7 +781,8 @@
         "Notes": "Notas",
         "IncludeNotes": "Incluir notas",
         "msgVisualizationNotes": "Notas para esta visualización.",
-        "ExportToPNG": "Exportar a PNG"
+        "ExportToPNG": "Exportar a PNG",
+        "msgSaveCsvMapping": "Guardar la asignación CSV"
       },
       "r": {
         "OpenCasesByCounty": "Abir reporte de casos notificados según país",

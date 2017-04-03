@@ -1,7 +1,7 @@
 <div class="checkbox">
   <label>
     <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
-           ng-checked="field.enabled">{{field.name}}
+           ng-checked="field.enabled">{{ 'op.' + field.name.charAt(8).toUpperCase() +  field.name.slice(9) | i18next}}
   </label>
 </div>
 
