@@ -21,8 +21,7 @@ RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev lib
     set -x; \
     apt-get update && apt-get install -y $buildDeps $phantomDeps --no-install-recommends
 
-ADD bower.json /code/bower.json
-ADD package.json /code/package.json
+ADD bower.json package.json /code/
 
 RUN npm update -g npm \
     && npm install -g gulp bower \
@@ -35,8 +34,7 @@ ADD public /code/public
 ADD server /code/server
 ADD tasks /code/tasks
 ADD views /code/views
-ADD gulpfile.js /code/gulpfile.js
-ADD server.js /code/server.js
+ADD server.js gulpfile.js /code/
 ADD .git /code/.git
 
 RUN gulp build \
@@ -54,7 +52,7 @@ RUN gulp build \
     && rm -f /code/gulpfile.js \
     && rm -rf /code/.git
 
-ADD config /code/config
+ADD config /code/config 
 
 EXPOSE 9000 9001
 ENV NODE_ENV production

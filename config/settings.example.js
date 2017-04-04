@@ -13,6 +13,7 @@ module.exports = function (settings) {
   settings.MAP_LATITUDE = '41.4925'
   settings.MAP_LONGITUDE = '-99.9018'
 
+  //Production secret should be set as ENV variable and not here
   settings.session.secret = '!superDuperSecretSe$$i@nKey!';
   settings.session.store = 'redis';
 

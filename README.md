@@ -1,10 +1,11 @@
 # OpenESSENCE
 
 * [Vagrant](#vagrant)
-* [Windows users](#windows-users)
+* [Windows Users](#windows-users)
+* [Docker Compose Quick Start](#quick-start-docker-compose)
 * [Elastic Search and Redis Setup](#elasticsearch-and-redis-setup)
-* [Building](#building)
 * [Initializing Elasticsearch with data](#initializing-elasticsearch-with-data)
+* [Building](#building)
 * [Map Setup](#map-setup)
 * [OpenESSENCE Docker Container](#openessence-docker-container)
 * [Deploying to Heroku](#deploying-to-heroku)
@@ -16,12 +17,16 @@
 These requirements are only needed where you will be running Node. If you are going to be developing side a VM, you can jump down to the Vagrant portion. 
 If developing locally, you'll want to make sure the below pre-requisites are present.
 
- * [Node.js 0.10.38](http://nodejs.org), [nvm](https://github.com/creationix/nvm) recommended for installing this version
- * [Elasticsearch](http://elasticsearch.org), which depends on Java
- * [Redis](http://redis.io)
- * [Docker](https://www.docker.com/)
- * [Python 2.7](https://www.python.org/download/releases/2.7/)
+Production
 
+ * [Docker](https://www.docker.com/) - included in Vagrantfile
+ * [Docker Compose](https://docs.docker.com/compose/install/) - included in Vagrantfile
+
+Development
+ * [Node.js 0.10.38](http://nodejs.org), [nvm](https://github.com/creationix/nvm) recommended for installing this version - included in Vagrant 
+ * [Docker](https://www.docker.com/) - included in Vagrant
+ * [Docker Compose](https://docs.docker.com/compose/install/) - included in Vagrantfile
+ * [Python 2.7](https://www.python.org/download/releases/2.7/) - included in Vagrantfile
 
 ## Vagrant
 
@@ -29,15 +34,14 @@ After installing [Vagrant](https://www.vagrantup.com) and [VirtualBox](https://w
 virtualization platform that Vagrant supports), just run
 
     vagrant up
-    vagrant ssh
 
-to get started. 
+to get started. Once it finishes, you can access the VM GUI through the Oracle VM Virtualbox Manager or via vagrant ssh.
 
 You'll want to clone the repository to the directory of your choice with
 
     git clone https://r1l-gitlab/sages/openessence.git
 
-You made need to run the following instead if you get SSL errors
+You made need to run the following instead if you get SSL errors with r1l-gitlab
 
     env GIT_SSL_NO_VERIFY=true git clone https://r1l-gitlab/sages/openessence.git
 
@@ -47,25 +51,39 @@ Unless you have rsync configured for your environment, you'll want to checkout o
 of using the /vagrant synced folder due to issues npm sometimes has with writing node_modules out to Windows paths. If you develop in the VM, make sure 
 to update your git configurations appropriately. 
 
+## Docker Compose Quick Start
 
-## Elasticsearch and Redis Setup
+If you want to get started with OpenESSENCE quickly, simply git clone and run
+
+    docker-compose up
+    docker exec openessence_openessence_1 node /code/server/migrations/reseed
+
+This will create all the necessary OpenESSENCE VMs and initialize the database with the reseed command. You may want to copy 
+the [config/settings.template.js](config/settings.template.js) file to config/settings.js to modify the default settings and secret key. 
+
+If you want to develop, then just get Elasticsearch and Redis running with
+
+    docker-compose up elasticsearch redis
+    node server/migrations/reseed
+
+## Individual Elasticsearch and Redis Setup
 
 Make sure your Docker service is up and run the following commands to start Elasticsearch where {DIR} is your specified directory on the host
 
-    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v "$PWD/data":/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config":/usr/share/elasticsearch/config --privileged --name elasticsearch elasticsearch:2.4
+    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v "$PWD/data":/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml --privileged --name elasticsearch elasticsearch:2.4
     sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
 
 
-## OpenESSENCE Docker Container
-If you want to get things up and running with just docker, you can start the web app with
+## Initializing Elasticsearch with data
 
-    sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis sageshealth/openessence
+If you are developing locally with own Elasticsearch instance or you launched a container, use the following command to initialize ES with default data
 
-If you need to modify the settings.js for a specific host name, you can include it in the docker container by adding -v conf/settings.js:/code/config/settings.js .
-The config file will get added automatically if you build the container image manually via
+    node server/migrations/reseed
 
-    sudo docker build -t sageshealth/openessence .
+If you need to initialize ES on a CoreOS instance, you can build a docker image to do that. Run these after you get OpenESSENCE, Elasticsearch, and Redis containers running
 
+    sudo docker build -t oe_init-db -f vagrant/Dockerfile.init_db .
+    sudo docker run oe_init-db
 
 ## Building
 
@@ -88,18 +106,6 @@ If the bower install fails due to a file being locked, try the following command
 
 Run gulp build at least once. You can run gulp server to re-build script everytime, or you can simply run node server.js to quickly start the server and 
 still have auto-refresh on HTML,javascript, and css changes.
-
-
-## Initializing Elasticsearch with data
-
-If you are developing locally with own Elasticsearch instance or you launched a container, use the following command to initialize ES with default data
-
-    node server/migrations/reseed
-
-If you need to initialize ES on a CoreOS instance, you can build a docker image to do that. Run these after you get OpenESSENCE, Elasticsearch, and Redis containers running
-
-    sudo docker build -t oe_init-db -f vagrant/Dockerfile.init_db .
-    sudo docker run oe_init-db
 
 
 ## Map Setup

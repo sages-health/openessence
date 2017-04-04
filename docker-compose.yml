@@ -1,0 +1,36 @@
+version: '2'
+services:
+  redis:
+    hostname: redis
+    image: "redis:alpine"
+    restart: always
+    ports:
+      - "6379:6379"
+  elasticsearch:
+    hostname: elasticsearch
+    image: "elasticsearch:2.4"
+    restart: always
+    privileged: true
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data:/usr/share/elasticsearch/data
+  openessence:
+    image: "sageshealth/openessence"
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./config:/code/config
+    depends_on:
+      - elasticsearch
+      - redis
+    links:
+      - elasticsearch
+      - redis
+    environment:
+      - ELASTICSEARCH_URL=elasticsearch:9200
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
