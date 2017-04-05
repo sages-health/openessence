@@ -55,15 +55,15 @@ to update your git configurations appropriately.
 
 If you want to get started with OpenESSENCE quickly, simply git clone and run
 
-    docker-compose up
-    docker exec openessence_openessence_1 node /code/server/migrations/reseed
+    sudo docker-compose up -d
+    sudo docker exec openessence_openessence_1 node /code/server/migrations/reseed
 
 This will create all the necessary OpenESSENCE VMs and initialize the database with the reseed command. You may want to copy 
 the [config/settings.template.js](config/settings.template.js) file to config/settings.js to modify the default settings and secret key. 
 
 If you want to develop, then just get Elasticsearch and Redis running with
 
-    docker-compose up elasticsearch redis
+    sudo docker-compose up -d elasticsearch redis
     node server/migrations/reseed
 
 ## Individual Elasticsearch and Redis Setup
