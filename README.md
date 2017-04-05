@@ -70,7 +70,7 @@ If you want to develop, then just get Elasticsearch and Redis running with
 
 Make sure your Docker service is up and run the following commands to start Elasticsearch where {DIR} is your specified directory on the host
 
-    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v "$PWD/data":/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml --privileged --name elasticsearch elasticsearch:2.4
+    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v "$PWD/data":/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config/elasticsearch.yml":/usr/share/elasticsearch/config/elasticsearch.yml --privileged --name elasticsearch elasticsearch:2.4
     sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
 
 
