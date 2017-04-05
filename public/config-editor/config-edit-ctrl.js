@@ -86,6 +86,9 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
           // reload page once we save template
           // if we are saving this template first time, we want to get newly generated template ID
           $window.location.reload();
+          $window.onbeforeunload = function() {
+              window.scrollTo(0, 0);
+          }
         });
     };
 
