@@ -451,7 +451,8 @@
         "Open": "Abrir",
         "Yes": "Si",
         "No": "No",
-        "Unknown": "Desconocido"
+        "Unknown": "Desconocido",
+        "SaveAs": "Guardar Como"
       },
       "aggregate": {
         "CSVFile": "Archivo CSV",
@@ -503,6 +504,7 @@
         "Settings": "Configuración de elemento(s)",
         "RemoveWidget": "Quitar elemento",
         "OpenDashboard": "Abrir Panel de Control",
+        "SaveAsDashboard": "Guarde el tablero de información bajo un nombre especifico",
         "Dashboard": "Panel de Control",
         "msgSelectDashboard": "Por favor seleccione un panel de control",
         "Name": "Nombre",
@@ -819,6 +821,7 @@
         "SaveWorkbench": "Guardar área de trabajo",
         "msgSelectWorkbench": "Por favor seleccione un área de trabajo",
         "Workbench": "Area de trabajo",
+        "SaveAsWorkbench": "Guarde el banco de trabajo bajo un nombre especifico",
         "OpenWorkbench": "Abrir área de trabajo",
         "WidgetSettings": "Ajustes de elemento"
       },
