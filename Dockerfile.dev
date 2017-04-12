@@ -2,13 +2,16 @@
 # Dockerfile for Fracas. Inspired by https://github.com/docker-library/node.
 ###############################################################################
 
-FROM node:0.10 
+FROM node:0.10-slim 
+
+ENV BOWER_VERSION 1.7.9
 
 MAINTAINER Miles Stewart, "https://github.com/sages-health"
 
 
 RUN mkdir /code
 WORKDIR /code
+ADD bower.json package.json /code/
 
 # Some of this stuff is only needed for building, so we remove it when we're done
 
@@ -19,15 +22,15 @@ WORKDIR /code
 RUN buildDeps='autoconf build-essential ca-certificates curl git libjpeg-dev libpng-dev pkg-config python'; \
     phantomDeps='libfreetype6 libfontconfig1'; \
     set -x; \
-    apt-get update && apt-get install -y $buildDeps $phantomDeps --no-install-recommends
-
-ADD bower.json package.json /code/
+    apt-get update && apt-get install -y $buildDeps $phantomDeps --no-install-recommends 
 
 RUN npm update -g npm \
-    && npm install -g gulp bower \
+    && npm install -g gulp bower@$BOWER_VERSION \
     && npm install
-RUN bower install --allow-root
-RUN bower cache clean --allow-root 
+
+RUN bower install --allow-root \
+    && bower cache clean --allow-root \
+    && rm -rf /var/lib/apt/lists/*
 
 ADD po /code/po
 ADD public /code/public
@@ -41,6 +44,7 @@ RUN gulp build \
     && npm prune --production \
     && npm uninstall -g gulp bower \
     && npm cache clear \
+    && apt-get clean -y \
     && apt-get purge -y $buildDeps \
     && apt-get autoremove -y \
     && rm -rf /code/bower_components \

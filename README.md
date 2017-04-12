@@ -68,10 +68,10 @@ If you want to develop, then just get Elasticsearch and Redis running with
 
 ## Individual Elasticsearch and Redis Setup
 
-Make sure your Docker service is up and run the following commands to start Elasticsearch where {DIR} is your specified directory on the host
+Make sure your Docker service is up and run the following commands to start Elasticsearch
 
-    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v "$PWD/data":/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config/elasticsearch.yml":/usr/share/elasticsearch/config/elasticsearch.yml --privileged --name elasticsearch elasticsearch:2.4
-    sudo docker run -d -p 6379:6379 --restart=always  redis:alpine
+    sudo docker run -d -p 9200:9200 -p 9300:9300 --restart=always -v "$PWD/data":/usr/share/elasticsearch/data -v "$PWD/elasticsearch/config/elasticsearch.yml":/usr/share/elasticsearch/config/elasticsearch.yml --privileged --name elasticsearch elasticsearch:2.4-alpine
+    sudo docker run -d -p 6379:6379 --restart=always --name redis redis:alpine
 
 
 ## Initializing Elasticsearch with data
@@ -89,7 +89,9 @@ If you need to initialize ES on a CoreOS instance, you can build a docker image 
 
 To build OpenESSENCE, you first need to install [`gulp`](http://gulpjs.com) and [`bower`](http://bower.io) globally:
 
-    npm install -g gulp bower
+    npm install -g gulp bower@1.7.9
+
+> Bower 1.7.9 is used to avoid an issue where it will randomly fail (https://github.com/travis-ci/travis-ci/issues/6014)
 
 The quickest way to get started is to then run
 
@@ -98,19 +100,19 @@ The quickest way to get started is to then run
 
 This will install all necessary dependencies, run a build, start the server, and launch OpenESSENCE in your web browser. Default credentials are admin/admin.
 
-If the bower install fails due to a file being locked, try the following commands
+If the `bower install` fails due to a file being locked, try the following commands
 
     bower cache clean
     bower install --force
     bower prune
 
-Run gulp build at least once. You can run gulp server to re-build script everytime, or you can simply run node server.js to quickly start the server and 
+Run `gulp build` at least once. You can run gulp server to re-build script everytime, or you can simply run `node server.js` to quickly start the server and 
 still have auto-refresh on HTML,javascript, and css changes.
 
 
 ## Map Setup
 
-THIS IS COMPLETELY OPTIONAL
+> This is a completely optional step
 
 By default we do not use a background map layer. However, we do use [Leaflet](http://leafletjs.com/) for our mapping. If you want to set up a proper GIS base layer, use the 
 [following guide from OpenMapTiles](https://openmaptiles.org/docs/) to set up the tile server. 
@@ -128,12 +130,14 @@ You can then edit the settings.js file to center on the correct lat/lon and set 
 ## OpenESSENCE Docker Container
 If you want to get things up and running with just docker, you can start the web app with
 
-    sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis sageshealth/openessence
+    sudo docker run -d -p 9000:9000 --restart=always --link elasticsearch:elasticsearch --link redis:redis --name openessence sageshealth/openessence
 
 If you need to modify the settings.js for a specific host name, you can include it in the docker container by adding -v conf/settings.js:/code/config/settings.js .
 The config file will get added automatically it you build the container image manually via
 
-    sudo docker build -t sageshealth/openessence .
+    sudo docker build -f Dockerfile.prod -t sageshealth/openessence .
+
+If you are making lots of changes and frequently re-building the docker container, use `-f Dockerfile.dev` instead since it follows a different build pattern that greatly improves speed but increases number of containers and container size.
 
 ## Deploying to Heroku
 
