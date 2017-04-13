@@ -31,7 +31,5 @@ release-image:
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
   when: manual
-  except:
-    - branches
   only:
     - master

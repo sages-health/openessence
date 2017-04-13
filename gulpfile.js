@@ -34,6 +34,7 @@ gulp.task('clean', function (callback) {
 
 gulp.task('setVariables', function(){
   gulp.src('public/partials/templates/home.template.html')
+    .pipe(replace('%%repo-url%%', settings.REPO_URL ? settings.REPO_URL : 'https://github.com/sages-health/openessence'))
     .pipe(replace('%%git-commit-hash%%', git.short()))
     .pipe(rename('public/partials/home.html'))
     .pipe(gulp.dest('./'));
