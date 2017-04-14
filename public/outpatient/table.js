@@ -130,12 +130,15 @@ angular.module(directives.name).directive('outpatientTable',
                       },
                       function (response) {
                         params.total(response.total);
+                        scope.setRowCounts(scope.tableParams.total());
+
                         return response.results;
+                        
                       },
                       function error (response) {
                         $rootScope.$broadcast('filterError', response);
 
-                      }).$promise.then(function(data){
+                        }).$promise.then(function(data){
                         scope.data = data.results;
                         return data.results;
                       });
@@ -244,6 +247,18 @@ angular.module(directives.name).directive('outpatientTable',
                 return field;
               }
               return print.join(',');
+            };
+
+            scope.setRowCounts = function (total) {
+              scope.tableParams.settings({counts: function(){
+                var counts = [];
+                angular.forEach([10,25,50], function(cnt) {
+                  if (cnt < total)
+                    counts.push(cnt);
+                });
+                counts.push(total);
+                return counts;
+                }()});
             };
 
             scope.tableFilter = function (field, value) {
