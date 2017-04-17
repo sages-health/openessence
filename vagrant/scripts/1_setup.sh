@@ -4,10 +4,10 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | b
 source ~/.bashrc
 nvm install  0.10.38
 npm update -g npm
-sudo yum install -y make
-sudo yum install -y gcc-c++
-sudo yum install -y python
-sudo yum install -y docker-engine
+sudo dnf install -y make
+sudo dnf install -y gcc-c++
+sudo dnf install -y python
+sudo dnf install -y docker-engine
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 sudo dnf check-update

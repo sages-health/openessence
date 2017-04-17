@@ -8,12 +8,14 @@ var del = require('del');
 var _ = require('lodash');
 var fs = require('fs');
 var defaults = require('./server/conf/defaults');
-var git = require('git-rev-sync');
+var git = require('gulp-git');
 
 // load all tasks in tasks directory
 require('require-dir')('./tasks');
 
 var settings = defaults;
+
+var gitHash;
 
 // TODO use gulp-changed
 
@@ -32,10 +34,21 @@ gulp.task('clean', function (callback) {
   ], callback);
 });
 
-gulp.task('setVariables', function(){
+gulp.task('git-hash', function(callback){
+  return git.revParse(
+        {
+          args:'--short HEAD'
+        }, 
+        function(err,hash){
+          gitHash = hash;
+          console.log(hash);
+          callback();
+        });
+});
+
+gulp.task('setVariables', ['git-hash'], function(){
   gulp.src('public/partials/templates/home.template.html')
-    .pipe(replace('%%repo-url%%', settings.REPO_URL ? settings.REPO_URL : 'https://github.com/sages-health/openessence'))
-    .pipe(replace('%%git-commit-hash%%', git.short()))
+    .pipe(replace('%%git-commit-hash%%', gitHash))
     .pipe(rename('public/partials/home.html'))
     .pipe(gulp.dest('./'));
     
@@ -49,7 +62,7 @@ gulp.task('setVariables', function(){
 
 });
 
-gulp.task('build', ['setVariables', 'images', 'fonts', 'views', 'translations']);
+gulp.task('build', ['git-hash', 'setVariables', 'images', 'fonts', 'views', 'translations']);
 
 // alias for now, but could be more in the future
 gulp.task('lint', ['jshint']);

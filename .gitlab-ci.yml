@@ -10,6 +10,7 @@ stages:
 variables:
   CONTAINER_TEST_IMAGE: r1l-gitlab:4567/sages/openessence:$CI_COMMIT_REF_NAME
   CONTAINER_RELEASE_IMAGE: r1l-gitlab:4567/sages/openessence:latest
+  DOCKER_DRIVER: overlay
 
 before_script: 
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
