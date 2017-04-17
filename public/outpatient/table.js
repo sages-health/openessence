@@ -152,6 +152,7 @@ angular.module(directives.name).directive('outpatientTable',
                 scope.tableParams.reload();
               });
 
+              /*  Disabled, pending validation, auto row count based on sizing - 4/17/17 (KFischer)
               scope.$watchCollection('[options.height, options.width]', function () {
                 // Use a timer to prevent a gazillion table queries
                 if (scope.tableTimeout) {
@@ -177,7 +178,8 @@ angular.module(directives.name).directive('outpatientTable',
                   }
                 }, 25);
               });
-
+              */
+              
               if (scope.records) {
                 scope.$watchCollection('records', function () {
                   scope.tableParams.reload();
