@@ -48,6 +48,7 @@ gulp.task('git-hash', function(callback){
 
 gulp.task('setVariables', ['git-hash'], function(){
   gulp.src('public/partials/templates/home.template.html')
+    .pipe(replace('%%repo-url%%', settings.REPO_URL ? settings.REPO_URL : 'https://github.com/sages-health/openessence'))
     .pipe(replace('%%git-commit-hash%%', gitHash))
     .pipe(rename('public/partials/home.html'))
     .pipe(gulp.dest('./'));
