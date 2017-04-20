@@ -9,7 +9,8 @@ var defaults = require('./defaults');
 var env = defaults.env;
 process.env.NODE_ENV = env;
 
-var configFile = path.resolve(__dirname, '../..', 'config/settings.js');
+var configFile = path.resolve(__dirname, '../..', 'config/settings.js') ||
+	path.resolve(__dirname, '../..', 'config/settings.example.js');
 var settings = defaults;
 
 if (fs.existsSync(configFile)) {
