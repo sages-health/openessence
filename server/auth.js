@@ -55,7 +55,7 @@ passport.use(new PersonaStrategy({
       email: email,
       tokens: [email],
       authType: 'persona',
-      roles: ['admin']
+      roles: ['admin', 'api_user']
     }));
   }
 
@@ -155,7 +155,7 @@ passport.use(new BearerStrategy(function (token, done) {
       email: token,
       tokens: [token],
       authType: 'bearer',
-      roles: ['admin']
+      roles: ['admin', 'api_user']
     }));
   }
 
