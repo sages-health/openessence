@@ -63,6 +63,10 @@ if (conf.env === 'production') {
 
 app.use(assets.static());
 
+if(conf.post_limit){
+  app.use(bodyParser({limit: conf.post_limit}));
+}
+
 app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({extended: true})); // we only use JSON-encoded request bodies
 
