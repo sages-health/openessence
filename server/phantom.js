@@ -22,7 +22,7 @@ var engine = phantomCluster.createQueued({
   phantomBasePort: conf.phantom.basePort,
 
   // Fixed in v1.9.8, see https://github.com/ariya/phantomjs/issues/12670
-  phantomArguments: ['--ssl-protocol=tlsv1'],
+  phantomArguments: ['--ssl-protocol=any', '--ignore-ssl-errors=true'],
   messageTimeout: 60 * 1000, // 1 minute
 
   onStdout: function (out) {
@@ -212,7 +212,7 @@ engine.on('queueItemReady', function (options) {
           });
         });
 
-      }, 3000);
+      }, 10000);
     });
   });
 
