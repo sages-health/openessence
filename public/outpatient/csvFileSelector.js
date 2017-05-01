@@ -29,7 +29,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
 
           scope.form = scope.form || {};
           var recordFields = [];
-
+          recordFields.push('');
           scope.getLocaleValue = stringUtil.getLocaleValue;
 
           var collectFields = function (collectedFields, fields, parentField) {
