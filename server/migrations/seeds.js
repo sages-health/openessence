@@ -67,7 +67,7 @@ async.parallel([
       previous.push({
         name: current.properties.CTYNAMEUP,
         geometry: {
-          type: 'polygon', // elasticsearch uses lowercase
+          type: current.geometry.type === 'Polygon' ? 'polygon' : 'multipolygon', // elasticsearch uses lowercase
           coordinates: current.geometry.coordinates
         }
       });

@@ -5,7 +5,7 @@ var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
 angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function ($q, DistrictResource, OutpatientVisitResource,
-                                                                  $timeout, $rootScope, debounce, $http) {
+  $timeout, $rootScope, debounce, $http) {
 
   return {
     restrict: 'E',
@@ -14,20 +14,20 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
       queryString: '=',
       filters: '='
     },
-    link: function postLink (scope, element) {
-      var baseMapURL = %%baseMapURL%%;
+    link: function postLink(scope, element) {
+      var baseMapURL = %%baseMapURL %%;
       // if they ever shut down the HTTPs version, here's the HTTP url:
       //var baseMapURL = 'http://ttiles0{s}.mqcdn.com/tiles/1.0.0/vy/map/{z}/{x}/{y}.png';
 
       function getColor(d) {
-          return d > 100  ? '#800026' :
-                 d > 75   ? '#BD0026' :
-                 d > 50   ? '#E31A1C' :
-                 d > 20   ? '#FC4E2A' :
-                 d > 10   ? '#FD8D3C' :
-                 d > 5    ? '#FEB24C' :
-                 d > 0    ? '#FED976' :
-                            '#C0C0C0' ;
+        return d > 100 ? '#800026' :
+          d > 75 ? '#BD0026' :
+            d > 50 ? '#E31A1C' :
+              d > 20 ? '#FC4E2A' :
+                d > 10 ? '#FD8D3C' :
+                  d > 5 ? '#FEB24C' :
+                    d > 0 ? '#FED976' :
+                      '#C0C0C0';
       }
 
       var getOverlayStyle = function (count) {
@@ -58,8 +58,8 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
       // don't wait for data to build map and fetch base layer tiles
       var map = L.map(element.children()[0], {
-          center: new L.LatLng(%%baseLatitude%%,%%baseLongitude%%),
-          zoom: 6
+        center: new L.LatLng(%%baseLatitude %%,%%baseLongitude %%),
+        zoom: 6
       });
 
       var info = L.control();
@@ -75,24 +75,24 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
       // method that we will use to update the control based on feature properties passed
       info.update = function (props) {
-        this._div.innerHTML = '<h4>Total Case Count by Region</h4>' +  (props ?
-                               '<b>' + props.oeName + '</b><br />' + (props.oeCount  !== undefined ? props.oeCount : 0) + ''
-                              : 'Hover over a region');
+        this._div.innerHTML = '<h4>Total Case Count by Region</h4>' + (props ?
+          '<b>' + props.oeName + '</b><br />' + (props.oeCount !== undefined ? props.oeCount : 0) + ''
+          : 'Hover over a region');
       };
 
       info.addTo(map);
 
-      var legend = L.control({position: 'bottomright'});
+      var legend = L.control({ position: 'bottomright' });
 
       legend.onAdd = function (map) {
 
-      var div = L.DomUtil.create('div', 'info legend'),
-        grades = [1, 5, 10, 20, 50, 75, 100],
-        labels = [];
+        var div = L.DomUtil.create('div', 'info legend'),
+          grades = [1, 5, 10, 20, 50, 75, 100],
+          labels = [];
 
-      // loop through our density intervals and generate a label with a colored square for each interval
-      for (var i = 0; i < grades.length; i++) {
-        div.innerHTML +=
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+          div.innerHTML +=
             '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
             grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
         }
@@ -114,14 +114,33 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
           var polygons = response.results.reduce(function (previous, current) {
             var geometry = current._source.geometry;
+            var layer;
+            
             if (geometry) {
-              var coordinates = geometry.coordinates[0].map(function (lonlat) {
-                // GeoJSON uses LonLat instead of LatLon
-                return L.latLng(lonlat[1], lonlat[0]);
-              });
-              var layer = L.polygon(coordinates, getOverlayStyle());
-              layer.oeName = current._source.name;
-              layer.oeName = current._source.name;
+              if (geometry.type === 'polygon') {
+                var coordinates = geometry.coordinates[0].map(function (lonlat) {
+                  // GeoJSON uses LonLat instead of LatLon
+                  return L.latLng(lonlat[1], lonlat[0]);
+                });
+                layer = L.polygon(coordinates, getOverlayStyle());
+                layer.oeName = current._source.name;
+              }
+              else if (geometry.type === 'multipolygon') {
+                var coordinates = []
+
+                for (var i in geometry.coordinates) {
+                  var newCoords = geometry.coordinates[i].map(function (lonlatarray) {
+                    var subArray = lonlatarray.map(function (lonlat) {
+                      return L.latLng(lonlat[1], lonlat[0]);
+                    });
+                    return subArray;
+                  });
+                  coordinates.push(newCoords);
+                }
+
+                layer = L.polygon(coordinates, getOverlayStyle());
+                layer.oeName = current._source.name;
+              }
 
               // inspired by http://leafletjs.com/examples/choropleth.html
               layer.on('click', function (e) {
@@ -200,7 +219,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
         }, function (response) {
           polys.then(function (districts) {
             // reset styles
-            angular.forEach(districts, function(district) {
+            angular.forEach(districts, function (district) {
               district.setStyle(getOverlayStyle(0));
             });
             // re-apply styles for query results
