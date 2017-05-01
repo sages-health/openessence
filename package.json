@@ -22,6 +22,7 @@
     "csurf": "^1.2.2",
     "ejs": "^1.0.0",
     "elasticsearch": "~2.4.3",
+    "elasticsearch-deletebyquery": "^1.6.0",
     "escape-html": "^1.0.1",
     "express": "^4.10.0",
     "express-session": "^1.5.0",
