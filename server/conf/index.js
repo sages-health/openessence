@@ -31,6 +31,7 @@ settings = _.assign({
 settings.ssl = _.assign({
   cert: ssl ? fs.readFileSync(settings.ssl.certPath) : null,
   key: ssl ? fs.readFileSync(settings.ssl.keyPath) : null,
+  passphrase: settings.ssl.passphrase,
   port: httpsPort
 }, settings.ssl);
 
