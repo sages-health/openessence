@@ -162,7 +162,8 @@
         "BarChart": "Bar chart",
         "Map": "Map",
         "ReportRows": "Report Rows",
-        "AttributeColumns": "Attribute Columns"
+        "AttributeColumns": "Attribute Columns",
+	"DefaultViewText": "Select a visualization from the list below"
       },
       "locale": {
         "Locale": "Locale",
@@ -591,7 +592,8 @@
         "BarChart": "Diagrama de barras",
         "Map": "Mapa",
         "ReportRows": "Filas de reporte",
-        "AttributeColumns": "Columnas de atributos"
+        "AttributeColumns": "Columnas de atributos",
+	"DefaultViewText": "Select a visualization from the list below"
       },
       "locale": {
         "Locale": "Local",

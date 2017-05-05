@@ -39,7 +39,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
         });
 
         scope.visualization = scope.visualization || scope.options.visualization || {
-          name: 'table'
+          name: 'default'
         };
 
         scope.pivot = scope.pivot || scope.options.pivot || {

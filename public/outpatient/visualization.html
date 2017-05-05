@@ -1,4 +1,11 @@
 <div class="animate-switch-container" ng-switch on="visualization.name"> <!-- TODO define animation CSS -->
+  <div class="animation-switch" ng-switch-when="default">
+	<div class="row">
+		<div class="col-md-12" style="height:300px; text-align:center;">
+			{{'hinge.DefaultViewText' | i18next}}
+		</div>
+	</div>
+  </div>
   <div id="svg-id-{{options.id}}" class="animation-switch" ng-switch-when="table">
     <outpatient-table query-string="queryString" form="form" options="options"></outpatient-table>
   </div>
