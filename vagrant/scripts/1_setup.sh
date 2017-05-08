@@ -4,6 +4,7 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | b
 source ~/.bashrc
 nvm install  0.10.38
 npm update -g npm
+sudo yum update
 sudo dnf install -y make
 sudo dnf install -y gcc-c++
 sudo dnf install -y python
