@@ -1,9 +1,13 @@
 <fracas-filter filter-name="{{filter.name}}" on-close="close()">
   <form class="form" role="form">
     <div class="form-group">
-      <select class="form-control" multiple ui-select2 ng-model="filter.value" placeholder="{{'app.Any' | i18next}}">
-        <option ng-repeat="item in filter.values | orderBy:'name'" value="{{item.value}}">{{item.name}}</option>
-      </select>
+      <ui-select multiple
+          ng-model="filter.value">
+          <ui-select-match placeholder="{{'app.Any' | i18next}}">{{$item.name}}</ui-select-match>
+          <ui-select-choices repeat="item.value as item in filter.values | orderBy:'name' | filter:$select.search">
+              {{item.name}}
+          </ui-select-choices>
+        </ui-select>
     </div>
   </form>
 </fracas-filter>

@@ -21,14 +21,22 @@
         </button>
       </div>
       <div class="col-md-4">
-        <input type="hidden" class="select2-multiple pivot-rows"
-               multiple placeholder="{{pivotRowsPlaceholder | i18next}}" ui-select2="select2Options"
+        <ui-select multiple
                ng-model="pivot.rows">
+              <ui-select-match placeholder="{{pivotRowsPlaceholder | i18next}}">{{$item.text}}</ui-select-match>
+                  <ui-select-choices repeat="row.id as row in select2Options.data | filter:$select.search">
+                    {{row.text}}
+                  </ui-select-choices>
+        </ui-select>
       </div>
       <div class="col-md-4">
-        <input type="hidden" class="select2-multiple pivot-cols" multiple
-               placeholder="{{pivotColsPlaceholder | i18next}}" ui-select2="select2Options"
+        <ui-select multiple
                ng-model="pivot.cols">
+               <ui-select-match placeholder="{{pivotColsPlaceholder | i18next}}">{{$item.text}}</ui-select-match>
+               <ui-select-choices repeat="col.id as col in select2Options.data | filter:$select.search">
+                  {{col.text}}
+               </ui-select-choices>
+        </ui-select>
       </div>
     </div>
   </div>

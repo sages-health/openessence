@@ -60,9 +60,14 @@
 
       <div class="form-group">
         <label for="entry-user-roles" ng-i18next>entry.Roles</label>
-        <select class="form-control select2-multiple" id="entry-user-roles" multiple ui-select2 ng-model="data.roles">
-          <option ng-repeat="role in roles" value="{{role}}">{{role}}</option>
-        </select>
+        <ui-select id="entry-user-roles" ng-model="data.roles" multiple>
+          <ui-select-match>
+            {{$item}}
+          </ui-select-match>
+          <ui-select-choices repeat="role in roles | filter:$select.search">
+            {{role}}
+          </ui-select-choices>
+        </ui-select>
       </div>
 
       <div class="form-group">
@@ -72,10 +77,14 @@
 
       <div class="form-group">
         <label for="entry-user-locations" ng-i18next>entry.Locations</label>
-        <select class="form-control select2-multiple" id="entry-user-locations" multiple ui-select2
-                ng-model="data.locations">
-          <option ng-repeat="location in locations" value="{{location}}">{{location}}</option>
-        </select>
+        <ui-select id="entry-user-locations" ng-model="data.locations" multiple>
+          <ui-select-match>
+            {{$item}}
+          </ui-select-match>
+          <ui-select-choices repeat="location in locations | filter:$select.search">
+            {{location}}
+          </ui-select-choices>
+        </ui-select>
       </div>
 
     </fieldset>
