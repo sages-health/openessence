@@ -40,13 +40,16 @@
   </div>
 
   <!-- Visit type -->
-  <div class="form-group" data-field="visitType" ng-show="fields.visitType.enabled">
+  <div  data-field="visitType" ng-show="fields.visitType.enabled">
     <label for="entry-visit-visitType" ng-i18next>op.VisitType</label>
 
-    <select class="form-control select2-multiple" id="entry-visit-visitType" name="visitType" multiple ui-select2
+    <ui-select id="entry-visit-visitType" name="visitType" multiple
             ng-model="visit.visitType">
-      <option ng-repeat="v in fields.visitType.values" value="{{v.name}}">{{v.name}}</option>
-    </select>
+      <ui-select-match placeholder="Visit Type">{{$item}}</ui-select-match>
+      <ui-select-choices repeat="v.name as item in fields.visitType.values | filter:$select.search">
+            {{item}}
+      </ui-select-choices>
+    </ui-select>
 
     <span ng-show="isInvalid(visitForm.visitType)" class="help-block" ng-i18next>op.msgVisitType</span>
   </div>
@@ -223,15 +226,13 @@
        ng-class="{'has-error': isInvalid(visitForm.preExistingConditions)}">
 
     <label for="entry-pre-existing-conditions" ng-i18next>op.PreExistingConditions</label>
-    <select class="form-control select2-multiple" id="entry-pre-existing-conditions" name="preExistingConditions"
-            multiple ui-select2 ng-model="visit.patient.preExistingConditions">
-      <option ng-repeat="condition in fields['patient.preExistingConditions'].values" value="{{condition.name}}">
-        {{condition.name}}
-      </option>
-      <optgroup label="──────────" ng-if="fields['patient.preExistingConditions.other'].enabled">
-        <option value="Other" ng-i18next>op.Other</option>
-      </optgroup>
-    </select>
+    <ui-select id="entry-pre-existing-conditions" name="preExistingConditions" multiple
+            ng-model="visit.patient.preExistingConditions">
+      <ui-select-match>{{$item.name}}</ui-select-match>
+      <ui-select-choices repeat="condition.name as condition in fields['patient.preExistingConditions'].values | filter:$select.search">
+            {{condition.name}}
+      </ui-select-choices>
+    </ui-select>
   </div>
 
   <!-- Other pre-existing conditions -->
@@ -261,13 +262,13 @@
 
     <div ng-if="form.dataType === 'individual'">
       <label for="entry-visit-symptoms" ng-i18next>op.Symptoms</label>
-      <select class="form-control select2-multiple" id="entry-visit-symptoms" name="symptoms" multiple ui-select2
+      <ui-select id="entry-visit-symptoms" name="symptoms" multiple
               ng-model="visit.symptoms">
-        <option ng-repeat="s in fields.symptoms.values" value="{{s.name}}">{{s.name}}</option>
-        <optgroup label="──────────" ng-if="fields['symptoms.other'].enabled">
-          <option value="Other" ng-i18next>op.Other</option>
-        </optgroup>
-      </select>
+        <ui-select-match>{{$item.name}}</ui-select-match>
+        <ui-select-choices repeat="s.name as s in fields.symptoms.values">
+              {{s.name}}
+        </ui-select-choices>
+      </ui-select>
     </div>
 
     <div ng-if="form.dataType === 'aggregate'">
@@ -291,13 +292,13 @@
 
     <div ng-if="form.dataType === 'individual'">
       <label for="entry-visit-syndromes" ng-i18next>op.Syndromes</label>
-      <select class="form-control select2-multiple" id="entry-visit-syndromes" name="syndromes" multiple ui-select2
+      <ui-select id="entry-visit-syndromes" name="syndromes" multiple
               ng-model="visit.syndromes">
-        <option ng-repeat="s in fields.syndromes.values" value="{{s.name}}">{{s.name}}</option>
-        <optgroup label="──────────" ng-if="fields['syndromes.other'].enabled">
-          <option value="Other" ng-i18next>op.Other</option>
-        </optgroup>
-      </select>
+        <ui-select-match>{{$item.name}}</ui-select-match>
+        <ui-select-choices repeat="s.name as s in fields.syndromes.values">
+              {{s.name}}
+        </ui-select-choices>
+      </ui-select>
     </div>
 
     <div ng-if="form.dataType === 'aggregate'">
@@ -321,14 +322,13 @@
 
     <div ng-if="form.dataType === 'individual'">
       <label for="entry-visit-diagnoses" ng-i18next>op.Diagnoses</label>
-
-      <select class="form-control select2-multiple" id="entry-visit-diagnoses" name="diagnoses" multiple ui-select2
+      <ui-select id="entry-visit-diagnoses" name="diagnoses" multiple
               ng-model="visit.diagnoses">
-        <option ng-repeat="d in fields.diagnoses.values" value="{{d.name}}">{{d.name}}</option>
-        <optgroup label="──────────" ng-if="fields['diagnoses.other'].enabled">
-          <option value="Other" ng-i18next>op.Other</option>
-        </optgroup>
-      </select>
+        <ui-select-match>{{$item.name}}</ui-select-match>
+        <ui-select-choices repeat="d.name as d in fields.diagnoses.values">
+              {{d.name}}
+        </ui-select-choices>
+      </ui-select>      
     </div>
 
     <div ng-if="form.dataType === 'aggregate'">
@@ -351,10 +351,13 @@
   <div class="form-group" data-field="disposition" ng-show="fields.disposition.enabled">
     <label for="entry-visit-disposition" ng-i18next>op.Disposition</label>
 
-    <select class="form-control select2-multiple" id="entry-visit-disposition" name="disposition" multiple ui-select2
-            ng-model="visit.disposition">
-      <option ng-repeat="d in fields.disposition.values" value="{{d.name}}">{{d.name}}</option>
-    </select>
+    <ui-select id="entry-visit-disposition" name="disposition" multiple
+              ng-model="visit.disposition">
+        <ui-select-match>{{$item.name}}</ui-select-match>
+        <ui-select-choices repeat="d.name as d in fields.disposition.values">
+              {{d.name}}
+        </ui-select-choices>
+      </ui-select>
 
     <span ng-show="isInvalid(visitForm.disposition)" class="help-block" ng-i18next>op.SelectDispositionType</span>
   </div>

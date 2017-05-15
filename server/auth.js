@@ -106,7 +106,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
     if (!user) {
       // Hash anyway to prevent timing attacks. FYI: this string is "admin" hashed by scrypt with our parameters
       new User().verifyPassword(new Buffer('c2NyeXB0AAoAAAAIAAAAFuATEagqDpM/f/hC+pbzTtcyMM7iPtS+56BKc8v5yMVdblqKpzM/u0j7PKc9MYHHAbiLCM/jL9A3z0m7SKwv/RFutRwCvkO8C4KNbHiXs7Ia', 'base64'),
-        new Buffer(password, 'utf8'), function (err) {
+        password, function (err) {
           // always pass false
           callback(err, false);
         });
@@ -115,7 +115,7 @@ passport.use(new LocalStrategy(function (username, password, callback) {
     }
 
     // Check password before we check if user is disabled. Again, this is to prevent timing attacks.
-    user.verifyPassword(new Buffer(password, 'utf8'), function (err, match) {
+    user.verifyPassword(password, function (err, match) {
       delete user.doc.password;
       password = null; // can't hurt
 

@@ -3,15 +3,13 @@
 var _ = require('lodash');
 var async = require('async');
 
-var scrypt = require('scrypt');
+var bcrypt = require('bcryptjs')
 var Boom = require('boom');
 
 var codex = require('../codex');
 var conf = require('../conf');
 var logger = conf.logger;
 var Lock = require('yarnl');
-
-var scryptParams = scrypt.params(0.1);
 
 var User = codex.model({
   index: 'user',
@@ -97,7 +95,11 @@ var User = codex.model({
         password = new Buffer(password, 'utf8');
       }
 
-      scrypt.hash(password, scryptParams, callback);
+      bcrypt.genSalt(10, function(err, salt){
+        bcrypt.hash(password, salt, function(err, hash){
+
+        });
+      });
     }
   },
 
@@ -153,28 +155,15 @@ var User = codex.model({
 
     verifyPassword: function (password, callback) {
       var myPassword = this.doc.password;
-      if (!Buffer.isBuffer(myPassword)) {
-        myPassword = new Buffer(myPassword, 'hex'); // TODO switch to base64
-      }
 
-      scrypt.verify(myPassword, password, function (err, result) {
-        /*jshint camelcase:false */
-        if (err) {
-          if (err instanceof Error) {
-            // scrypt tends to return raw objects instead of errors, but check just in case the fix that one day
-            return callback(err);
-          }
-
-          if (err.scrypt_err_code === 11) {
-            // convert scrypt's "password is incorrect" error into a false return value
-            return callback(null, false);
-          }
-
-          return callback(new Error(err.scrypt_err_message));
+      bcrypt.compare(password, myPassword, function(err, res){
+        if(res === true){
+          callback(null, res);
         }
-
-        callback(null, result);
-      });
+        else{
+          callback(null, false);
+        }
+      })
     }
   },
 

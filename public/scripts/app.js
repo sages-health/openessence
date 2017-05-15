@@ -29,7 +29,6 @@ require('angular-sanitize');
 require('angular-bootstrap');
 require('angular-ui-router');
 require('angular-ui-select');
-require('angular-ui-select2');
 require('angular-ui-sortable');
 //require('angular-gettext');
 require('angular-gridster');
@@ -56,7 +55,6 @@ require('infinite-scroll');
 require('sticky-table-headers');
 
 var frable = require('../frable');
-require('../select2');
 require('../hinge');
 require('../config-editor');
 require('../crosstab');
@@ -75,7 +73,7 @@ require('./directives');
 require('./filters');
 
 
-var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.select2', 'ui.sortable',
+var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.sortable',
   'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
   'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll',
   'jm.i18next', 'tmh.dynamicLocale', frable.name]
