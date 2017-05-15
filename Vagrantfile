@@ -58,6 +58,8 @@ Vagrant.configure(2) do |config|
     development.vm.network "forwarded_port", guest: 8080, host: 8080
 	  development.vm.network "forwarded_port", guest: 6379, host: 6379
 
+    config.vm.provision :shell, privileged:false, path: "vagrant/scripts/1_setup_windows.sh"
+    
 	  config.vm.provision :shell, privileged:false, path: "vagrant/scripts/3_setup_containers_windows.sh"
   end
 
