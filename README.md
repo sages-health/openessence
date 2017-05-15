@@ -1,12 +1,12 @@
 # OpenESSENCE
 
-* [Vagrant](#vagrant)
 * [Windows Users](#windows-users)
-* [Docker Compose Quick Start](#quick-start-docker-compose)
-* [Elastic Search and Redis Setup](#elasticsearch-and-redis-setup)
+* [Vagrant for Development](#vagrant)
+* [Docker Elastic Search and Redis Setup](#docker-elasticsearch-and-redis-setup)
 * [Initializing Elasticsearch with data](#initializing-elasticsearch-with-data)
 * [Building](#building)
 * [Map Setup](#map-setup)
+* [Docker Compose Quick Start](#quick-start-docker-compose)
 * [OpenESSENCE Docker Container](#openessence-docker-container)
 * [Deploying to Heroku](#deploying-to-heroku)
 * [Deploying to other PaaS providers](#deploying-to-other-paas-providers)
@@ -23,12 +23,28 @@ Production
  * [Docker Compose](https://docs.docker.com/compose/install/) - included in Vagrantfile
 
 Development
- * [Node.js 0.10.38](http://nodejs.org), [nvm](https://github.com/creationix/nvm) recommended for installing this version - included in Vagrant 
+ * [Node.js 4.8.3](http://nodejs.org), [nvm](https://github.com/creationix/nvm) recommended for installing this version - included in Vagrant 
  * [Docker](https://www.docker.com/) - included in Vagrant
+ * [Elasticsearch 2.4](https://www.elastic.co/) - started by the Vagrantfile
+ * [Redis](https://github.com/MSOpenTech/redis/releases) - started by the Vagrantfile
  * [Docker Compose](https://docs.docker.com/compose/install/) - included in Vagrantfile
  * [Python 2.7](https://www.python.org/download/releases/2.7/) - included in Vagrantfile
 
-## Vagrant
+### Windows Users
+
+Unless you decide to install [Docker Toolbox for Windows](https://docs.docker.com/toolbox/toolbox_install_windows/) (Windows 7) or Docker for Windows (Windows 10), you'll need to either 
+
+1.) Install Elasticsearch and Redis for Windows. Redis isn't natively supported on Windows but [there is a project that ported it over here](https://github.com/MSOpenTech/redis/releases).
+
+or
+
+2.) Run the following vagrant command to bring up Elasticsearch and Redis inside of Docker inside the VM. Sometimes this is a cleaner option. You'll then want to go to [Initializing Elasticsearch with data](#initializing-elasticsearch-with-data)
+
+    vagrant up windows_development
+
+If you choose to install Docker for Windows, you'll need to run the docker commands in the [Docker Elastic Search and Redis Setup](#docker-elasticsearch-and-redis-setup) section
+
+## Vagrant for Development
 
 After installing [Vagrant](https://www.vagrantup.com) and [VirtualBox](https://www.virtualbox.org/) (or any other
 virtualization platform that Vagrant supports), just run
@@ -45,28 +61,7 @@ You made need to run the following instead if you get SSL errors with r1l-gitlab
 
     env GIT_SSL_NO_VERIFY=true git clone https://r1l-gitlab/sages/openessence.git
 
-### Windows Users
-
-Unless you have rsync configured for your environment, you'll want to checkout out and build the code in a new folder inside of the VM instead 
-of using the /vagrant synced folder due to issues npm sometimes has with writing node_modules out to Windows paths. If you develop in the VM, make sure 
-to update your git configurations appropriately. 
-
-## Docker Compose Quick Start
-
-If you want to get started with OpenESSENCE quickly, simply git clone and run
-
-    sudo docker-compose up -d
-    sudo docker exec openessence_openessence_1 node /code/server/migrations/reseed
-
-This will create all the necessary OpenESSENCE VMs and initialize the database with the reseed command. You may want to copy 
-the [config/settings.template.js](config/settings.template.js) file to config/settings.js to modify the default settings and secret key. 
-
-If you want to develop, then just get Elasticsearch and Redis running with
-
-    sudo docker-compose up -d elasticsearch redis
-    node server/migrations/reseed
-
-## Individual Elasticsearch and Redis Setup
+## Docker Elasticsearch and Redis Setup
 
 Make sure your Docker service is up and run the following commands to start Elasticsearch
 
@@ -129,6 +124,21 @@ You can then edit the settings.js file to center on the correct lat/lon and set 
     settings.MAP_URL = "'http://localhost:8080/styles/klokantech-basic/rendered/{z}/{x}/{y}.png'"
     settings.MAP_LATITUDE = '41.4925'
     settings.MAP_LONGITUDE = '-99.9018'
+
+## Docker Compose Quick Start
+
+If you want to get started with OpenESSENCE quickly, simply git clone and run
+
+    sudo docker-compose up -d
+    sudo docker exec openessence_openessence_1 node /code/server/migrations/reseed
+
+This will create all the necessary OpenESSENCE VMs and initialize the database with the reseed command. You may want to copy 
+the [config/settings.template.js](config/settings.template.js) file to config/settings.js to modify the default settings and secret key. 
+
+If you want to develop, then just get Elasticsearch and Redis running with
+
+    sudo docker-compose up -d elasticsearch redis
+    node server/migrations/reseed
 
 ## OpenESSENCE Docker Container
 If you want to get things up and running with just docker, you can start the web app with

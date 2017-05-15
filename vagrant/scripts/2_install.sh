@@ -6,8 +6,6 @@ cd openessence
 
 	
 npm install -g gulp bower@1.7.9
-npm install gulp
-npm install
 
 bower cache clean
 bower install --force

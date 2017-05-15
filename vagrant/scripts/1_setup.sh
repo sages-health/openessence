@@ -2,7 +2,7 @@
 	
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
 source ~/.bashrc
-nvm install  0.10.38
+nvm install  4.8.3
 npm update -g npm
 sudo yum update
 sudo dnf install -y make

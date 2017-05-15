@@ -22,7 +22,7 @@
     "angular-order-object-by": "~1.1.0",
     "highcharts": "~4.0.3",
     "highcharts-ng": "~0.0.8",
-    "angular-ui-select": "~0.9.1",
+    "angular-ui-select": "^0.19.8",
     "ng-table": "1.0.0",
     "ngInfiniteScroll": "~1.2.0",
     "StickyTableHeaders": "~0.1.15",

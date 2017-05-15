@@ -2,7 +2,7 @@
 # Dockerfile for Fracas. Inspired by https://github.com/docker-library/node.
 ###############################################################################
 
-FROM node:0.10-slim 
+FROM node:4.8.3-slim 
 
 ENV BOWER_VERSION 1.7.9
 
