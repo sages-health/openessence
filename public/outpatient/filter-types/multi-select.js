@@ -45,6 +45,9 @@ angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngIn
             }
           });
         }
+        else{
+          scope.filter.value = '';
+        }
 
         scope.$watch('filter.value', function (selectedValue) {
           if (Array.isArray(selectedValue)) {
@@ -58,8 +61,6 @@ angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngIn
             }
           } else if (selectedValue !== '*') {
             selectedValue = selectedValue ? ('"' + selectedValue + '"') : '*';
-          } else if(selectedValue == '*'){
-            selectedValue = '';
           }
           scope.filter.queryString = scope.filter.field + ':' + selectedValue;
         });
