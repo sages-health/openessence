@@ -80,12 +80,24 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                 allowPointSelect: true,
                 cursor: 'pointer'
               },
+              series: {
+                point: {
+                  events: {
+                    click: function () {
+                      var point = {
+                        name: this.name,
+                        col: this.series.name
+                      };
 
+                      narrowFilters(point);
+                    }
+                  }
+                }
+              }
             },
             title: {
               text: scope.options.labels.title
-            },
-            series: []
+            }
           };
 
           var reload = function () {
@@ -93,8 +105,6 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
           };
 
           var reloadDebounce = function () {
-
-            console.log(scope.pivot);
 
             scope.chartConfig.series = [];
 
@@ -143,7 +153,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                   dataLabels: {
                     formatter: function () {
                       if (this.y > 5 || inner.length < 4) {
-                        return this.point.name;
+                        return this.point.name + ' : ' + this.point.y;
                       } else {
                         return null;
                       }
@@ -162,7 +172,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                   innerSize: '0',
                   dataLabels: {
                     formatter: function () {
-                      return this.point.name;
+                      return this.point.name + ' : ' + this.point.y;
                     },
                     color: 'black',
                     distance: 30
@@ -235,7 +245,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                   innerSize: '80%',
                   dataLabels: {
                     formatter: function () {
-                      return this.point.name;
+                      return this.point.name + ' : ' + this.point.y;
                     },
                     color: 'black',
                     distance: 30
@@ -251,7 +261,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                   innerSize: '0',
                   dataLabels: {
                     formatter: function () {
-                      return this.point.name;
+                      return this.point.name + ' : ' + this.point.y;
                     },
                     color: 'black',
                     distance: 30
