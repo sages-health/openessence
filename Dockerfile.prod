@@ -38,8 +38,8 @@ RUN buildDeps='autoconf ca-certificates curl git pkg-config build-essential bzip
     && bower install --allow-root \
     && bower cache clean --allow-root \
     && gulp build \
-    && npm cache clear \
-    && npm prune --production \
+    && npm --silent cache clear \
+    && npm --silent prune --production \
     && apt-get -qq clean -y \
     && apt-get -qq purge -y $buildDeps \
     && apt-get -qq autoremove -y \
