@@ -2,79 +2,78 @@
   <div class="panel-heading viz-drag-handle">
     <div class="clearfix header">
       <div class="panel-control btn-group">
-        <button type="button" class="close" ng-click="close()" popover="{{'hinge.RemoveWidget' | i18next}}"
-                popover-trigger="mouseenter">
+        <button type="button" class="close" ng-click="close()" popover="{{'hinge.RemoveWidget' | i18next}}" popover-trigger="mouseenter">
           <span class="fa fa-times toolbar-icon"></span>
         </button>
         <!-- TODO next to the close button is the worst possible position for these buttons -->
-        <button type="button" class="save" ng-click="saveViz()" popover="{{'hinge.SaveVisualization' | i18next}}"
-                popover-trigger="mouseenter">
+        <button type="button" class="save" ng-click="saveViz()" popover="{{'hinge.SaveVisualization' | i18next}}" popover-trigger="mouseenter">
           <span class="fa fa-floppy-o toolbar-icon" ></span>
         </button>
-        <button type="button" class="export" ng-click="exportViz()" popover="{{'hinge.ExportVisualization' | i18next}}"
-                popover-trigger="mouseenter">
-          <span class="fa fa-share-square-o toolbar-icon"></span>
-        </button>
-        <button type="button" class="settings" ng-click="settings()" popover="{{'hinge.Settings' | i18next}}"
-                popover-trigger="mouseenter">
+        <div class="btn-group" dropdown dropdown-append-to-body>
+          <button type="button" class="export" dropdown-toggle popover="{{'hinge.ExportVisualization' | i18next}}" popover-trigger="mouseenter">
+            <span class="fa fa-share-square-o toolbar-icon"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li role="menuitem"><a ng-click="printChart()">Print</a>
+            <li role="menuitem"><a ng-click="exportPNG()">Export to PNG</a>
+            <li role="menuitem"><a ng-click="exportJPEG()">Export to JPEG</a>
+            <!-- <li role="menuitem"><a ng-click="exportPDF()">Export to PDF</a> -->
+          </ul>
+        </div>
+        <button type="button" class="settings" ng-click="settings()" popover="{{'hinge.Settings' | i18next}}" popover-trigger="mouseenter">
           <span class="fa fa-cog toolbar-icon"></span>
         </button>
       </div>
       <div class="col-md-4">
-        <ui-select multiple
-               ng-model="pivot.rows">
-              <ui-select-match placeholder="{{pivotRowsPlaceholder | i18next}}">{{$item.text}}</ui-select-match>
-                  <ui-select-choices repeat="row.id as row in select2Options.data | filter:$select.search">
-                    {{row.text}}
-                  </ui-select-choices>
+        <ui-select multiple ng-model="pivot.rows">
+          <ui-select-match placeholder="{{pivotRowsPlaceholder | i18next}}">{{$item.text}}</ui-select-match>
+          <ui-select-choices repeat="row.id as row in select2Options.data | filter:$select.search">
+            {{row.text}}
+          </ui-select-choices>
         </ui-select>
       </div>
       <div class="col-md-4">
-        <ui-select multiple
-               ng-model="pivot.cols">
-               <ui-select-match placeholder="{{pivotColsPlaceholder | i18next}}">{{$item.text}}</ui-select-match>
-               <ui-select-choices repeat="col.id as col in select2Options.data | filter:$select.search">
-                  {{col.text}}
-               </ui-select-choices>
+        <ui-select multiple ng-model="pivot.cols">
+          <ui-select-match placeholder="{{pivotColsPlaceholder | i18next}}">{{$item.text}}</ui-select-match>
+          <ui-select-choices repeat="col.id as col in select2Options.data | filter:$select.search">
+            {{col.text}}
+          </ui-select-choices>
         </ui-select>
       </div>
     </div>
   </div>
-
   <!-- clients are responsible for what's rendered inside the hinge, e.g. a table, crosstab, pie chart, etc. -->
   <div ng-transclude></div>
-
   <div class="panel-footer viz-drag-handle">
     <div class="clearfix">
-
       <!-- don't wrap btn-group in col since we don't ever want it to wrap -->
       <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'"
-                popover="{{'hinge.Table' | i18next}}" popover-trigger="mouseenter">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'table'" popover="{{'hinge.Table' | i18next}}"
+          popover-trigger="mouseenter">
           <span class="icon-table"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'crosstab'"
-                popover="{{'hinge.Crosstab' | i18next}}" popover-trigger="mouseenter">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'crosstab'" popover="{{'hinge.Crosstab' | i18next}}"
+          popover-trigger="mouseenter">
           <span class="icon-cube"></span><!-- TODO get a better crosstab icon -->
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'line'"
-                popover="{{'hinge.Timeseries' | i18next}}" popover-trigger="mouseenter">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'line'" popover="{{'hinge.Timeseries' | i18next}}"
+          popover-trigger="mouseenter">
           <span class="icon-chart-line"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'yoy'"
-                popover="{{'hinge.YearOverYear' | i18next}}" popover-trigger="mouseenter">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'yoy'" popover="{{'hinge.YearOverYear' | i18next}}"
+          popover-trigger="mouseenter">
           <span class="icon-calendar"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'pie'"
-                popover="{{'hinge.PieChart' | i18next}}" popover-trigger="mouseenter">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'pie'" popover="{{'hinge.PieChart' | i18next}}"
+          popover-trigger="mouseenter">
           <span class="icon-chart-pie"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'bar'"
-                popover="{{'hinge.BarChart' | i18next}}" popover-trigger="mouseenter">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'bar'" popover="{{'hinge.BarChart' | i18next}}"
+          popover-trigger="mouseenter">
           <span class="icon-chart-bar-box"></span>
         </button>
-        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'map'"
-                popover="{{'hinge.Map' | i18next}}" popover-trigger="mouseenter">
+        <button type="button" class="btn btn-default" ng-model="visualization.name" btn-radio="'map'" popover="{{'hinge.Map' | i18next}}"
+          popover-trigger="mouseenter">
           <span class="icon-globe"></span>
         </button>
       </div>

@@ -3,6 +3,9 @@
 var angular = require('angular');
 var moment = require('moment');
 var directives = require('../scripts/modules').directives;
+var Highcharts = require('highcharts');
+require('highcharts/modules/exporting')(Highcharts);
+require('highcharts/modules/offline-exporting')(Highcharts);
 
 angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*/ function ($rootScope, $filter, $timeout, debounce, $window, $location, $log, updateURL, outpatientAggregation, visualization, OutpatientVisitResource, scopeToJson, EditSettings, $http, possibleFilters, NgTableParams) {
 
@@ -49,16 +52,14 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
           scope.series = scope.pivot.rows || scope.options.series || [];
           if (scope.options.interval) {
             scope.interval = scope.options.interval;
-          }
-          else {
+          } else {
             scope.interval = 'day';
             scope.options.interval = 'day';
           }
 
           if (scope.options.range) {
             scope.range = scope.options.range
-          }
-          else {
+          } else {
             scope.range = 1;
             scope.options.range = 1;
           }
@@ -82,61 +83,63 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
           scope.data = [];
 
           scope.chartConfig = {
-            options: {
-              chart: {
-                type: 'line',
-                zoomType: 'x',
-                resetZoomButton: {
-                  theme: {
-                    display: 'none'
+            chart: {
+              type: 'line',
+              zoomType: 'x',
+              resetZoomButton: {
+                theme: {
+                  display: 'none'
+                }
+              },
+              events: {
+                selection: function (event) {
+                  if (event.xAxis) {
+                    var xMin = event.xAxis[0].min;
+                    var xMax = event.xAxis[0].max;
+                    scope.zoomWithRange(xMin, xMax);
                   }
-                },
-                events: {
-                  selection: function (event) {
-                    if (event.xAxis) {
-                      var xMin = event.xAxis[0].min;
-                      var xMax = event.xAxis[0].max;
-                      scope.zoomWithRange(xMin, xMax);
-                    }
+                }
+              },
+              animation: false
+            },
+            credits: {
+              enabled: false
+            },
+            navigation: {
+              buttonOptions: {
+                enabled: false
+              }
+            },
+            plotOptions: {
+              series: {
+                states: {
+                  hover: {
+                    halo: false
                   }
                 },
                 animation: false
               },
-              credits: {
-                enabled: false
-              },
-              exporting: {enabled: false},
-              plotOptions: {
-                series: {
-                  states: {
-                    hover: {
-                      halo: false
-                    }
-                  },
-                  animation: false
-                },
-                line: {
-                  events: {}
-                }
-              },
-              events: {},
-              tooltip: {
-                shared: true,
-                crosshairs: [{
-                               width: 1.5,
-                               dashStyle: 'solid',
-                               color: 'black'
-                             }, false],
-                dateTimeLabelFormats: {
-                  millisecond: "%B %e",
-                  second: "%B %e",
-                  minute: "%B %e",
-                  hour: "%B %e",
-                  day: "%B %e",
-                  week: "%B %e",
-                  month: "%B %e",
-                  year: "%B %e"
-                }
+              line: {
+                events: {}
+              }
+            },
+            events: {},
+            tooltip: {
+              shared: true,
+              crosshairs: [{
+                width: 1.5,
+                dashStyle: 'solid',
+                color: 'black'
+              }, false],
+              dateTimeLabelFormats: {
+                millisecond: "%B %e",
+                second: "%B %e",
+                minute: "%B %e",
+                hour: "%B %e",
+                day: "%B %e",
+                week: "%B %e",
+                month: "%B %e",
+                year: "%B %e"
               }
             },
             xAxis: {
@@ -199,16 +202,29 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
               });
           });
 
-          scope.$on('exportVisualization', function () {
-            visualization.export(angular.extend({}, scopeToJson(scope), {
-              visualization: {
-                name: 'line'
-              },
-              pivot: {
-                cols: scope.series
-              },
-              source: 'export'
-            }));
+          scope.$on('exportPNG', function (){
+            scope.chartConfig.getChartObj().exportChartLocal({
+              type:'image/png',
+              filename: "chart"
+            });
+          });
+
+          scope.$on('exportJPEG', function (){
+            scope.chartConfig.getChartObj().exportChartLocal({
+              type:'image/jpeg',
+              filename: "chart"
+            });
+          });
+
+          scope.$on('exportPDF', function (){
+            scope.chartConfig.getChartObj().exportChartLocal({
+              type:'application/pdf',
+              filename: "chart"
+            });
+          });
+
+          scope.$on('printChart', function (){
+            scope.chartConfig.getChartObj().print();
           });
 
           scope.$on('saveVisualization', function () {
@@ -430,10 +446,16 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
                 var ix = 0;
                 while (curDate.isBefore(maxDate) || curDate.isSame(maxDate)) {
                   if (curDate.isSame(moment(dates[ix]))) {
-                    filledPoints.push({x: curDate.valueOf(), y: (counts[ix] || 0)});
+                    filledPoints.push({
+                      x: curDate.valueOf(),
+                      y: (counts[ix] || 0)
+                    });
                     ix++;
                   } else {
-                    filledPoints.push({x: curDate.valueOf(), y: 0});
+                    filledPoints.push({
+                      x: curDate.valueOf(),
+                      y: 0
+                    });
                   }
                   curDate.add(1, interval);
                 }
@@ -448,7 +470,10 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
            * @returns dateRange = {from: -1, to: -1}  -1 if not found, time in millis if found
            */
           var findDateRangeFromFilter = function () {
-            var dateRange = {from: 0, to: 0};
+            var dateRange = {
+              from: 0,
+              to: 0
+            };
             var filteredDate;
             var mins = [];
             var maxs = [];
@@ -632,7 +657,10 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
               var count = b.count ? b.count.value : b.doc_count;
               agg.counts.push(count);
               //return [b.key, count];
-              return {x: moment(b.key).add(years, 'y').valueOf(), y: count};
+              return {
+                x: moment(b.key).add(years, 'y').valueOf(),
+                y: count
+              };
             });
           };
 
@@ -688,7 +716,5 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
         }
       };
     }
-  }
-    ;
-})
-;
+  };
+});

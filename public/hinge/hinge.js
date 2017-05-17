@@ -62,12 +62,29 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function ($filt
 
         scope.exportViz = function () {
           // broadcast on parent since transcluded scope is our sibling
+          scope.$parent.$broadcast('exportPNGImage');
           scope.$parent.$broadcast('exportVisualization');
         };
 
         scope.saveViz = function () {
           // broadcast on parent since transcluded scope is our sibling
           scope.$parent.$broadcast('saveVisualization');
+        };
+
+        scope.exportPNG = function () {
+          scope.$parent.$broadcast('exportPNG');
+        };
+
+        scope.exportJPEG = function () {
+          scope.$parent.$broadcast('exportJPEG');
+        };
+
+        scope.exportPDF = function () {
+          scope.$parent.$broadcast('exportPDF');
+        };
+
+        scope.printChart = function () {
+          scope.$parent.$broadcast('printChart');
         };
       },
       post: function (scope, element) {

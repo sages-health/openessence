@@ -46,7 +46,8 @@ require('text-angular'); // must be after the other text-angular resources
 require('d3');
 require('leaflet');
 require('highcharts');
-require('exporting');
+require('highcharts/modules/exporting');
+require('highcharts/modules/offline-exporting');
 require('drilldown');
 require('no-data-to-display');
 require('highcharts-ng');
