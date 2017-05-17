@@ -28,7 +28,7 @@ ADD config /code/config
 # Hopefully once Docker-in-Docker becomes easier we can build the app in a separate container and not have to
 # worry about all the extra setup and tear down building inside the container entails
 
-RUN buildDeps='autoconf ca-certificates curl git pkg-config'; \
+RUN buildDeps='autoconf ca-certificates curl git pkg-config build-essential bzip2'; \
     set -x; \
     apt-get -qq update && apt-get -qq install -y $buildDeps --no-install-recommends \
     && npm --silent update -g npm \
