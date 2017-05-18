@@ -1,6 +1,5 @@
 #!/bin/bash
 
-env GIT_SSL_NO_VERIFY=true git clone https://r1l-gitlab/sages/openessence.git
 cd openessence
 
 sudo systemctl start docker

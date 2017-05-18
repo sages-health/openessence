@@ -1,8 +1,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var replace = require('gulp-replace');
-var rename= require('gulp-rename');
 var gutil = require('gulp-util');
 var del = require('del');
 var _ = require('lodash');
@@ -28,9 +26,7 @@ var gitHash;
 gulp.task('clean', function (callback) {
   del([
     'dist',
-    '.tmp',
-    'public/outpatient/leaflet-map.js',
-    'public/partials/home.html'
+    '.tmp'
   ], callback);
 });
 
@@ -41,25 +37,11 @@ gulp.task('git-hash', function(callback){
         }, 
         function(err,hash){
           gitHash = hash;
-          console.log(hash);
           callback();
         });
 });
 
 gulp.task('setVariables', ['git-hash'], function(){
-  gulp.src('public/partials/templates/home.template.html')
-    .pipe(replace('%%repo-url%%', settings.REPO_URL ? settings.REPO_URL : 'https://github.com/sages-health/openessence'))
-    .pipe(replace('%%git-commit-hash%%', gitHash))
-    .pipe(rename('public/partials/home.html'))
-    .pipe(gulp.dest('./'));
-    
-
-  gulp.src(['public/scripts/templates/leaflet-map.template.js'])
-  .pipe(replace(/%%baseMapURL%%/g, settings.MAP_URL !== undefined ? settings.MAP_URL : "''"))
-  .pipe(replace(/%%baseLatitude%%/g, settings.MAP_LATITUDE !== undefined ? settings.MAP_LATITUDE : '41.4925'))
-  .pipe(replace(/%%baseLongitude%%/g, settings.MAP_LONGITUDE !== undefined ? settings.MAP_LONGITUDE : '-99.9018'))
-  .pipe(rename("public/outpatient/leaflet-map.js"))
-  .pipe(gulp.dest('./'));
 
 });
 

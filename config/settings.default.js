@@ -1,8 +1,6 @@
 'use strict';
 
 module.exports = function (settings) {
-  settings.phantom.enabled = true;
-
   settings.users = {
     'foo@bar.com': {
       roles: ['admin']
