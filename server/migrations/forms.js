@@ -133,6 +133,7 @@ module.exports = [
         values: [
           {value:'M', name:'Male'},
           {value:'F',name:'Female'},
+          {value:'OTH',name:'Other'},
           {value:'UNK',name:'Unknown'}
         ]
       },
