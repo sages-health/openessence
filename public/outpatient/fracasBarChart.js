@@ -135,10 +135,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             title: {
               text: scope.options.labels.title
             },
-            series: [],
-            credits: {
-              enabled: false
-            }
+            series: []
           };
 
           /**
