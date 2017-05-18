@@ -35,6 +35,7 @@ Vagrant.configure(2) do |config|
     development.vm.network "forwarded_port", guest: 9300, host: 9300
     development.vm.network "forwarded_port", guest: 8080, host: 8080
     development.vm.network "forwarded_port", guest: 8443, host: 8443
+    development.vm.network "forwarded_port", guest: 6379, host: 6379
 
   	config.vm.provision :shell, privileged:false, path: "vagrant/scripts/1_setup.sh"
   	config.vm.provision :shell, privileged:false, path: "vagrant/scripts/2_install.sh"
@@ -51,7 +52,7 @@ Vagrant.configure(2) do |config|
       vb.memory = "4096"
     end
 
-	  config.vm.synced_folder ".", "/openessence"
+	  config.vm.synced_folder ".", "/home/vagrant/openessence"
 	
     development.vm.network "forwarded_port", guest: 9200, host: 9200
     development.vm.network "forwarded_port", guest: 9300, host: 9300
