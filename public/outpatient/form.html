@@ -23,7 +23,7 @@
     <div class="input-group">
       <!-- TODO in angular-ui/bootstrap master they removed weeks -->
       <input id="entry-visit-date" name="visitDate" type="text" class="form-control" required
-             ng-model="visit.visitDate" datepicker-popup
+             ng-model="visit.visitDate" datepicker-popup ng-init="current_date"
              current-text="{{'date.current' | i18next}}" clear-text="{{'date.clear' | i18next}}"
              close-text="{{'date.close' | i18next}}" toggle-weeks-text="{{'date.weeks' | i18next}}" show-weeks="false" is-open="datePopupsOpen.visitDate">
 
@@ -47,7 +47,7 @@
             ng-model="visit.visitType">
       <ui-select-match placeholder="Visit Type">{{$item}}</ui-select-match>
       <ui-select-choices repeat="v.name as item in fields.visitType.values | filter:$select.search">
-            {{item}}
+            {{item.name}}
       </ui-select-choices>
     </ui-select>
 
@@ -328,7 +328,7 @@
         <ui-select-choices repeat="d.name as d in fields.diagnoses.values">
               {{d.name}}
         </ui-select-choices>
-      </ui-select>      
+      </ui-select>
     </div>
 
     <div ng-if="form.dataType === 'aggregate'">
