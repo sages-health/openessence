@@ -33,6 +33,9 @@ module.exports = function () {
             if (years === 0) {
               // months are defined as intervals of 30 days, NOT calendar months
               return Math.floor((Date.now() - dateOfBirth.getTime()) / (1000 * 60 * 60 * 24 * 30));
+            } else {
+              var years_in_ms = years * (1000 * 60 * 60 * 24 * 365)
+              return Math.floor((Date.now() - (dateOfBirth.getTime() + years_in_ms)) / (1000 * 60 * 60 * 24 * 30));
             }
           };
 
