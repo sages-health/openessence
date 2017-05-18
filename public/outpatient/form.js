@@ -143,7 +143,8 @@ module.exports = function ($parse, OutpatientVisitResource) {
           scope.allSyndromes = scope.fields.syndromes ? scope.fields.syndromes.values.map(function (v) {
             return {name: v.name};
           }) : [];
-          scope.allDiagnoses = scope.fields.diagnoses ? scope.fields.diagnoses.values.map(function (v) {
+          scope.allDiagnoses = s
+          scope.fields.diagnoses ? scope.fields.diagnoses.values.map(function (v) {
             return {name: v.name};
           }) : [];
 
