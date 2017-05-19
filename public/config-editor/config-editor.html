@@ -59,8 +59,9 @@
                   <td>
                     <div class="checkbox">
                       <label>
-                        <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
-                               ng-checked="field.enabled">{{'op.' + getLocaleValue(field.name) | i18next}}
+                        <input type="checkbox" ng-value="field.name" ng-model="field.enabled" ng-click="checkLock(field)"
+                               ng-checked="field.enabled">
+                        {{'op.' + getLocaleValue(field.name) | i18next}} {{ field.locked ? '*' : ''}}
                       </label>
                     </div>
                   </td>
