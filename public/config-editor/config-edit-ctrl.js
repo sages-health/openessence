@@ -180,8 +180,15 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
     return groupField.length > 0 ? groupField[0] : null;
   };
 
+  $scope.checkLock = function (field) {
+    // if field is locked, undo user's changes
+    if ( field.locked ) {
+        field.enabled = !field.enabled;
+    }
+  };
+
   $scope.openAddNewFieldModal = function () {
-    
+
     return $modal.open({
       template: require('./config-new-field.html'),
       backdrop: 'static',
@@ -190,7 +197,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
         scope.possibleValues = scope.possibleValues;
 
         scope.save = function (form) {
-      
+
 
           // check if form is valid
           scope.yellAtUser = form.$invalid;
