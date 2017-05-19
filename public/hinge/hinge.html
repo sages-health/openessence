@@ -9,7 +9,9 @@
         <button type="button" class="save" ng-click="saveViz()" popover="{{'hinge.SaveVisualization' | i18next}}" popover-trigger="mouseenter">
           <span class="fa fa-floppy-o toolbar-icon" ></span>
         </button>
-        <div class="btn-group" dropdown dropdown-append-to-body>
+        <div ng-if="visualization.name !== 'table' 
+                 && visualization.name !== 'crosstab' 
+                 && visualization.name !== 'map'" class="btn-group" dropdown dropdown-append-to-body>
           <button type="button" class="export" dropdown-toggle popover="{{'hinge.ExportVisualization' | i18next}}" popover-trigger="mouseenter">
             <span class="fa fa-share-square-o toolbar-icon"></span>
           </button>
@@ -20,7 +22,14 @@
             <!-- <li role="menuitem"><a ng-click="exportPDF()">Export to PDF</a> -->
           </ul>
         </div>
-        <button type="button" class="settings" ng-click="settings()" popover="{{'hinge.Settings' | i18next}}" popover-trigger="mouseenter">
+        <button ng-if="visualization.name == 'table'" type="button" class="export" ng-click="exportViz()" popover="{{'hinge.ExportVisualization' | i18next}}"
+                popover-trigger="mouseenter">
+          <span class="fa fa-share-square-o toolbar-icon"></span>
+        </button>
+
+        <button ng-if="visualization.name !== 'table' 
+                    && visualization.name !== 'crosstab' 
+                    && visualization.name !== 'map'" type="button" class="settings" ng-click="settings()" popover="{{'hinge.Settings' | i18next}}" popover-trigger="mouseenter">
           <span class="fa fa-cog toolbar-icon"></span>
         </button>
       </div>
