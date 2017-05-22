@@ -2,9 +2,12 @@
 
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
+var Highcharts = require('highcharts');
+require('highcharts/modules/exporting')(Highcharts);
+require('highcharts/modules/offline-exporting')(Highcharts);
 
 angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ function ($rootScope, $log, $location, $timeout, debounce,
-                                                                                        updateURL, $filter, EditSettings) {
+  updateURL, $filter, EditSettings) {
   return {
     restrict: 'E',
     template: require('./bar-chart.html'),
@@ -44,63 +47,74 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
           });
 
           scope.chartConfig = {
-            options: {
-              chart: {
-                type: 'column',
-                animation: false,
-                events: {}
-              },
-              exporting: {enabled: false},
-              tooltip: {
-                formatter: function () {
+            chart: {
+              type: 'bar',
+              animation: false,
+              events: {},
+              width: scope.options.width - 10,
+              height: scope.options.height
+            },
+            navigation: {
+              buttonOptions: {
+                enabled: false
+              }
+            },
+            credits: {
+              enabled: false
+            },
+            exporting: {
+              fallbackToExportServer: false
+            },
+            tooltip: {
+              formatter: function () {
 
-                  var identifier = '';
-                  if (this.series.options.id === 'single') {
-                    identifier = 'Count';
-                  } else {
-                    identifier = this.series.name;
-                  }
-
-                  return '<span>Category: <i>' + this.key + '</i></span><br/>' + '<span>' + identifier + ': <b>' + this.y + '</b></span><br/>';
+                var identifier = '';
+                if (this.series.options.id === 'single') {
+                  identifier = 'Count';
+                } else {
+                  identifier = this.series.name;
                 }
+
+                return '<span>Category: <i>' + this.key + '</i></span><br/>' + '<span>' + identifier + ': <b>' + this.y + '</b></span><br/>';
+              }
+            },
+            plotOptions: {
+              column: {
+                pointPadding: 0.1,
+                borderWidth: 0,
+                groupPadding: 0
               },
-              plotOptions: {
-                column: {
-                  pointPadding: 0.1,
-                  borderWidth: 0,
-                  groupPadding: 0
-                },
-                series: {
-                  point: {
-                    events: {
-                      click: function () {
+              series: {
+                point: {
+                  events: {
+                    click: function () {
 
-                        var point = {
-                          name: null,
-                          col: null
-                        };
+                      var point = {
+                        name: null,
+                        col: null
+                      };
 
-                        if (this.series.options.id === 'single') {
-                          point.name = this.category;
-                          if (scope.pivot.cols.length > 0) {
-                            point.col = scope.pivot.cols[0];
-                          } else {
-                            point.col = scope.pivot.rows[0];
-                          }
-                        } else {
-                          point.name = this.series.name;
+                      if (this.series.options.id === 'single') {
+                        point.name = this.category;
+                        if (scope.pivot.cols.length > 0) {
                           point.col = scope.pivot.cols[0];
+                        } else {
+                          point.col = scope.pivot.rows[0];
                         }
-
-                        narrowFilters(point);
+                      } else {
+                        point.name = this.series.name;
+                        point.col = scope.pivot.cols[0];
                       }
+
+                      narrowFilters(point);
                     }
                   }
                 }
-              },
-              legend: {
-                enabled: true
               }
+            },
+
+            legend: {
+              enabled: false
             },
             xAxis: {
               type: 'category',
@@ -121,14 +135,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             title: {
               text: scope.options.labels.title
             },
-            series: [],
-            credits: {
-              enabled: false
-            },
-            size: {
-              width: scope.options.width - 10,
-              height: scope.options.height
-            }
+            series: []
           };
 
           /**
@@ -141,93 +148,93 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
           var reloadDebounce = function () {
 
-              scope.chartConfig.series = [];
-              scope.chartConfig.xAxis.categories = [];
+            scope.chartConfig.series = [];
+            scope.chartConfig.xAxis.categories = [];
 
-              scope.aggData = scope.aggData.sort(function(a,b){
-                return b.values[0].value - a.values[0].value;
-              });
-              
-              var length = scope.aggData.length < scope.options.labels.displayNumber ? scope.aggData.length : scope.options.labels.displayNumber;
+            scope.aggData = scope.aggData.sort(function (a, b) {
+              return b.values[0].value - a.values[0].value;
+            });
+
+            var length = scope.aggData.length < scope.options.labels.displayNumber ? scope.aggData.length : scope.options.labels.displayNumber;
+
+            for (var i = 0; i < length; i++) {
+              if (typeof scope.aggData[i].colName === 'undefined') {
+                //scope.chartConfig.xAxis.categories.push(scope.aggData[i].key);
+                scope.chartConfig.xAxis.categories.push(scope.aggData[i].values[0].colName || '');
+              } else {
+                scope.chartConfig.xAxis.categories.push(scope.aggData[i].colName);
+              }
+            }
+
+            var colors = Highcharts.getOptions().colors;
+
+            var series = [];
+
+            if ((scope.pivot.cols.length <= 0 && scope.pivot.rows.length > 0) || (scope.pivot.rows.length <= 0 && scope.pivot.cols.length > 0)) {
+
+              scope.chartConfig.legend.enabled = false;
+
+              var series = [{
+                id: 'single',
+                data: [],
+                color: colors[0]
+              }];
+              for (var i = 0; i < length; i++) {
+                series[0].data.push(scope.aggData[i].values[0].value);
+              }
+            } else {
+              scope.chartConfig.legend.enabled = true;
+
+              var subCats = [];
 
               for (var i = 0; i < length; i++) {
-                if (typeof scope.aggData[i].colName === 'undefined') {
-                  //scope.chartConfig.xAxis.categories.push(scope.aggData[i].key);
-                  scope.chartConfig.xAxis.categories.push(scope.aggData[i].values[0].colName || '');
-                } else {
-                  scope.chartConfig.xAxis.categories.push(scope.aggData[i].colName);
+                for (var y = 0; y < scope.aggData[i].values.length; y++) {
+                  var found = false;
+                  for (var x = 0; x < subCats.length; x++) {
+                    if (subCats[x] === scope.aggData[i].values[y].rowName) {
+                      found = true;
+                    }
+                  }
+
+                  if (found === false) {
+                    if (typeof scope.aggData[i].values[y].rowName !== 'undefined') {
+                      subCats.push(scope.aggData[i].values[y].rowName);
+                    }
+                  }
                 }
               }
 
-              var colors = Highcharts.getOptions().colors;
-
-              var series = [];
-
-              if ((scope.pivot.cols.length <= 0 && scope.pivot.rows.length > 0) || (scope.pivot.rows.length <= 0 && scope.pivot.cols.length > 0)) {
-
-                scope.chartConfig.options.legend.enabled = false;
-
-                var series = [{
-                                id: 'single',
-                                data: [],
-                                color: colors[0]
-                              }];
-                for (var i = 0; i < length; i++) {
-                  series[0].data.push(scope.aggData[i].values[0].value);
-                }
-              } else {
-                scope.chartConfig.options.legend.enabled = true;
-
-                var subCats = [];
+              for (var x = 0; x < subCats.length; x++) {
+                var subSeries = {
+                  name: subCats[x],
+                  data: [],
+                  color: colors[x]
+                };
 
                 for (var i = 0; i < length; i++) {
-                  for (var y = 0; y < scope.aggData[i].values.length; y++) {
-                    var found = false;
-                    for (var x = 0; x < subCats.length; x++) {
-                      if (subCats[x] === scope.aggData[i].values[y].rowName) {
+
+                  var found = false;
+
+                  if (scope.aggData[i].values.length > 0) {
+                    for (var y = 0; y < scope.aggData[i].values.length; y++) {
+                      if (subSeries.name === scope.aggData[i].values[y].rowName) {
+                        subSeries.data.push(scope.aggData[i].values[y].value);
                         found = true;
                       }
                     }
+                  }
 
-                    if (found === false) {
-                      if (typeof scope.aggData[i].values[y].rowName !== 'undefined') {
-                        subCats.push(scope.aggData[i].values[y].rowName);
-                      }
-                    }
+                  if (found === false) {
+                    subSeries.data.push(0);
                   }
                 }
 
-                for (var x = 0; x < subCats.length; x++) {
-                  var subSeries = {
-                    name: subCats[x],
-                    data: [],
-                    color: colors[x]
-                  };
-
-                  for (var i = 0; i < length; i++) {
-
-                    var found = false;
-
-                    if (scope.aggData[i].values.length > 0) {
-                      for (var y = 0; y < scope.aggData[i].values.length; y++) {
-                        if (subSeries.name === scope.aggData[i].values[y].rowName) {
-                          subSeries.data.push(scope.aggData[i].values[y].value);
-                          found = true;
-                        }
-                      }
-                    }
-
-                    if (found === false) {
-                      subSeries.data.push(0);
-                    }
-                  }
-
-                  series.push(subSeries);
-                }
+                series.push(subSeries);
               }
+            }
 
-              scope.chartConfig.series = series;
-            };
+            scope.chartConfig.series = series;
+          };
 
           var narrowFilters = function (point) {
             var column = removeAsterix(point.col);
@@ -269,6 +276,31 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
             return response;
           };
 
+          scope.$on('exportPNG', function () {
+            scope.chartConfig.getChartObj().exportChartLocal({
+              type: 'image/png',
+              filename: "chart"
+            });
+          });
+
+          scope.$on('exportJPEG', function () {
+            scope.chartConfig.getChartObj().exportChartLocal({
+              type: 'image/jpeg',
+              filename: "chart"
+            });
+          });
+
+          scope.$on('exportPDF', function () {
+            scope.chartConfig.getChartObj().exportChartLocal({
+              type: 'application/pdf',
+              filename: "chart"
+            });
+          });
+
+          scope.$on('printChart', function () {
+            scope.chartConfig.getChartObj().print();
+          });
+
           scope.$watchCollection('[aggData]', function () {
             reload();
           });
@@ -284,8 +316,8 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
           });
 
           scope.$watchCollection('[options.height, options.width]', function () {
-            scope.chartConfig.size.height = scope.options.height;
-            scope.chartConfig.size.width = scope.options.width - 10;
+            scope.chartConfig.chart.height = scope.options.height;
+            scope.chartConfig.chart.width = scope.options.width - 10;
           });
 
         }
@@ -294,4 +326,3 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
   };
 
 });
-

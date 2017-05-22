@@ -5,7 +5,7 @@ var directives = require('../scripts/modules').directives;
 var L = require('leaflet');
 
 angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function ($q, DistrictResource, OutpatientVisitResource,
-  $timeout, $rootScope, debounce, $http) {
+  $timeout, $rootScope, debounce, $http, mapUrl, mapLatitude, mapLongitude) {
 
   return {
     restrict: 'E',
@@ -15,7 +15,8 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
       filters: '='
     },
     link: function postLink(scope, element) {
-      var baseMapURL = %%baseMapURL%%;
+
+      var baseMapURL = mapUrl;
       // if they ever shut down the HTTPs version, here's the HTTP url:
       //var baseMapURL = 'http://ttiles0{s}.mqcdn.com/tiles/1.0.0/vy/map/{z}/{x}/{y}.png';
 
@@ -58,7 +59,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
 
       // don't wait for data to build map and fetch base layer tiles
       var map = L.map(element.children()[0], {
-        center: new L.LatLng(%%baseLatitude%%,%%baseLongitude%%),
+        center: new L.LatLng(mapLatitude,mapLongitude),
         zoom: 6
       });
 

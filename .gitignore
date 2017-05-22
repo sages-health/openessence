@@ -42,8 +42,4 @@ bower_components/
 *.der
 *.pem
 
-# Templated files
-public/outpatient/leaflet-map.js
-public/partials/home.html
-
 data/

@@ -82,11 +82,11 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
             $scope.goodRecCount = 0;
             $scope.total = $scope.data.tableData.length;
             $scope.uploading = true;
-            $scope.data.tableData.forEach(function (row) { 
+            $scope.data.tableData.forEach(function (row) {
               var mappedData = {};
                 for(var column in row){
                     mappedData[$scope.data.mapping[column]] = row[column];
-                } 
+                }
               if ('visitDate' in mappedData) {
 
 

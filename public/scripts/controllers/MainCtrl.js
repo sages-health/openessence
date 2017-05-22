@@ -1,7 +1,7 @@
 'use strict';
 
 // @ngInject
-module.exports = function ($timeout, $filter, $scope, $window, $location, $state, appName, user, visitsReportModal, aggregateReportModal,//
+module.exports = function ($timeout, $filter, $scope, $window, $location, $state, appName, user, commit, repoUrl, visitsReportModal, aggregateReportModal,//
                            Workbench, Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope, locale, tmhDynamicLocale, datepickerPopupConfig) {
   // ****** Start Locale
   $scope.localeSelect2Options = [{value: 'en', label: 'English'}, {value: 'es', label: 'Spanish'}];
@@ -64,7 +64,9 @@ module.exports = function ($timeout, $filter, $scope, $window, $location, $state
   };
 
   $scope.appName = appName;
-
+  $scope.commit = commit;
+  $scope.repoUrl = repoUrl; 
+  
   $scope.user = user;
   $scope.logout = function () {
     // wait for acknowledgement of logout from server before reloading

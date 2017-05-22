@@ -8,7 +8,9 @@ module.exports = [
       {
         name: 'visitDate',
         aggregable: true,
-        enabled: false
+        enabled: true,
+        // users cannot change the 'enabled' value of a locked field
+        locked: true
       },
 
       {
@@ -133,6 +135,7 @@ module.exports = [
         values: [
           {value:'M', name:'Male'},
           {value:'F',name:'Female'},
+          {value:'OTH',name:'Other'},
           {value:'UNK',name:'Unknown'}
         ]
       },
