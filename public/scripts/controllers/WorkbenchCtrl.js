@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 var angular = require('angular');
 
@@ -19,7 +19,8 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       handle: '.viz-drag-handle'
     },
     resizable: {
-      enabled: true
+      enabled: true,
+      handles: "e"
     }
   };
 
@@ -95,9 +96,9 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       $scope.addVisualization(viz.visualization.name, options);
       $scope.vizMenuOpen = false;
     } else if (state.visualizations || state.filters) { // if we are loading workbench state - for phantom reports
-      state.filters.forEach(function(filter){
-        $scope.activeFilters.push(angular.extend({}, $scope.possibleFilters[filter.filterID], filter));
-      })
+        state.filters.forEach(function (filter) {
+            $scope.activeFilters.push(angular.extend({}, $scope.possibleFilters[filter.filterID], filter));
+        });
       //$scope.activeFilters = state.filters || [];
       if (Array.isArray(state.visualizations)) {
         state.visualizations.sort(sortVisualizations);
@@ -147,6 +148,13 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       $scope.menuPosition = 'bottom-left'; // button is at far right, so move menu over
     }
   });
+
+  $scope.$watchCollection(function () {
+      var panel = angular.element(".workbench-panel");
+      return [panel.height(), panel.width()];
+  }, function () {
+      angular.element('li.workbench-visualization').height(angular.element(".workbench-panel").height());
+  }, true);
 
   $scope.addVisualization = function (name, options) {
     options = options || {};
