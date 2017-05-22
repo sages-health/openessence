@@ -5,12 +5,25 @@
     <h3 class="panel-title pull-left">{{workbenchName}} <span ng-if='workbenchName' ng-i18next>navBar.workbench</span></h3>
 
     <div class="col-md-3 pull-right">
-        <button class="btn btn-primary" ng-click="addVisualization()"
-                popover-trigger="mouseenter">
-          <span class="icon-plus"></span>
-          <span ng-i18next>wb.AddWidget</span>
-        </button>
-        <button class="btn btn-primary" ng-click="saveWorkbench()"
+        <div style="display:inline-block;" popover="{{'wb.AddWidget' | i18next}}" popover-trigger="mouseenter">
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+              <span class="icon-plus"></span>
+              <span ng-i18next>wb.AddWidget</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a ng-click="addVisualization('table',{});">{{'hinge.Table' | i18next}}</a></li>
+                <li><a ng-click="addVisualization('crosstab',{});">{{'hinge.Crosstab' | i18next}}</a></li>
+                <li><a ng-click="addVisualization('line',{})">{{'hinge.Timeseries' | i18next}}</a></li>
+                <li><a ng-click="addVisualization('yoy',{})">{{'hinge.YearOverYear' | i18next}}</a></li>
+                <li><a ng-click="addVisualization('pie',{})">{{'hinge.PieChart' | i18next}}</a></li>
+                <li><a ng-click="addVisualization('bar',{})">{{'hinge.BarChart' | i18next}}</a></li>
+                <li><a ng-click="addVisualization('map',{})">{{'hinge.Map' | i18next}}</a></li>
+                <li><a ng-click="addVisualization()">{{'hinge.DefaultVizName' | i18next }}</a></li>
+            </ul>
+          </div>
+         </div>
+        <button class="btn btn-primary" ng-click="saveWorkbench()" popover="{{'wb.SaveWorkbench' | i18next}}"
                 popover-trigger="mouseenter">
           <span class="icon-floppy"></span>
           <span ng-i18next>app.Save</span>

@@ -166,7 +166,8 @@
         "Print": "Print",
         "ExportToPNG": "Export to PNG",
         "ExportToJPEG": "Export to JPEG",
-	      "DefaultViewText": "Select a visualization from the list below"
+	      "DefaultViewText": "Select a visualization from the list below",
+        "DefaultVizText": "Empty Widget"
       },
       "locale": {
         "Locale": "Locale",
@@ -599,7 +600,8 @@
         "Print": "Imprimir",
         "ExportToPNG": "Exportar a PNG",
         "ExportToJPEG": "Exportar a JPEG",
-	      "DefaultViewText": "Select a visualization from the list below"
+	      "DefaultViewText": "Select a visualization from the list below",
+        "DefaultVizText": "Empty Widget"
       },
       "locale": {
         "Locale": "Local",
