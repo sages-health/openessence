@@ -49,7 +49,9 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
   };
   $scope.setEnabled = function (val) {
     $scope.siteTemplate.fields.forEach(function (field) {
-      field.enabled = val;
+      if ( !field.locked ) {
+        field.enabled = val;
+      }
     });
   };
 
@@ -178,13 +180,6 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
       return field.groupName === fld.name;
     });
     return groupField.length > 0 ? groupField[0] : null;
-  };
-
-  $scope.checkLock = function (field) {
-    // if field is locked, undo user's changes
-    if ( field.locked ) {
-        field.enabled = !field.enabled;
-    }
   };
 
   $scope.openAddNewFieldModal = function () {
