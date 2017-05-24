@@ -149,13 +149,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     }
   });
 
-  $scope.$watchCollection(function () {
-      var panel = angular.element(".workbench-panel");
-      return [panel.height(), panel.width()];
-  }, function () {
-      angular.element('li.workbench-visualization').height(angular.element(".workbench-panel").height());
-  }, true);
-
   $scope.addVisualization = function (name, options) {
     options = options || {};
     var id = options.id;

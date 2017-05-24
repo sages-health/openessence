@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
@@ -146,10 +146,23 @@ angular.module(directives.name).directive('outpatientTable',
                   }
                 }
               });
+
               scope.formLoaded = true;
 
               scope.$watchCollection('queryString', function () {
                 scope.tableParams.reload();
+              });
+
+              scope.$watch(function () {
+                  //check for change of panel height
+                  return angular.element(".workbench-panel").height();
+              }, function (hgt) {
+                  //find panel where height changed and resize the parent visualization
+                  var p = angular.element(".workbench-panel");
+                  for (var i = 0; i < p.length; i++) {
+                    if (angular.element(p[i]).height() === hgt)
+                        angular.element(p[0]).closest('li.workbench-visualization').height(hgt);
+                  }
               });
 
               /*  Disabled, pending validation, auto row count based on sizing - 4/17/17 (KFischer)
