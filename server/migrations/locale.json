@@ -163,7 +163,10 @@
         "Map": "Map",
         "ReportRows": "Report Rows",
         "AttributeColumns": "Attribute Columns",
-	"DefaultViewText": "Select a visualization from the list below"
+        "Print": "Print",
+        "ExportToPNG": "Export to PNG",
+        "ExportToJPEG": "Export to JPEG",
+	      "DefaultViewText": "Select a visualization from the list below"
       },
       "locale": {
         "Locale": "Locale",
@@ -593,7 +596,10 @@
         "Map": "Mapa",
         "ReportRows": "Filas de reporte",
         "AttributeColumns": "Columnas de atributos",
-	"DefaultViewText": "Select a visualization from the list below"
+        "Print": "Imprimir",
+        "ExportToPNG": "Exportar a PNG",
+        "ExportToJPEG": "Exportar a JPEG",
+	      "DefaultViewText": "Select a visualization from the list below"
       },
       "locale": {
         "Locale": "Local",
