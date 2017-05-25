@@ -24,7 +24,7 @@ function locals (req, res, next) {
 
   if (process.env.DEPLOY_DATE) {
     // DEPLOY_DATE is in seconds since that's what date +"%s" returns
-    res.locals.deployDate = parseInt(process.env.DEPLOY_DATE, 10) * 1000;
+    res.locals.deployDate = process.env.DEPLOY_DATE;
   } else {
     res.locals.deployDate = '';
   }

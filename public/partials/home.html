@@ -104,7 +104,10 @@
           </a>
           <ul class="dropdown-menu">
             <li ng-show="user.isAdmin()">
-              <a href="{{repoUrl}}/commit/{{commit}}">Version: {{commit}}</git>
+              <a href="{{repoUrl}}/commit/{{commit}}">Version: {{commit}}</a>
+            </li>
+            <li ng-show="user.isAdmin()">
+              <a>Build: {{deployDate}}</a>
             </li>
             <li>
               <!--<a ui-sref="settings" ng-i18next>navBar.settings</a>-->
