@@ -294,10 +294,10 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
           // Removing functionality for clickthrough.
           if (scope.source === 'dashboard') {
-            scope.chartConfig.options.plotOptions.series.point.events = {
+            scope.chartConfig.plotOptions.series.point.events = {
               click: chartToWorkbench
             };
-            scope.chartConfig.options.chart.events = {
+            scope.chartConfig.chart.events = {
               click: chartToWorkbench
             };
           }
