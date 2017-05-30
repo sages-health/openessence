@@ -174,7 +174,8 @@
     "text-angular-setup": "./bower_components/textAngular/src/textAngularSetup.js",
     "i18next": "./node_modules/i18next-client/i18next.js",
     "ng-i18next": "./bower_components/ng-i18next/dist/ng-i18next.js",
-    "angular-dynamic-locale": "./bower_components/angular-dynamic-locale/dist/tmhDynamicLocale.js"
+    "angular-dynamic-locale": "./bower_components/angular-dynamic-locale/dist/tmhDynamicLocale.js",
+    "angular-bootstrap-toggle": "./bower_components/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.js"
   },
   "locales": {
     "en-us": "./bower_components/angular-i18n/angular-locale_en-us.js",

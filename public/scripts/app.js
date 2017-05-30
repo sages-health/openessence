@@ -72,12 +72,13 @@ require('./controllers');
 require('./services');
 require('./directives');
 require('./filters');
+require('angular-bootstrap-toggle');
 
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.sortable',
   'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
   'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll',
-  'jm.i18next', 'tmh.dynamicLocale', frable.name]
+  'jm.i18next', 'tmh.dynamicLocale', frable.name, 'ui.toggle']
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));
