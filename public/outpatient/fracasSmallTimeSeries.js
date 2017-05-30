@@ -98,9 +98,9 @@ angular.module(directives.name).directive('outpatientSmallTimeSeries', //
                 data.data = [];
                 scope.chartConfig.series.push(data);
               }
-              scope.chartConfig.options.legend.enabled = true;
-              scope.chartConfig.options.xAxis.lineWidth = 0;
-              scope.chartConfig.options.yAxis.lineWidth = 0;
+              scope.chartConfig.legend.enabled = true;
+              scope.chartConfig.xAxis.lineWidth = 0;
+              scope.chartConfig.yAxis.lineWidth = 0;
             }
 
             var reload = function () {

@@ -180,8 +180,8 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
 
           // Removing click functionality for clickthrough.
           if (scope.source === 'dashboard') {
-            scope.chartConfig.options.chart.zoomType = null;
-            scope.chartConfig.options.chart.events.click =
+            scope.chartConfig.chart.zoomType = null;
+            scope.chartConfig.chart.events.click =
               function () {
                 var savedWidget = {};
                 savedWidget[scope.widget.name] = scope.widget.content;

@@ -11,4 +11,5 @@ require('../modules').services
   .constant('mapLatitude', angular.element('meta[name="_map-latitude"]').attr('content'))
   .constant('mapLongitude', angular.element('meta[name="_map-longitude"]').attr('content'))
   .constant('commit', angular.element('meta[name="_commit"]').attr('content'))
+  .constant('deployDate', angular.element('meta[name="_deploy-date"]').attr('content'))
   .constant('repoUrl', angular.element('meta[name="_repo-url"]').attr('content'));

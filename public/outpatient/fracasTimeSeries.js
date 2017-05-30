@@ -4,6 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var directives = require('../scripts/modules').directives;
 var Highcharts = require('highcharts');
+
 require('highcharts/modules/exporting')(Highcharts);
 require('highcharts/modules/offline-exporting')(Highcharts);
 
@@ -177,8 +178,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           // Removing click functionality for clickthrough.
           if (scope.source === 'dashboard') {
-            scope.chartConfig.options.chart.zoomType = null;
-            scope.chartConfig.options.chart.events.click =
+            scope.chartConfig.chart.zoomType = null;
+            scope.chartConfig.chart.events.click =
               function () {
                 var savedWidget = {};
                 savedWidget[scope.widget.name] = scope.widget.content;

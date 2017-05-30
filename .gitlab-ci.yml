@@ -20,7 +20,7 @@ build:
   tags:
     - shell
   script:
-    - docker build --pull -f Dockerfile.prod -t $CONTAINER_TEST_IMAGE .
+    - docker build --pull -f Dockerfile.prod -t $CONTAINER_TEST_IMAGE . --build-arg COMMIT_HASH=${CI_COMMIT_SHA:0:8} --build-arg DEPLOY_DATE="$(date +%F)"
     - docker push $CONTAINER_TEST_IMAGE
 
 release-image:

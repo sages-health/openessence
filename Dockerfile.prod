@@ -31,7 +31,6 @@ ADD config /code/config
 RUN buildDeps='autoconf ca-certificates curl git pkg-config build-essential bzip2'; \
     set -x; \
     apt-get -qq update && apt-get -qq install -y $buildDeps --no-install-recommends \
-    && env COMMIT_HASH=$(git rev-parse --short HEAD) \
     && npm --silent update -g npm \
     && npm --silent install -g gulp bower@$BOWER_VERSION \
     && npm --silent install \
@@ -58,6 +57,9 @@ RUN buildDeps='autoconf ca-certificates curl git pkg-config build-essential bzip
 
 EXPOSE 9000 9001
 ENV NODE_ENV production
-
+ARG COMMIT_HASH
+ENV COMMIT_HASH ${COMMIT_HASH}
+ARG DEPLOY_DATE
+ENV DEPLOY_DATE ${DEPLOY_DATE}
 
 CMD ["node", "/code/server.js"]
