@@ -149,7 +149,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           scope.pivotOptions = angular.copy(scope.pivot);
 
           if (scope.visualization.name === 'table') {
-            //scope.tableParams.reload();
+            scope.$broadcast('tableReload', 'visualization.js'); //triggers table reload in table.js
           } else if (scope.visualization.name === 'pie') {
             aggReload2();
           } else if (scope.visualization.name === 'bar') {
@@ -187,7 +187,12 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
           return moment(date).format('GGGG');
         };
 
-        scope.$watch('queryString', function () {
+//        scope.$watch('queryString', function () {
+//          updateURL.updateFilters(scope.filters);
+//          reload();
+//        });
+        
+        scope.$on("queryChanged", function(events,args){
           updateURL.updateFilters(scope.filters);
           reload();
         });

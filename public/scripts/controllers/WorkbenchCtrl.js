@@ -23,6 +23,8 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       handles: "e"
     }
   };
+  
+  $scope.autoRunQuery = true; //initial state
 
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];

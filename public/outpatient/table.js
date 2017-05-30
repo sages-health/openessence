@@ -29,6 +29,56 @@ angular.module(directives.name).directive('outpatientTable',
             scope.formLoaded = false;
             scope.columns = [];
 
+            scope.$on("tableReload", function(events,args){
+              scope.tableParams.reload();
+            });
+            
+            scope.tableParams = new NgTableParams({ //FrableParams({
+              page: 1, // page is 1-based
+              count: 10,
+              sorting: {
+                visitDate: 'desc'
+              }
+            }, {
+              total: scope.data ? scope.data.length : 0,
+              counts: [], // hide page count control
+              $scope: {
+                $data: {}
+              },
+
+              getData: function (params) {
+                  if (!angular.isDefined(scope.queryString)) {
+                    // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
+                    // If you really don't want a filter, set queryString='' or null
+                    // TODO there's probably a more Angular-y way to do this
+                    return [];
+                  }
+                  return  OutpatientVisitResource.get(
+                    {
+                      q: scope.queryString,
+                      from: (params.page() - 1) * params.count(),
+                      size: params.count(),
+                      sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting
+                    },
+                    function (response) {
+                      params.total(response.total);
+                      scope.setRowCounts(scope.tableParams.total());
+                      return response.results;
+                      
+                    },
+                    function error (response) {
+                      $rootScope.$broadcast('filterError', response);
+
+                    }).  
+                    $promise.then(function(data){
+                      scope.data = data.results;
+                      return data.results;
+                    });
+                    return scope.data;
+              }
+            });
+            
+            
             var init = function () {
               if (!scope.form || !scope.form.fields) {
                 return;
@@ -96,62 +146,11 @@ angular.module(directives.name).directive('outpatientTable',
               columns.push({title: '', type: 'action'});
               scope.columns = columns;
 
-              scope.tableParams = new NgTableParams({ //FrableParams({
-                page: 1, // page is 1-based
-                count: 10,
-                sorting: {
-                  visitDate: 'desc'
-                }
-              }, {
-                total: scope.records ? scope.records.length : 0,
-                counts: [], // hide page count control
-                $scope: {
-                  $data: {}
-                },
-
-                getData: function (params) {
-                  if (scope.records) {
-                    var orderedData = params.sorting() ? orderByFilter(scope.records, params.orderBy()) : scope.records;
-                    return orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
-                  } else {
-                    if (!angular.isDefined(scope.queryString)) {
-                      // Wait for queryString to be set before we accidentally fetch a bajillion rows we don't need.
-                      // If you really don't want a filter, set queryString='' or null
-                      // TODO there's probably a more Angular-y way to do this
-                      return [];
-
-                    }
-                    return  OutpatientVisitResource.get(
-                      {
-                        q: scope.queryString,
-                        from: (params.page() - 1) * params.count(),
-                        size: params.count(),
-                        sort: sortString.toElasticsearchString(params.orderBy()[0]) // we only support one level of sorting
-                      },
-                      function (response) {
-                        params.total(response.total);
-                        scope.setRowCounts(scope.tableParams.total());
-
-                        return response.results;
-                        
-                      },
-                      function error (response) {
-                        $rootScope.$broadcast('filterError', response);
-
-                        }).$promise.then(function(data){
-                        scope.data = data.results;
-                        return data.results;
-                      });
-                      return scope.data;
-                  }
-                }
-              });
-
               scope.formLoaded = true;
 
-              scope.$watchCollection('queryString', function () {
-                scope.tableParams.reload();
-              });
+//              scope.$watchCollection('queryString', function () {
+//                scope.tableParams.reload();
+//              });
 
               scope.$watch(function () {
                   //check for change of panel height

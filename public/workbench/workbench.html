@@ -25,7 +25,7 @@
 </div>
 
 <div class="container-fluid">
-  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString">
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString" auto-run-query="autoRunQuery">
 
   </outpatient-filters-grid>
 </div>
@@ -37,7 +37,7 @@
       <ul>
         <li class="workbench-visualization col-md-6 col-xs-12" id="{{viz.id}}" gridster-item="viz" ng-repeat="viz in visualizations">
           <div class="panel-body workbench-panel">
-            <workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="activeFilters"
+            <workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="activeFilters" auto-run-query="autoRunQuery"
                                      form="form"
                                      options="viz.options"
                                      visualization="viz.visualization"

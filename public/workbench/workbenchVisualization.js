@@ -23,7 +23,8 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
       sizeY: '=',
       row: '=',
       col: '=',
-      source: '='
+      source: '=',
+      autoRunQuery: '='
     },
     compile: function () {
       return {
@@ -40,6 +41,13 @@ angular.module(directives.name).directive('workbenchVisualization', /*@ngInject*
               parent = angular.element(value);
               header = parent.find('.panel-heading');
               footer = parent.find('.panel-footer');
+            }
+          });
+          
+          
+          scope.$watchCollection('queryString', function () {
+            if(scope.autoRunQuery){
+              scope.$broadcast('queryChanged', 'workbenchVisualization.js'); //triggers reload() in visualizaiton.js
             }
           });
 

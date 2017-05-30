@@ -12,13 +12,22 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
     scope: {
       activeFilters: '=',
       possibleFilters: '=',
-      queryString: '='
+      queryString: '=', 
+      autoRunQuery: '='
     },
     compile: function () {
       return {
         pre: function (scope) {
           scope.possibleFilters = scope.possibleFilters || {};
           scope.activeFilters = scope.activeFilters || [];
+          
+          scope.autoRunToggle = function(){
+            scope.autoRunQuery = !scope.autoRunQuery;
+          }
+          
+          scope.triggerQuery = function(){
+            $rootScope.$broadcast('queryChanged', 'force query run'); //triggers reload() in visualizaiton.js
+          }
 
           scope.addFilter = function (filter, isFilterEvent) {
 
