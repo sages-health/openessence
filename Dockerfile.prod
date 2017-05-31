@@ -19,7 +19,6 @@ ADD server /code/server
 ADD tasks /code/tasks
 ADD views /code/views
 ADD server.js gulpfile.js /code/
-ADD .git /code/.git
 ADD config /code/config 
 
 # Some of this stuff is only needed for building, so we remove it when we're done
@@ -38,7 +37,7 @@ RUN buildDeps='autoconf ca-certificates curl git pkg-config build-essential bzip
     && bower install --allow-root \
     && bower cache clean --allow-root \
     && gulp build \
-    && npm --silent cache clear \
+    && npm --silent cache verify \
     && npm --silent prune --production \
     && apt-get -qq clean -y \
     && apt-get -qq purge -y $buildDeps \
@@ -51,8 +50,7 @@ RUN buildDeps='autoconf ca-certificates curl git pkg-config build-essential bzip
     && rm -rf /code/tasks \
     && rm -rf /code/views \
     && rm -f /code/bower.json \
-    && rm -f /code/gulpfile.js \
-    && rm -rf /code/.git
+    && rm -f /code/gulpfile.js
 
 
 EXPOSE 9000 9001
