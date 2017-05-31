@@ -130,7 +130,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
           };
 
           scope.datePopupsOpen = {};
-          scope.visit.visitDate = (Date.now());
+          scope.visit.visitDate = scope.visit.visitDate == undefined ? Date.now() : scope.visit.visitDate;
           scope.openDatePopup = function (name, $event) {
             $event.preventDefault();
             $event.stopPropagation();
