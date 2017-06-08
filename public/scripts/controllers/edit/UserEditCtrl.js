@@ -42,6 +42,8 @@ module.exports = function ($scope, $modal, tableUtil, crud, $filter, UserResourc
       return filters;
     }, {});
 
+  $scope.autoRunQuery = true;
+
   $scope.changePasswordTemplate = require('../../../partials/edit/forms/change-password-form.html');
   $scope.editTemplate = require('../../../partials/edit/forms/user-form.html');
   $scope.deleteTemplate = require('../../../partials/delete-record.html');
