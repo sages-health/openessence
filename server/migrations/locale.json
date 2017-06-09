@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "lng": "en",
     "ns": "translation",
@@ -167,7 +167,8 @@
         "ExportToPNG": "Export to PNG",
         "ExportToJPEG": "Export to JPEG",
 	      "DefaultViewText": "Select a visualization from the list below",
-        "DefaultVizText": "Empty Widget"
+        "DefaultVizText": "Empty Widget",
+        "Stratify": "Stratify By"
       },
       "locale": {
         "Locale": "Locale",
@@ -600,8 +601,9 @@
         "Print": "Imprimir",
         "ExportToPNG": "Exportar a PNG",
         "ExportToJPEG": "Exportar a JPEG",
-	      "DefaultViewText": "Select a visualization from the list below",
-        "DefaultVizText": "Empty Widget"
+        "DefaultViewText": "Select a visualization from the list below",
+        "DefaultVizText": "Empty Widget",
+        "Stratify": "Estratificar por"
       },
       "locale": {
         "Locale": "Local",

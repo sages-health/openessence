@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Hinge - AKA the "magic pivot thing" that controls visualizations.
  */
 
@@ -30,18 +30,23 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function ($filt
           cols: []
         };
 
+        scope.pivotSelect = scope.pivotSelect || {
+            rows: [],
+            cols: []
+        }
+
         // TODO think of visualization-independent name, e.g. 'Grouping', but better, or change placeholder depending
         // on the selected visualization
-        scope.pivotRowsPlaceholder = 'hinge.ReportRows';
-        scope.pivotColsPlaceholder = 'hinge.AttributeColumns';
+        scope.pivotRowsPlaceholder = 'hinge.Stratify';
+        scope.pivotColsPlaceholder = 'hinge.Stratify';
 
         scope.select2Options = {
           sortable: true,
           'simple_tags': true,
           data: scope.pivotOptions.map(function (o) {
             return {
-              id: o.value,
-              text: $filter('i18next')(o.label)
+                id: o.value,
+                text: $filter('i18next')(o.label)
             };
           }).sort(function(a, b){
             if (a.text > b.text) {
@@ -86,6 +91,15 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function ($filt
         scope.printChart = function () {
           scope.$parent.$broadcast('printChart');
         };
+
+        scope.onRowChanged = function () {
+            scope.pivot.rows = Array(scope.pivotSelect.rows.id);
+        };
+
+        scope.onColChanged = function () {
+            scope.pivot.cols = Array(scope.pivotSelect.cols.id);
+        };
+
       },
       post: function (scope, element) {
         var updateViz = function (rows, cols) {
