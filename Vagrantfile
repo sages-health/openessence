@@ -64,4 +64,25 @@ Vagrant.configure(2) do |config|
 	  config.vm.provision :shell, privileged:false, path: "vagrant/scripts/3_setup_containers_windows.sh"
   end
 
+  config.vm.define "demo_vm", autostart:false do |development|
+	  development.vm.box = "bento/fedora-24"
+	  development.vm.provider "virtualbox" do |vb|
+    
+	  vb.name = "openessence_demo"
+      vb.customize ['modifyvm', :id, '--cableconnected1', 'on']
+      vb.memory = "4096"
+    end
+	
+    development.vm.network "forwarded_port", guest: 9000, host: 9000
+    development.vm.network "forwarded_port", guest: 9200, host: 9200
+    development.vm.network "forwarded_port", guest: 9300, host: 9300
+    development.vm.network "forwarded_port", guest: 8080, host: 8080
+	  development.vm.network "forwarded_port", guest: 6379, host: 6379
+
+    config.vm.provision :shell, privileged:false, path: "vagrant/scripts/1_demo_setup.sh"
+    config.vm.provision :shell, privileged:false, path: "vagrant/scripts/2_install.sh"
+	  config.vm.provision :shell, privileged:false, path: "vagrant/scripts/3_setup_containers.sh"
+    config.vm.provision :shell, privileged:false, path: "vagrant/scripts/4_setup_webapp_container.sh"
+  end
+
 end

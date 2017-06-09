@@ -146,6 +146,13 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
           // TODO highlight record that was created
         });
     };
+    $scope.createVisitPage = function () {
+      outpatientEditModal.open({form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was created
+        });
+    };
 
     $scope.importVisits = function () {
       $scope.form.fields;

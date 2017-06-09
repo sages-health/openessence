@@ -1,6 +1,6 @@
 <!-- search box -->
 <div class="row">
-  <div class="col-md-10">
+  <div class="col-md-8">
     <form name="queryForm" class="query-string-form" role="form" novalidate ng-submit="submit(queryForm)">
       <div class="form-group" ng-class="{'has-error': isInvalid(queryForm.queryStrings), 'has-feedback': isInvalid(queryForm.queryStrings)}">
         <label class="sr-only" for="query-string" ng-i18next>op.Query</label>
@@ -9,14 +9,18 @@
       </div>
     </form>
   </div>
-  <label for="auto-query-toggle">Auto-Query: </label>
-  <toggle id="auto-query-toggle" ng-model="autoRunQuery" on="Enabled " off="Disabled" size="btn-sm" onstyle="btn-success"></toggle>
+
+  <div class="col-md-4">
   
-  <button class="btn btn-default btn-sm" type="button" ng-hide="autoRunQuery" ng-click="triggerQuery()"
+  <toggle id="auto-query-toggle" ng-model="autoRunQuery" on="Auto Query" off="Manual Query" size="btn-sm" onstyle="btn-success" offstyle="btn-primary"></toggle>
+  
+  <button class="btn btn-primary btn-sm" type="button" ng-hide="autoRunQuery" ng-click="triggerQuery()"
               popover="{{'op.runQueryOnce' | i18next}}" popover-trigger="mouseenter">
         <span class="fa fa-play"></span>
    </button>
+   </div>
 </div>
+<div class="col-xs-12" style="height:20px;"></div>
 
 <!-- filter panels -->
 <div class="row">

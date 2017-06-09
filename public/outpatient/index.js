@@ -18,3 +18,4 @@ require('./possibleFilters');
 require('./csvFileSelector.js');
 require('./csvUtil.js');
 require('./modalImport.js');
+require('./new.js');
