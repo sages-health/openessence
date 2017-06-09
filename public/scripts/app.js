@@ -268,6 +268,11 @@ app.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
       template: require('../outpatient/edit.html'),
       controller: 'OutpatientEditCtrl'
     })
+    .state('edit.newvisit', { // TODO define this in outpatient module
+      url: '/newvisit',
+      template: require('../outpatient/new.html'),
+      controller: 'OutpatientNewCtrl'
+    })
     .state('edit.translation', {
       url: '/translation',
       template: require('../translation/translation-editor.html'),

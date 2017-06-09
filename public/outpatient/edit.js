@@ -86,12 +86,9 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
                                                                             outpatientCsvImportModal,
                                                                             outpatientImportModal,
                                                                             possibleFilters, FormResource) {
-  $scope.activeFilters = [
-    angular.extend({
-      filterID: 'visitDate'
-      // no to/from window, we page the results anyway
-    }, possibleFilters.possibleFilters.visitDate)
-  ];
+
+  //default query auto run to true for edit page
+  $scope.autoRunQuery = true;
 
   var reload = function () {
     $scope.$broadcast('outpatientReload');
@@ -127,6 +124,13 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
 
     $scope.possibleFilters = possibleFilters.getPossibleFilters(form.fields);
 
+  $scope.activeFilters = [
+    angular.extend({
+      filterID: 'visitDate'
+      // no to/from window, we page the results anyway
+    }, $scope.possibleFilters.visitDate)
+  ];
+
     $scope.editVisit = function (visit) {
       outpatientEditModal.open({record: visit, form: form}).result
         .then(function () {
@@ -136,6 +140,13 @@ angular.module(controllers.name).controller('OutpatientEditCtrl', /*@ngInject*/ 
     };
 
     $scope.createVisit = function () {
+      outpatientEditModal.open({form: form}).result
+        .then(function () {
+          reload();
+          // TODO highlight record that was created
+        });
+    };
+    $scope.createVisitPage = function () {
       outpatientEditModal.open({form: form}).result
         .then(function () {
           reload();

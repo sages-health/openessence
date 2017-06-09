@@ -13,7 +13,8 @@ angular.module(directives.name).directive('outpatientTable',
         records: '=?',
         queryString: '=',
         form: '=?',
-        options: '=?'
+        options: '=?',
+        autoRunQuery: '='
       },
       compile: function (element, attrs) {
         var condensed = angular.isDefined(attrs.condensed) && attrs.condensed !== 'false';
@@ -227,6 +228,12 @@ angular.module(directives.name).directive('outpatientTable',
               }
               init();
             });
+
+            scope.$watch('queryString', function (fields) {
+              if(scope.autoRunQuery)
+                scope.tableParams.reload();
+            });
+
             scope.getValueFromVisit = function (visit, field) {
               var value = field.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
                 return obj ? obj[i] : undefined;

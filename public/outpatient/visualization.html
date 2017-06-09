@@ -7,7 +7,7 @@
 	</div>
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch" ng-switch-when="table">
-    <outpatient-table query-string="queryString" form="form" options="options"></outpatient-table>
+    <outpatient-table query-string="queryString" form="form" options="options" auto-run-query="autoRunQuery"></outpatient-table>
   </div>
   <div id="svg-id-{{options.id}}" class="animation-switch pivot" ng-switch-when="crosstab">
     <crosstab options="options" pivot="pivotOptions" records="crosstabData"></crosstab>

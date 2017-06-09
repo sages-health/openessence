@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters"
+  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" auto-run-query="autoRunQuery"
                            query-string="queryString"></outpatient-filters-grid>
 </div>
 
@@ -11,17 +11,17 @@
           <h4 class="panel-title pull-left" ng-i18next>op.OutpatientVisits</h4>
 
           <div class="pull-right" >
-            <a class="btn btn-primary" ng-click="createVisit()" 
+            <a class="btn btn-primary" ng-click="createVisit()"
                     popover="{{'op.CreateNewVisit' | i18next}}" popover-trigger="mouseenter">
               <span class="icon-plus" ng-i18next>op.NewVisit</span>
             </a>
             <!-- disable import -->
-            <a ng-show=" scope.form.datatype  !== 'aggregate'" class="btn btn-primary" ng-click="importVisits()" 
+            <a ng-show=" scope.form.datatype  !== 'aggregate'" class="btn btn-primary" ng-click="importVisits()"
                     popover="{{'op.ImportCSV' | i18next}}" popover-trigger="mouseenter">
               <i class="fa fa-upload"></i><span ng-i18next>op.Import</span>
             </a>
 
-            <a ng-show=" scope.form.datatype  === 'aggregate'" class="btn btn-primary" ng-click="importAggVisits()" 
+            <a ng-show=" scope.form.datatype  === 'aggregate'" class="btn btn-primary" ng-click="importAggVisits()"
                     popover="{{'op.ImportCSV' | i18next}}" popover-trigger="mouseenter">
               <i class="fa fa-upload"></i><span ng-i18next>op.Import</span>
             </a>
@@ -30,7 +30,7 @@
           <span upload-aggregate></span>
 
         </div>
-        <outpatient-table query-string="queryString" form="form"></outpatient-table>
+        <outpatient-table query-string="queryString" auto-run-query="autoRunQuery" form="form"></outpatient-table>
       </div>
     </div>
   </div>
