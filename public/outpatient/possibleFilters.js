@@ -52,7 +52,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
     {
       filterID: 'medicalFacility.location.district.group',
       type: 'group',
-      field: 'medicalFacilityLocationDistrict.name',
+      field: 'medicalFacility.location.district',
       name: 'op.MedicalFacilityLocationDistrictGroup'
     },
     {
