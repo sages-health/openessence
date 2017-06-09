@@ -50,6 +50,12 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
       name: 'op.District'
     },
     {
+      filterID: 'medicalFacility.location.district.group',
+      type: 'group',
+      field: 'medicalFacilityLocationDistrict.name',
+      name: 'op.MedicalFacilityLocationDistrictGroup'
+    },
+    {
       // the same can be done for any geographic region stored on medicalFacility, e.g. county, state, country, etc.
       filterID: 'medicalFacility.location.country',
       type: 'multi-select',
