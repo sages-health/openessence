@@ -5,6 +5,7 @@ var directives = require('../scripts/modules').directives;
 var Highcharts = require('highcharts');
 require('highcharts/modules/exporting')(Highcharts);
 require('highcharts/modules/offline-exporting')(Highcharts);
+var _ = require('lodash');
 
 angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ function ($rootScope, debounce, updateURL, //
   $filter, EditSettings, $location) {
@@ -112,13 +113,44 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
             var inner = [];
             var outer = [];
 
-            if (scope.pivot.cols.length > 0) {
+            var totals = {};
 
-              var innerData = scope.aggData.concat();
-              innerData = innerData.sort(function (a, b) {
-                return b.value - a.value;
+            for(var i = 0; i < scope.aggData.length; i++){
+              if(!totals[scope.aggData[i].colName])
+                totals[scope.aggData[i].colName] = scope.aggData[i].value;
+              else
+                totals[scope.aggData[i].colName] += scope.aggData[i].value
+            }
+
+            totals = _.map(totals, function(value, prop){
+              return {name: prop, value: value};
+            });
+
+            totals = _.orderBy(totals, ['value'], ['desc']);
+
+            totals = _.map(totals, 'name').slice(0, scope.options.labels.displayNumber);
+
+            var aggDataTemp = scope.aggData.slice().filter(function(data) {
+                return totals.indexOf(data.colName) > -1;
+              }).sort(function (a, b) {
+                var temp = totals.indexOf(a.colName) - totals.indexOf(b.colName);
+                return totals.indexOf(a.colName) - totals.indexOf(b.colName);
               });
-              innerData = innerData.slice(0, scope.options.labels.displayNumber);
+            
+            var uniqueValues = [];
+
+            if (scope.pivot.cols.length > 0) {
+              var innerData = scope.aggData.concat();
+              //innerData = innerData.slice(0, scope.options.labels.displayNumber);
+              innerData = innerData.filter(function(data){
+                return totals.includes(data.colName);
+              });
+
+              innerData = innerData.sort(function (a, b) {
+                var temp = totals.indexOf(a.colName) - totals.indexOf(b.colName);
+                return totals.indexOf(a.colName) - totals.indexOf(b.colName);
+              });
+
               var color = 0;
 
               for (var i = 0; i < innerData.length; i++) {
@@ -147,7 +179,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
               if (scope.pivot.rows.length > 0) {
                 series.push({
                   id: 'cols',
-                  name: innerData[0].col,
+                  name: aggDataTemp[0].col,
                   data: inner,
                   size: '80%',
                   dataLabels: {
@@ -201,18 +233,12 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
               var color = 0;
               var brightScale = 10;
 
-              var length = scope.aggData.length < scope.options.labels.displayNumber ? scope.aggData.length : scope.options.labels.displayNumber;
-
-              scope.aggData = scope.aggData.sort(function (a, b) {
-                return b.value - a.value;
-              });
-
-              for (var x = 0; x < length; x++) {
+              for (var x = 0; x < aggDataTemp.length; x++) {
 
                 if (scope.pivot.cols.length > 0) {
                   var brightness = 0.2 - (x / brightScale) / 5;
 
-                  if (scope.aggData[x][catName] === parent) {
+                  if (aggDataTemp[x][catName] === parent) {
                     colorVal = Highcharts.Color(colors[color]).brighten(brightness).get();
                     brightness--;
 
@@ -220,7 +246,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                     if (x !== 0) {
                       color++;
                     }
-                    parent = scope.aggData[x][catName];
+                    parent = aggDataTemp[x][catName];
                     brightScale = 50;
                     colorVal = Highcharts.Color(colors[color]).brighten(0.2 - (x / brightScale) / 5).get();
                     brightScale--;
@@ -230,8 +256,8 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
                 }
 
                 outer.push({
-                  name: scope.aggData[x][sourceName],
-                  y: scope.aggData[x].value,
+                  name: aggDataTemp[x][sourceName],
+                  y: aggDataTemp[x].value,
                   color: colorVal
                 });
               }
@@ -239,7 +265,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
               if (scope.pivot.cols.length > 0) {
                 series.push({
                   id: 'rows',
-                  name: scope.aggData[0][source],
+                  name: aggDataTemp[0][source],
                   data: outer,
                   size: '100%',
                   innerSize: '80%',
@@ -255,7 +281,7 @@ angular.module(directives.name).directive('outpatientPieChart', /*@ngInject*/ fu
 
                 series.push({
                   id: 'rows',
-                  name: removeAsterix(scope.aggData[0] ? scope.aggData[0].col : ''),
+                  name: removeAsterix(aggDataTemp[0] ? aggDataTemp[0].col : ''),
                   data: outer,
                   size: '100%',
                   innerSize: '0',
