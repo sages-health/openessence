@@ -8,6 +8,7 @@ module.exports = [
       {
         name: 'visitDate',
         aggregable: true,
+        isFilter: true,
         enabled: true,
         // users cannot change the 'enabled' value of a locked field
         locked: true

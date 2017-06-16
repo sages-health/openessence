@@ -1,7 +1,13 @@
-<div class="checkbox">
+<div class="checkbox" style="display:inline-block;">
   <label>
     <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
            ng-checked="field.enabled">{{'op.' + getLocaleValue(field.name) | i18next}}
+  </label>
+</div>
+<div class="checkbox" ng-show="field.enabled" style="display:inline-block; margin-left:20px;">
+  <label>
+    <input type="checkbox" ng-model="field.isFilter"
+           ng-checked="field.isFilter">{{'op.isFilterable' | i18next}}
   </label>
 </div>
 

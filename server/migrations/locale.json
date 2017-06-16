@@ -180,6 +180,8 @@
       },
       "op": {
         "CSVFile": "CSV file",
+        "isFilterable": "Allow Filter",
+        "isEnabled": "Enabled?",
         "ChooseFile": "Choose file...",
         "msgCSVHelp": "Please select a CSV file",
         "Separator": "Separator",
@@ -618,6 +620,8 @@
       },
       "op": {
         "CSVFile": "Archivo CSV",
+        "isFilterable": "Allow Filter",
+        "isEnabled": "Enabled?",
         "MapTo": "Asignaciones de columnas",
         "ChooseFile": "Escoja un archivo...",
         "msgCSVHelp": "Por favor seleccione un archivo CSV",

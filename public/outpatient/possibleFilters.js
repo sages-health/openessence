@@ -162,7 +162,7 @@ angular.module(services.name).factory('possibleFilters', /*@ngInject*/ function 
 
   var getPossibleFiltersFn = function(fields) {
     var reduced = fields.reduce(function (filters, field) {
-      if (field.enabled) {
+      if (field.enabled && field.isFilter) {
         var possibleFilter = possibles[field.name];
         if (possibleFilter) {
           filters[field.name] = angular.extend({values: field.values}, possibleFilter);
