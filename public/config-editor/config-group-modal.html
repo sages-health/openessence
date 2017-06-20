@@ -11,7 +11,7 @@
     <div class="form-group" ng-class="{'has-error': noValue}">
       <label ng-i18next>config.Value</label>
 
-      <ui-select class="form-control" multiple="multiple" ng-model="row.value" theme="select2"
+      <ui-select class="form-control" multiple="multiple" ng-model="row.value" style="height:auto;"
                  ng-disabled="disabled" required>
         <ui-select-match placeholder="{{'app.Select' | i18next}}">{{$item}}</ui-select-match>
         <ui-select-choices ng-value="val"

@@ -8,6 +8,7 @@ module.exports = [
       {
         name: 'visitDate',
         aggregable: true,
+        isFilter: true,
         enabled: true,
         // users cannot change the 'enabled' value of a locked field
         locked: true
@@ -61,6 +62,7 @@ module.exports = [
       {
         name: 'medicalFacility.location.district',
         enabled: false,
+        groupName: 'medicalFacility.location.district.group',
         values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
           // construct set of districts
           if (facility.location && facility.location.district) {
@@ -76,6 +78,14 @@ module.exports = [
               name: name
             };
           })
+      },
+      
+      {
+        name: 'medicalFacility.location.district.group',
+        enabled: false,
+        aggregable: true,
+        isGroup: true,
+        possibleValuesFrom: 'medicalFacility.location.district'
       },
 
       {

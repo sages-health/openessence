@@ -55,15 +55,33 @@
             </div>
             <div class="panel-body">
               <table class="table table-striped">
+                <tr>
+                  <td style="padding:2px;"><i class="fa fa-filter" aria-hidden="true" popover="{{'op.isFilterable' | i18next}}" popover-trigger="mouseenter"></i></td>
+                  <td style="padding:2px;"><i class="fa fa-toggle-on" aria-hidden="true" popover="{{'op.isEnabled' | i18next}}" popover-trigger="mouseenter"></i></td>
+                  <td></td> <!-- field name --> 
+                  <td></td> <!-- field values -->
+                </tr>
                 <tr ng-repeat="field in siteTemplate.fields | filter: isNotGroupField">
+                <td>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" ng-model="field.isFilter"
+                               ng-checked="field.isFilter" ng-disabled="field.locked">
+                      </label>
+                    </div>
+                  </td>
                   <td>
                     <div class="checkbox">
                       <label>
                         <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
                                ng-checked="field.enabled" ng-disabled="field.locked">
-                        {{'op.' + getLocaleValue(field.name) | i18next}}
-                      </label>
+                      <label>
                     </div>
+                  </td>
+                  <td>
+                    <label>
+                      {{'op.' + getLocaleValue(field.name) | i18next}}
+                    </label>
                   </td>
                   <td>
                     <div ng-if="field.enabled && field.groupName === 'patient.ageGroup'">

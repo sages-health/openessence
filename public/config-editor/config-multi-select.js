@@ -45,8 +45,16 @@ angular.module(directives.name).directive('configMultiselect', /*@ngInject*/ fun
             // open a modal to enter a new value
             openAddNewValueModal(field).result
               .then(function (newValue) {
-                field.possibleValues.push({name: newValue});
-                field.values.push(newValue);
+                // Split user-entered values by semicolon
+                var vals = newValue.split(";");
+                vals.forEach(function (val) {
+                  // Strip leading/trailing spaces and prevent duplicate values
+                  var trimmedValue = val.replace(/^\s+|\s+$/g,'');
+                  if (trimmedValue.length > 0 && field.values.indexOf(trimmedValue) === -1) {
+                    field.possibleValues.push({name: trimmedValue});
+                    field.values.push(trimmedValue);
+                  }
+                })
               });
           };
 

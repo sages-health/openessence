@@ -3,7 +3,7 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('configGroup', /*@ngInject*/ function ($modal) {
+angular.module(directives.name).directive('configGroup', /*@ngInject*/ function ($modal, stringUtil) {
   return {
     restrict: 'E',
     template: require('./config-group.html'),
@@ -14,6 +14,8 @@ angular.module(directives.name).directive('configGroup', /*@ngInject*/ function 
     compile: function () {
       return {
         pre: function (scope) {
+          scope.getLocaleValue = stringUtil.getLocaleValue;
+          
           scope.field = scope.field || {};
           scope.field.values = scope.field.values || [];
           scope.possibleValues = scope.possibleValues || [];

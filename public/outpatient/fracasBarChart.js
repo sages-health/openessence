@@ -48,7 +48,7 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
 
           scope.chartConfig = {
             chart: {
-              type: 'bar',
+              type: 'column',
               animation: false,
               events: {},
               width: scope.options.width - 10,
@@ -66,17 +66,12 @@ angular.module(directives.name).directive('outpatientBarChart', /*@ngInject*/ fu
               fallbackToExportServer: false
             },
             tooltip: {
-              formatter: function () {
-
-                var identifier = '';
-                if (this.series.options.id === 'single') {
-                  identifier = 'Count';
-                } else {
-                  identifier = this.series.name;
-                }
-
-                return '<span>Category: <i>' + this.key + '</i></span><br/>' + '<span>' + identifier + ': <b>' + this.y + '</b></span><br/>';
-              }
+              headerFormat: '<span style="font-size:10px">{point.key} </span><table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
             },
             plotOptions: {
               column: {
