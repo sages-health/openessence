@@ -93,11 +93,17 @@ angular.module(directives.name).directive('hinge', /*@ngInject*/ function ($filt
         };
 
         scope.onRowChanged = function () {
-            scope.pivot.rows = Array(scope.pivotSelect.rows.id);
+            if (scope.pivotSelect.rows !== null)
+                scope.pivot.rows = Array(scope.pivotSelect.rows.id);
+            else
+                scope.pivot.rows = [];
         };
 
         scope.onColChanged = function () {
-            scope.pivot.cols = Array(scope.pivotSelect.cols.id);
+            if (scope.pivotSelect.cols !== null)
+                scope.pivot.cols = Array(scope.pivotSelect.cols.id);
+            else
+                scope.pivot.cols = [];
         };
 
       },

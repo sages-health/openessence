@@ -33,15 +33,31 @@
           <span class="fa fa-cog toolbar-icon"></span>
         </button>
       </div>
+      <div ng-if="visualization.name == 'pie'
+                || visualization.name == 'bar'
+                || visualization.name == 'crosstab' ">
+        <div class="col-md-4">
+          {{pivotRowsPlaceholder | i18next}}
+        </div>
+        <div class="col-md-4">
+          {{pivotColsPlaceholder | i18next}}
+        </div>
+      </div>
+      <div  ng-if="visualization.name !== 'pie'
+                && visualization.name !== 'bar'
+                && visualization.name !== 'crosstab' " class="col-md-8">
+          {{pivotRowsPlaceholder | i18next}}
+      </div>
       <div class="col-md-4">
-        <select ng-model="pivotSelect.rows" ng-change="onRowChanged()" ng-options="row.text for row in select2Options.data">
-            <option value=''>- {{pivotRowsPlaceholder | i18next}} -</option>
-        </select>
+          <select ng-model="pivotSelect.rows" ng-init="row.text=select2Options.data.text" ng-change="onRowChanged()" ng-options="row.text for row in select2Options.data">
+              <option value=''></option>
+          </select>
       </div>
       <div ng-if="visualization.name == 'pie'
-                || visualization.name == 'bar'" class="col-md-4">
+                || visualization.name == 'bar'
+                || visualization.name == 'crosstab' " class="col-md-4">
         <select ng-model="pivotSelect.cols" ng-change="onColChanged()" ng-options="col.text for col in select2Options.data">
-            <option value=''>- {{pivotColsPlaceholder | i18next}} -</option>
+            <option value=''></option>
         </select>
       </div>
     </div>
