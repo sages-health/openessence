@@ -150,6 +150,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
           if (scope.visualization.name === 'table') {
             scope.$broadcast('tableReload', 'visualization.js'); //triggers table reload in table.js
+          } else if (scope.visualization.name === 'line') {
+            scope.$broadcast('lineChartReload', 'visualization.js'); //triggers table reload in fracasTimeSeries.js
           } else if (scope.visualization.name === 'pie') {
             aggReload2();
           } else if (scope.visualization.name === 'bar') {

@@ -144,6 +144,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               }
             },
             xAxis: {
+              id: 'theX',
               ordinal: false,
               type: 'datetime',
               title: {
@@ -157,6 +158,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   //TODO: isoWeek: '%G-%V'
               },
               minTickInterval: 86400000,
+              endOnTick: true, 
+              minPadding: 0.05,
               gridLineWidth: 1
             },
             yAxis: {
@@ -355,6 +358,15 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             }
           };
+          
+          scope.createChart =  function(){
+            scope.chartConfig.xAxis.endOnTick = true;
+            scope.chartConfig.xAxis.floor = scope.chartConfig.xAxis.min;
+            scope.chartConfig.xAxis.ceiling = scope.chartConfig.xAxis.max;
+            scope.chart = Highcharts.chart('testChart', scope.chartConfig);
+            scope.chart.get('theX').update({}, true);
+            
+          }
 
           /**
            *
@@ -447,7 +459,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                 from: new Date(from),
                 to: new Date(to)
               }, possibleFilters.possibleFilters.visitDate);
-              $rootScope.$emit('filterChange', dateFilter, true, true);
+              $rootScope.$emit('filterChange', dateFilter, true, true); //handled in filtersGrid.js
             } else {
               dateFilter.from = new Date(from);
               dateFilter.to = new Date(to);
@@ -599,6 +611,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               scope.data[x].color = scope.colors[x];
             }
             scope.chartConfig.series = scope.data;
+            scope.createChart();
           };
 
           /**
@@ -700,6 +713,10 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
           /* Watchers */
 
+          scope.$on("lineChartReload", function(events,args){
+            reload();
+          });
+          
           scope.$watchCollection('[pivot.rows, pivot.cols, queryString, options.algorithm]', function () {
             reload();
           });
@@ -731,7 +748,6 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           scope.$watch('options.width', function () {
             scope.chartConfig.chart.width = scope.options.width;
           });
-
         }
       };
     }

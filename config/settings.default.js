@@ -14,7 +14,7 @@ module.exports = function (settings) {
 
   //Production secret should be set as ENV variable and not here
   settings.session.secret = '!superDuperSecretSe$$i@nKey!';
-  //settings.session.store = 'redis';
+  settings.session.store = 'redis';
 
   settings.apiEnabled = true;
 
