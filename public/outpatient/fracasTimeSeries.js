@@ -363,7 +363,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             scope.chartConfig.xAxis.endOnTick = true;
             scope.chartConfig.xAxis.floor = scope.chartConfig.xAxis.min;
             scope.chartConfig.xAxis.ceiling = scope.chartConfig.xAxis.max;
-            scope.chart = Highcharts.chart('testChart', scope.chartConfig);
+            scope.chart = Highcharts.chart("highcharts-id-" + scope.options.id, scope.chartConfig);
             scope.chart.get('theX').update({}, true);
             
           }
