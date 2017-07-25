@@ -8,7 +8,6 @@ ENV BOWER_VERSION 1.7.9
 
 MAINTAINER Miles Stewart, "https://github.com/sages-health"
 
-
 RUN mkdir /code
 WORKDIR /code
 ADD bower.json package.json /code/
