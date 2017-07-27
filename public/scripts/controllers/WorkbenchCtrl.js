@@ -23,7 +23,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       handles: "e"
     }
   };
-  
+
   $scope.autoRunQuery = true; //initial state
 
   $scope.vizMenuOpen = true;
@@ -75,6 +75,13 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
         $scope.workbenchId = workbenchId;
         $scope.workbenchName = response._source.name;
         var workbench = response._source.state;
+
+        // Store a copy of the original workbench definition because if user updates the workbench name via the
+        // xeditable widget, we'll have to send the new workbench name and the original (last saved) workbench
+        // definition to the server, which doesn't support updating just the name.
+        $scope.originalWorkbench = {};
+        angular.copy(workbench, $scope.originalWorkbench);
+
         $scope.nextVizId = workbench.nextVizId;
         $scope.activeFilters = workbench.activeFilters;
 
@@ -203,6 +210,11 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     } else {
       Workbench.save(state);
     }
+
+    // Store a copy of the original workbench definition because if user updates the workbench name via the
+    // xeditable widget, we'll have to send the new workbench name and the original (last saved) workbench
+    // definition to the server, which doesn't support updating just the name.
+    angular.copy(scopeJson, $scope.originalWorkbench);
   };
 
   $scope.saveAsWorkbench = function () {
@@ -218,6 +230,19 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     Workbench.save(state);
   };
 
+  $scope.onTitleFocus = function() {
+    $scope.isFocused = true;
+  }
+
+  $scope.onTitleBlur = function() {
+    $scope.isFocused = false;
+  }
+
+  $scope.saveTitle = function() {
+    if ($scope.workbenchId && $scope.originalWorkbench) {
+      Workbench.updateName($scope.workbenchId, $scope.workbenchName, $scope.originalWorkbench);
+    }
+  }
 
   $scope.sortableOptions = {
     cursor: 'move',
