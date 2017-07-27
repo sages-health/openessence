@@ -1,6 +1,7 @@
 'use strict';
 
 var angular = require('angular');
+var uuidV4 = require('uuid/v4');
 
 // @ngInject
 module.exports = function ($scope, $modal, tableUtil, crud, $filter, UserResource, FormResource, $location) {
@@ -76,6 +77,18 @@ module.exports = function ($scope, $modal, tableUtil, crud, $filter, UserResourc
   editOptions.passwordMatch = function (field1, field2) {
     return field1.$modelValue === field2.$modelValue;
   };
+  
+  editOptions.generateKey = function(){
+      var key = uuidV4();
+//      $scope.tableParams.data[0]._source.tokens = [key];
+      
+        var token = angular.element(document.querySelector('#entry-user-tokens'));
+        token.val(key);
+        token.trigger('input');
+        var i=0;
+
+  };
+  
   FormResource.get({q: 'name:site', size: 1}, function (response) {
     if (response.results.length === 0) {
       console.error('No configured forms');
