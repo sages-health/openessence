@@ -6,6 +6,7 @@
 @import "fracas-theme/flatly/bootswatch";
 @import "fracas-fonts/fonts";
 @import "../../bower_components/font-awesome/less/font-awesome";
+@import (less, reference) "../../bower_components/font-awesome/css/font-awesome.css";
 @import (less) "humane-js/themes/libnotify.css";
 @import (less) "angular-loading-bar/build/loading-bar.css";
 @import (less) "angular/angular-csp.css";
@@ -339,3 +340,10 @@ input.invalidFilename-true {
   background-color: Tomato;
   color: white;
 }
+
+// Override certain Bootstrap glyphicons with Font Awesome versions (used in angular-xeditable widgets)
+.glyphicon:extend(.fa all) {
+  &.glyphicon-ok:extend(.fa-check all) {};
+  &.glyphicon-remove:extend(.fa-times all) {};
+}
+

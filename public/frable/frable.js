@@ -611,7 +611,7 @@ app.run(['$templateCache', function ($templateCache) {
 }]);
 
 app.run(function(editableOptions) {
-  editableOptions.theme = 'default';
+  editableOptions.theme = 'bs3';
 });
 
 module.exports = app;

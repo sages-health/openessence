@@ -230,15 +230,15 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     Workbench.save(state);
   };
 
-  $scope.onTitleFocus = function() {
-    $scope.isFocused = true;
+  $scope.setNameFocus = function() {
+    $scope.isWorkbenchNameFocused = true;
   }
 
-  $scope.onTitleBlur = function() {
-    $scope.isFocused = false;
+  $scope.unsetNameFocus = function() {
+    $scope.isWorkbenchNameFocused = false;
   }
 
-  $scope.saveTitle = function() {
+  $scope.saveWorkbenchName = function() {
     if ($scope.workbenchId && $scope.originalWorkbench) {
       Workbench.updateName($scope.workbenchId, $scope.workbenchName, $scope.originalWorkbench);
     }
