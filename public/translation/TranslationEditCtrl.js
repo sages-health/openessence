@@ -130,6 +130,57 @@ module.exports = function ($scope, $modal, $window, $filter, LocaleResource, NgT
         }
       });
   };
+  
+  $scope.remove = function (row) {
+    // open a modal to enter a new value
+    openModal('Removed', 'This translation will be removed').result
+      .then(function () {
+        for(var i = 0; i < $scope.$data.length; i++){
+          if($scope.$data[i].key === row.key){
+            $scope.$data.splice(i, 1);
+            $scope.tableParams.reload();
+            break;
+          }
+        }
+      });
+  };
+  
+  $scope.createTranslation = function(){
+    openAddModal().result
+    .then(function (newRow) {
+      //TODO : update row on $scope.$data
+      console.log(newRow);
+      $scope.$data.push(newRow);
+      $scope.tableParams.reload();
+    });
+  }
+  
+  var openAddModal = function () {
+    return $modal.open({
+      template: require('./add-modal.html'),
+      scope: $scope,
+      controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+        $scope.row = {};
+        //$scope.data = {};
+        $scope.save = function (form) {
+          if (form.$invalid) {
+            $scope.yellAtUser = true;
+            return;
+          }
+          for(var i = 0; i < $scope.$data.length; i++){
+            if($scope.$data[i].key === $scope.row.key){
+              $scope.yellAtUser = true;
+              return;
+            }
+          }
+          $modalInstance.close($scope.row);
+        };
+        $scope.closeModal = function () {
+          $modalInstance.dismiss('cancel');
+        };
+      }]
+    });
+  };
 
   $scope.save = function () {
     var onSuccess = function () {
@@ -150,7 +201,9 @@ module.exports = function ($scope, $modal, $window, $filter, LocaleResource, NgT
         }
       });
       $scope.toLocale.translation = flat.unflatten(translation);
-      LocaleResource.update({id: $scope.toLocale._id}, $scope.toLocale, onSuccess);
+      var updateId = $scope.toLocale._id;
+      delete $scope.toLocale._id;
+      LocaleResource.update({id: updateId}, $scope.toLocale, onSuccess);
     }
     // create/save a new site form
     else {
@@ -167,6 +220,15 @@ module.exports = function ($scope, $modal, $window, $filter, LocaleResource, NgT
 
     loadTranslation();
   });
+  
+  $scope.showAddButton = function(){
+    //Can only add a translation key to the default language set.
+    //key values for other locals can be added after the key is in the default.
+    if($scope.fromLocale.lng === $scope.toLocale.lng){ 
+      return true;
+    }
+    return false;
+  }
 
   init();
 };
