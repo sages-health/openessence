@@ -1,5 +1,7 @@
 'use strict';
 
+window.global = {};     //to avoid uuid error in rng-browser.js
+
 // jQuery doesn't write to window if you require() it
 window.jQuery = window.jQuery || require('jquery');
 require('jquery-ui');
@@ -73,6 +75,7 @@ require('./services');
 require('./directives');
 require('./filters');
 require('angular-bootstrap-toggle');
+//require('uuid/v4');
 
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.sortable',

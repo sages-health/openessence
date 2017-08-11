@@ -170,7 +170,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       type: 'outpatient-visit',
       options: options,
       visualization: {
-        name: name || 'default'
+        name: name || 'table'
       },
       //pivotOptions: $scope.pivotOptions,
       pivot: options.pivot || {

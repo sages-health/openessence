@@ -7,6 +7,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var defaults = require('./server/conf/defaults');
 var git = require('gulp-git');
+var shell = require('gulp-shell');
 
 // load all tasks in tasks directory
 require('require-dir')('./tasks');
@@ -51,6 +52,13 @@ gulp.task('build', ['git-hash', 'setVariables', 'images', 'fonts', 'views', 'tra
 gulp.task('lint', ['jshint']);
 
 gulp.task('test', ['lint', 'tests']);
+
+gulp.task('rebuild-db', ['clean-db', 'build-db']);
+
+gulp.task('clean-db', [], shell.task("node server/migrations/clean"));
+
+gulp.task('build-db', [], shell.task("node server/migrations/reseed"));
+
 
 
 gulp.task('server', ['build'], function (callback) {
