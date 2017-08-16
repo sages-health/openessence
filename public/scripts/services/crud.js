@@ -9,6 +9,7 @@ module.exports = function ($modal) {
     open: function (record, resource, template, options) {
       return $modal.open({
         template: template,
+        backdrop: 'static',
         controller: /*ngInject*/ function ($scope, $modalInstance) {
           $scope.uniqueConstraintViolation = false;
           $scope.record = record || {};
@@ -17,6 +18,8 @@ module.exports = function ($modal) {
           angular.extend($scope, options);
 
           $scope.isInvalid = function (field) { // TODO move to parent controller
+            if (field === undefined)    //eliminate errors caused by triggering popovers
+                return true;
             if ($scope.yellAtUser) {
               // if the user has already tried to submit, show them all the fields they're required to submit
               return field.$invalid;

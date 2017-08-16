@@ -144,7 +144,8 @@
         "Type": "Type",
         "msgConflict": "We're sorry, but the record you were trying to save has been updated by another user. Here's the updated record.",
         "msgDeleteRecord": "Are you sure you want to delete this record?",
-        "APIKey": "API Key"
+        "APIKey": "API Key",
+        "GenerateKey": "Generate new key"
       },
       "filter": {
         "RemoveFilter": "Remove Filter"
@@ -584,7 +585,8 @@
         "DeleteUser": "Eliminar usuario",
         "Type": "Tipo",
         "msgConflict": "Los sentimos. El registro que trata de guardar ha sido modificado por otro usuario. Encuentre aquí el registro actualizado.",
-        "msgDeleteRecord": "Está usted seguro que quiere eliminar este registro?"
+        "msgDeleteRecord": "Está usted seguro que quiere eliminar este registro?",
+        "GenerateKey": "Generar nueva clave"
       },
       "filter": {
         "RemoveFilter": "Quitar filtro"

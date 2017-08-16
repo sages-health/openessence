@@ -41,6 +41,14 @@
                     </button>
 
                   </td>
+                  <td data-title="'app.Remove' | i18next">
+
+                    <button type="button" class="btn btn-default" ng-click="remove(row)"
+                            title="{{'app.Remove' | i18next}} {{row.key}}">
+                      <span class="fa fa-trash-o"></span>
+                    </button>
+
+                  </td>
                 </tr>
               </table>
             </div>
@@ -60,6 +68,10 @@
           <span class="icon-ok"></span>
           <span ng-i18next>app.Save</span>
         </button>
+        <button type="button" class="btn btn-primary" ng-click="createTranslation()" ng-show="showAddButton()">
+            <span class="fa fa-plus"></span>
+            <span ng-i18next>app.AddTranslation</span>
+         </button>
       </div>
     </div>
 
