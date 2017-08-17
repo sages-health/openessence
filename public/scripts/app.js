@@ -76,12 +76,13 @@ require('./directives');
 require('./filters');
 require('angular-bootstrap-toggle');
 //require('uuid/v4');
+require('angular-xeditable');
 
 
 var dependencies = ['ngAnimate', 'ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.router', 'ui.select', 'ui.sortable',
   'angular-loading-bar', 'debounce', 'gridster', 'textAngular', 'angularFileUpload',
   'ngGrid', 'ngOrderObjectBy', 'highcharts-ng', 'checklist-model', 'ngTable', 'infinite-scroll',
-  'jm.i18next', 'tmh.dynamicLocale', frable.name, 'ui.toggle']
+  'jm.i18next', 'tmh.dynamicLocale', frable.name, 'ui.toggle', 'xeditable']
   .concat(Object.keys(modules).map(function (m) {
     return modules[m].name; // 'fracas.filters', 'fracas.services', etc.
   }));

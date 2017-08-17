@@ -610,4 +610,8 @@ app.run(['$templateCache', function ($templateCache) {
   $templateCache.put('frable/pager.html', require('./pager.html'));
 }]);
 
+app.run(function(editableOptions) {
+  editableOptions.theme = 'bs3';
+});
+
 module.exports = app;
