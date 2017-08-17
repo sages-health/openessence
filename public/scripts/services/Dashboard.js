@@ -35,6 +35,14 @@ module.exports = function ($resource, $modal, $state, DashboardResource, crud) {
         });
       });
     },
+    updateName: function (dashboardId, newDashboardName, originalDashboard) {
+      /**
+       * Server doesn't allow us to update a dashboard name without updating the entire dashboard definition,
+       * so send the original (last saved) dashboard definition along with the new name.
+       */
+      originalDashboard.name = newDashboardName;
+      DashboardResource.update(angular.extend({id: dashboardId}, originalDashboard));
+    },
     get: function (id, callback) {
       DashboardResource.get({id: id}, callback);
     },

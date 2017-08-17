@@ -4,19 +4,19 @@
     <div class="panel panel-default">
       <div class="panel-heading clearfix">
 
-        <!-- TODO make this editable with something like http://vitalets.github.io/angular-xeditable -->
-        <h3 class="panel-title pull-left">{{dashboard.name}} <span ng-if='dashboard.name' ng-i18next>navBar.dashboard</span></h3> 
+        <h3 class="panel-title pull-left" editable-text="dashboard.name" buttons="right" blur="cancel"
+            onaftersave="saveDashboardName()" onshow="setNameFocus()" onhide="unsetNameFocus()">{{dashboard.name}} <span ng-if='dashboard.name' ng-i18next>navBar.dashboard</span></h3>
 
         <div class="pull-right">
-          <a class="btn btn-primary" ng-click="addWidget()" popover="{{'db.AddWidget' | i18next}}"
+          <a class="btn btn-primary" ng-click="addWidget()" ng-disabled="isDashboardNameFocused" popover="{{'db.AddWidget' | i18next}}"
              popover-trigger="mouseenter">
             <span class="icon-plus" ng-i18next>db.AddWidget</span>
           </a>
-          <a class="btn btn-primary" ng-click="export()" popover="{{'db.SaveDashboard' | i18next}}"
+          <a class="btn btn-primary" ng-click="export()" ng-disabled="isDashboardNameFocused" popover="{{'db.SaveDashboard' | i18next}}"
              popover-trigger="mouseenter">
             <span class="icon-floppy" ng-i18next>app.Save</span>
           </a>
-          <a class="btn btn-primary" ng-click="saveAs()" popover="{{'db.SaveAsDashboard' | i18next}}"
+          <a class="btn btn-primary" ng-click="saveAs()" ng-disabled="isDashboardNameFocused" popover="{{'db.SaveAsDashboard' | i18next}}"
              popover-trigger="mouseenter">
             <span class="icon-floppy" ng-i18next>app.SaveAs</span>
           </a>
