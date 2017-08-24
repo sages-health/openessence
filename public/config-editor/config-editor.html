@@ -61,7 +61,8 @@
                   <td></td> <!-- field name --> 
                   <td></td> <!-- field values -->
                 </tr>
-                <tr ng-repeat="field in siteTemplate.fields | filter: isNotGroupField">
+                <tbody id="config-fields-table">
+                <tr ng-repeat="field in siteTemplate.fields | filter: isNotGroupField" rowindex={{field.index}} class="config-fields-row">
                 <td>
                     <div class="checkbox">
                       <label>
@@ -107,6 +108,7 @@
                     </div>
                   </td>
                 </tr>
+                </tbody>
               </table>
             </div>
           </div>
@@ -140,6 +142,5 @@
       <button class="btn btn-primary" ng-click="closeModal()">OK</button>
     </div>
   </script>
-
 
 </div>
