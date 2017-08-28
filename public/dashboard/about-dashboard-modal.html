@@ -1,0 +1,12 @@
+<div class="modal-header">
+  <h4 class="modal-title" ng-i18next>db.AboutDashboard</h4>
+</div>
+<div class="modal-body">
+  <h5 ng-repeat="line in description">{{line}}</h5>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok()">
+    <span class="icon-ok"></span>
+    <span ng-i18next>app.OK</span>
+  </button>
+</div>

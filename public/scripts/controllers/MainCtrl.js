@@ -84,6 +84,7 @@ module.exports = function ($timeout, $filter, $scope, $window, $location, $state
   $scope.currentPath = $window.encodeURIComponent($state.href($state.current, $state.params));
 
   $scope.openDashboard = Dashboard.openModal;
+  $scope.aboutDashboard = Dashboard.aboutModal;
 
   $scope.openWorkbench = Workbench.openModal;
 
