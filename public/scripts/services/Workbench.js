@@ -35,6 +35,14 @@ module.exports = function ($resource, $modal, $state, WorkbenchResource, crud) {
         });
       });
     },
+    updateName: function(workbenchId, newWorkbenchName, originalWorkbench) {
+      /**
+       * Server doesn't allow us to update a workbench name without updating the entire workbench definition,
+       * so send the original (last saved) workbench definition along with the new name.
+       */
+      var newNameObj = { id: workbenchId, name: newWorkbenchName, state: originalWorkbench };
+      WorkbenchResource.update(newNameObj);
+    },
     get: function (id, callback) {
       WorkbenchResource.get({id: id}, callback);
     },

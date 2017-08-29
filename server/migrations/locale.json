@@ -78,7 +78,13 @@
         "Dashboard": "Dashboard",
         "msgSelectDashboard": "Please select a dashboard",
         "Name": "Name",
-        "DateInterval": "Date Interval"
+        "DateInterval": "Date Interval",
+        "AboutDashboard": "About Dashboard",
+        "Description": [
+                "(line 1: to do)",
+                "(line 2: to do)",
+                "(line 3: to do)"
+                ]
       },
       "entry": {
         "DOB": "Date of birth",
@@ -431,7 +437,8 @@
         "users": "Users",
         "visualizations": "Visualizations",
         "settings": "Settings",
-        "logout": "Logout"
+        "logout": "Logout",
+        "about": "About"
       },
       "date": {
         "weeks": "Weeks",
@@ -520,7 +527,11 @@
         "Dashboard": "Panel de Control",
         "msgSelectDashboard": "Por favor seleccione un panel de control",
         "Name": "Nombre",
-        "DateInterval": "Intervalo de fecha"
+        "DateInterval": "Intervalo de fecha",
+        "AboutDashboard": "Acerca Panel de Control",
+        "Description": [
+                "(vacío)"
+                ]
       },
       "entry": {
         "DOB": "Fecha de nacimiento",
@@ -869,7 +880,8 @@
         "users": "Usuarios",
         "visualizations": "Visualizaciones",
         "settings": "Ajustes",
-        "logout": "Salir"
+        "logout": "Salir",
+        "about": "Acerca"
       },
       "date": {
         "weeks": "Semanas",

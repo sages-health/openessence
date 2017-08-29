@@ -43,3 +43,4 @@ bower_components/
 *.pem
 
 data/
+/nbproject/private/

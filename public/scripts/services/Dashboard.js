@@ -35,6 +35,14 @@ module.exports = function ($resource, $modal, $state, DashboardResource, crud) {
         });
       });
     },
+    updateName: function (dashboardId, newDashboardName, originalDashboard) {
+      /**
+       * Server doesn't allow us to update a dashboard name without updating the entire dashboard definition,
+       * so send the original (last saved) dashboard definition along with the new name.
+       */
+      originalDashboard.name = newDashboardName;
+      DashboardResource.update(angular.extend({id: dashboardId}, originalDashboard));
+    },
     get: function (id, callback) {
       DashboardResource.get({id: id}, callback);
     },
@@ -70,6 +78,28 @@ module.exports = function ($resource, $modal, $state, DashboardResource, crud) {
       }).result.then(function (dashboard) {
           return $state.go('dashboard', {dashboardId: dashboard._id});
         });
+    },
+    
+    aboutModal: function () {
+      $modal.open({
+        template: require('../../dashboard/about-dashboard-modal.html'),
+        controller: /*ngInject*/ function ($scope, $modalInstance, $filter) {
+
+          $scope.description = [];
+          var indx = 0;
+          var key = "db.Description." + indx++;
+          var val = $filter('i18next')(key);
+          while (val !== key){
+            $scope.description.push(val);
+            key = "db.Description." + indx++;
+            val = $filter('i18next')(key);
+          }
+      
+          $scope.ok = function () {
+            $modalInstance.close();
+          };
+        }
+      });
     }
   };
 };

@@ -118,6 +118,12 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
               Dashboard.get(scope.dashboardId, function (data) {
                 scope.dashboard = data._source;
                 scope.dashboard.widgets.forEach(updateDateRange);
+
+                // Store a copy of the original dashboard definition because if user updates the dashboard name via the
+                // xeditable widget, we'll have to send the new dashboard name with the original (last saved) dashboard
+                // definition to the server, which doesn't support updating just the name.
+                scope.originalDashboard = angular.copy(scope.dashboard);
+
               });
             } else if (state.visualizations || state.filters) {
               var widgets = [];
@@ -221,6 +227,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
                 });
               });
           };
+
           scope.clear = function () {
             scope.dashboard.widgets = [];
             scope.dashboard.nextVizId = 0;
@@ -242,6 +249,11 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
             } else {
               Dashboard.save(Dashboard.state(state));
             }
+
+            // Store a copy of the original dashboard definition because if user updates the dashboard name via the
+            // xeditable widget, we'll have to send the new dashboard name with the original (last saved) dashboard
+            // definition to the server, which doesn't support updating just the name.
+            scope.originalDashboard = angular.copy(Dashboard.state(state));
           };
 
           scope.saveAs = function () {
@@ -258,6 +270,20 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
 
             Dashboard.save(Dashboard.state(state));
           };
+
+          scope.setNameFocus = function() {
+            scope.isDashboardNameFocused = true;
+          }
+
+          scope.unsetNameFocus = function() {
+            scope.isDashboardNameFocused = false;
+          }
+
+          scope.saveDashboardName = function() {
+            if (scope.dashboardId && scope.originalDashboard) {
+              Dashboard.updateName(scope.dashboardId, scope.dashboard.name, scope.originalDashboard);
+            }
+          }
 
           scope.clickthrough = function (widget) {
             var savedWidget = {};

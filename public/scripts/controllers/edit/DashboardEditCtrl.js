@@ -63,4 +63,5 @@ module.exports = function ($scope, $modal, tableUtil, crud, $filter, DashboardRe
     delete deleteRecord._source.widgets;
     crud.delete(deleteRecord, $scope.resource, $scope.deleteTemplate).result.then(reload);
   };
+
 };

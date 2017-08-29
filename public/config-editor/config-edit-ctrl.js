@@ -19,12 +19,13 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
         if (template._source.name === 'site') {
 
           var temp = template._source;
-          temp.fields.forEach(function (field) {
+          temp.fields.forEach(function (field, indx) {
             if (!field.isGroup && field.formFieldType !== 'FixedLengthList' && field.values) {
               field.values = field.values.map(function (val) {
                 return val.name;
               });
             }
+            field.index = indx;
           });
 
           // templates are stored as an array so that in future, user can select multiple templates
@@ -35,6 +36,10 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
           $scope.siteTemplate._id = template._id;
 
         } else {
+          //save field order
+          template._source.fields.forEach(function(field, indx){
+            field.index = indx;
+          });
           $scope.templateKeys.push(template._source.name);
           templates[template._source.name] = template._source;
           templates[template._source.name]._id = template._id;
@@ -45,6 +50,8 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
       // Custom template should be listed last
       $scope.templateKeys.sort().reverse();
 
+      angular.element("#config-fields-table").sortable({cursor:"move"});
+    
     });
   };
   $scope.setEnabled = function (val) {
@@ -124,7 +131,25 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
           return possibleValuesByName[val] || { name: val };
         }).sort(stringUtil.compare);
       }
+      
     });
+    
+    //get HTML field order
+    var tempFields = [];
+    angular.element(".config-fields-row").each(function(){
+       var indx = parseInt(this.attributes['rowindex'].value);
+       tempFields.push(template.fields[indx]);
+       var group = $scope.groupField(template.fields[indx]);
+       if (group !== null){
+        tempFields.push(template.fields[group.index]);
+       }
+    });
+    
+     //reorder template fields
+    template.fields.length = 0;
+    tempFields.forEach(function(field){
+        template.fields.push(field);
+    });   
 
     // Update form if it has an id
     if (template._id) {
@@ -138,6 +163,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
     else {
       FormResource.save(template, onSuccess);
     }
+    
   };
 
   var addSiteTemplate = function (templateName) {

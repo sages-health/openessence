@@ -90,35 +90,39 @@ angular.module(directives.name).directive('outpatientTable',
                 return fields;
               }, {});
 
-              var columns = [
-                {title: 'op.VisitDate', sortable: 'visitDate', field: 'visitDate', type: 'date'},
-                {title: 'op.VisitType', sortable: 'visitType', field: 'visitType', type: 'multi-select'},
-                //{title: 'Week', sortable:'visitDate', field:'visitDate', type:'week'},
-                //{title: 'Year', sortable:'visitDate', field:'visitDate', type:'year'},
-                {title: 'op.SymptomOnset', sortable: 'symptomOnsetDate', field: 'symptomOnsetDate', type: 'date'},
-                {title: 'op.Submitted', sortable: 'submissionDate', field: 'submissionDate', type: 'date'},
-                {title: 'op.Facility', sortable: 'medicalFacility', field: 'medicalFacility', type: 'multi-select'},
-                {title: 'op.District', sortable: 'medicalFacility.location.district', field: 'medicalFacility.location.district', type: 'shortString'},
-                {title: 'op.SitesTotal', sortable: 'medicalFacility.sites.total', field: 'medicalFacility.sites.total'},
-                {title: 'op.SitesReporting', sortable: 'medicalFacility.sites.reporting', field: 'medicalFacility.sites.reporting'},
-                {title: 'op.PatientID', sortable: 'patient.id', field: 'patient.id'},
-                {title: 'op.Name', sortable: 'patient.name', field: 'patient.name'},
-                {title: 'op.Sex', sortable: 'patient.sex', field: 'patient.sex'},
-                {title: 'op.Age', sortable: 'patient.age.years', field: 'patient.age', type: 'age'},
-                {title: 'op.TelephoneNumber', sortable: 'patient.phone', field: 'patient.phone'},
-                {title: 'op.Address', sortable: 'patient.address', field: 'patient.address'},
-                {title: 'op.Weight', sortable: 'patient.weight', field: 'patient.weight'},
-                {title: 'op.Temperature', sortable: 'patient.temperature', field: 'patient.temperature'},
-                {title: 'op.Pulse', sortable: 'patient.pulse', field: 'patient.pulse'},
-                {title: 'op.BloodPressure', sortable: 'patient.bloodPressure.diastolic', field: 'patient.bloodPressure', type: 'pressure'},
-                {title: 'op.Pregnant', sortable: 'patient.pregnant.is', field: 'patient.pregnant.is'},
-                {title: 'op.PreExistingConditions', sortable: 'patient.preExistingConditions', field: 'patient.preExistingConditions', type: 'text'},
-                {title: 'op.Symptoms', field: 'symptoms', type: 'agg'},
-                {title: 'op.Syndromes', field: 'syndromes', type: 'agg'},
-                {title: 'op.Diagnoses', field: 'diagnoses', type: 'agg'},
-                {title: 'op.Disposition', field: 'disposition', type: 'disposition'},
-                {title: 'op.Antiviral', sortable: 'antiviral.name', field: 'antiviral.name'}
-              ];
+              var namedColumns = [];
+              namedColumns['visitDate'] = {title: 'op.VisitDate', sortable: 'visitDate', field: 'visitDate', type: 'date'};
+              namedColumns['visitType'] = {title: 'op.VisitType', sortable: 'visitType', field: 'visitType', type: 'multi-select'};
+              namedColumns['symptomOnsetDate'] = {title: 'op.SymptomOnset', sortable: 'symptomOnsetDate', field: 'symptomOnsetDate', type: 'date'};
+              namedColumns['submissionDate'] = {title: 'op.Submitted', sortable: 'submissionDate', field: 'submissionDate', type: 'date'};
+              namedColumns['medicalFacility'] = {title: 'op.Facility', sortable: 'medicalFacility', field: 'medicalFacility', type: 'multi-select'};
+              namedColumns['medicalFacility.location.district'] = {title: 'op.District', sortable: 'medicalFacility.location.district', field: 'medicalFacility.location.district', type: 'shortString'};
+              namedColumns['medicalFacility.sites.total'] = {title: 'op.SitesTotal', sortable: 'medicalFacility.sites.total', field: 'medicalFacility.sites.total'};
+              namedColumns['medicalFacility.sites.reporting'] = {title: 'op.SitesReporting', sortable: 'medicalFacility.sites.reporting', field: 'medicalFacility.sites.reporting'};
+              namedColumns['patient.id'] = {title: 'op.PatientID', sortable: 'patient.id', field: 'patient.id'};
+              namedColumns['patient.name'] = {title: 'op.Name', sortable: 'patient.name', field: 'patient.name'};
+              namedColumns['patient.sex'] = {title: 'op.Sex', sortable: 'patient.sex', field: 'patient.sex'};
+              namedColumns['patient.age'] = {title: 'op.Age', sortable: 'patient.age.years', field: 'patient.age', type: 'age'};
+              namedColumns['patient.phone'] = {title: 'op.TelephoneNumber', sortable: 'patient.phone', field: 'patient.phone'};
+              namedColumns['patient.address'] = {title: 'op.Address', sortable: 'patient.address', field: 'patient.address'};
+              namedColumns['patient.weight'] = {title: 'op.Weight', sortable: 'patient.weight', field: 'patient.weight'};
+              namedColumns['patient.temperature'] = {title: 'op.Temperature', sortable: 'patient.temperature', field: 'patient.temperature'};
+              namedColumns['patient.pulse'] = {title: 'op.Pulse', sortable: 'patient.pulse', field: 'patient.pulse'};
+              namedColumns['patient.bloodPressure'] = {title: 'op.BloodPressure', sortable: 'patient.bloodPressure.diastolic', field: 'patient.bloodPressure', type: 'pressure'};
+              namedColumns['patient.pregnant.is'] = {title: 'op.Pregnant', sortable: 'patient.pregnant.is', field: 'patient.pregnant.is'};
+              namedColumns['patient.preExistingConditions'] = {title: 'op.PreExistingConditions', sortable: 'patient.preExistingConditions', field: 'patient.preExistingConditions', type: 'text'};
+              namedColumns['symptoms'] = {title: 'op.Symptoms', field: 'symptoms', type: 'agg'};
+              namedColumns['syndromes'] = {title: 'op.Syndromes', field: 'syndromes', type: 'agg'};
+              namedColumns['diagnoses'] = {title: 'op.Diagnoses', field: 'diagnoses', type: 'agg'};
+              namedColumns['disposition'] = {title: 'op.Disposition', field: 'disposition', type: 'disposition'};
+              namedColumns['antiviral.name'] = {title: 'op.Antiviral', sortable: 'antiviral.name', field: 'antiviral.name'};
+              
+              var columns = [];
+              scope.form.fields.forEach(function(field){
+                  if (namedColumns[field.name] !== undefined){
+                      columns.push(namedColumns[field.name]);
+                  }
+              });
 
               angular.forEach(columns, function (column) {
                 //Translate column headers
