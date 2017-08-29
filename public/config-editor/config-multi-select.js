@@ -13,6 +13,7 @@ angular.module(directives.name).directive('configMultiselect', /*@ngInject*/ fun
     compile: function () {
       return {
         pre: function (scope) {
+          scope.editEnabled = false;
 
           var openAddNewValueModal = function (field) {
             return $modal.open({
@@ -38,6 +39,26 @@ angular.module(directives.name).directive('configMultiselect', /*@ngInject*/ fun
           };
 
           scope.removeAll = function (field) {
+            field.values = [];
+          };
+          
+          scope.showFieldEdit = function(){
+            scope.editEnabled = !scope.editEnabled;
+          }
+      
+          
+          scope.possibleValueRemoved = function(item, model){
+            for (var i=scope.field.values.length-1; i>=0; i--) {
+              if (scope.field.values[i] === item.name) {
+                scope.field.values.splice(i, 1);
+                    // break;       //<-- Uncomment  if only the first term has to be removed
+                }
+            }
+            
+          }
+          
+          scope.removeAllPossibleValues = function (field) {
+            field.possibleValues = [];
             field.values = [];
           };
 

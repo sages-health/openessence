@@ -13,7 +13,6 @@ module.exports = function ($parse, OutpatientVisitResource) {
     template: require('./form.html'),
     transclude: true,
     scope: {
-      form: '=',
       page: '=',
       paging: '=',
       onSubmit: '&',
@@ -22,7 +21,11 @@ module.exports = function ($parse, OutpatientVisitResource) {
     compile: function () {
       return {
         pre: function (scope) {
-          scope.dataType = scope.form.dataType;  //aggregate or individual
+//          console.log("Stalling : " + scope.$parent.formDataLoaded)
+//          while(!scope.$parent.formDataLoaded){
+//            console.log("Stalling : " + scope.$parent.formDataLoaded)
+//          }
+          scope.dataType = scope.$parent.form.dataType;  //aggregate or individual
           scope.page = scope.page || 1;
           scope.paging = scope.paging || false;
           scope.record = scope.record || {};
@@ -37,8 +40,8 @@ module.exports = function ($parse, OutpatientVisitResource) {
 
           // convert array of fields to object indexed by field name
           // TODO keep order of fields
-          scope.fields = scope.form.fields.reduce(function (fields, field) {
-            var aggregateField = (scope.form.dataType === 'aggregate' && aggregateFields.indexOf(field.name) > -1 );
+          scope.fields = scope.$parent.form.fields.reduce(function (fields, field) {
+            var aggregateField = (scope.$parent.form.dataType === 'aggregate' && aggregateFields.indexOf(field.name) > -1 );
             if (field.enabled && field.values && !aggregateField) { //not an aggregatedField, ok to convert to string
 
               // index values by name to make lookups easy
@@ -164,7 +167,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
             return dataElement;
           };
 
-          if (scope.form.dataType === 'aggregate') {
+          if (scope.$parent.form.dataType === 'aggregate') {
             scope.visit.symptoms = addDefaultFieldsToDataField(scope.visit.symptoms, scope.allSymptoms);
             scope.visit.syndromes = addDefaultFieldsToDataField(scope.visit.syndromes, scope.allSyndromes);
             scope.visit.diagnoses = addDefaultFieldsToDataField(scope.visit.diagnoses, scope.allDiagnoses);
@@ -301,7 +304,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
                 return;
               }
 
-              var aggregateField = (scope.form.dataType === 'aggregate' && aggregateFields.indexOf(field.name) > -1 );
+              var aggregateField = (scope.$parent.form.dataType === 'aggregate' && aggregateFields.indexOf(field.name) > -1 );
               if (aggregateField) {
                 // only store objects having count value
                 recordToSubmit[field.name] = recordToSubmit[field.name].filter(function (el) {

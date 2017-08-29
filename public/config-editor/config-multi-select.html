@@ -16,4 +16,28 @@
           ng-click="removeAll(field)" ng-i18next="[title]config.RemoveAll">
     <span class="icon-cancel"></span>
   </button>
+  <button class="btn btn-warning btn-sm"
+          ng-click="showFieldEdit()" ng-i18next="[title]config.EditValues">
+    <span class="fa fa-pencil"></span>
+  </button>
 </div>
+<div ng-show="editEnabled">
+<br/><br/>
+<div>
+  <ui-select class="form-control" multiple="multiple" ng-model="field.possibleValues"
+             ng-disabled="disabled" on-remove="possibleValueRemoved($item, $model)">
+    <ui-select-match placeholder="Add dropdown options...">{{$item.name}}</ui-select-match>
+    <ui-select-choices repeat="pval in field.possibleValues  | filter:$select.search">
+    <div ng-bind-html="pval.value.name | highlight: $select.search"></div>
+  </ui-select>
+</div>
+
+<div class="btn-group pull-right">
+  <button class="btn btn-warning btn-sm"
+          ng-click="removeAllPossibleValues(field)" ng-i18next="[title]config.RemoveAll">
+    <span class="icon-cancel"></span>
+  </button>
+</div>
+</div>
+
+
