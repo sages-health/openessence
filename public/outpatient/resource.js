@@ -24,6 +24,16 @@ var services = require('../scripts/modules').services;
             method: 'PUT',
             headers: { 'Accept': 'application/json' }
           },
+          modify: {
+            method: 'POST',
+            headers: { 'Accept': 'application/json'},
+            url: resourceUrl + '/_update'
+          },
+          create:{
+            method:'POST',
+            headers: { 'Accept': 'application/json'},
+            url: resourceUrl + '/_update'
+          },
           save: {
             method: 'POST',
             headers: { 'Accept': 'application/json' }

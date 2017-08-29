@@ -8,20 +8,7 @@
         <div class="col-md-12">
           <div class="panel panel-default">
             <div class="panel-body">
-              <div class="form-group">
-                <label ng-i18next>config.DataType</label>
-                <br>
-                <label class="radio-inline">
-                  <input type="radio" name="data-type" value="individual" ng-model="siteTemplate.dataType">
-                  Individual
-                </label>
-                <label class="radio-inline">
-                  <input type="radio" name="data-type" value="aggregate" ng-model="siteTemplate.dataType">
-                  Aggregate
-                </label>
-              </div>
-
-              <div class="form-group">
+              <div class="form-group  col-md-3">
                 <label ng-i18next>config.Template</label>
                 <br>
 
@@ -33,73 +20,117 @@
                 </div>
 
               </div>
-            </div>
-          </div>
-
-          <div ng-show="siteTemplate.fields" class="panel panel-default">
-
-            <div class="panel-heading clearfix">
-              <label ng-i18next>config.Fields</label>
-
-              <div class="pull-right">
-                <!-- <button class="btn btn-primary" ng-click="openAddNewFieldModal()">
-                  <span ng-i18next>config.NewField</span>
-                </button> -->
-                <button class="btn btn-primary" ng-click="setEnabled(true)">
-                  <span ng-i18next>config.SelectAll</span>
-                </button>
-                <button class="btn btn-primary" ng-click="setEnabled(false)">
-                  <span ng-i18next>config.DeselectAll</span>
-                </button>
+              <div class="form-group col-md-3">
+                <label ng-i18next>config.DataType</label>
+                <br>
+                <div class="radio">
+                  <label>
+                  <input type="radio" name="data-type" value="individual" ng-model="siteTemplate.dataType">
+                  Individual
+                  </label>
+                </div>
+                <div class="radio">
+                  <label>
+                  <input type="radio" name="data-type" value="aggregate" ng-model="siteTemplate.dataType">
+                  Aggregate
+                  </label>
+                </div>
               </div>
             </div>
-            <div class="panel-body">
-              <table class="table table-striped">
-                <tr>
-                  <td style="padding:2px;"><i class="fa fa-filter" aria-hidden="true" popover="{{'op.isFilterable' | i18next}}" popover-trigger="mouseenter"></i></td>
-                  <td style="padding:2px;"><i class="fa fa-toggle-on" aria-hidden="true" popover="{{'op.isEnabled' | i18next}}" popover-trigger="mouseenter"></i></td>
-                  <td></td> <!-- field name --> 
-                  <td></td> <!-- field values -->
-                </tr>
-                <tbody id="config-fields-table">
-                <tr ng-repeat="field in siteTemplate.fields | filter: isNotGroupField" rowindex={{field.index}} class="config-fields-row">
-                <td>
+
+            <div ng-show="siteTemplate.fields" class="panel panel-default">
+
+              <div class="panel-heading clearfix">
+                <label ng-i18next>config.Fields</label>
+
+                <div class="pull-right">
+                  <button class="btn btn-primary" ng-disabled="template._id !== '' && template._id !== undefined" ng-click="openAddNewFieldModal()">
+                  <span ng-i18next>config.NewField</span>
+                </button>
+                  <button class="btn btn-primary" ng-click="setEnabled(true)">
+                  <span ng-i18next>config.SelectAll</span>
+                </button>
+                  <button class="btn btn-primary" ng-click="setEnabled(false)">
+                  <span ng-i18next>config.DeselectAll</span>
+                </button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <table class="table table-striped">
+                  <tr>
+                    <th style="padding:2px;"><i class="fa fa-toggle-on" aria-hidden="true" popover="{{'op.isEnabled' | i18next}}" popover-trigger="mouseenter"></i></th>
+                    <th style="padding:2px;"><i class="fa fa-filter" aria-hidden="true" popover="{{'op.isFilterable' | i18next}}" popover-trigger="mouseenter"></i></th>
+                    <th style="padding:2px;"><i class="fa fa-sort" aria-hidden="true" popover="{{'op.isSortable' | i18next}}" popover-trigger="mouseenter"></i></th>
+                    <th>
+                      {{ 'app.Delete' | i18next }}
+                    </th>
+                    <th>
+                      {{ 'op.FieldName' | i18next}}
+                    </th>
+                    <th>
+                      {{ 'op.FieldValues' | i18next }}
+                    </th>
+
+                  </tr>
+                    <tbody id="config-fields-table">
+                  <tr ng-repeat="field in siteTemplate.fields | filter: isNotGroupField" rowindex={{field.index}} class="config-fields-row">
+                    <td>
+                      <div class="checkbox">
+                        <label>
+                        <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
+                               ng-checked="field.enabled" ng-disabled="field.locked">
+                        <label>
+                    </div>
+                  </td>
+                  <td>
                     <div class="checkbox">
                       <label>
                         <input type="checkbox" ng-model="field.isFilter"
-                               ng-checked="field.isFilter" ng-disabled="field.locked">
+                               ng-checked="field.isFilter">
                       </label>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="checkbox">
+                      </div>
+                    </td>
+                    <td>
+                      <div class="checkbox">
+                        <label>
+                        <input type="checkbox" ng-model="field.sortable"
+                               ng-checked="field.sortable" data-ng-true-value="'{{field.nested ? field.name + '.name' : field.name}}'">
+                      </label>
+                      </div>
+                    </td>
+                    <td style="padding-top: 16px">
+                      <button class="btn btn-danger btn-xs" ng-show="!field.locked">
+                      <span class="fa fa-trash" ng-click="openDeleteFieldModal(field)">
+                      </span>
+                    </button>
+                    </td>
+                    <td>
                       <label>
-                        <input type="checkbox" ng-value="field.name" ng-model="field.enabled"
-                               ng-checked="field.enabled" ng-disabled="field.locked">
-                      <label>
-                    </div>
-                  </td>
-                  <td>
-                    <label>
                       {{'op.' + getLocaleValue(field.name) | i18next}}
                     </label>
-                  </td>
-                  <td>
-                    <div ng-if="field.enabled && field.groupName === 'patient.ageGroup'">
-                      <config-age-group field="groupField(field)"></config-age-group>
-                    </div>
-
-                    <div ng-if="field.enabled && field.values !== undefined">
-
-                      <!-- sex and antiviral.exposure fields have fixed number of rows.
-                      Admin cannot add or delete rows, he can only change displayValue -->
-                      <div ng-if="field.formFieldType === 'FixedLengthList'">
-                        <config-table field="field"></config-table>
+                      <label ng-if="field.table.type === 'agg' && siteTemplate.dataType === 'aggregate'">
+                      (Aggregate)
+                    </label>
+                    </td>
+                    <td>
+                      <div ng-if="field.enabled && field.groupName === 'patient.ageGroup'">
+                        <config-age-group field="groupField(field)"></config-age-group>
                       </div>
 
-                      <div ng-if="field.formFieldType !== 'FixedLengthList'">
-                        <config-multiselect field="field"></config-multiselect>
-                        <br>
+                      <div ng-if="field.enabled && field.values !== undefined">
+
+                        <!-- sex and antiviral.exposure fields have fixed number of rows.
+                      Admin cannot add or delete rows, he can only change displayValue -->
+                        <div ng-if="field.fieldType === 'FixedLengthList'">
+                          <config-table field="field"></config-table>
+                        </div>
+                        <div ng-if="field.fieldType === 'Region'">
+                          <config-table-region field="field"></config-table-region>
+                        </div>
+
+                        <div ng-if="field.fieldType !== 'FixedLengthList' && field.fieldType !== 'Region'">
+                          <config-multiselect field="field"></config-multiselect>
+                          <br>
 
                         <div ng-if="field.groupName !== undefined">
                           <config-group field="groupField(field)" possible-values="field.values"></config-group>
@@ -108,7 +139,7 @@
                     </div>
                   </td>
                 </tr>
-                </tbody>
+                    </tbody>
               </table>
             </div>
           </div>
@@ -122,25 +153,26 @@
           <span class="icon-cancel"></span>
           <span ng-i18next>app.Cancel</span>
         </button>
-        <button class="btn btn-primary" ng-click="save()">
+          <button class="btn btn-primary" ng-click="save()">
           <span class="icon-ok"></span>
           <span ng-i18next>app.Save</span>
         </button>
+        </div>
       </div>
     </div>
+
+    <!-- Template for modal that displays a message -->
+    <script type="text/ng-template" id="message.html">
+      <div class="modal-header">
+        <h3 class="modal-title">{{title}}</h3>
+      </div>
+      <div class="modal-body">
+        {{message}}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="closeModal()">OK</button>
+      </div>
+    </script>
+
   </div>
-
-  <!-- Template for modal that displays a message -->
-  <script type="text/ng-template" id="message.html">
-    <div class="modal-header">
-      <h3 class="modal-title">{{title}}</h3>
-    </div>
-    <div class="modal-body">
-      {{message}}
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" ng-click="closeModal()">OK</button>
-    </div>
-  </script>
-
-</div>
+  </div>

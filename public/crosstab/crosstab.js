@@ -30,6 +30,7 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function () 
         var countKey = 'count';
         var opts = angular.extend(
           {
+            explodeFields: scope.options.explodeFields,
             // heatmaps are nice in theory but make it harder to read and the bar chart is kind of pointless
             renderer: $.pivotUtilities.renderers.Table,
             aggregator: $.pivotUtilities.aggregators.count(),
@@ -74,6 +75,7 @@ angular.module(directives.name).directive('crosstab', /*@ngInject*/ function () 
           scope.pivot,
           pivot
         );
+        opts.aggregator.explodeFields = opts.explodeFields;
         angular.element(element).pivot(records, opts);
       };
 

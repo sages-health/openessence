@@ -182,6 +182,12 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
     flattenRecord(record, flatRecs, explodeFields);
   };
 
+  var flattenAggregateRecord = function (record, flatRecs, explodeFields) {
+    //currently we explode symptoms, symptomsGroup, diagnoses and diagnosesGroup to make crosstab counts for them happy
+    
+    flattenRecord(record, flatRecs, explodeFields);
+  };
+
   var uniqueStrings = function (value, index, self) {
     return self.indexOf(value) === index;
   };
@@ -321,10 +327,11 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
      * @param scope [fields, form.dataType, pivot (adds pivotOptions)  ]
      * @returns {Array}
      */
-    parseResults: function (data, scope) {
+    parseResults: function (data, explodeFields, scope) {
       var records = [];
       var seriesFilter = seriesFilters(scope);
       var fields = scope.fields || scope.options.fields;
+      var explodeFields = explodeFields;
 
       //TODO add missing count, remove 0 from flattened records
       angular.forEach(data.results, function (r) {
@@ -337,12 +344,15 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
         rec.visitYear = moment(rec.visitDate).startOf('year').valueOf().toString();
         rec.visitDOY = moment(rec.visitDate).startOf('day').valueOf().toString();
         rec.visitDate = moment(rec.visitDate).format('YYYY-MM-DD');
-        rec['patient.age'] = rec['patient.age'] && rec['patient.age'].years ? rec['patient.age'].years.toString() : 'Missing-patient.age';
+        //rec.patient.age.years = rec['patient.age.years'] ? rec['patient.age.years'].toString() : 'Missing-patient.age';
 
-        if (scope.form.dataType === 'aggregate') {
+        if (scope.form.dataType === 'aggregate' && explodeFields) {
           //flatten symptoms/diagnoses/symptomsGroup/diagnosesGroup
+          flattenAggregateRecord(rec, records, explodeFields);
+        } else if (scope.form.dataType === 'aggregate'){
           flattenAggregateRecord(rec, records);
-        } else {
+        }
+        else {
           flattenIndividualRecord(rec, records, seriesFilter, scope);
         }
       });
@@ -405,7 +415,7 @@ angular.module(services.name).factory('outpatientAggregation', /*@ngInject*/ fun
       }, opts);
 
       var pivotData = $.pivotUtilities.getPivotData(records,
-        options.cols, options.rows, options.aggregator, options.filter, options.derivedAttributes);
+        options.cols, options.rows, options.aggregator, options.filter, options.derivedAttributes, scope.form.explodeFields);
 
       var barData = [];
       var pieData = [];

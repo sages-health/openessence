@@ -4,14 +4,23 @@
 <div class="modal-body">
   <form class="form" role="form" novalidate name="form">
 
-    <div class="form-group" ng-class="{'has-error': isInvalid(form.value)}">
-      <label ng-i18next>config.ID</label>
-      <input class="form-control" type="text" name="value" ng-model="row.value" required>
-    </div>
-
     <div class="form-group" ng-class="{'has-error': isInvalid(form.name)}">
       <label ng-i18next>config.Name</label>
       <input class="form-control" type="text" name="name" ng-model="row.name" required>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': isInvalid(form.region)}">
+      <label ng-i18next>config.Region</label>
+      <select class="form-control" name="region" ng-model="row.region">
+            <option value=""></option>
+
+            <!-- We don't use ng-options b/c then we couldn't insert the "Other" optgroup. But ng-repeat means we have to
+            convert our model instances to strings, otherwise, since it uses reference equality, it wouldn't
+            pre-select the right value -->
+            <option ng-repeat="f in field.regions" value="{{f.name}}"
+              ng-selected="row.region === f.name"> 
+              {{f.name}}
+            </option>
     </div>
 
     <div class="help-block" ng-show="yellAtUser && !row.name" ng-i18next>

@@ -4,18 +4,20 @@ var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 var _ = require('lodash');
 
-angular.module(directives.name).directive('configTable', /*@ngInject*/ function ($modal, orderByFilter, NgTableParams) {
+angular.module(directives.name).directive('configTableMapping', /*@ngInject*/ function ($modal, orderByFilter, NgTableParams) {
   return {
     restrict: 'E',
-    template: require('./config-table.html'),
+    template: require('./config-table-mapping.html'),
     scope: {
-      field: '=?'
+      field: '=?',
+      regions: '=?'
     },
     compile: function () {
       return {
         pre: function (scope) {
           scope.field = scope.field || {};
           scope.field.values = scope.field.values || [];
+          scope.regions = scope.regions || [{name: '', region: ''}];
 
           scope.tableParams = new NgTableParams({
             page: 1, // page is 1-based
@@ -27,25 +29,26 @@ angular.module(directives.name).directive('configTable', /*@ngInject*/ function 
               total: scope.field.values ? scope.field.values.length : 0,
               counts: [], // hide page count control
               getData: function (params) {
-                var orderedData = params.sorting() ? orderByFilter(scope.field.possibleValues, params.orderBy()) : scope.field.possibleValues;
+                var orderedData = params.sorting() ? orderByFilter(scope.regions, params.orderBy()) : scope.regions;
                 return orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
               }
             });
 
           scope.tableParams.reload();
 
-          scope.$watchCollection('field.possibleValues', function () {
+          scope.$watchCollection('field.regions', function () {
             scope.tableParams.reload();
           });
 
           // Modal that will allow group edit/create
           var openEditModal = function (values, row) {
             return $modal.open({
-              template: require('./config-table-modal.html'),
+              template: require('./config-table-mapping-modal.html'),
               backdrop: 'static',
               controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
                 $scope.row = angular.copy(row || {});
                 $scope.yellAtUser = false;
+                $scope.regions = values;
 
                 $scope.isInvalid = function (field) {
                   if (!field) {
@@ -93,12 +96,12 @@ angular.module(directives.name).directive('configTable', /*@ngInject*/ function 
           // Create/Edit a group
           scope.edit = function (row) {
             // open a modal to enter a new value
-            openEditModal(scope.field.possibleValues, row).result
+            openEditModal(scope.regions, row).result
               .then(function (entry) {
 
                 // update existing entry
-                scope.field.possibleValues.forEach(function (val, ix) {
-                  if (val.value === row.value) {
+                scope.regions.forEach(function (val, ix) {
+                  if (val.name === row.name) {
                     angular.extend(scope.field.possibleValues[ix], entry);
                   }
                 });
@@ -119,7 +122,7 @@ angular.module(directives.name).directive('configTable', /*@ngInject*/ function 
 
           scope.add = function () {
             // open a modal to enter a new value
-            var newRow = {name: '', value: ''};
+            var newRow = {name: '', region: ''};
 
             scope.field.possibleValues.push(newRow);
           };

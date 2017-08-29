@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h3 class="modal-title" ng-i18next>config.NewField</h3>
+</div>
+<div class="modal-body">
+  <form class="form" role="form" novalidate name="deleteFieldForm">
+    Are you sure you want to delete <label ng-i18next>{{field.name}}</label>? 
+    <span class="help-block" ng-i18next>This is action irreversable</span>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-warning" ng-click="closeModal()" ng-i18next>app.Cancel</button>
+  <button class="btn btn-danger" ng-click="delete()" ng-i18next>app.Delete</button>
+</div>

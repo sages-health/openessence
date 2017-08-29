@@ -64,7 +64,6 @@ or
 
 If you choose to install Docker for Windows, you'll need to run the docker commands in the [Docker Elastic Search and Redis Setup](#docker-elasticsearch-and-redis-setup) section
 
-
 ## Docker Elasticsearch and Redis Setup
 
 > This is only needed if you are using Docker natively and not running the Vagrant target in the [Windows Users](#windows-users) section

@@ -60,7 +60,7 @@
       "pivot": {
         "rows": [],
         "cols": [
-          "patient.sex"
+          "sex"
         ]
       },
       "options": {

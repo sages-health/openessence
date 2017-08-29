@@ -2,7 +2,7 @@
 
 var gulp = require('gulp');
 
-gulp.task('fonts', ['fracas-fonts', 'font-awesome']);
+gulp.task('fonts', ['fracas-fonts', 'font-awesome', 'roboto']);
 
 gulp.task('fracas-fonts', function () {
   var getFontFiles = function (path) {
@@ -25,5 +25,17 @@ gulp.task('font-awesome', function () {
 
   
   return gulp.src(getFontFiles('bower_components/font-awesome/fonts/*'))
+    .pipe(gulp.dest('dist/public/fonts'));
+});
+
+gulp.task('roboto', function () {
+  var getFontFiles = function (path) {
+    return ['.eot', '.svg', '.ttf', '.woff', '.woff2'].map(function (ext) {
+      return path + ext;
+    });
+  };
+
+  
+  return gulp.src(getFontFiles('public/styles/fonts/*'))
     .pipe(gulp.dest('dist/public/fonts'));
 });

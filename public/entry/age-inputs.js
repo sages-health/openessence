@@ -14,6 +14,7 @@ module.exports = function () {
           scope.visit = scope.visit || {};
           scope.visit.patient = scope.visit.patient || {};
           scope.visit.patient.age = scope.visit.patient.age || {};
+          scope.visit.patient.age.years = scope.visit.patient.age.years || {};
 
           // IDs of warning messages. The actual messages are stored in the views (where they should be).
           scope.warnings = {

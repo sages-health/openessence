@@ -2,6 +2,7 @@
 
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
+var _ = require('lodash');
 
 /**
  * A reusable edit form. Currently only used in the modal edit, but could be used in other places.
@@ -27,13 +28,13 @@ module.exports = function ($parse, OutpatientVisitResource) {
           scope.paging = scope.paging || false;
           scope.record = scope.record || {};
           scope.visit = angular.copy(scope.record._source) || {};
-
+          scope.gridOptions = {};
           // namespace for "Other" fields, e.g. other pre-existing conditions not listed
           scope.others = {};
 
           // Fields that have count: X. We need to add count: 1 to them on individual form
           //TODO use possibleFilters[field].aggregation.nested
-          var aggregateFields = ['symptoms', 'syndromes', 'diagnoses'];
+          var aggregateFields = scope.form.explodeFields || ['symptoms', 'syndromes', 'diagnoses'];
 
           // convert array of fields to object indexed by field name
           // TODO keep order of fields
@@ -54,7 +55,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
               // form will list this field as blank when it really isn't
               var existingValues = field.expression(scope.visit);
               if (existingValues) {
-                if(field.name === 'antiviral.exposure' || field.name === 'patient.sex' || field.name === 'patient.pregnant.is'){
+                if(field.name === 'antiviral.exposure' || field.name === 'sex' || field.name === 'patient.pregnant.is'){
                   if(angular.isString(existingValues)){
                     existingValues = valuesByName[existingValues] ? valuesByName[existingValues].value : '';
                   }
@@ -89,10 +90,10 @@ module.exports = function ($parse, OutpatientVisitResource) {
           //TODO remove sites hack when UI supports object representation
           // current workaround for medicalFacility.sites
           scope.medicalFacility = {'sites': {}};
-          if (scope.fields['medicalFacility.sites.total'].enabled) {
+          if (scope.fields['medicalFacility.sites.total'] && scope.fields['medicalFacility.sites.total'].enabled) {
             scope.medicalFacility.sites.total = $parse('medicalFacility.sites.total')(scope.record._source) || 0;
           }
-          if (scope.fields['medicalFacility.sites.reporting'].enabled) {
+          if (scope.fields['medicalFacility.sites.reporting'] && scope.fields['medicalFacility.sites.reporting'].enabled) {
             scope.medicalFacility.sites.reporting = $parse('medicalFacility.sites.reporting')(scope.record._source) || 0;
           }
 
@@ -137,19 +138,13 @@ module.exports = function ($parse, OutpatientVisitResource) {
             scope.datePopupsOpen[name] = !scope.datePopupsOpen[name];
           };
 
-          scope.allSymptoms = scope.fields.symptoms ? scope.fields.symptoms.values.map(function (v) {
-            return {name: v.name};
-          }) : [];
-          scope.allSyndromes = scope.fields.syndromes ? scope.fields.syndromes.values.map(function (v) {
-            return {name: v.name};
-          }) : [];
-          scope.allDiagnoses = scope.fields.diagnoses ? scope.fields.diagnoses.values.map(function (v) {
-            return {name: v.name};
-          }) : [];
+          scope.allValues = {};
 
-          scope.fields.diagnoses ? scope.fields.diagnoses.values.map(function (v) {
-            return {name: v.name};
-          }) : [];
+          for(var field in aggregateFields){
+            scope.allValues[aggregateFields[field]] = scope.fields[aggregateFields[field]] ? scope.fields[aggregateFields[field]].values.map(function (v) {
+              return {name: v.name};
+            }) : [];
+          }
 
           var addDefaultFieldsToDataField = function (dataElement, allPossibleValues) {
             dataElement = dataElement ? dataElement : [];
@@ -165,43 +160,20 @@ module.exports = function ($parse, OutpatientVisitResource) {
           };
 
           if (scope.form.dataType === 'aggregate') {
-            scope.visit.symptoms = addDefaultFieldsToDataField(scope.visit.symptoms, scope.allSymptoms);
-            scope.visit.syndromes = addDefaultFieldsToDataField(scope.visit.syndromes, scope.allSyndromes);
-            scope.visit.diagnoses = addDefaultFieldsToDataField(scope.visit.diagnoses, scope.allDiagnoses);
+            for(var field in aggregateFields){
+              scope.visit[aggregateFields[field]] = addDefaultFieldsToDataField(scope.visit[aggregateFields[field]], scope.allValues[aggregateFields[field]]);
+              scope.gridOptions[aggregateFields[field]] = {
+                data: 'visit.' + aggregateFields[field],
+                enableRowSelection: false,
+                enableCellSelection: true,
+                enableCellEditOnFocus: true,
+                columnDefs: [
+                  {field: 'name', displayName: 'Name', cellEditableCondition: 'false'},
+                  {field: 'count', displayName: 'Count'}
+                ]
+              }
+            }
           }
-
-          scope.symptomsGridOptions = {
-            data: 'visit.symptoms',
-            enableRowSelection: false,
-            enableCellSelection: true,
-            enableCellEditOnFocus: true,
-            columnDefs: [
-              {field: 'name', displayName: 'Name', cellEditableCondition: 'false'},
-              {field: 'count', displayName: 'Count'}
-            ]
-          };
-
-          scope.syndromesGridOptions = {
-            data: 'visit.syndromes',
-            enableRowSelection: false,
-            enableCellSelection: true,
-            enableCellEditOnFocus: true,
-            columnDefs: [
-              {field: 'name', displayName: 'Name', cellEditableCondition: 'false'},
-              {field: 'count', displayName: 'Count'}
-            ]
-          };
-
-          scope.diagnosesGridOptions = {
-            data: 'visit.diagnoses',
-            enableRowSelection: false,
-            enableCellSelection: true,
-            enableCellEditOnFocus: true,
-            columnDefs: [
-              {field: 'name', displayName: 'Name', cellEditableCondition: 'false'},
-              {field: 'count', displayName: 'Count'}
-            ]
-          };
 
           scope.submit = function (visitForm) {
             if (visitForm.$invalid) {
@@ -227,29 +199,37 @@ module.exports = function ($parse, OutpatientVisitResource) {
               }
             };
 
+            
+
             // don't make destructive modification on scope.visit since we may have to redo form
-            var recordToSubmit = angular.copy(scope.visit);
+            //var recordToSubmit = angular.copy(scope.visit);
+            var recordToSubmit = {};
+
+            Object.keys(scope.visit).forEach(function(field){
+              if(_.includes(aggregateFields, field)){
+                _.set(recordToSubmit, field, scope.visit[field]);
+              }else{
+                _.set(recordToSubmit, field, scope.visit[field]);
+              }
+            });
 
             // Clear conditional fields whose pre-conditions aren't met. We don't do this on the form itself b/c
             // reversible actions. E.g. if you un-check and then immediately re-check the "Pregnant" checkbox, all
             // the conditional pregnancy fields, e.g. trimester, should still be there.
             var deleteConditionalFields = function (recordToSubmit) {
-              if (!recordToSubmit.patient) {
-                return;
-              }
 
               // trimester -> pregnant -> female
-              if (recordToSubmit.patient.sex !== 'F') {
+              if (recordToSubmit['sex'] !== 'F') {
                 // can't be pregnant without being female, modus tollens FTW!
-                delete recordToSubmit.patient.pregnant;
-              } else if (recordToSubmit.patient.pregnant && !recordToSubmit.patient.pregnant.is) {
-                delete recordToSubmit.patient.pregnant.trimester;
+                delete recordToSubmit['patient.pregnant'];
+              } else if (recordToSubmit['patient.pregnant'] && !recordToSubmit['patient.pregnant.is']) {
+                delete recordToSubmit['patient.pregnant.trimester'];
               }
 
               // antiviral name || antiviral source -> antiviral exposure
-              if (recordToSubmit.antiviral && recordToSubmit.antiviral.exposure === 'N') {
-                delete recordToSubmit.antiviral.name;
-                delete recordToSubmit.antiviral.source;
+              if (recordToSubmit.antiviral && recordToSubmit['antiviral.exposure'] === 'N') {
+                delete recordToSubmit['antiviral.name'];
+                delete recordToSubmit['antiviral.source'];
               }
 
               return recordToSubmit;
@@ -318,7 +298,7 @@ module.exports = function ($parse, OutpatientVisitResource) {
                 }
 
                 // map id(value) to displayValue(name)
-                if (field.name === 'antiviral.exposure' || field.name === 'patient.sex' || field.name === 'patient.pregnant.is') {
+                if (field.name === 'antiviral.exposure' || field.name === 'sex' || field.name === 'patient.pregnant.is') {
                   angular.forEach(field.valuesByName, function (val) {
                     if (val.value === selectedValues) {
                       selectedValues = val.name;
@@ -358,12 +338,14 @@ module.exports = function ($parse, OutpatientVisitResource) {
                     v.count = 1;
                   });
                 }
+
               });
             }
             //TODO remove sites hack
             //current hard code to add sites { total, reporting }
             //this is due to the medicalFacility object being converted to a string for ng-model/drop down
-            if (scope.fields['medicalFacility.sites.total'].enabled || scope.fields['medicalFacility.sites.reporting'].enabled) {
+            if ((scope.fields['medicalFacility.sites.total'] && scope.fields['medicalFacility.sites.total'].enabled) || 
+                 (scope.fields['medicalFacility.sites.reporting'] && scope.fields['medicalFacility.sites.reporting'].enabled)) {
               angular.extend(recordToSubmit['medicalFacility'], {'sites': scope.medicalFacility.sites});
             }
 

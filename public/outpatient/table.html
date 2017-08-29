@@ -8,31 +8,31 @@
         <td ng-repeat="col in $columns">
           <div class="animate-switch-container" ng-switch on="col.type">
             <div class="animation-switch" ng-switch-when="date">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+              <a ng-class="{'disabled': !col.isFilter}"  ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getValue(row._source, col.field) | date}}</a>
             </div>
             <div class="animation-switch" ng-switch-when="multi-select">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+              <a ng-class="{'disabled': !col.isFilter || !hasValue(row._source, col.field)}"  ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getNamedValue(row._source, col.field) | truncate:30}}</a>
             </div>
             <div class="animation-switch" ng-switch-when="shortString">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+              <a ng-class="{'disabled': !col.isFilter || !hasValue(row._source, col.field)}"  ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getValue(row._source, col.field) | truncate:15}}</a>
             </div>
             <div class="animation-switch" ng-switch-when="text">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+              <a ng-class="{'disabled': !col.isFilter || !hasValue(row._source, col.field)}"  ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getValue(row._source, col.field) | truncate:30}}</a>
             </div>
             <div class="animation-switch" ng-switch-when="agg">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+              <a ng-class="{'disabled': !col.isFilter || !hasValue(row._source, col.field)}"  ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{printAggregate(getValue(row._source, col.field)) | truncate:30}}</a>
             </div>
             <div class="animation-switch" ng-switch-when="age">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field + '.years'))">
-                {{getValue(row._source, col.field + '.years') }}</a>
+              <a ng-class="{'disabled': !col.isFilter || !hasValue(row._source, col.field)}"  ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+                {{getValue(row._source, col.field) }}</a>
             </div>
             <div class="animation-switch" ng-switch-when="disposition">
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+              <a ng-class="{'disabled': !col.isFilter || !hasValue(row._source, col.field)}"  ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getValue(row._source, col.field) | pluck:'name' | join | truncate:30 }}</a>
             </div>
             <div class="animation-switch" ng-switch-when="action">
@@ -49,7 +49,7 @@
               </div>
             </div>
             <div class="animation-switch" ng-switch-default>
-              <a ng-click="tableFilter(col.field, getValue(row._source, col.field))">
+              <a ng-class="{'disabled': !col.isFilter || !hasValue(row._source, col.field)}" ng-click="tableFilter(col.field, getValue(row._source, col.field))">
                 {{getNamedValue(row._source, col.field)}}</a>
             </div>
           </div>

@@ -336,6 +336,7 @@ function Controller(Model, options) {
       }
 
       var q = req.query.q || req.body.q;
+      var query = req.query.query || req.body.query;
       if (q) {
         // We don't check for the empty string here since most of the time you don't want to search for the empty
         // string, especially since elasticsearch's inverted index doesn't store nulls or the empty string
@@ -346,13 +347,26 @@ function Controller(Model, options) {
             query: q
           }
         };
-      } else {
+      } 
+      else if (query) {
+        esRequest.body.query = {
+          query: query
+        }
+      }
+      else {
         esRequest.body.query = {
           'match_all': {}
         };
       }
 
       var body = req.body || {};
+
+
+      var source = body._source;
+
+      if(source !== undefined){
+        esRequest.body._source = source;
+      }
 
       // aggregations have to be in body, plus that's the only way for them to be parsed as JSON
       var aggs = body.aggregations || body.aggs;

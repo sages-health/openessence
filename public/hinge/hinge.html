@@ -2,18 +2,15 @@
   <div class="panel-heading viz-drag-handle">
     <div class="clearfix header">
       <div class="panel-control btn-group">
-        <button type="button" class="close" ng-click="close()" popover="{{'hinge.RemoveWidget' | i18next}}" popover-trigger="mouseenter">
-          <span class="fa fa-times toolbar-icon"></span>
-        </button>
         <!-- TODO next to the close button is the worst possible position for these buttons -->
-        <button type="button" class="save" ng-click="saveViz()" popover="{{'hinge.SaveVisualization' | i18next}}" popover-trigger="mouseenter">
-          <span class="fa fa-floppy-o toolbar-icon" ></span>
+        <button type="button" class="btn btn-default save" ng-click="saveViz()" popover="{{'hinge.SaveVisualization' | i18next}}" popover-trigger="mouseenter">
+          <span class="fa fa-floppy-o fa-1 toolbar-icon" ></span>
         </button>
         <div ng-if="visualization.name !== 'table' 
                  && visualization.name !== 'crosstab' 
                  && visualization.name !== 'map'" class="btn-group" dropdown dropdown-append-to-body>
-          <button type="button" class="export" dropdown-toggle popover="{{'hinge.ExportVisualization' | i18next}}" popover-trigger="mouseenter">
-            <span class="fa fa-share-square-o toolbar-icon"></span>
+          <button type="button" class="btn btn-default export" dropdown-toggle popover="{{'hinge.ExportVisualization' | i18next}}" popover-trigger="mouseenter">
+            <span class="fa fa-download fa-1 toolbar-icon"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
             <li role="menuitem"><a ng-click="printChart()" ng-i18next>hinge.Print</a>
@@ -22,15 +19,18 @@
             <!-- <li role="menuitem"><a ng-click="exportPDF()">Export to PDF</a> -->
           </ul>
         </div>
-        <button ng-if="visualization.name == 'table'" type="button" class="export" ng-click="exportViz()" popover="{{'hinge.ExportVisualization' | i18next}}"
+        <button ng-if="visualization.name == 'table'" type="button" class="btn btn-default export" ng-click="exportViz()" popover="{{'hinge.ExportVisualization' | i18next}}"
                 popover-trigger="mouseenter">
-          <span class="fa fa-share-square-o toolbar-icon"></span>
+          <span class="fa fa-download toolbar-icon"></span>
         </button>
 
         <button ng-if="visualization.name !== 'table' 
                     && visualization.name !== 'crosstab' 
-                    && visualization.name !== 'map'" type="button" class="settings" ng-click="settings()" popover="{{'hinge.Settings' | i18next}}" popover-trigger="mouseenter">
-          <span class="fa fa-cog toolbar-icon"></span>
+                    && visualization.name !== 'map'" type="button" class="btn btn-default settings" ng-click="settings()" popover="{{'hinge.Settings' | i18next}}" popover-trigger="mouseenter">
+          <span class="fa fa-cogs fa-1 toolbar-icon"></span>
+        </button>
+        <button type="button" class="btn btn-danger close" ng-click="close()" popover="{{'hinge.RemoveWidget' | i18next}}" popover-trigger="mouseenter">
+          <span class="fa fa-times fa-1 toolbar-icon"></span>
         </button>
       </div>
       <div ng-if="visualization.name == 'pie'

@@ -37,7 +37,7 @@ module.exports = function reportsMiddleware () {
   };
 
   // TODO: remove hardcoded field names
-  var getFields = function (fields, formFields, format) {
+  var getFields = function (fields, formFields, format, explodeFields) {
     var fldsEnabled = ['id'];
     var fieldIds = Object.keys(fields);
     if (format === 'expanded') {
@@ -50,7 +50,7 @@ module.exports = function reportsMiddleware () {
     }
     formFields.forEach(function (fld) {
       if (fld.enabled) {
-        if (format === 'expanded' && ['symptoms', 'diagnoses', 'disposition'].indexOf(fld.name) > -1) {
+        if (format === 'expanded' && explodeFields.indexOf(fld.name) > -1) {
           fldsEnabled.push(fld.name + '.name');
           fldsEnabled.push(fld.name + '.count');
         } else if (fld.name === 'medicalFacility') {
@@ -116,8 +116,9 @@ module.exports = function reportsMiddleware () {
           }
 
           var formFields = formData[0].doc.fields;
+          var explodeFields = formData[0].explodeFields;
           var fields = flatten(config.template);
-          var fieldIds = getFields(fields, formFields, requestParams.format);
+          var fieldIds = getFields(fields, formFields, requestParams.format, explodeFields);
           var fieldNames = fieldIds;
 
           var converterParams = {

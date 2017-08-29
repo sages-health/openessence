@@ -4,16 +4,35 @@
 <div class="modal-body">
   <form class="form" role="form" novalidate name="newFieldForm">
     <div class="form-group" ng-class="{'has-error': yellAtUser}">
-      <label for="newFieldName" mg-i18next>op.EnterNewFieldName</label>
-      <input class="form-control" type="text" id="newFieldName" name="newFieldName" ng-model="data.newFieldName" required>
-
+      <div ng-class="{'has-error': duplicateField}">
+        <label for="newFieldName" ng-i18next>op.EnterNewFieldName</label>
+        <input class="form-control" ng-change="submitted = false" type="text" id="newFieldName" name="newFieldName" ng-class="{'has-error': duplicateField}" ng-model="data.newFieldName" required>
+        <div class="help-block" ng-show="duplicateField" ng-i18next>
+          config.FieldNameExists
+        </div>
+      </div>
+      <label for="fieldType" ng-i18next>op.SelectFieldType</label>
+      <select class="form-control" ng-change="submitted = false" id="fieldType" name="fieldType" ng-model="data.fieldType" required>
+        <option ng-repeat="type in types" value="{{type.value}}">{{type.name}}</option>
+      </select>
+      <label ng-if="data.fieldType === 'GIS'" for="regionMapping" ng-i18next>op.RegionMapping</label>
+      <select class="form-control" ng-if="data.fieldType === 'GIS'" id="regionMapping" name="regionMapping" ng-model="data.regionMapping" >
+        <option ng-repeat="regionColumn in regionColumns" value="{{regionColumn.name}}">{{regionColumn.name}}</option>
+      </select>
       <div class="help-block" ng-show="yellAtUser" ng-i18next>
         config.msgEnterAValue
       </div>
+      <div class="help-block" ng-show="aggFieldExists" ng-i18next ng-class="{'has-error': aggFieldExists}">
+        config.aggFieldExists
+      </div>
+      <div class="help-block" ng-show="noRegionSelected" ng-i18next ng-class="{'has-error': noRegionSelected}">
+        config.noRegionSelected
+      </div>
+      
     </div>
   </form>
 </div>
 <div class="modal-footer">
   <button class="btn btn-warning" ng-click="closeModal()" ng-i18next>app.Cancel</button>
-  <button class="btn btn-primary" ng-click="save(newFieldForm)" ng-i18next>app.Save</button>
+  <button class="btn btn-primary" ng-disabled="submitted" ng-click="submitted = true; save(newFieldForm)" ng-i18next>app.Save</button>
 </div>

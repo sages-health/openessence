@@ -44,7 +44,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
               }
 
               if(fields[field]){
-                collectFields(collectedFields, fields[field], fieldName);
+                collectedFields.push(fields[field].name);
               }
               else{
 
@@ -74,7 +74,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
 
 
 
-          collectFields(recordFields, csvExportConfig.template, "");
+          collectFields(recordFields, scope.form.fields, "");
 
           scope.recordFields = recordFields;
 
@@ -126,7 +126,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
                   row.forEach(function (v, ix) {
                     obj[columnDefs[ix].field] = v;
                   });
-                  tableData.push(flat.unflatten(obj));
+                  tableData.push(obj);
                 } else {
                   row.forEach(function (v) {
                     columnDefs.push({field: v, width: '100', mapping: ''});
@@ -141,15 +141,19 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             };
 
             CsvMappingResource.get({size: 1}, function(response){
+              if(response.results[0]){
+                scope.mapping = response.results[0]._source.mapping ? response.results[0]._source.mapping : scope.mapping ;
+              }
+              else{
+                scope.mapping = scope.mapping;
+              }
 
-              scope.mapping = response.results[0]._source.mapping ? response.results[0]._source.mapping : scope.mapping ;
-
-              scope.columnDefs.forEach(function(column){
-                if(scope.mapping[column.field]){
-                  var select = document.getElementById('mappings-' + column.field);
-                  select.value = scope.mapping[column.field];
-                }
-              });
+                scope.columnDefs.forEach(function(column){
+                  if(scope.mapping[column.field]){
+                    var select = document.getElementById('mappings-' + column.field);
+                    select.value = scope.mapping[column.field];
+                  }
+                });
               
             });
 
@@ -175,8 +179,14 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
           });
 
           scope.updateMapping = function(fromColumn, toColumn) {
-            scope.mapping[fromColumn] = toColumn;
-            
+            var toColumnFinal = toColumn;
+            for(var i = 0; i < scope.form.fields.length; i++){
+              if(scope.form.fields[i].name === toColumnFinal && scope.form.fields[i].nested == true){
+                //toColumnFinal  = toColumnFinal + '.name';  
+              }
+            }
+            scope.mapping[fromColumn] = toColumnFinal;
+             
           };
           
           scope.saveMapping = function(){

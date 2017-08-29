@@ -63,7 +63,9 @@
         "NewValue": "Enter new value(s) separated by semicolons",
         "ID": "ID",
         "Name": "Name",
-        "msgNameInUse": "Sorry, this name is already in use"
+        "msgNameInUse": "Sorry, this name is already in use",
+        "FieldNameExists": "Field name already exists, please choose another name",
+        "aggFieldExists": "Aggregate Field already exists in datasource. There can only be one aggregate field at a time"
       },
       "db": {
         "AddWidget": "Add Widget",
@@ -320,7 +322,9 @@
         "SymptomsOther" : "Other Symptoms",
         "SyndromesOther": "Other Syndromes",
         "DiagnosesOther": "Other Diagnoses",
-        "SubmissionDate": "Submission Date"
+        "SubmissionDate": "Submission Date",
+        "EnterNewFieldName": "Enter New Field Name",
+        "SelectFieldType": "Select Field Type"
 
       },
       "pa": {
@@ -766,7 +770,9 @@
         "SymptomsOther" : "Otros Síntomas",
         "SyndromesOther": "Otros Síndromes",
         "DiagnosesOther": "Otros Diagnósticos",
-        "SubmissionDate": "Fecha de Emisión"
+        "SubmissionDate": "Fecha de Emisión",
+        "EnterNewFieldName": "Enter New Field Name",
+        "SelectFieldType": "Select Field Type"
 
       },
       "pa": {

@@ -291,7 +291,7 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
               size: 10000,
               q: queryString
             }, function (data) {
-              var records = outpatientAggregation.parseResults(data, scope);
+              var records = outpatientAggregation.parseResults(data, scope.form.explodeFields, scope);
               resultFn(yearID, records);
 
               if (yearID < scope.range) {
@@ -321,7 +321,8 @@ angular.module(directives.name).directive('outpatientYearOverYear', /*@ngInject*
           var processData = function (yearID, records) {
             var opts = {
               rows: scope.pivotOptions.rows || [],
-              cols: scope.pivotOptions.cols || []
+              cols: scope.pivotOptions.cols || [],
+              explodeFields: scope.form.explodeFields
             };
 
             //TODO remove visitDate as option from timeseries view

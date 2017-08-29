@@ -2,6 +2,7 @@
 
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
+var _ = require('lodash');
 
 angular.module(directives.name).directive('outpatientTable',
   /*@ngInject*/ function ($rootScope, $timeout, orderByFilter, NgTableParams, OutpatientVisitResource, sortString,//
@@ -23,6 +24,7 @@ angular.module(directives.name).directive('outpatientTable',
             scope.condensed = condensed;
             scope.options = scope.options || {};
             scope.form = scope.form || {};
+            scope.columns = {};
 
             // scope.formLoaded flag is added so that table will not be rendered till form data is loaded.
             // ng-table-dynamic does not update column info ($columns) if table is already loaded...
@@ -33,7 +35,7 @@ angular.module(directives.name).directive('outpatientTable',
             scope.$on("tableReload", function(events,args){
               scope.tableParams.reload();
             });
-            
+
             scope.tableParams = new NgTableParams({ //FrableParams({
               page: 1, // page is 1-based
               count: 10,
@@ -65,21 +67,20 @@ angular.module(directives.name).directive('outpatientTable',
                       params.total(response.total);
                       scope.setRowCounts(scope.tableParams.total());
                       return response.results;
-                      
+
                     },
                     function error (response) {
                       $rootScope.$broadcast('filterError', response);
 
-                    }).  
+                    }).
                     $promise.then(function(data){
                       scope.data = data.results;
                       return data.results;
                     });
-                    return scope.data;
-              }
+              },
             });
-            
-            
+
+
             var init = function () {
               if (!scope.form || !scope.form.fields) {
                 return;
@@ -89,46 +90,32 @@ angular.module(directives.name).directive('outpatientTable',
                 fields[field.name] = field;
                 return fields;
               }, {});
+              var columns = []
+              _.forEach(scope.form.fields, function(field){
+                var tableColumn = {title: field.localeName, sortable: field.sortable};
 
-              var namedColumns = [];
-              namedColumns['visitDate'] = {title: 'op.VisitDate', sortable: 'visitDate', field: 'visitDate', type: 'date'};
-              namedColumns['visitType'] = {title: 'op.VisitType', sortable: 'visitType', field: 'visitType', type: 'multi-select'};
-              namedColumns['symptomOnsetDate'] = {title: 'op.SymptomOnset', sortable: 'symptomOnsetDate', field: 'symptomOnsetDate', type: 'date'};
-              namedColumns['submissionDate'] = {title: 'op.Submitted', sortable: 'submissionDate', field: 'submissionDate', type: 'date'};
-              namedColumns['medicalFacility'] = {title: 'op.Facility', sortable: 'medicalFacility', field: 'medicalFacility', type: 'multi-select'};
-              namedColumns['medicalFacility.location.district'] = {title: 'op.District', sortable: 'medicalFacility.location.district', field: 'medicalFacility.location.district', type: 'shortString'};
-              namedColumns['medicalFacility.sites.total'] = {title: 'op.SitesTotal', sortable: 'medicalFacility.sites.total', field: 'medicalFacility.sites.total'};
-              namedColumns['medicalFacility.sites.reporting'] = {title: 'op.SitesReporting', sortable: 'medicalFacility.sites.reporting', field: 'medicalFacility.sites.reporting'};
-              namedColumns['patient.id'] = {title: 'op.PatientID', sortable: 'patient.id', field: 'patient.id'};
-              namedColumns['patient.name'] = {title: 'op.Name', sortable: 'patient.name', field: 'patient.name'};
-              namedColumns['patient.sex'] = {title: 'op.Sex', sortable: 'patient.sex', field: 'patient.sex'};
-              namedColumns['patient.age'] = {title: 'op.Age', sortable: 'patient.age.years', field: 'patient.age', type: 'age'};
-              namedColumns['patient.phone'] = {title: 'op.TelephoneNumber', sortable: 'patient.phone', field: 'patient.phone'};
-              namedColumns['patient.address'] = {title: 'op.Address', sortable: 'patient.address', field: 'patient.address'};
-              namedColumns['patient.weight'] = {title: 'op.Weight', sortable: 'patient.weight', field: 'patient.weight'};
-              namedColumns['patient.temperature'] = {title: 'op.Temperature', sortable: 'patient.temperature', field: 'patient.temperature'};
-              namedColumns['patient.pulse'] = {title: 'op.Pulse', sortable: 'patient.pulse', field: 'patient.pulse'};
-              namedColumns['patient.bloodPressure'] = {title: 'op.BloodPressure', sortable: 'patient.bloodPressure.diastolic', field: 'patient.bloodPressure', type: 'pressure'};
-              namedColumns['patient.pregnant.is'] = {title: 'op.Pregnant', sortable: 'patient.pregnant.is', field: 'patient.pregnant.is'};
-              namedColumns['patient.preExistingConditions'] = {title: 'op.PreExistingConditions', sortable: 'patient.preExistingConditions', field: 'patient.preExistingConditions', type: 'text'};
-              namedColumns['symptoms'] = {title: 'op.Symptoms', field: 'symptoms', type: 'agg'};
-              namedColumns['syndromes'] = {title: 'op.Syndromes', field: 'syndromes', type: 'agg'};
-              namedColumns['diagnoses'] = {title: 'op.Diagnoses', field: 'diagnoses', type: 'agg'};
-              namedColumns['disposition'] = {title: 'op.Disposition', field: 'disposition', type: 'disposition'};
-              namedColumns['antiviral.name'] = {title: 'op.Antiviral', sortable: 'antiviral.name', field: 'antiviral.name'};
-              
-              var columns = [];
-              scope.form.fields.forEach(function(field){
-                  if (namedColumns[field.name] !== undefined){
-                      columns.push(namedColumns[field.name]);
-                  }
+                if(_.get(field, 'table.type')){
+                  tableColumn.type = field.table.type;
+                }
+                var found = _.get(field, 'table.field');
+                if(found){
+                  tableColumn.field = field.table.field
+                }
+                else{
+                  tableColumn.field = field.name
+                }
+                tableColumn.name = field.name;
+
+                tableColumn.isFilter = field.isFilter;
+
+                columns.push(tableColumn);
               });
 
               angular.forEach(columns, function (column) {
                 //Translate column headers
                 column.title = $filter('i18next')(column.title);
 
-                if (fieldsMap[column.field]) {
+                if (fieldsMap[column.field] || fieldsMap[column.name]) {
                   column.show = fieldsMap[column.field] && fieldsMap[column.field].enabled;
                 } else if (column.field === 'patient.bloodPressure') { // column name is bloodPressure vs form fields are diastolic and systolic
                   column.show = (fieldsMap['patient.diastolic'] && fieldsMap['patient.diastolic'].enabled) ||
@@ -142,7 +129,7 @@ angular.module(directives.name).directive('outpatientTable',
               // Append auto-generated fields
               scope.form.fields.reduce(function (fields, field) {
                 if (field.autogen && field.enabled) {
-                  columns.push({title: $filter('i18next')(field.name), sortable: field.name, field: field.name, type: field.type || 'text'});
+                  columns.push({title: $filter('i18next')(field.name), sortable: field.name, field: field.name, type: field.type || 'text', isFilter: field.isFilter});
                 }
                 return fields;
               }, {});
@@ -196,7 +183,7 @@ angular.module(directives.name).directive('outpatientTable',
                 }, 25);
               });
               */
-              
+
               if (scope.records) {
                 scope.$watchCollection('records', function () {
                   scope.tableParams.reload();
@@ -216,9 +203,28 @@ angular.module(directives.name).directive('outpatientTable',
               return scope.getValue(row, field + '.name') || val;
             };
 
+            scope.hasValue = function(row, field){
+              var val = scope.getValue(row, field)
+              if (angular.isArray(val)) {
+                return scope.printAggregate(val);
+              }
+              var testValue = scope.getValue(row, field + '.name') || val
+              return testValue !== undefined && testValue !== null;
+            }
+
             scope.getValue = function (row, field) {
               var value = field.split('.').reduce(function (obj, i) { //traverse down parent.child.prop key
-                return obj ? obj[i] : undefined;
+                if(obj){
+                  if(Array.isArray(obj)){
+                    return obj;
+                  }
+                  else{
+                    return obj[i];
+                  }
+                }else{
+                  return undefined;
+                }
+
               }, row);
               return value;
             };
@@ -287,6 +293,7 @@ angular.module(directives.name).directive('outpatientTable',
             };
 
             scope.tableFilter = function (field, value) {
+
               //TODO multiselect if value.length > ?
               if (value || value === false) {
                 var a = [].concat(value);

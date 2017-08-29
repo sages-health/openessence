@@ -53,7 +53,7 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
                 props.forEach(function (prop) {
                   if ($scope.badRecsColumnNames.indexOf(prop) === -1) {
                     $scope.badRecsColumnNames.push(prop);
-                    $scope.badRecsColumnDefs.push({field: prop, width: '100'});
+                    $scope.badRecsColumnDefs.push({ field: prop, width: '100' });
                   }
                 });
               }
@@ -84,15 +84,21 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
             $scope.uploading = true;
             $scope.data.tableData.forEach(function (row) {
               var mappedData = {};
-                for(var column in row){
-                    mappedData[$scope.data.mapping[column]] = row[column];
-                }
+              
+              for (var column in row) {
+                if($scope.data.mapping[column] !== undefined)
+                  mappedData[$scope.data.mapping[column]] = row[column];
+                else if(column === 'count'  && $scope.data.mapping[column] === undefined)
+                  mappedData[column] = row[column];
+                
+              }
+
               if ('visitDate' in mappedData) {
 
 
                 // csvUtil will process one record at a time, remove id prop if it is there
                 // format dates, int, double, array, etc...
-                var record = csvUtil.toRecord(mappedData);
+                var record = csvUtil.toRecord(mappedData, scope.form);
                 //var record = csvUtil.toRecord(row);
                 //TODO: bulk insert
                 // Ignore ids, always insert record. Once we expand our GUI, we may prove option to insert/update
@@ -116,7 +122,7 @@ angular.module(services.name).factory('outpatientCsvImportModal', /*@ngInject*/ 
         }
       }, modalOptions);
 
-      return $modal.open(modalOptions, {form: scope.form, mapping: scope.mapping});
+      return $modal.open(modalOptions, { form: scope.form, mapping: scope.mapping });
     }
   };
 });

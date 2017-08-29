@@ -1,8 +1,8 @@
-<div ng-show="visit.patient.sex === 'F'">
+<div ng-show="visit.sex === 'F'">
 
   <!-- Pregnancy --> <!-- TODO this lonely checkbox doesn't look good -->
   <div class="form-group" data-field="patient.pregnant.is"
-       ng-show="fields['patient.pregnant.is'].enabled && visit.patient.sex === 'F'">
+       ng-show="fields['patient.pregnant.is'].enabled && visit.sex === 'F'">
 
     <label for="entry-pregnant" ng-i18next>entry.Pregnant</label>
     <select class="form-control" id="entry-pregnant" name="pregnantIs"

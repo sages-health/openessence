@@ -1,16 +1,16 @@
 'use strict';
 
 var angular = require('angular');
+var _ = require('lodash');
 //var $ = require('jquery');
 // @ngInject
-module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $http, stringUtil) {
+module.exports = function ($scope, $window, $rootScope, FormResource, LocaleResource, $modal, $http, stringUtil) {
 
   var init = function () {
     $scope.siteTemplate = {
-      dataType: 'individual'
+      dataType: ''
     };
     $scope.templateKeys = [];
-
     $scope.getLocaleValue = stringUtil.getLocaleValue;
 
     FormResource.get({ size: 99 }, function (response) {
@@ -151,6 +151,14 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
         template.fields.push(field);
     });   
 
+    template.explodeFields = []
+
+    template.fields.forEach(function (field){
+      if(field.table.type === 'agg'){
+        template.explodeFields.push(field.name);
+      }
+    });
+
     // Update form if it has an id
     if (template._id) {
       //FormResource.delete({id: template._id, type:'form', index: 'form"'}, onSuccess);
@@ -201,6 +209,10 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
     return value.isGroup === undefined || value.isGroup === false;
   };
 
+  $scope.isGISField = function (value) {
+    return value.isGISField !== undefined && value.isGISField !== false;
+  };
+
   $scope.groupField = function (field) {
     var groupField = $scope.siteTemplate.fields.filter(function (fld) {
       return field.groupName === fld.name;
@@ -216,12 +228,55 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
       controller: ['$scope', '$modalInstance', function (scope, modalInstance) {
         scope.noValues = false;
         scope.possibleValues = scope.possibleValues;
+        scope.data = {};
+        scope.regionColumns = _.filter($scope.siteTemplate.fields, function(n){
+          return n.useAsRegion;
+        });
+        scope.types = [
+          {name: 'Date', value: 'date-range'},
+          {name: 'Free Text', value: 'text'},
+          //{name: 'Number', value: 'numeric-range'},
+          {name: 'Single-Select List', value: 'multi-select'},
+          {name: 'Multi-Select List (Aggregate Field)', value: 'agg'},
+          {name: 'Region', value:'Region', type:'Region'}
+          ];
+
+        scope.submitted = true;
+        scope.fieldExists = function (newFieldName) {
+          var exists = false;
+          $scope.siteTemplate.fields.forEach(function (field) {
+            var camelCase = _.camelCase(newFieldName)
+            if(field.name === camelCase)
+              exists = true;
+          });
+          return exists;
+        };
+
+        scope.fieldTypeExists = function (fieldType) {
+          var exists = false;
+          $scope.siteTemplate.fields.forEach(function (field) {
+            
+            if(field.table.type === fieldType)
+              exists = true;
+          });
+          return exists;
+        };
 
         scope.save = function (form) {
-
-
           // check if form is valid
           scope.yellAtUser = form.$invalid;
+          scope.duplicateField = scope.fieldExists(scope.data.newFieldName);
+          if(scope.duplicateField){
+            form.newFieldName.$invalid = true;
+            return;
+          }
+          scope.aggFieldExists = scope.fieldTypeExists('agg');
+          scope.aggFieldExists = scope.aggFieldExists & scope.data.fieldType === 'agg'
+          if(scope.aggFieldExists){
+            form.$invalid = true;
+            return;
+          }
+
           if (scope.yellAtUser) {
             return;
           }
@@ -229,12 +284,263 @@ module.exports = function ($scope, $window, $rootScope, FormResource, $modal, $h
           if (scope.noValues) {
             return;
           }
+
           //POST /resource/form/{id}/_update {field:name other:attributes}
           $scope.siteTemplate.name = 'site';
           var template = angular.copy($scope.siteTemplate);
-          template.fields.push({enabled: true, name: form.$modalValue});
 
-          FormResource.save(template);
+          if (angular.isString(template.templates)) {
+            template.templates = [template.templates];
+          }
+
+          // ensure a template is selected and atleast one field enabled
+          if (template.fields === undefined || template.fields.length === 0 || checkAllFieldsDisabled(template)) {
+            if (template.templates === undefined || template.templates.length === 0) {
+              openSaveTemplateModal('Error', 'Please select a template');
+            } else {
+              openSaveTemplateModal('Error', 'Please select one or more fields');
+            }
+            return;
+          }
+
+          template.fields.forEach(function (field) {
+            // Ensure values has same format as possibleValues
+            if (!field.isGroup && field.formFieldType !== 'FixedLengthList' && field.values) {
+
+              var possibleValuesByName = field.possibleValues.reduce(function (values, v) {
+                values[v.name] = v;
+                return values;
+              }, {});
+              field.values = field.values.map(function (val) {
+                return possibleValuesByName[val] || { name: val };
+              }).sort(stringUtil.compare);
+            }
+          });
+
+          var newField = {
+              name: _.camelCase(scope.data.newFieldName), 
+              enabled: true, 
+              aggregable: true,
+              locked: false,
+              filter: 
+              {
+                enabled: true,
+                type: scope.data.fieldType 
+              },
+              table:{
+                enabled: true,
+                type: scope.data.fieldType
+              },
+              localeName:  'op.' + scope.data.newFieldName.split(' ').join(''),
+            };
+
+          if(scope.data.fieldType === 'FixedLengthList'){
+            newField.fieldType = 'FixedLengthList';
+            newField.filter.type = 'multi-select'
+            newField.table.type = 'multi-select'
+          }
+          else if(newField.filter.type === 'GIS'){
+            newField.fieldType = 'GIS';
+            newField.filter.type = 'multi-select'
+            newField.table.type = 'multi-select'
+          }
+          else if(newField.filter.type === 'multi-select' && newField.table.type !== 'GIS'){
+            newField.values = [{name: 'No Value'}];
+            newField.possibleValues = [{name: 'No Value'}];
+            newField.nested = true;
+          }
+          else if(newField.filter.type === 'agg'){
+            newField.values = [{name: 'No Value'}];
+            newField.possibleValues = [{name: 'No Value'}];
+            newField.nested = true;
+            newField.table.type = 'agg';
+            newField.filter.type = 'multi-select';
+          }
+          else if(newField.filter.type === 'date-range'){
+            newField.table.type = 'date';
+          }
+
+          template.fields.push(newField);
+
+          template.explodeFields = [];
+          template.fields.forEach(function (field){
+            if(field.table.type === 'agg'){
+              template.explodeFields.push(field.name);
+            }
+          });
+
+          // Update form if it has an id
+          if (template._id) {
+            //FormResource.delete({id: template._id, type:'form', index: 'form"'}, onSuccess);
+            var templateId = template._id;
+            delete template._id;
+
+            FormResource.update({ id: templateId }, template, function(onSuccess){
+              LocaleResource.get({ size: 99 }, function (response) {
+                //var locale = response.results[0]._source;
+                var toLocale;
+                var fromLocale;
+                var toLng;
+
+                var locales = response.results.reduce(function (locales, locale) {
+                  if (locale._source.default) {
+                    fromLocale = locale._source;
+                  }
+                  
+                  if (!toLocale && (!fromLocale || locale._source.lng !== fromLocale.lng)) {
+                    toLocale = locale._source;
+                    toLng = toLocale.lng;
+                  }
+
+                  locales[locale._source.lng] = locale._source;
+                  locales[locale._source.lng]._id = locale._id;
+                  return locales;
+                }, {});
+
+                fromLocale.translation.op[scope.data.newFieldName.split(' ').join('')] = scope.data.newFieldName;
+
+                var localeId = fromLocale._id;
+      
+                delete fromLocale._id;
+
+
+                LocaleResource.update({id: localeId}, fromLocale, function(response){
+                  scope.closeModal();
+                  $window.location.reload();
+                  $window.onbeforeunload = function() {
+                    window.scrollTo(0, 0);
+                  }
+                });
+              });
+            });
+            //FormResource.save(template, onSuccess);
+          }
+          // create/save a new site form
+          else {
+            FormResource.save(template, function(onSuccess){
+              LocaleResource.get({ size: 99 }, function (response) {
+                //var locale = response.results[0]._source;
+                var toLocale;
+                var fromLocale;
+                var toLng;
+
+                var locales = response.results.reduce(function (locales, locale) {
+                  if (locale._source.default) {
+                    fromLocale = locale._source;
+                  }
+                  
+                  if (!toLocale && (!fromLocale || locale._source.lng !== fromLocale.lng)) {
+                    toLocale = locale._source;
+                    toLng = toLocale.lng;
+                  }
+
+                  locales[locale._source.lng] = locale._source;
+                  locales[locale._source.lng]._id = locale._id;
+                  return locales;
+                }, {});
+
+                fromLocale.translation.op[scope.data.newFieldName.split(' ').join('')] = scope.data.newFieldName;
+
+                var localeId = fromLocale._id;
+
+                delete fromLocale._id;
+
+                LocaleResource.update({id: localeId}, fromLocale, function(response){
+                  scope.closeModal();
+                  $window.location.reload();
+                  $window.onbeforeunload = function() {
+                    window.scrollTo(0, 0);
+                  }
+                });
+              });
+            });
+          }
+
+
+        };
+
+        scope.closeModal = function () {
+          modalInstance.dismiss('cancel');
+        };
+      }]
+    });
+  };
+
+$scope.openDeleteFieldModal = function (field) {
+
+    return $modal.open({
+      template: require('./config-delete-field.html'),
+      backdrop: 'static',
+      field: field,
+      controller: ['$scope', '$modalInstance', function (scope, modalInstance) {
+        scope.noValues = false;
+        scope.data = {};
+        scope.field = field;
+
+        scope.delete = function (form) {
+
+          //POST /resource/form/{id}/_update {field:name other:attributes}
+          $scope.siteTemplate.name = 'site';
+          var template = angular.copy($scope.siteTemplate);
+
+          _.remove(template.fields, {
+            name: scope.field.name
+          });
+          
+          if (angular.isString(template.templates)) {
+            template.templates = [template.templates];
+          }
+
+          // ensure a template is selected and atleast one field enabled
+          if (template.fields === undefined || template.fields.length === 0 || checkAllFieldsDisabled(template)) {
+            if (template.templates === undefined || template.templates.length === 0) {
+              openSaveTemplateModal('Error', 'Please select a template');
+            } else {
+              openSaveTemplateModal('Error', 'Please select one or more fields');
+            }
+            return;
+          }
+
+          template.fields.forEach(function (field) {
+            // Ensure values has same format as possibleValues
+            if (!field.isGroup && field.formFieldType !== 'FixedLengthList' && field.values) {
+
+              var possibleValuesByName = field.possibleValues.reduce(function (values, v) {
+                values[v.name] = v;
+                return values;
+              }, {});
+              field.values = field.values.map(function (val) {
+                return possibleValuesByName[val] || { name: val };
+              }).sort(stringUtil.compare);
+            }
+          });
+
+          // Update form if it has an id
+          if (template._id) {
+            //FormResource.delete({id: template._id, type:'form', index: 'form"'}, onSuccess);
+            var templateId = template._id;
+            delete template._id;
+            FormResource.update({ id: templateId }, template, function(onSuccess){
+              scope.closeModal();
+              $window.location.reload();
+              $window.onbeforeunload = function() {
+                window.scrollTo(0, 0);
+              }
+              
+            });
+            //FormResource.save(template, onSuccess);
+          }
+          // create/save a new site form
+          else {
+            FormResource.save(template, function(onSuccess){
+              scope.closeModal();
+              $window.location.reload();
+              $window.onbeforeunload = function() {
+                window.scrollTo(0, 0);
+              }
+            });
+            
+          }
         };
 
         scope.closeModal = function () {

@@ -212,7 +212,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
           aggregations: {
             district: {
               terms: {
-                field: 'medicalFacility.location.district.raw',
+                field: 'medicalFacility.region.raw',
                 size: 0 // don't cap number of buckets
               }
             }

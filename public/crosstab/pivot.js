@@ -256,12 +256,12 @@ aggregatorTemplates = {
 };
 
 aggregators = {
-  count: function (record) {
-    return function (record) {
+  count: function (record, explodeFields) {
+    return function (record, explodeFields) {
       return {
         count: 0,
-        push: function (record) {
-          var explodeFields = ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
+        push: function (record, explodeFields) {
+          explodeFields = explodeFields || ['symptoms', 'diagnoses', 'symptomsGroup', 'diagnosesGroup'];
           var tmpCount = 0;
           explodeFields.forEach(function(fld){
             if (record[fld] && angular.isArray(record[fld])) {
@@ -561,6 +561,31 @@ PivotData = (function () {
     this.sorted = false;
   }
 
+  function PivotData (aggregator, explodeFields, colAttrs, rowAttrs) {
+    this.aggregator = aggregator;
+    this.explodeFields = explodeFields;
+    this.colAttrs = colAttrs;
+    this.rowAttrs = rowAttrs;
+    this.getAggregator = __bind(this.getAggregator, this);
+    this.flattenKey = __bind(this.flattenKey, this);
+    this.getRowKeys = __bind(this.getRowKeys, this);
+    this.getColKeys = __bind(this.getColKeys, this);
+    this.getKeyFromRecord = __bind(this.getKeyFromRecord, this);
+    this.getCellKey = __bind(this.getCellKey, this);
+    this.sortKeys = __bind(this.sortKeys, this);
+    this.arrSort = __bind(this.arrSort, this);
+    this.natSort = __bind(this.natSort, this);
+    this.tree = {};
+    this.rowKeys = [];
+    this.colKeys = [];
+    this.flatRowKeys = [];
+    this.flatColKeys = [];
+    this.rowTotals = {};
+    this.colTotals = {};
+    this.allTotal = this.aggregator(this, explodeFields, [], []);
+    this.sorted = false;
+  }
+
   PivotData.prototype.natSort = function (as, bs) {
     return naturalSort(as, bs);
   };
@@ -659,6 +684,44 @@ PivotData = (function () {
     }
   };
 
+    PivotData.prototype.processRecord = function (record) {
+    var colKey, flatColKey, flatRowKey, rowKey;
+    colKey = this.getCellKey(this.colAttrs, record, 'name');
+    rowKey = this.getCellKey(this.rowAttrs, record, 'name');
+    flatRowKey = this.flattenKey(rowKey);
+    flatColKey = this.flattenKey(colKey);
+    this.allTotal.push(record, this.explodeFields);
+    if (rowKey.length !== 0) {
+      if (__indexOf.call(this.flatRowKeys, flatRowKey) < 0) {
+        this.rowKeys.push(rowKey);
+        this.flatRowKeys.push(flatRowKey);
+      }
+      if (!this.rowTotals[flatRowKey]) {
+        this.rowTotals[flatRowKey] = this.aggregator(this, this.explodeFields, rowKey, []);
+      }
+      this.rowTotals[flatRowKey].push(record, this.explodeFields);
+    }
+    if (colKey.length !== 0) {
+      if (__indexOf.call(this.flatColKeys, flatColKey) < 0) {
+        this.colKeys.push(colKey);
+        this.flatColKeys.push(flatColKey);
+      }
+      if (!this.colTotals[flatColKey]) {
+        this.colTotals[flatColKey] = this.aggregator(this, this.explodeFields, [], colKey);
+      }
+      this.colTotals[flatColKey].push(record, this.explodeFields);
+    }
+    if (colKey.length !== 0 && rowKey.length !== 0) {
+      if (!(flatRowKey in this.tree)) {
+        this.tree[flatRowKey] = {};
+      }
+      if (!(flatColKey in this.tree[flatRowKey])) {
+        this.tree[flatRowKey][flatColKey] = this.aggregator(this, this.explodeFields, rowKey, colKey);
+      }
+      return this.tree[flatRowKey][flatColKey].push(record, this.explodeFields);
+    }
+  };
+
   PivotData.prototype.getAggregator = function (rowKey, colKey) {
     var agg, flatColKey, flatRowKey;
     flatRowKey = this.flattenKey(rowKey);
@@ -692,6 +755,17 @@ getPivotData = function (input, cols, rows, aggregator, filter, derivedAttribute
   forEachRecord(input, derivedAttributes, function (record) {
     if (filter(record)) {
       return pivotData.processRecord(record);
+    }
+  });
+  return pivotData;
+};
+
+getPivotData = function (input, cols, rows, aggregator, filter, derivedAttributes, explodeFields) {
+  var pivotData;
+  pivotData = new PivotData(aggregator, explodeFields, cols, rows);
+  forEachRecord(input, derivedAttributes, function (record, explodeFields) {
+    if (filter(record)) {
+      return pivotData.processRecord(record, explodeFields);
     }
   });
   return pivotData;
@@ -876,7 +950,7 @@ module.exports = $.fn.pivot = function (input, opts) {
   opts = $.extend(defaults, opts);
   result = null;
   try {
-    pivotData = getPivotData(input, opts.cols, opts.rows, opts.aggregator, opts.filter, opts.derivedAttributes);
+    pivotData = getPivotData(input, opts.cols, opts.rows, opts.aggregator, opts.filter, opts.derivedAttributes, opts.explodeFields);
     try {
       result = opts.renderer(pivotData, opts.rendererOptions);
     } catch (_error) {

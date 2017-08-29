@@ -36,10 +36,12 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
 
           scope.addFilter = function (filter, isFilterEvent) {
 
-            var deref = scope.possibleFilters[filter.filterID];
+            var deref, fieldName;
 
+            fieldName = filter.filterID;
 
-            var newFilter = angular.extend({}, scope.possibleFilters[filter.filterID], filter);
+            deref = scope.possibleFilters[fieldName];
+            var newFilter = angular.extend({}, scope.possibleFilters[fieldName], filter);
 
             // group filter needs to translate selected display name to id where filter is added using click through
             if(isFilterEvent && newFilter.type === 'group'){

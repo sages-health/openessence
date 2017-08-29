@@ -1,5 +1,5 @@
-﻿<div class="panel panel-default">
-  <div class="panel-heading clearfix">
+﻿    <div class="panel panel-default" style="margin-top: 0px;">
+      <div class="panel-heading clearfix">
 
     <h3 class="panel-title pull-left" editable-text="workbenchName" buttons="right" blur="cancel"
         onaftersave="saveWorkbenchName()" onshow="setNameFocus()" onhide="unsetNameFocus()">{{workbenchName}} <span ng-if='workbenchName' ng-i18next>navBar.workbench</span></h3>
@@ -36,36 +36,32 @@
   </div>
 </div>
 
-<div class="container-fluid">
-  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString" auto-run-query="autoRunQuery">
+    <div class="container-fluid">
+      <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString" auto-run-query="autoRunQuery">
 
-  </outpatient-filters-grid>
-</div>
+      </outpatient-filters-grid>
+    </div>
 
-<!-- visualizations-->
-<div class="container-fluid">
-  <div class="row">
-    <div gridster="gridsterOptions">
-      <ul>
-        <li class="workbench-visualization col-md-6 col-xs-12" id="{{viz.id}}" gridster-item="viz" ng-repeat="viz in visualizations">
-          <div class="panel-body workbench-panel">
-            <workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="activeFilters" auto-run-query="autoRunQuery"
-                                     form="form"
-                                     options="viz.options"
-                                     visualization="viz.visualization"
-                                     pivot="viz.pivot"
-                                     size-x="viz.sizeX" size-y="viz.sizeY" row="viz.row" col="viz.col"
-                                     on-close="removeVisualization(viz)">
-            </workbench-visualization>
-<!--
+    <!-- visualizations-->
+    <div class="container-fluid">
+      <div class="row">
+        <div gridster="gridsterOptions">
+          <ul>
+            <li class="workbench-visualization col-md-6 col-xs-12" id="{{viz.id}}" gridster-item="viz" ng-repeat="viz in visualizations">
+              <div class="panel-body workbench-panel">
+                <workbench-visualization pivot-options="pivotOptions" query-string="queryString" filters="activeFilters" auto-run-query="autoRunQuery"
+                  form="form" options="viz.options" visualization="viz.visualization" pivot="viz.pivot" size-x="viz.sizeX"
+                  size-y="viz.sizeY" row="viz.row" col="viz.col" on-close="removeVisualization(viz)">
+                </workbench-visualization>
+                <!--
             <span class="top-left caret-top-left"></span>
             <span class="top-right caret-top-right"></span>
             <span class="bottom-left caret-bottom-left"></span>
             <span class="bottom-right caret-bottom-right"></span>
 -->
-          </div>
-        </li>
-      </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
-</div>

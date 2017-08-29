@@ -38,6 +38,7 @@
 .navbar-brand {
   // Fix https://github.com/thomaspark/bootswatch/commit/5226a30d7df2eb15a06b9014507da767d205de30
   padding-top: 13px; // there's probably some magic formula that makes this work, but oh well
+  font-size:24px;
 }
 
 // notification settings
@@ -98,13 +99,27 @@ body {
 .table {
   // this looks better on all the tables we have so far, but we may need to re-evaluate in the future
   margin-bottom: 0px;
-
-  a {
-    // no idea why bootswatch uses underline, but it looks horrible on the workbench
-    text-decoration: inherit;
-  }
 }
 
+.table {
+  th {
+    text-align: center;
+  }
+
+  th {
+    font-weight: bold;
+    font-size:medium;
+  }
+
+  td {
+    color: #000;
+  }
+
+  .btn {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+}
 .table-scroll-x {
   overflow-x: scroll;
 }
@@ -112,7 +127,7 @@ body {
 // This is bootstrap's default, but they don't expose it as a variable. We do this in case it ever changes.
 .panel-heading {
   padding: @padding-base-vertical @padding-base-horizontal;
-
+  font-size: 18px;
   .panel-control {
     position: relative;
     top: -@padding-base-vertical;
@@ -139,6 +154,10 @@ body {
       right: -@padding-small-horizontal;
     }
   }
+
+  td {
+    font-size: 12px;
+  }
 }
 
 // don't show table border when panel-body is hidden
@@ -146,6 +165,7 @@ body {
   > .panel-body.ng-hide + .table,
   > .panel-body.ng-hide + .table-responsive {
     border-top: 0px;
+
     //border-top: 1px solid @table-border-color;
   }
 }
@@ -161,8 +181,10 @@ fracas-filter .panel {
 }
 
 .query-string-form {
+  margin-left: 5px;
   .form-control-feedback {
     top: 0;
+
   }
 }
 
@@ -225,7 +247,7 @@ fracas-filter .panel {
 }
 
 .fracas-filter {
-  height: 160px; // fixed height so tall elements don't cause weird wrapping in our >12 col filter grid
+  height: 140px; // fixed height so tall elements don't cause weird wrapping in our >12 col filter grid
 }
 
 .date-filter input.form-control {
@@ -247,6 +269,7 @@ fracas-filter .panel {
 .toolbar-icon{
   margin-top: 5px;
   color: black;
+  font-size: 20px;
 }
 
 .ui-resizable-helper {
@@ -347,3 +370,17 @@ input.invalidFilename-true {
   &.glyphicon-remove:extend(.fa-times all) {};
 }
 
+
+.select-box {
+  color: white
+}
+
+.ui-select-multiple.ui-select-bootstrap{
+  border-color: #000;
+  background: #fff;
+  margin: 2px;
+}
+
+.row {
+  margin-top: 16px;
+}

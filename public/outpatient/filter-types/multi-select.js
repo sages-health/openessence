@@ -62,7 +62,17 @@ angular.module(directives.name).directive('outpatientMultiSelectFilter', /*@ngIn
           } else if (selectedValue !== '*') {
             selectedValue = selectedValue ? ('"' + selectedValue + '"') : '*';
           }
-          scope.filter.queryString = scope.filter.field + ':' + selectedValue;
+
+          var field;
+
+          //in the case of created fields, elasticsearch assumes that the values created for the field can only be referenced by field.name. 
+          //we'll add .name for these fields only. when we switch away from ES we can do away with this
+          if(scope.filter.nested)
+            field = scope.filter.field + '.name'
+          else
+            field = scope.filter.field
+
+          scope.filter.queryString = field  + ':' + selectedValue;
         });
       }
     }

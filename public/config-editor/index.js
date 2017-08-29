@@ -8,3 +8,4 @@ require('./config-age-group.js');
 require('./config-group.js');
 require('./config-multi-select.js');
 require('./config-table.js');
+require('./config-table-mapping.js');

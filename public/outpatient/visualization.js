@@ -25,7 +25,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
         scope.options = scope.options || {};
         scope.form = scope.form || {};
-
+        scope.options.explodeFields = scope.form.explodeFields;
         // index fields by name
         scope.$watch('form.fields', function (fields) {
           if (!fields) {
@@ -123,7 +123,7 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
             size: 10000,
             q: scope.queryString
           }, function (data) {
-            var records = outpatientAggregation.parseResults(data, scope);
+            var records = outpatientAggregation.parseResults(data, scope.form.explodeFields, scope);
             resultFn(records);
           });
         };
@@ -134,7 +134,8 @@ angular.module(directives.name).directive('outpatientVisualization', /*@ngInject
 
             var opts = {
               rows: angular.copy(scope.pivotOptions.rows) || [],
-              cols: angular.copy(scope.pivotOptions.cols) || []
+              cols: angular.copy(scope.pivotOptions.cols) || [],
+              explodeFields: scope.form.explodeFields
             };
             var cdata = outpatientAggregation.getCrosstabularData(records, opts, scope);
             scope.aggData = cdata;

@@ -248,7 +248,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               size: 10000,
               q: scope.queryString
             }, function (data) {
-              var records = outpatientAggregation.parseResults(data, scope);
+              var records = outpatientAggregation.parseResults(data, scope.form.explodeFields, scope);
               resultFn(records);
             });
           };
@@ -259,7 +259,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
             queryData(function (records) {
               var opts = {
                 rows: scope.pivotOptions.rows || [],
-                cols: scope.pivotOptions.cols || []
+                cols: scope.pivotOptions.cols || [],
+                explodeFields: scope.form.explodeFields
               };
 
               //TODO remove visitDate as option from timeseries view
