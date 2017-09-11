@@ -58,7 +58,7 @@ var indexRequests = [
                     index: 'not_analyzed'
                   }
                 }
-                
+
               },
 
               symptomOnsetDate: {
@@ -80,29 +80,19 @@ var indexRequests = [
                         index: 'not_analyzed'
                       }
                     }
-                  },
+                  }
+                }
+              },
+              medicalFacilityDistrict: {
+                properties: { // same as facility type
 
-                  location: {
-                    properties: {
-                      district: {
+                  // The name of this facility
+                  name: {
+                    type: 'string',
+                    fields: {
+                      raw: {
                         type: 'string',
-                        fields: {
-                          raw: {
-                            type: 'string',
-                            index: 'not_analyzed'
-                          }
-                        }
-                      }
-                    }
-                  },
-
-                  sites: {
-                    properties: {
-                      total: {
-                        type: 'integer'
-                      },
-                      reporting: {
-                        type: 'integer'
+                        index: 'not_analyzed'
                       }
                     }
                   }

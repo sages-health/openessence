@@ -116,7 +116,7 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
           var polygons = response.results.reduce(function (previous, current) {
             var geometry = current._source.geometry;
             var layer;
-            
+
             if (geometry) {
               if (geometry.type === 'polygon') {
                 var coordinates = geometry.coordinates[0].map(function (lonlat) {
@@ -212,8 +212,14 @@ angular.module(directives.name).directive('leafletMap', /*@ngInject*/ function (
           aggregations: {
             district: {
               terms: {
-                field: 'medicalFacility.region.raw',
-                size: 0 // don't cap number of buckets
+                field: 'medicalFacilityDistrict.name.raw'
+              },
+              aggregations: {
+                symptoms: {
+                  terms: {
+                    field: 'symptoms.name.raw',
+                  }
+                }
               }
             }
           }
