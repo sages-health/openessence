@@ -1,56 +1,46 @@
 <div class="container-fluid">
   <div class="row">
+    <div class="container-fluid">
+    <h3 class="panel-title pull-left" editable-text="dashboard.name" buttons="right" blur="cancel"
+        onaftersave="saveDashboardName()" onshow="setNameFocus()" onhide="unsetNameFocus()">{{dashboard.name}} <span ng-if='dashboard.name' ng-i18next>navBar.dashboard</span></h3>
+    </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading clearfix">
+    <div class="spacer"></div>
 
-        <h3 class="panel-title pull-left" editable-text="dashboard.name" buttons="right" blur="cancel"
-            onaftersave="saveDashboardName()" onshow="setNameFocus()" onhide="unsetNameFocus()">{{dashboard.name}} <span ng-if='dashboard.name' ng-i18next>navBar.dashboard</span></h3>
+    <div class="container-fluid">
+      <a class="btn btn-primary" ng-click="addWidget()" ng-disabled="isDashboardNameFocused" popover="{{'db.AddWidget' | i18next}}"
+         popover-trigger="mouseenter">
+        <span class="icon-plus" ng-i18next>db.AddWidget</span>
+      </a>
+    </div>
 
-        <div class="pull-right">
-          <a class="btn btn-primary" ng-click="addWidget()" ng-disabled="isDashboardNameFocused" popover="{{'db.AddWidget' | i18next}}"
-             popover-trigger="mouseenter">
-            <span class="icon-plus" ng-i18next>db.AddWidget</span>
-          </a>
-          <a class="btn btn-primary" ng-click="export()" ng-disabled="isDashboardNameFocused" popover="{{'db.SaveDashboard' | i18next}}"
-             popover-trigger="mouseenter">
-            <span class="icon-floppy" ng-i18next>app.Save</span>
-          </a>
-          <a class="btn btn-primary" ng-click="saveAs()" ng-disabled="isDashboardNameFocused" popover="{{'db.SaveAsDashboard' | i18next}}"
-             popover-trigger="mouseenter">
-            <span class="icon-floppy" ng-i18next>app.SaveAs</span>
-          </a>
-        </div>
-      </div>
+    <div gridster="gridsterOptions">
+      <ul>
+        <li class="dashboard-widget" gridster-item="widget" ng-repeat="widget in dashboard.widgets">
+          <div class="panel panel-default dashboard-panel" ng-controller="WidgetCtrl">
+            <div class="panel-heading clearfix viz-drag-handle">
+              <h4 class="panel-title pull-left">{{ widget.name }}</h4>
 
-      <div gridster="gridsterOptions">
-        <ul>
-          <li class="dashboard-widget" gridster-item="widget" ng-repeat="widget in dashboard.widgets">
-            <div class="panel panel-default dashboard-panel" ng-controller="WidgetCtrl">
-              <div class="panel-heading clearfix viz-drag-handle">
-                <h4 class="panel-title pull-left">{{ widget.name }}</h4>
-
-                <div class="pull-right">
-                  <button type="button" class="btn btn-default" ng-click="openSettings(widget)"
-                          popover="{{'db.Settings' | i18next}}" popover-trigger="mouseenter">
-                    <span class="icon-cog"></span>
-                  </button>
-                  <button type="button" class="btn btn-default" ng-click="remove(widget)"
-                          popover="{{'db.RemoveWidget' | i18next}}" popover-trigger="mouseenter">
-                    <span class="icon-cancel"></span>
-                  </button>
-                </div>
-              </div>
-
-              <div class="panel-body" ng-click="clickthrough(widget)">
-                <dashboard-widget options="widget.content" size-x="widget.sizeX" size-y="widget.sizeY" row="widget.row"
-                                  col="widget.col" source="source" widget="widget" form="form">
-                </dashboard-widget>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" ng-click="openSettings(widget)"
+                        popover="{{'db.Settings' | i18next}}" popover-trigger="mouseenter">
+                  <span class="icon-cog"></span>
+                </button>
+                <button type="button" class="btn btn-default" ng-click="remove(widget)"
+                        popover="{{'db.RemoveWidget' | i18next}}" popover-trigger="mouseenter">
+                  <span class="icon-cancel"></span>
+                </button>
               </div>
             </div>
-          </li>
-        </ul>
-      </div>
+
+            <div class="panel-body" ng-click="clickthrough(widget)">
+              <dashboard-widget options="widget.content" size-x="widget.sizeX" size-y="widget.sizeY" row="widget.row"
+                                col="widget.col" source="source" widget="widget" form="form">
+              </dashboard-widget>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

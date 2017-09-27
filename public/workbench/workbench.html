@@ -1,45 +1,48 @@
-﻿<div class="panel panel-default">
-  <div class="panel-heading clearfix">
-
-    <h3 class="panel-title pull-left" editable-text="workbenchName" buttons="right" blur="cancel"
+﻿<div class="container-fluid">
+    <div panel panel-default>
+        <h3 class="panel-title pull-left" style="margin-left: 10px" editable-text="workbenchName" buttons="right" blur="cancel"
         onaftersave="saveWorkbenchName()" onshow="setNameFocus()" onhide="unsetNameFocus()">{{workbenchName}} <span ng-if='workbenchName' ng-i18next>navBar.workbench</span></h3>
-
-    <div class="col-md-3 pull-right">
-        <div style="display:inline-block;" popover="{{'wb.AddWidget' | i18next}}" popover-trigger="mouseenter">
-          <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" ng-disabled="isWorkbenchNameFocused" type="button" data-toggle="dropdown">
-              <span class="icon-plus"></span>
-              <span ng-i18next>wb.AddWidget</span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a ng-click="addVisualization('table',{});">{{'hinge.Table' | i18next}}</a></li>
-                <li><a ng-click="addVisualization('crosstab',{});">{{'hinge.Crosstab' | i18next}}</a></li>
-                <li><a ng-click="addVisualization('line',{})">{{'hinge.Timeseries' | i18next}}</a></li>
-                <li><a ng-click="addVisualization('yoy',{})">{{'hinge.YearOverYear' | i18next}}</a></li>
-                <li><a ng-click="addVisualization('pie',{})">{{'hinge.PieChart' | i18next}}</a></li>
-                <li><a ng-click="addVisualization('bar',{})">{{'hinge.BarChart' | i18next}}</a></li>
-                <li><a ng-click="addVisualization('map',{})">{{'hinge.Map' | i18next}}</a></li>
-            </ul>
-          </div>
-         </div>
-        <button class="btn btn-primary" ng-click="saveWorkbench()" ng-disabled="isWorkbenchNameFocused" popover="{{'wb.SaveWorkbench' | i18next}}"
-                popover-trigger="mouseenter">
-          <span class="icon-floppy"></span>
-          <span ng-i18next>app.Save</span>
-        </button>
-        <button class="btn btn-primary" ng-click="saveAsWorkbench()" ng-disabled="isWorkbenchNameFocused" popover="{{'wb.SaveAsWorkbench' | i18next}}"
-                popover-trigger="mouseenter">
-          <span class="icon-floppy"></span>
-          <span ng-i18next>app.SaveAs</span>
-        </button>
     </div>
-  </div>
 </div>
+<div class="spacer"></div>
+<div ng-show="showFilterGrid" class="panel panel-default animate-show-hide" style="margin: 10px 10px 10px 10px" id="filterGroup">
 
+    <div class="panel-heading">
+
+        <h4 class="panel-title">
+            Filter Options
+        </h4>
+    </div>
+    <panel-body>
+      <div id="filterGrid"  style="margin-top: 10px" class="container-fluid">
+          <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString" auto-run-query="autoRunQuery">
+
+          </outpatient-filters-grid>
+      </div>
+    </panel-body>
+  </div>
+
+</div>
 <div class="container-fluid">
-  <outpatient-filters-grid active-filters="activeFilters" possible-filters="possibleFilters" query-string="queryString" auto-run-query="autoRunQuery">
-
-  </outpatient-filters-grid>
+    <div class="col-md-3 pull-left">
+        <div style="display:inline-block;" popover="{{'wb.AddWidget' | i18next}}" popover-trigger="mouseenter">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" ng-disabled="isWorkbenchNameFocused" type="button" data-toggle="dropdown">
+                    <span class="icon-plus"></span>
+                    <span ng-i18next>wb.AddWidget</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a ng-click="addVisualization('table',{});">{{'hinge.Table' | i18next}}</a></li>
+                    <li><a ng-click="addVisualization('crosstab',{});">{{'hinge.Crosstab' | i18next}}</a></li>
+                    <li><a ng-click="addVisualization('line',{})">{{'hinge.Timeseries' | i18next}}</a></li>
+                    <li><a ng-click="addVisualization('yoy',{})">{{'hinge.YearOverYear' | i18next}}</a></li>
+                    <li><a ng-click="addVisualization('pie',{})">{{'hinge.PieChart' | i18next}}</a></li>
+                    <li><a ng-click="addVisualization('bar',{})">{{'hinge.BarChart' | i18next}}</a></li>
+                    <li><a ng-click="addVisualization('map',{})">{{'hinge.Map' | i18next}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- visualizations-->

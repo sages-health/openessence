@@ -32,7 +32,8 @@ module.exports = [
         // It's not `medicalFacility.name` because the user is selecting the entire medical facility, not just the name
         // (even though the name is what's displayed and queried on).
         name: 'medicalFacility',
-        enabled: false,
+        enabled: true,
+        isFilter:true,
         aggregable: true,
         groupName: 'medicalFacilityGroup',
         // can't do this with JSON
@@ -61,7 +62,8 @@ module.exports = [
       // geographic fields, these are collected via medical facility, so users don't have to input them separately
       {
         name: 'medicalFacility.location.district',
-        enabled: false,
+        enabled: true,
+        isFilter:true,
         groupName: 'medicalFacility.location.district.group',
         values: Object.keys(require('./facilities.json').reduce(function (districts, facility) {
           // construct set of districts
@@ -79,7 +81,7 @@ module.exports = [
             };
           })
       },
-      
+
       {
         name: 'medicalFacility.location.district.group',
         enabled: false,
@@ -117,7 +119,8 @@ module.exports = [
       {
         name: 'patient.age',
         groupName: 'patient.ageGroup',
-        enabled: false,
+        enabled: true,
+        isFilter:true,
         aggregable: true
       },
 
@@ -139,8 +142,9 @@ module.exports = [
 
       {
         name: 'patient.sex',
-        enabled: false,
+        enabled: true,
         aggregable: true,
+        isFilter:true,
         formFieldType: 'FixedLengthList',
         values: [
           {value:'M', name:'Male'},
@@ -268,8 +272,9 @@ module.exports = [
 
       {
         name: 'symptoms',
-        enabled: false,
+        enabled: true,
         aggregable: true,
+        isFilter:true,
         groupName: 'symptomsGroup',
         values: require('./symptom.json')
       },
@@ -301,8 +306,9 @@ module.exports = [
 
       {
         name: 'diagnoses',
-        enabled: false,
+        enabled: true,
         aggregable: true,
+        isFilter:true,
         groupName: 'diagnosesGroup',
         values: require('./diagnosis.json')
       },

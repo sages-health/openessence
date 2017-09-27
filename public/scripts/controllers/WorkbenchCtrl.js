@@ -29,6 +29,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
   $scope.vizMenuOpen = true;
   $scope.visualizations = [];
   $scope.pivotOptions = [];
+  $scope.showFilterGrid = true;
 
   var getNextVizId = function () {
     if (!$scope.nextVizId) {
@@ -69,6 +70,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     $scope.nextVizId = 0;
     $scope.workbenchId = null;
     var visualizationName = $location.search().visualization;
+    $scope.workbenchName = 'Untitled';
 
     if (workbenchId) { // if we are loading a saved workbench
       Workbench.get(workbenchId, function (response) {
@@ -131,8 +133,15 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
         }, possibleFilters.getPossibleFilters($scope.form.fields).visitDate)
       ];
 
+      var scopeJson = scopeToJson($scope);
+      delete scopeJson.form;
+      delete scopeJson.possibleFilters;
+      delete scopeJson.pivotOptions;
+
+      $scope.setWorkbenchJson(scopeJson);
+
       // TODO don't do this
-      $scope.addVisualization();
+      //$scope.addVisualization();
     }
   });
 
@@ -187,6 +196,13 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     };
     $scope.visualizations.push(viz);
     updateURL.updateVisualization(options.id, viz);
+
+    var scopeJson = scopeToJson($scope);
+    delete scopeJson.form;
+    delete scopeJson.possibleFilters;
+    delete scopeJson.pivotOptions;
+
+    $scope.setWorkbenchJson(scopeJson);
   };
 
   $scope.removeVisualization = function (visualization) {
@@ -195,40 +211,6 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     $scope.visualizations.splice(index, 1);
   };
 
-  $scope.saveWorkbench = function () {
-    var scopeJson = scopeToJson($scope);
-    delete scopeJson.form;
-    delete scopeJson.possibleFilters;
-    delete scopeJson.pivotOptions;
-
-    var state = {
-      name: $scope.workbenchName || '',
-      state: scopeJson
-    };
-    if ($scope.workbenchId) {
-      Workbench.update(state, $scope.workbenchId);
-    } else {
-      Workbench.save(state);
-    }
-
-    // Store a copy of the original workbench definition because if user updates the workbench name via the
-    // xeditable widget, we'll have to send the new workbench name and the original (last saved) workbench
-    // definition to the server, which doesn't support updating just the name.
-    angular.copy(scopeJson, $scope.originalWorkbench);
-  };
-
-  $scope.saveAsWorkbench = function () {
-    var scopeJson = scopeToJson($scope);
-    delete scopeJson.form;
-    delete scopeJson.possibleFilters;
-    delete scopeJson.pivotOptions;
-
-    var state = {
-      name: $scope.workbenchName || '',
-      state: scopeJson
-    };
-    Workbench.save(state);
-  };
 
   $scope.setNameFocus = function() {
     $scope.isWorkbenchNameFocused = true;
