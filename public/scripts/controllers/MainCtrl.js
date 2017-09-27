@@ -169,7 +169,7 @@ module.exports = function ($timeout, $filter, $scope, $window, $location, $state
         }
       });
     }
-    if ($scope.dashboardId) {
+    if ($scope.dashboard.dashboardId) {
       Dashboard.update(Dashboard.state(state), $scope.dashboard.dashboardId);
     } else {
       Dashboard.save(Dashboard.state(state));

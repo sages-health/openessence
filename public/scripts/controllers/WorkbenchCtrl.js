@@ -18,12 +18,14 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
       enabled: true,
       handle: '.viz-drag-handle'
     },
-    resizable: {
+    resize: {
       enabled: true,
       handles: "e"
     }
   };
 
+  $scope.status = {};
+  $scope.status.open = true;
   $scope.autoRunQuery = true; //initial state
 
   $scope.vizMenuOpen = true;
@@ -70,7 +72,7 @@ module.exports = function ($resource, $scope, $location, $timeout, $modal, $wind
     $scope.nextVizId = 0;
     $scope.workbenchId = null;
     var visualizationName = $location.search().visualization;
-    $scope.workbenchName = 'Untitled';
+    $scope.workbenchName = 'New';
 
     if (workbenchId) { // if we are loading a saved workbench
       Workbench.get(workbenchId, function (response) {

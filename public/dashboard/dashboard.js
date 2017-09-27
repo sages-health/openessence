@@ -95,7 +95,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
           };
 
           scope.dashboard = {
-            name: 'Untitled',
+            name: 'New',
             widgets: [],
             nextVizId: 0
           };
