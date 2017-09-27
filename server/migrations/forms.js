@@ -306,9 +306,9 @@ module.exports = [
 
       {
         name: 'diagnoses',
-        enabled: true,
+        enabled: false,
         aggregable: true,
-        isFilter:true,
+        isFilter:false,
         groupName: 'diagnosesGroup',
         values: require('./diagnosis.json')
       },

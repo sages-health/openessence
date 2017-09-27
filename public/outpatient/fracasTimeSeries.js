@@ -87,8 +87,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               fallbackToExportServer: false,
             },
             chart: {
-              width: scope.options.width - 10,
-              height: scope.options.height - 40,
+              width: scope.options.width - 25,
+              height: scope.options.height - 58,
               type: 'line',
               zoomType: 'x',
               resetZoomButton: {

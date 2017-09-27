@@ -25,7 +25,7 @@ module.exports = codex.controller(User, {
     if (!req.user || !req.user.isAdmin()) {
       return callback(Boom.forbidden());
     }
-    if(!req.user.isAdmin()){
+    if(!req.user.isAdmin() && req.user.isAPIUser()){
       return callback(Boom.forbidden());
     }
 

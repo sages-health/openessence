@@ -103,8 +103,25 @@ body {
     // no idea why bootswatch uses underline, but it looks horrible on the workbench
     text-decoration: inherit;
   }
-}
 
+  th {
+    text-align: center;
+  }
+
+  th {
+    font-weight: bold;
+    font-size:medium;
+  }
+
+  td {
+    color: #000;
+  }
+
+  .btn {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+}
 .table-scroll-x {
   overflow-x: scroll;
 }
@@ -112,7 +129,7 @@ body {
 // This is bootstrap's default, but they don't expose it as a variable. We do this in case it ever changes.
 .panel-heading {
   padding: @padding-base-vertical @padding-base-horizontal;
-
+  font-size: 18px;
   .panel-control {
     position: relative;
     top: -@padding-base-vertical;
@@ -138,6 +155,10 @@ body {
       top: -@padding-small-vertical;
       right: -@padding-small-horizontal;
     }
+  }
+
+  td {
+    font-size: 12px;
   }
 }
 
@@ -225,7 +246,7 @@ fracas-filter .panel {
 }
 
 .fracas-filter {
-  height: 160px; // fixed height so tall elements don't cause weird wrapping in our >12 col filter grid
+  height: 140px; // fixed height so tall elements don't cause weird wrapping in our >12 col filter grid
 }
 
 .date-filter input.form-control {
@@ -247,6 +268,7 @@ fracas-filter .panel {
 .toolbar-icon{
   margin-top: 5px;
   color: black;
+  font-size: 20px;
 }
 
 .ui-resizable-helper {
@@ -359,6 +381,7 @@ input.invalidFilename-true {
 .animate-show-hide.ng-hide-remove {
   transition: all ease-in-out 0.2s;
 }
+
 
 .check-element {
   border: 1px solid black;
