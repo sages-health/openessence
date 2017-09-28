@@ -29,7 +29,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
 
           scope.form = scope.form || {};
           var recordFields = [];
-          recordFields.push('');
+          //recordFields.push('');
           scope.getLocaleValue = stringUtil.getLocaleValue;
 
           var collectFields = function (collectedFields, fields, parentField) {
@@ -47,9 +47,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
                 collectFields(collectedFields, fields[field], fieldName);
               }
               else{
-                if(fields[field].enabled == true) {
                   collectedFields.push(fieldName);
-                }
               }
             });
           };
