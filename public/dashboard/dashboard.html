@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div panel panel-default>
-    <h3 class="panel-title pull-left" editable-text="dashboard.name" buttons="right" blur="cancel"
-        onaftersave="saveDashboardName()" onshow="setNameFocus()" onhide="unsetNameFocus()">{{dashboard.name}} <span ng-if='dashboard.name' ng-i18next>navBar.dashboard</span></h3>
+    <h3 class="panel-title pull-left"><span ng-if='dashboard.name' ng-i18next>navBar.dashboard</span>: <span editable-text="dashboard.name" buttons="right" blur="cancel"
+                                            onaftersave="saveDashboardName()" onshow="setNameFocus()" onhide="unsetNameFocus()">{{dashboard.name}} </span> </h3>
   </div>
 </div>
 
