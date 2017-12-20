@@ -37,15 +37,8 @@ var template = {
     weight: undefined,
     preExistingConditions: undefined
   },
-  specimen: {
-    collectionDate: undefined,
-    id: undefined
-  },
-  antiviral: {
-    exposure: undefined,
-    name: undefined,
-    source: undefined
-  },
+
+
   symptoms: undefined,
   diagnoses: undefined,
   disposition: undefined,

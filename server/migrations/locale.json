@@ -68,12 +68,12 @@
         "aggFieldExists": "Aggregate Field already exists in datasource. There can only be one aggregate field at a time"
       },
       "db": {
-        "AddWidget": "Add Widget",
+        "AddWidget": "Add Visualization",
         "msgFieldsRequired": "These fields are required",
         "Visualization": "Visualization",
         "msgDashboardUpdated": "Dashboard Updated",
         "SaveDashboard": "Save Dashboard",
-        "SaveAsDashboard": "Save dashboard under a specific name",
+        "SaveAsDashboard": "Save Dashboard As",
         "Settings": "Widget Settings",
         "RemoveWidget": "Remove Widget",
         "OpenDashboard": "Open Dashboard",
@@ -408,12 +408,12 @@
         "Column": "Column"
       },
       "wb": {
-        "AddWidget": "Add widget",
+        "AddWidget": "Add Visualization",
         "WorkbenchUpdated": "Workbench updated",
         "msgNameWorkbench": "Please name this workbench",
         "Name": "Name",
-        "SaveWorkbench": "Save workbench",
-        "SaveAsWorkbench": "Save workbench under a specific name",
+        "SaveWorkbench": "Save Workbench",
+        "SaveAsWorkbench": "Save Workbench As",
         "msgSelectWorkbench": "Please select a workbench",
         "Workbench": "Workbench",
         "OpenWorkbench": "Open workbench",

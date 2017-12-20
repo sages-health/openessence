@@ -1,6 +1,7 @@
 'use strict';
 
 var Boom = require('boom');
+
 var Lock = require('yarnl');
 var codex = require('../codex');
 var conf = require('../conf');

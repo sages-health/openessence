@@ -112,9 +112,9 @@ async.parallel([
   //  bulkInsert(require('../models/VisitType'), require('./visit-type.json'), callback);
   //},
 
-  function visualizations (callback) {
+  /*function visualizations (callback) {
     bulkInsert(require('../models/Visualization'), require('./visualizations.json'), callback);
-  }
+  }*/
 ], function (err) {
   logger.info('Done seeding data');
 

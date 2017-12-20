@@ -87,8 +87,8 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               fallbackToExportServer: false,
             },
             chart: {
-              width: scope.options.width - 10,
-              height: scope.options.height - 40,
+              width: scope.options.width - 25,
+              height: scope.options.height - 58,
               type: 'line',
               zoomType: 'x',
               resetZoomButton: {
@@ -158,7 +158,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
                   //TODO: isoWeek: '%G-%V'
               },
               minTickInterval: 86400000,
-              endOnTick: true, 
+              endOnTick: true,
               minPadding: 0.05,
               gridLineWidth: 1
             },
@@ -359,14 +359,14 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
 
             }
           };
-          
+
           scope.createChart =  function(){
             scope.chartConfig.xAxis.endOnTick = true;
             scope.chartConfig.xAxis.floor = scope.chartConfig.xAxis.min;
             scope.chartConfig.xAxis.ceiling = scope.chartConfig.xAxis.max;
             scope.chart = Highcharts.chart("highcharts-id-" + scope.options.id, scope.chartConfig);
             scope.chart.get('theX').update({}, true);
-            
+
           }
 
           /**
@@ -612,7 +612,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
               scope.data[x].color = scope.colors[x];
             }
             scope.chartConfig.series = scope.data;
-            scope.createChart();
+            //scope.createChart();
           };
 
           /**
@@ -717,7 +717,7 @@ angular.module(directives.name).directive('outpatientTimeSeries', /*@ngInject*/ 
           scope.$on("lineChartReload", function(events,args){
             reload();
           });
-          
+
           scope.$watchCollection('[pivot.rows, pivot.cols, queryString, options.algorithm]', function () {
             reload();
           });

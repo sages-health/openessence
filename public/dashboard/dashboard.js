@@ -3,15 +3,13 @@
 var angular = require('angular');
 var directives = require('../scripts/modules').directives;
 
-angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($modal, visualization, Dashboard, //
+angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($modal, visualization, scopeToJson, Dashboard, //
                                                                                $location, dateFilter, updateURL, //
                                                                                FormResource) {
   return {
     restrict: 'E',
     template: require('./dashboard.html'),
-    scope: {
-      dashboardId: '=?'
-    },
+    scope: true,
     compile: function () {
       return {
         pre: function (scope) {
@@ -97,7 +95,7 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
           };
 
           scope.dashboard = {
-            name: '',
+            name: 'New',
             widgets: [],
             nextVizId: 0
           };
@@ -154,6 +152,8 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
               });
               scope.dashboard.widgets = widgets;
               scope.dashboard.widgets.forEach(updateDateRange);
+
+              scope.setDashboardJson(scopeToJson(scope));
             }
           });
 
@@ -226,49 +226,13 @@ angular.module(directives.name).directive('dashboard', /*@ngInject*/ function ($
                   content: widget.visualization.state
                 });
               });
+
+            scope.setDashboardJson(scopeToJson(scope));
           };
 
           scope.clear = function () {
             scope.dashboard.widgets = [];
             scope.dashboard.nextVizId = 0;
-          };
-
-          scope.export = function () {
-            var state = angular.copy(scope.dashboard);
-            delete state.form;
-            if(state.widgets) {
-              state.widgets.forEach(function (w) {
-                if (w.content) {
-                  delete w.content.fields;
-                  delete w.content.form;
-                }
-              });
-            }
-            if (scope.dashboardId) {
-              Dashboard.update(Dashboard.state(state), scope.dashboardId);
-            } else {
-              Dashboard.save(Dashboard.state(state));
-            }
-
-            // Store a copy of the original dashboard definition because if user updates the dashboard name via the
-            // xeditable widget, we'll have to send the new dashboard name with the original (last saved) dashboard
-            // definition to the server, which doesn't support updating just the name.
-            scope.originalDashboard = angular.copy(Dashboard.state(state));
-          };
-
-          scope.saveAs = function () {
-            var state = angular.copy(scope.dashboard);
-            delete state.form;
-            if(state.widgets) {
-              state.widgets.forEach(function (w) {
-                if (w.content) {
-                  delete w.content.fields;
-                  delete w.content.form;
-                }
-              });
-            }
-
-            Dashboard.save(Dashboard.state(state));
           };
 
           scope.setNameFocus = function() {

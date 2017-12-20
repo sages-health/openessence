@@ -29,11 +29,11 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
 
           scope.form = scope.form || {};
           var recordFields = [];
-          recordFields.push('');
+          //recordFields.push('');
           scope.getLocaleValue = stringUtil.getLocaleValue;
 
           var collectFields = function (collectedFields, fields, parentField) {
-            
+
             Object.keys(fields).forEach(function (field) {
               var fieldName = "";
               if(parentField !== ""){
@@ -47,8 +47,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
                 collectedFields.push(fields[field].name);
               }
               else{
-
-                collectedFields.push(fieldName);
+                  collectedFields.push(fieldName);
               }
             });
           };
@@ -56,7 +55,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
           if(scope.form.dataType === 'aggregate'){
             recordFields.push('count');
           }
-          
+
 
           /*Object.keys(csvExportConfig.template).forEach(function (field) {
 
@@ -69,7 +68,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             else{
               recordFields.push(field);
             }
-            
+
           });*/
 
 
@@ -104,7 +103,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             scope.fileParams.file = $files[0];
             parseCsvFile();
           };
-          
+
 
           var parseCsvFile = function () {
             if (!scope.fileParams.file) {
@@ -154,10 +153,10 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
                     select.value = scope.mapping[column.field];
                   }
                 });
-              
+
             });
 
-            
+
           };
 
           scope.columnDefs = [];
@@ -182,13 +181,13 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
             var toColumnFinal = toColumn;
             for(var i = 0; i < scope.form.fields.length; i++){
               if(scope.form.fields[i].name === toColumnFinal && scope.form.fields[i].nested == true){
-                //toColumnFinal  = toColumnFinal + '.name';  
+                //toColumnFinal  = toColumnFinal + '.name';
               }
             }
             scope.mapping[fromColumn] = toColumnFinal;
-             
+
           };
-          
+
           scope.saveMapping = function(){
               $modal.open({
                 template: require('../partials/save-csv-mapping-modal.html'),
@@ -214,7 +213,7 @@ angular.module(directives.name).directive('outpatientCsvFileSelector', /*@ngInje
                 };
               }]
             })
-            
+
           }
         }
       };

@@ -2,7 +2,7 @@
 
 // @ngInject
 module.exports = function ($timeout, $filter, $scope, $window, $location, $state, appName, user, commit, deployDate, repoUrl, visitsReportModal, aggregateReportModal,//
-                           Workbench, Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope, locale, tmhDynamicLocale, datepickerPopupConfig) {
+                           Workbench, Dashboard, DashboardResource, WorkbenchResource, FormResource, $rootScope, locale, tmhDynamicLocale, datepickerPopupConfig, scopeToJson) {
   // ****** Start Locale
   $scope.localeSelect2Options = [{value: 'en', label: 'English'}, {value: 'es', label: 'Spanish'}];
   $scope.site = {locale: locale.getLocale()};
@@ -66,9 +66,13 @@ module.exports = function ($timeout, $filter, $scope, $window, $location, $state
   $scope.appName = appName;
   $scope.commit = commit;
   $scope.deployDate = deployDate;
-  $scope.repoUrl = repoUrl; 
-  
+  $scope.repoUrl = repoUrl;
+
   $scope.user = user;
+
+  $scope.workbench = {};
+  $scope.dashboard = {};
+
   $scope.logout = function () {
     // wait for acknowledgement of logout from server before reloading
     $scope.$on('logout', function () { // TODO move to user service
@@ -118,4 +122,84 @@ module.exports = function ($timeout, $filter, $scope, $window, $location, $state
       }, {})));
     });
   };
+
+  $scope.saveWorkbench = function () {
+
+    var state = {
+      name: $scope.workbench.workbenchName || '',
+      state: $scope.workbench
+    };
+    if ($scope.workbench.workbenchId) {
+      Workbench.update(state, $scope.workbench.workbenchId);
+    } else {
+      Workbench.save(state);
+    }
+
+    // Store a copy of the original workbench definition because if user updates the workbench name via the
+    // xeditable widget, we'll have to send the new workbench name and the original (last saved) workbench
+    // definition to the server, which doesn't support updating just the name.
+    //angular.copy($scope.workbench, $scope.workbench.originalWorkbench);
+  };
+
+  $scope.saveAsWorkbench = function () {
+    var scopeJson = scopeToJson($scope.workbench);
+    delete scopeJson.form;
+    delete scopeJson.possibleFilters;
+    delete scopeJson.pivotOptions;
+
+    var state = {
+      name: $scope.workbenchName || '',
+      state: scopeJson
+    };
+    Workbench.save(state);
+  };
+
+  $scope.setWorkbenchJson = function(value){
+    $scope.workbench = value;
+  }
+
+  $scope.saveDashboard = function () {
+    var state = angular.copy($scope.dashboard);
+    state = state.dashboard;
+    delete state.form;
+    if(state.widgets) {
+      state.widgets.forEach(function (w) {
+        if (w.content) {
+          delete w.content.fields;
+          delete w.content.form;
+        }
+      });
+    }
+    if ($scope.dashboard.dashboardId) {
+      Dashboard.update(Dashboard.state(state), $scope.dashboard.dashboardId);
+    } else {
+      Dashboard.save(Dashboard.state(state));
+    }
+
+    // Store a copy of the original dashboard definition because if user updates the dashboard name via the
+    // xeditable widget, we'll have to send the new dashboard name with the original (last saved) dashboard
+    // definition to the server, which doesn't support updating just the name.
+    //$scope.workbench.originalDashboard = angular.copy(Dashboard.state(state));
+  };
+
+  $scope.saveAsDashboard = function () {
+    var state = angular.copy($scope.dashboard);
+    state = state.dashboard;
+    delete state.form;
+    if(state.widgets) {
+      state.widgets.forEach(function (w) {
+        if (w.content) {
+          delete w.content.fields;
+          delete w.content.form;
+        }
+      });
+    }
+
+    Dashboard.save(Dashboard.state(state));
+  };
+
+  $scope.setDashboardJson = function(value){
+    $scope.dashboard = value;
+  }
+
 };

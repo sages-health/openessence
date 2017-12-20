@@ -30,6 +30,9 @@
             <!-- TODO get rid of this and fold functionality into dashboard view  -->
             <li><a ui-sref="edit.dashboard" ng-i18next>navBar.manageDashboards</a></li>
 
+            <li ng-if="isActive('/dashboard')"><a ng-click="saveDashboard()" ng-i18next>db.SaveDashboard</a></li>
+            <li ng-if="isActive('/dashboard')"><a ng-click="saveAsDashboard()" ng-i18next>db.SaveAsDashboard</a></li>
+
             <li role="presentation" class="divider" ng-show="dashboards.length > 0"></li>
             <!-- We don't actually show the most recent dashboards, but oh well -->
             <li role="presentation" class="dropdown-header" ng-i18next>navBar.recentDashboards</li>
@@ -51,6 +54,9 @@
             <li><a ui-sref="workbench({workbenchId: ''})" ng-i18next>navBar.newWorkbench</a></li>
             <li><a ng-click="openWorkbench()" ng-i18next>navBar.openWorkbench</a></li>
             <li><a ui-sref="edit.workbench" ng-i18next>navBar.manageWorkbenches</a></li>
+
+            <li ng-if="isActive('/workbench')" ><a ng-click="saveWorkbench()" ng-i18next>wb.SaveWorkbench</a></li>
+            <li ng-if="isActive('/workbench')" ><a ng-click="saveAsWorkbench()" ng-i18next>wb.SaveAsWorkbench</a></li>
 
             <li role="presentation" class="divider" ng-show="workbenches.length > 0"></li>
             <!-- We don't actually show the most recent workbenches, but oh well -->
@@ -82,7 +88,6 @@
             <li role="presentation" class="dropdown-header" ng-i18next>navBar.edit</li>
             <!-- TODO define this in outpatient module -->
             <li><a ui-sref="edit.visit" ng-i18next>navBar.outpatientVisits</a></li>
-            <li><a ui-sref="edit.newvisit" ng-i18next>navBar.NewVisit</a></li>
             <li role="presentation" class="divider" ng-show="user.isAdmin()"></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.config" ng-i18next>navBar.configuration</a></li>
             <li><a ng-show="user.isAdmin()" ui-sref="edit.translation" ng-i18next>navBar.translation</a></li>

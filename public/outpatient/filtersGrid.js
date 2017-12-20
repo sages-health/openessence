@@ -12,7 +12,7 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
     scope: {
       activeFilters: '=',
       possibleFilters: '=',
-      queryString: '=', 
+      queryString: '=',
       autoRunQuery: '='
     },
     compile: function () {
@@ -20,6 +20,7 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
         pre: function (scope) {
           scope.possibleFilters = scope.possibleFilters || {};
           scope.activeFilters = scope.activeFilters || [];
+          scope.showFilterGrid = true;
           if(!scope.autoRunQuery)
             scope.autoRunQuery = true;
 
@@ -28,7 +29,7 @@ angular.module(directives.name).directive('outpatientFiltersGrid', /*@ngInject*/
               scope.autoRunQuery = !scope.autoRunQuery;
             });
           }
-          
+
           scope.triggerQuery = function(){
             $rootScope.$broadcast('queryChanged', 'force query run'); //triggers reload() in visualizaiton.js
             $rootScope.$broadcast('tableReload', 'force query run');
