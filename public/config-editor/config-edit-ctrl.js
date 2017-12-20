@@ -51,7 +51,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
       $scope.templateKeys.sort().reverse();
 
       angular.element("#config-fields-table").sortable({cursor:"move"});
-    
+
     });
   };
   $scope.setEnabled = function (val) {
@@ -131,9 +131,9 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
           return possibleValuesByName[val] || { name: val };
         }).sort(stringUtil.compare);
       }
-      
+
     });
-    
+
     //get HTML field order
     var tempFields = [];
     angular.element(".config-fields-row").each(function(){
@@ -144,12 +144,12 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
         tempFields.push(template.fields[group.index]);
        }
     });
-    
+
      //reorder template fields
     template.fields.length = 0;
     tempFields.forEach(function(field){
         template.fields.push(field);
-    });   
+    });
 
     template.explodeFields = []
 
@@ -171,7 +171,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
     else {
       FormResource.save(template, onSuccess);
     }
-    
+
   };
 
   var addSiteTemplate = function (templateName) {
@@ -237,8 +237,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
           {name: 'Free Text', value: 'text'},
           //{name: 'Number', value: 'numeric-range'},
           {name: 'Single-Select List', value: 'multi-select'},
-          {name: 'Multi-Select List (Aggregate Field)', value: 'agg'},
-          {name: 'Region', value:'Region', type:'Region'}
+          {name: 'Multi-Select List (Aggregate Field)', value: 'agg'}
           ];
 
         scope.submitted = true;
@@ -255,7 +254,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
         scope.fieldTypeExists = function (fieldType) {
           var exists = false;
           $scope.siteTemplate.fields.forEach(function (field) {
-            
+
             if(field.table.type === fieldType)
               exists = true;
           });
@@ -318,14 +317,14 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
           });
 
           var newField = {
-              name: _.camelCase(scope.data.newFieldName), 
-              enabled: true, 
+              name: _.camelCase(scope.data.newFieldName),
+              enabled: true,
               aggregable: true,
               locked: false,
-              filter: 
+              filter:
               {
                 enabled: true,
-                type: scope.data.fieldType 
+                type: scope.data.fieldType
               },
               table:{
                 enabled: true,
@@ -386,7 +385,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
                   if (locale._source.default) {
                     fromLocale = locale._source;
                   }
-                  
+
                   if (!toLocale && (!fromLocale || locale._source.lng !== fromLocale.lng)) {
                     toLocale = locale._source;
                     toLng = toLocale.lng;
@@ -400,7 +399,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
                 fromLocale.translation.op[scope.data.newFieldName.split(' ').join('')] = scope.data.newFieldName;
 
                 var localeId = fromLocale._id;
-      
+
                 delete fromLocale._id;
 
 
@@ -428,7 +427,7 @@ module.exports = function ($scope, $window, $rootScope, FormResource, LocaleReso
                   if (locale._source.default) {
                     fromLocale = locale._source;
                   }
-                  
+
                   if (!toLocale && (!fromLocale || locale._source.lng !== fromLocale.lng)) {
                     toLocale = locale._source;
                     toLng = toLocale.lng;
@@ -486,7 +485,7 @@ $scope.openDeleteFieldModal = function (field) {
           _.remove(template.fields, {
             name: scope.field.name
           });
-          
+
           if (angular.isString(template.templates)) {
             template.templates = [template.templates];
           }
@@ -526,7 +525,7 @@ $scope.openDeleteFieldModal = function (field) {
               $window.onbeforeunload = function() {
                 window.scrollTo(0, 0);
               }
-              
+
             });
             //FormResource.save(template, onSuccess);
           }
@@ -539,7 +538,7 @@ $scope.openDeleteFieldModal = function (field) {
                 window.scrollTo(0, 0);
               }
             });
-            
+
           }
         };
 

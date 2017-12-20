@@ -15,10 +15,6 @@
       <select class="form-control" ng-change="submitted = false" id="fieldType" name="fieldType" ng-model="data.fieldType" required>
         <option ng-repeat="type in types" value="{{type.value}}">{{type.name}}</option>
       </select>
-      <label ng-if="data.fieldType === 'GIS'" for="regionMapping" ng-i18next>op.RegionMapping</label>
-      <select class="form-control" ng-if="data.fieldType === 'GIS'" id="regionMapping" name="regionMapping" ng-model="data.regionMapping" >
-        <option ng-repeat="regionColumn in regionColumns" value="{{regionColumn.name}}">{{regionColumn.name}}</option>
-      </select>
       <div class="help-block" ng-show="yellAtUser" ng-i18next>
         config.msgEnterAValue
       </div>
@@ -28,7 +24,7 @@
       <div class="help-block" ng-show="noRegionSelected" ng-i18next ng-class="{'has-error': noRegionSelected}">
         config.noRegionSelected
       </div>
-      
+
     </div>
   </form>
 </div>

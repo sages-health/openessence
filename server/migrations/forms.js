@@ -135,7 +135,7 @@ module.exports = [
           type: 'multi-select'
         }
       },
-      
+
       {
         name: 'medicalFacilityDistrictGroup',
         enabled: false,
@@ -300,7 +300,6 @@ module.exports = [
         enabled: true,
         aggregable: true,
         isFilter: false,
-        fieldType: 'GIS',
         groupName: 'medicalFacilityGroup',
         // can't do this with JSON
         values: require('./facilities.json'),
@@ -382,6 +381,7 @@ module.exports = [
         locked: false,
         isFilter: false,
         localeName: 'op.District',
+        fieldType: 'GIS',
         filter: {
           enabled: true,
           type: 'multi-select'
