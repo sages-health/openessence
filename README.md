@@ -1,4 +1,6 @@
 # OpenESSENCE
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsages-health%2Fopenessence.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsages-health%2Fopenessence?ref=badge_shield)
+
 
 * [Building](#building)
 * [Windows Users](#windows-users)
@@ -112,3 +114,7 @@ You can then edit the settings.js file to center on the correct lat/lon and set 
     settings.MAP_URL = "'http://localhost:8080/styles/klokantech-basic/rendered/{z}/{x}/{y}.png'"
     settings.MAP_LATITUDE = '41.4925'
     settings.MAP_LONGITUDE = '-99.9018'
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsages-health%2Fopenessence.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsages-health%2Fopenessence?ref=badge_large)
