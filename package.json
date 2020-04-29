@@ -78,7 +78,7 @@
     "gulp-util": "^3.0.1",
     "html-minifier": "^0.6.9",
     "humane-js": "~3.2.1",
-    "jquery": "~2.1.0",
+    "jquery": "~3.5.0",
     "karma": "^0.12.16",
     "leaflet": "^1.0.2",
     "less-middleware": "^1.0.3",
