@@ -1,0 +1,1380 @@
+#
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: fracas\n"
+"PO-Revision-Date: 2021-02-26 21:43+0100\n"
+"Language-Team: French (http://www.transifex.com/projects/p/fracas/language/"
+"fr/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+"POT-Creation-Date: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.4.2\n"
+"Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
+"Language: cs\n"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Acute Fever and Rash"
+msgstr "Akutní horečka a vyrážka"
+
+#: ../public/dashboard/add-widget.html
+msgid "Add"
+msgstr "Přidat"
+
+#: ../public/dashboard/add-widget.html ../public/dashboard/dashboard.html
+#: ../public/workbench/workbench.html
+msgid "Add widget"
+msgstr "Přidat widget"
+
+#: ../public/outpatient/form.html
+msgid "Address"
+msgstr "Adresa"
+
+#: ../public/entry/age-inputs.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html
+#: ../public/partials/visualization-menu.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+msgid "Age"
+msgstr "Věk"
+
+#: ../public/partials/visualization-menu.html
+msgid "Age & Sex"
+msgstr "Věk a pohlaví"
+
+#: ../public/partials/home.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Aggregate Data"
+msgstr "Souhrnná data"
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Aggregate data"
+msgstr "Souhrnná data"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Amantadine (Symmetrel®)"
+msgstr "Amantadine (Symmetrel®)"
+
+#: ../public/outpatient/table.html ../public/outpatient/visualization.html
+#: ../public/outpatient/possibleFilters.js
+msgid "Antiviral"
+msgstr "Antivirový"
+
+#: ../public/outpatient/filter-types/multi-select.html
+#: ../public/outpatient/filter-types/text.html
+msgid "Any"
+msgstr "Jakýkoliv"
+
+#: ../public/outpatient/filter-types/sex.html
+msgid "Any sex"
+msgstr "Jakékoliv pohlaví"
+
+#: ../public/outpatient/form.html
+msgid "Anything else you want to add"
+msgstr "Cokoliv jiného chcete dodat"
+
+#. Month of April
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Apr"
+msgstr "Duben"
+
+#: ../public/partials/delete-diagnosis-modal.html
+msgid "Are you sure you want to delete this diagnosis?"
+msgstr "Opravdu chcete tuto diagnózu odstranit?"
+
+#: ../public/partials/delete-record.html
+msgid "Are you sure you want to delete this record?"
+msgstr "Opravdu chcete tento záznam smazat?"
+
+#. {{expectedAge.months}} is a variable
+#: ../public/entry/age-inputs.html
+msgid ""
+"Are you sure? According to the patient's date of birth, they should be "
+"{{expectedAge.months}} months old."
+msgstr ""
+"Jste si jist? Podle data narození pacienta by měl být {{expectedAge."
+"months}} měsíců starý."
+
+#. {{expectedAge.years}} is a variable
+#: ../public/entry/age-inputs.html
+msgid ""
+"Are you sure? According to the patient's date of birth, they should be "
+"{{expectedAge.years}} years old."
+msgstr ""
+"Jste si jist? Podle data narození pacienta by mu mělo být {{expectedAge."
+"y}}} let."
+
+#: ../public/entry/age-inputs.html ../public/outpatient/form.html
+msgid "Are you sure? This date is in the future."
+msgstr "Jste si jist? Toto datum je v budoucnosti."
+
+#. Month of August
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Aug"
+msgstr "Srpen"
+
+#. Beats per minute
+#: ../public/outpatient/form.html
+msgid "BPM"
+msgstr "BPM"
+
+#: ../public/partials/visualization-menu.html
+msgid "Back"
+msgstr "Zpět"
+
+#: ../public/outpatient/fracasBarChart.js
+msgid "Bar Chart"
+msgstr "Sloupcový graf"
+
+#: ../public/partials/reports/visits-report.html
+msgid "Bar Chart - Sex"
+msgstr "Sloupcový graf - pohlaví"
+
+#: ../public/partials/visualization-menu.html
+msgid "Bar chart"
+msgstr "Sloupcový graf"
+
+#: ../public/partials/visualization-menu.html
+msgid "Blank"
+msgstr "Prázdné"
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "CSV file"
+msgstr "CSV soubor"
+
+#: ../public/aggregate/modal-upload.html ../public/dashboard/add-widget.html
+#: ../public/dashboard/open-dashboard-modal.html
+#: ../public/dashboard/widget-settings.html
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/delete-diagnosis-modal.html
+#: ../public/partials/delete-record.html
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/export-visualization-modal.html
+#: ../public/partials/save-report-dialog.html
+#: ../public/partials/save-visualization-modal.html
+#: ../public/partials/visualization-export.html
+#: ../public/workbench/open-workbench-modal.html
+#: ../public/workbench/save-workbench-modal.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-visits-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: ../public/outpatient/fracasBarChart.js
+msgid "Category"
+msgstr "Kategorie"
+
+#: ../public/partials/edit/forms/change-password-form.html
+msgid "Change Password"
+msgstr "Změnit heslo"
+
+#: ../public/partials/edit/user.html
+msgid "Change password"
+msgstr "Změnit heslo"
+
+#: ../public/outpatient/modal-edit.html
+msgid "Close"
+msgstr "Zavřít"
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Confirm Password"
+msgstr "Potvrdit heslo"
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Contains Header Row?"
+msgstr "Obsahuje řádek záhlaví?"
+
+#: ../public/outpatient/fracasBarChart.js
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Count"
+msgstr "Počet"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Country / Area"
+msgstr "Země"
+
+#: ../public/partials/reports/timeseries-report.html
+#: ../public/partials/reports/weekly-report.html
+msgid "Created by: {{username}}"
+msgstr "Vytvořil: {{username}}"
+
+#: ../public/partials/visualization-menu.html
+msgid "Crosstab"
+msgstr "Souhrnná tabulka"
+
+#: ../public/partials/reports/visits-report.html
+msgid "Daily Time Series"
+msgstr "Denní časové řady"
+
+#: ../public/dashboard/open-dashboard-modal.html
+#: ../public/partials/edit/forms/dashboard-form.html
+msgid "Dashboard"
+msgstr "Nástěnka"
+
+#: ../public/dashboard/dashboard-saved-modal.html
+msgid "Dashboard Updated"
+msgstr "Nástěnka aktualizována"
+
+#: ../public/partials/edit/dashboard.html
+msgid "Dashboards"
+msgstr "Nástěnky"
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Data"
+msgstr "Data"
+
+#: ../public/partials/edit/aggregate-data.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Date"
+msgstr "Datum"
+
+#: ../public/dashboard/widget-settings.html
+msgid "Date Interval"
+msgstr "Datum Interval"
+
+#: ../public/entry/age-inputs.html
+msgid "Date of birth"
+msgstr "Datum narození"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Date of report"
+msgstr "Datum zprávy"
+
+#: ../public/partials/reports/timeseries-report.html
+#: ../public/partials/reports/weekly-report.html
+msgid "Date of report: {{dateString}}"
+msgstr "Datum zprávy: {{dateString}}"
+
+#. Month of December
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Dec"
+msgstr "Prosinec"
+
+#: ../public/partials/delete-diagnosis-modal.html
+#: ../public/partials/delete-record.html
+msgid "Delete"
+msgstr "Smazat"
+
+#: ../public/partials/edit/user.html
+msgid "Delete user"
+msgstr "Smazat uživatele"
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Delimiter"
+msgstr "Oddělovač"
+
+#: ../public/partials/edit/dashboard.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/scripts/controllers/edit/DashboardEditCtrl.js
+#: ../public/scripts/controllers/edit/WorkbenchEditCtrl.js
+msgid "Description"
+msgstr "Popis"
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html ../public/partials/home.html
+#: ../public/partials/edit/diagnosis.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+msgid "Diagnoses"
+msgstr "Diagnostiky"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Diarrhoea"
+msgstr "Průjem"
+
+#: ../public/partials/login.html
+msgid "Did your administrator give you a local account? Sign in below!"
+msgstr "Poskytl vám správce místní účet? Přihlaste se níže!"
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+msgid "Disabled"
+msgstr "Zakázáno"
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/partials/edit/disposition.html
+#: ../public/partials/edit/forms/disposition-form.html
+msgid "Disposition"
+msgstr "Dispozice"
+
+#: ../public/partials/home.html
+msgid "Dispositions"
+msgstr "Dispozice"
+
+#: ../public/partials/edit/aggregate-data.html
+#: ../public/partials/edit/district.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+#: ../public/scripts/controllers/edit/AggregateDataEditCtrl.js
+msgid "District"
+msgstr "Okres"
+
+#: ../public/partials/home.html ../public/partials/edit/forms/user-form.html
+msgid "Districts"
+msgstr "Okresy"
+
+#: ../public/partials/home.html
+msgid "Edit"
+msgstr "Upravit"
+
+#: ../public/outpatient/modal-edit.html
+msgid "Edit record"
+msgstr "Upravit záznam"
+
+#: ../public/partials/edit/user.html
+msgid "Edit user"
+msgstr "Upravit uživatele"
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+msgid "Email"
+msgstr "E-mail"
+
+#: ../public/partials/edit/diagnosis.html
+msgid "Enabled"
+msgstr "Povoleno"
+
+#: ../public/partials/edit/forms/diagnosis-form.html
+msgid "Enabled?"
+msgstr "Povoleno?"
+
+#: ../public/outpatient/filter-types/date-range.html
+msgid "End"
+msgstr "Konec"
+
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+msgid "Ending On"
+msgstr "Končí"
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Export"
+msgstr "Export"
+
+#: ../public/partials/visualization-export.html
+msgid "Export to PNG"
+msgstr "Exportovat do PNG"
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Export visualization"
+msgstr "Export vizualizace"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Exposure to influenza antiviral drugs during the last 14 days?"
+msgstr "Vystavení chřipkovým antivirovým lékům během posledních 14 dnů?"
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html
+#: ../public/outpatient/possibleFilters.js
+msgid "Facility"
+msgstr "Zařízení"
+
+#. Month of February
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Feb"
+msgstr "Únor"
+
+#: ../public/outpatient/form.html ../public/outpatient/filter-types/sex.html
+msgid "Female"
+msgstr "Žena"
+
+#: ../public/outpatient/possibleFilters.js
+msgid "Form submission date"
+msgstr "Datum podání formuláře"
+
+#: ../public/partials/not-found.html
+msgid "Home"
+msgstr "Home"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Household contact"
+msgstr "Kontakt pro domácnost"
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Import"
+msgstr "Import"
+
+#: ../public/partials/visualization-export.html
+msgid "Include Notes"
+msgstr "Zahrnout poznámky"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Influenza-like Illness"
+msgstr "Nemoci podobné chřipce"
+
+#: ../public/scripts/services/errorInterceptor.js
+msgid "Insufficient permissions"
+msgstr "Nedostatečná oprávnění"
+
+#: ../public/outpatient/time-series.html
+msgid "Interval"
+msgstr "Interval"
+
+#: ../public/partials/reports/open-visits-report-dialog.html
+msgid "Invalid date range"
+msgstr "Neplatné časové období"
+
+#. Month of January
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Jan"
+msgstr "Leden"
+
+#. Month of July
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Jul"
+msgstr "Červenec"
+
+#. Month of June
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Jun"
+msgstr "Červen"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Laninamivir"
+msgstr "Laninamivir"
+
+#: ../public/entry/age-inputs.html
+msgid "Leave this field blank if you don't know the patient's age"
+msgstr "Pokud neznáte věk pacienta, ponechte toto pole prázdné"
+
+#: ../public/partials/login.html
+msgid "Local sign in"
+msgstr "Místní přihlášení"
+
+#: ../public/partials/relogin.html
+msgid "Login"
+msgstr "Přihlásit se"
+
+#: ../public/partials/home.html
+msgid "Logout"
+msgstr "Odhlásit se"
+
+#: ../public/outpatient/form.html ../public/outpatient/filter-types/sex.html
+msgid "Male"
+msgstr "Muž"
+
+#: ../public/partials/home.html
+msgid "Manage dashboards"
+msgstr "Spravovat nástěnky"
+
+#: ../public/partials/home.html
+msgid "Manage workbenches"
+msgstr "Spravovat pracovní místo"
+
+#: ../public/partials/visualization-menu.html
+msgid "Map"
+msgstr "Mapa"
+
+#. Month of March
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Mar"
+msgstr "Březen"
+
+#. Month of May
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "May"
+msgstr "Květen"
+
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "More than one record found. First record will be imported."
+msgstr "Nalezen více než jeden záznam. Bude importován první záznam."
+
+#: ../public/partials/delete-diagnosis-modal.html
+msgid ""
+"Most of the time, you should disable a diagnosis instead of deleting it, in "
+"case you want to collect it\n"
+"    at some later time."
+msgstr ""
+"Většinu času byste měli místo diagnózy vypnout diagnostiku, pokud ji chcete "
+"sbírat\n"
+"     později."
+
+#: ../public/outpatient/form.html
+#: ../public/partials/save-visualization-modal.html
+#: ../public/workbench/save-workbench-modal.html
+#: ../public/partials/edit/dashboard.html
+#: ../public/partials/edit/diagnosis.html
+#: ../public/partials/edit/disposition.html
+#: ../public/partials/edit/district.html ../public/partials/edit/symptom.html
+#: ../public/partials/edit/syndrome.html ../public/partials/edit/user.html
+#: ../public/partials/edit/visit-type.html
+#: ../public/partials/edit/visualization.html
+#: ../public/partials/edit/workbench.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+#: ../public/scripts/controllers/edit/DashboardEditCtrl.js
+#: ../public/scripts/controllers/edit/DiagnosisEditCtrl.js
+#: ../public/scripts/controllers/edit/DispositionEditCtrl.js
+#: ../public/scripts/controllers/edit/DistrictEditCtrl.js
+#: ../public/scripts/controllers/edit/SymptomEditCtrl.js
+#: ../public/scripts/controllers/edit/SyndromeEditCtrl.js
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+#: ../public/scripts/controllers/edit/VisitTypeEditCtrl.js
+#: ../public/scripts/controllers/edit/VisualizationEditCtrl.js
+#: ../public/scripts/controllers/edit/WorkbenchEditCtrl.js
+msgid "Name"
+msgstr "Název"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Name of antiviral"
+msgstr "Název antivirového přípravku"
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "New"
+msgstr "Nový"
+
+#: ../public/partials/home.html
+msgid "New dashboard"
+msgstr "Nová nástěnka"
+
+#: ../public/partials/edit/diagnosis.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+msgid "New diagnosis"
+msgstr "Nová diagnoza"
+
+#: ../public/partials/edit/user.html
+msgid "New user"
+msgstr "Nový uživatel"
+
+#: ../public/outpatient/edit.html
+msgid "New visit"
+msgstr "Nová návštěva"
+
+#: ../public/partials/home.html
+msgid "New workbench"
+msgstr "Nový pracovní prostor"
+
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Next"
+msgstr "Další"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "No"
+msgstr "Ne"
+
+#: ../public/aggregate/upload-aggregate.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "No data found"
+msgstr "Nenalezena žádná data"
+
+#: ../public/partials/login.html
+msgid "No registration required"
+msgstr "Není nutná registrace"
+
+#: ../public/partials/reports/timeseries-report.html
+msgid ""
+"Note: Number of reported cases are not comparable between countries. The "
+"purpose of the charts is to show\n"
+"        trends over time within each country/area."
+msgstr ""
+"Poznámka: Počet hlášených případů není mezi zeměmi srovnatelný. Účelem "
+"grafů je ukázat\n"
+"         trendy v rámci každé země / oblasti."
+
+#: ../public/outpatient/form.html ../public/partials/visualization-export.html
+msgid "Notes"
+msgstr "Poznámky"
+
+#: ../public/partials/visualization-export.html
+msgid "Notes for this visualization."
+msgstr "Poznámky k této vizualizaci."
+
+#. Month of November
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Nov"
+msgstr "Listopad"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Number of <br>sites reporting"
+msgstr "Počet <br>přehledů stránek"
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Number of sites reporting"
+msgstr "Počet přehledů stránek"
+
+#: ../public/dashboard/dashboard-saved-modal.html
+#: ../public/dashboard/widget-settings.html
+#: ../public/partials/edit-settings-modal.html
+#: ../public/workbench/workbench-saved-modal.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-visits-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+msgid "OK"
+msgstr "OK"
+
+#. Month of October
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Oct"
+msgstr "Říjen"
+
+#: ../public/partials/delete-diagnosis-modal.html
+msgid ""
+"Only delete this diagnosis if you're sure you will never collect it, for "
+"example, because it\n"
+"      was added in error."
+msgstr ""
+"Tuto diagnózu smažte pouze tehdy, pokud jste si jisti, že ji nikdy nebudete "
+"shromažďovat, například proto, že \n"
+"       byla omylem přidána."
+
+#: ../public/dashboard/open-dashboard-modal.html
+#: ../public/workbench/open-workbench-modal.html
+msgid "Open"
+msgstr "Otevřít"
+
+#: ../public/dashboard/open-dashboard-modal.html
+msgid "Open Dashboard"
+msgstr "Otevřít nástěnku"
+
+#: ../public/partials/reports/open-visits-report-dialog.html
+msgid "Open Outpatient Visits Report"
+msgstr "Otevřená zpráva o ambulantních návštěvách"
+
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+msgid "Open Reported Cases by Country Report"
+msgstr "Otevřít oznámené případy podle Zprávy o zemi"
+
+#: ../public/partials/reports/open-weekly-report-dialog.html
+msgid "Open Weekly Report"
+msgstr "Otevřít Týdenní přehled"
+
+#: ../public/workbench/open-workbench-modal.html
+msgid "Open Workbench"
+msgstr "Otevřít pracovní prostor"
+
+#: ../public/partials/home.html
+msgid "Open dashboard"
+msgstr "Otevřít nástěnku"
+
+#: ../public/partials/home.html
+msgid "Open workbench"
+msgstr "Otevřít pracovní prostor"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Oseltamivir (Tamiflu®)"
+msgstr "Oseltamivir (Tamiflu®)"
+
+#: ../public/outpatient/form.html
+msgid "Other"
+msgstr "Ostatní"
+
+#: ../public/outpatient/form.html
+msgid "Other diagnoses"
+msgstr "Další diagnózy"
+
+#: ../public/outpatient/form.html
+msgid "Other facility not listed"
+msgstr "Ostatní zařízení které není uvedeno v seznamu"
+
+#: ../public/outpatient/form.html
+msgid "Other pre-existing conditions"
+msgstr "Další již existující podmínky"
+
+#: ../public/outpatient/form.html
+msgid "Other symptoms"
+msgstr "Jiné příznaky"
+
+#: ../public/partials/home.html
+msgid "Outpatient Visits Report"
+msgstr "Zpráva o ambulantních návštěvách"
+
+#: ../public/outpatient/edit.html ../public/partials/home.html
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Outpatient visits"
+msgstr "Ambulantní návštěvy pacientů"
+
+#: ../public/partials/login.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Password"
+msgstr "Heslo"
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Password and Confirm Password must match"
+msgstr "Heslo a Potvrzení hesla se musí shodovat"
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Password must be at least"
+msgstr "Heslo musí být alespoň"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Patient"
+msgstr "Pacient"
+
+#: ../public/outpatient/form.html
+msgid "Patient ID"
+msgstr "ID Pacienta"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Peramivir"
+msgstr "Peramivir"
+
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/scripts/controllers/edit/DispositionEditCtrl.js
+#: ../public/scripts/controllers/edit/DistrictEditCtrl.js
+#: ../public/scripts/controllers/edit/SymptomEditCtrl.js
+#: ../public/scripts/controllers/edit/SyndromeEditCtrl.js
+#: ../public/scripts/controllers/edit/VisitTypeEditCtrl.js
+msgid "Phone ID"
+msgstr "Phone ID"
+
+#: ../public/outpatient/fracasPieChart.js
+msgid "Pie Chart"
+msgstr "Koláčový graf"
+
+#: ../public/partials/reports/visits-report.html
+msgid "Pie Chart - Symptoms"
+msgstr "Koláčový graf - symptomy"
+
+#: ../public/partials/visualization-menu.html
+msgid "Pie chart"
+msgstr "Koláčový graf"
+
+#: ../public/hinge/hinge.js
+msgid "Pivot columns"
+msgstr "Pivot sloupce"
+
+#: ../public/hinge/hinge.js
+msgid "Pivot rows"
+msgstr "Pivot řádky"
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Please enter a password"
+msgstr "Prosím, vložte heslo"
+
+#: ../public/partials/edit/forms/diagnosis-form.html
+msgid "Please enter a valid Diagnosis name"
+msgstr "Zadejte platný název Diagnózy"
+
+#: ../public/partials/edit/forms/district-form.html
+msgid "Please enter a valid District name"
+msgstr "Zadejte platný název okresu"
+
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+msgid "Please enter a valid Phone ID"
+msgstr "Zadejte platné telefonní číslo"
+
+#: ../public/partials/edit/forms/symptom-form.html
+msgid "Please enter a valid Symptom name"
+msgstr "Zadejte platný název Symptomu"
+
+#: ../public/partials/edit/forms/syndrome-form.html
+msgid "Please enter a valid Syndrome name"
+msgstr "Zadejte platný název syndromu"
+
+#: ../public/partials/edit/forms/visit-type-form.html
+msgid "Please enter a valid Visit Type name"
+msgstr "Zadejte platný název typu návštěvy"
+
+#: ../public/partials/edit/forms/visualization-form.html
+msgid "Please enter a valid Visualization name"
+msgstr "Zadejte platný název vizualizace"
+
+#: ../public/partials/edit/forms/dashboard-form.html
+msgid "Please enter a valid dashboard name"
+msgstr "Zadejte platný název nástěnky"
+
+#: ../public/partials/edit/forms/dashboard-form.html
+msgid "Please enter a valid description"
+msgstr "Zadejte platný popis"
+
+#: ../public/partials/edit/forms/disposition-form.html
+msgid "Please enter a valid disposition"
+msgstr "Zadejte platnou dispozici"
+
+#: ../public/partials/edit/forms/user-form.html
+msgid "Please enter a valid email address"
+msgstr "Zadejte platnou emailovou adresu"
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Please enter a valid user name"
+msgstr "Zadejte platné uživatelské jméno"
+
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Please enter a valid workbench name"
+msgstr "Zadejte platný název pracovního prostoru"
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Please enter label for x-axis"
+msgstr "Zadejte popisek pro osu x"
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Please enter label for y-axis"
+msgstr "Zadejte popisek pro osu y"
+
+#: ../public/partials/visualization-export.html
+msgid "Please enter size for x-axis"
+msgstr "Zadejte velikost pro osu x"
+
+#: ../public/partials/visualization-export.html
+msgid "Please enter size for y-axis"
+msgstr "Zadejte velikost pro osu y"
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Please enter title"
+msgstr "Zadejte název"
+
+#: ../public/partials/relogin.html
+msgid "Please log back in first"
+msgstr "Nejprve se přihlaste"
+
+#: ../public/partials/save-visualization-modal.html
+msgid "Please name this visualization"
+msgstr "Tuto vizualizaci pojmenujte"
+
+#: ../public/workbench/save-workbench-modal.html
+msgid "Please name this workbench"
+msgstr "Pojmenujte tento pracovní prostor"
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Please select a CSV file"
+msgstr "Vyberte soubor CSV"
+
+#: ../public/dashboard/open-dashboard-modal.html
+msgid "Please select a dashboard"
+msgstr "Vyberte nástěnku"
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Please select a title for this visualization"
+msgstr "Vyberte název této vizualizace"
+
+#: ../public/workbench/open-workbench-modal.html
+msgid "Please select a workbench"
+msgstr "Vyberte pracovní prostor"
+
+#: ../public/outpatient/form.html
+msgid "Pre-existing conditions"
+msgstr "Předcházející podmínky"
+
+#: ../public/entry/pregnancy-inputs.html
+msgid "Pregnant"
+msgstr "Těhotná"
+
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Previous"
+msgstr "Předchozí"
+
+#: ../public/partials/reports/weekly-report.html
+msgid "Prolonged Fever"
+msgstr "Prodloužená horečka"
+
+#: ../public/outpatient/form.html
+msgid "Pulse"
+msgstr "Puls"
+
+#: ../public/outpatient/filtersGrid.html
+msgid "Query"
+msgstr "Dotaz"
+
+#: ../public/partials/home.html
+msgid "Recent dashboards"
+msgstr "Nedávné nástěnky"
+
+#: ../public/partials/home.html
+msgid "Recent workbenches"
+msgstr "Nedávné pracovní prostory"
+
+#: ../public/partials/home.html
+msgid "Reported Cases by Country - Table"
+msgstr "Oznámené případy podle zemí - tabulka"
+
+#: ../public/partials/home.html
+#: ../public/scripts/services/reports/aggregateReportModal.js
+msgid "Reported Cases by Country - Time Series"
+msgstr "Hlášené případy podle země - časové řady"
+
+#: ../public/scripts/services/reports/aggregateReportModal.js
+msgid "Reported Cases by Country - Weekly Report"
+msgstr "Hlášené případy podle země - týdenní zpráva"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Rimantadine (Flumadine®)"
+msgstr "Rimantadine (Flumadine®)"
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "Roles"
+msgstr "Role"
+
+#: ../public/aggregate/modal-upload.html ../public/dashboard/dashboard.html
+#: ../public/outpatient/modal-edit.html
+#: ../public/partials/save-report-dialog.html
+#: ../public/partials/save-visualization-modal.html
+#: ../public/workbench/save-workbench-modal.html
+#: ../public/workbench/workbench.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Save"
+msgstr "Uložit"
+
+#: ../public/partials/save-report-dialog.html
+msgid "Save this page"
+msgstr "Uložit tuto stránku"
+
+#: ../public/partials/save-visualization-modal.html
+msgid "Save this visualization"
+msgstr "Uložit tuto vizualizaci"
+
+#: ../public/workbench/save-workbench-modal.html
+msgid "Save this workbench"
+msgstr "Uložit tento pracovní prostor"
+
+#: ../public/outpatient/form.html
+msgid "Select a disposition type"
+msgstr "Vybrat typ dispozice"
+
+#: ../public/outpatient/form.html
+msgid "Select diagnoses"
+msgstr "Vybrat diagnózy"
+
+#: ../public/outpatient/form.html
+msgid "Select symptom(s)"
+msgstr "Vybrat příznak(y)"
+
+#: ../public/outpatient/form.html
+msgid "Select visit type"
+msgstr "Vybrat typ návštěvy"
+
+#. Month of September
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Sep"
+msgstr "Září"
+
+#: ../public/aggregate/csv-file-selector.html
+msgid "Separator"
+msgstr "Oddělovač"
+
+#: ../public/partials/edit-settings-modal.html ../public/partials/home.html
+msgid "Settings"
+msgstr "Nastavení"
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html
+#: ../public/partials/visualization-menu.html
+#: ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+msgid "Sex"
+msgstr "Pohlaví"
+
+#: ../public/partials/export-visualization-modal.html
+msgid "Show Title"
+msgstr "Zobrazit název"
+
+#: ../public/partials/login.html
+msgid "Sign in"
+msgstr "Přihlásit se"
+
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Sites Reporting"
+msgstr "Hlášení stránek"
+
+#: ../public/partials/edit/forms/aggregate-data-form.html
+msgid "Sites Total"
+msgstr "Stránek celkem"
+
+#: ../public/scripts/services/errorInterceptor.js
+msgid "Something went wrong :("
+msgstr "Něco se pokazilo :("
+
+#: ../public/partials/not-found.html
+msgid "Sorry, but we couldn't find"
+msgstr "Omlouváme se, ale nepodařilo se nám najít"
+
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Sorry, this name is already in use"
+msgstr "Tento název je již používán"
+
+#: ../public/partials/edit/forms/change-password-form.html
+msgid "Sorry, this user name is already in use"
+msgstr "Toto uživatelské jméno je již používáno"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Source of antiviral exposure"
+msgstr "Zdroj antivirového vystavení"
+
+#: ../public/entry/specimen-inputs.html
+msgid "Specimen ID"
+msgstr "ID Vzorku"
+
+#: ../public/entry/specimen-inputs.html
+msgid "Specimen collection"
+msgstr "Odběr vzorků"
+
+#: ../public/outpatient/filter-types/date-range.html
+msgid "Start"
+msgstr "Start"
+
+#: ../public/outpatient/table.html
+msgid "Submitted"
+msgstr "Odesláno"
+
+#: ../public/dashboard/dashboard-saved-modal.html
+#: ../public/workbench/workbench-saved-modal.html
+msgid "Success"
+msgstr "Úspěch"
+
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/outpatient/possibleFilters.js
+msgid "Symptom"
+msgstr "Příznak"
+
+#: ../public/outpatient/form.html
+msgid "Symptom onset"
+msgstr "Nástup příznaků"
+
+#: ../public/outpatient/form.html ../public/outpatient/table.html
+#: ../public/outpatient/visualization.html ../public/partials/home.html
+#: ../public/partials/edit/aggregate-data.html
+#: ../public/partials/edit/symptom.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/scripts/controllers/WorkbenchCtrl.js
+#: ../public/scripts/controllers/edit/AggregateDataEditCtrl.js
+msgid "Symptoms"
+msgstr "Příznaky"
+
+#: ../public/partials/edit/forms/syndrome-form.html
+msgid "Syndrome"
+msgstr "Syndrom"
+
+#: ../public/partials/home.html ../public/partials/edit/syndrome.html
+msgid "Syndromes"
+msgstr "Syndromy"
+
+#: ../public/partials/visualization-menu.html
+msgid "Table"
+msgstr "Tabulka"
+
+#: ../public/outpatient/form.html
+msgid "Telephone number"
+msgstr "Telefonní číslo"
+
+#: ../public/entry/temperature-inputs.html
+msgid "Temperature"
+msgstr "Teplota"
+
+#: ../public/partials/login.html
+msgid "The username or password you entered is incorrect."
+msgstr "Zadané uživatelské jméno nebo heslo je nesprávné."
+
+#: ../public/dashboard/add-widget.html ../public/outpatient/form.html
+#: ../public/partials/reports/open-timeseries-report-dialog.html
+#: ../public/partials/reports/open-visits-report-dialog.html
+#: ../public/partials/reports/open-weekly-report-dialog.html
+#: ../public/partials/edit/forms/aggregate-data-form.html
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/dashboard-form.html
+#: ../public/partials/edit/forms/diagnosis-form.html
+#: ../public/partials/edit/forms/disposition-form.html
+#: ../public/partials/edit/forms/district-form.html
+#: ../public/partials/edit/forms/symptom-form.html
+#: ../public/partials/edit/forms/syndrome-form.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/partials/edit/forms/visit-type-form.html
+#: ../public/partials/edit/forms/visualization-form.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "These fields are required"
+msgstr "Tato pole jsou vyžadována"
+
+#: ../public/partials/visualization-menu.html
+msgid "Time series"
+msgstr "Časové řady"
+
+#: ../public/outpatient/fracasTimeSeries.js
+msgid "Timeseries"
+msgstr "Časové řady"
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Title"
+msgstr "Název"
+
+#: ../public/partials/home.html
+msgid "Toggle navigation"
+msgstr "Přepnout navigaci"
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Total sites"
+msgstr "Celkový počet stránek"
+
+#: ../public/entry/pregnancy-inputs.html
+msgid "Trimester"
+msgstr "Trimestr"
+
+#: ../public/partials/edit/visualization.html
+#: ../public/scripts/controllers/edit/VisualizationEditCtrl.js
+msgid "Type"
+msgstr "Typ"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Umifenovir (Arbidol®)"
+msgstr "Umifenovir (Arbidol®)"
+
+#: ../public/entry/antiviral-inputs.html ../public/outpatient/form.html
+msgid "Unknown"
+msgstr "Neznámý"
+
+#: ../public/aggregate/modal-upload.html
+#: ../public/partials/edit/aggregate-data.html
+msgid "Upload"
+msgstr "Nahrát"
+
+#: ../public/partials/edit/forms/user-form.html
+msgid "User"
+msgstr "Uživatel"
+
+#: ../public/partials/edit/forms/change-password-form.html
+msgid "User Name"
+msgstr "Uživatelské jméno"
+
+#: ../public/partials/edit/user.html
+#: ../public/partials/edit/forms/user-form.html
+#: ../public/scripts/controllers/edit/UserEditCtrl.js
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+#: ../public/partials/login.html
+msgid "Username or email"
+msgstr "Uživatelské jméno nebo email"
+
+#: ../public/partials/home.html ../public/partials/edit/user.html
+msgid "Users"
+msgstr "Uživatelé"
+
+#: ../public/outpatient/table.html ../public/outpatient/visualization.html
+msgid "Visit"
+msgstr "Návštěva"
+
+#: ../public/partials/edit/forms/visit-type-form.html
+msgid "Visit Type"
+msgstr "Typ návštěvy"
+
+#: ../public/partials/home.html
+msgid "Visit Types"
+msgstr "Typy návštěv"
+
+#: ../public/outpatient/form.html ../public/outpatient/possibleFilters.js
+#: ../public/scripts/controllers/edit/AggregateDataEditCtrl.js
+msgid "Visit date"
+msgstr "Datum návštěvy"
+
+#: ../public/outpatient/form.html
+msgid "Visit type"
+msgstr "Typ návštěvy"
+
+#: ../public/partials/edit/visit-type.html
+msgid "Visit types"
+msgstr "Typy návštěv"
+
+#: ../public/dashboard/add-widget.html
+#: ../public/partials/edit/forms/visualization-form.html
+msgid "Visualization"
+msgstr "Vizualizace"
+
+#: ../public/partials/home.html ../public/partials/edit/visualization.html
+msgid "Visualizations"
+msgstr "Vizualizace"
+
+#: ../public/partials/conflict-message.html
+msgid ""
+"We're sorry, but the record you were trying to save has been updated by "
+"another user. Here's the updated record."
+msgstr ""
+"Je nám líto, ale záznam, který jste se pokoušeli uložit, byl aktualizován "
+"jiným uživatelem. Zde je aktualizovaný záznam."
+
+#: ../public/partials/edit/aggregate-data.html
+msgid "Week"
+msgstr "Týden"
+
+#: ../public/partials/reports/open-weekly-report-dialog.html
+msgid "Week Ending Date"
+msgstr "Datum konce týdne"
+
+#: ../public/outpatient/form.html
+msgid "Weight"
+msgstr "Hmotnost"
+
+#: ../public/workbench/open-workbench-modal.html
+#: ../public/partials/edit/forms/workbench-form.html
+msgid "Workbench"
+msgstr "Pracov í prostor"
+
+#: ../public/workbench/workbench-saved-modal.html
+msgid "Workbench Updated"
+msgstr "Pracovní prostor aktualizován"
+
+#: ../public/partials/edit/workbench.html
+msgid "Workbenches"
+msgstr "Pracovní prostory"
+
+#: ../public/partials/visualization-export.html
+msgid "X Size"
+msgstr "Rozměr X"
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "X-Axis Label"
+msgstr "Štítek osy X"
+
+#: ../public/partials/visualization-export.html
+msgid "Y Size"
+msgstr "Rozměr Y"
+
+#: ../public/partials/edit-settings-modal.html
+#: ../public/partials/visualization-export.html
+msgid "Y-Axis Label"
+msgstr "Štítek osy Y"
+
+#: ../public/partials/reports/weekly-report.html
+msgid ""
+"Year: {{report.year}} | Week: {{report.week}} | Ending on: {{report."
+"endDateString}}"
+msgstr ""
+"Rok: {{report.year}} | Týden: {{report.week}} | Končí dne: {{report."
+"endDateString}}"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Yes"
+msgstr "Ano"
+
+#: ../public/entry/antiviral-inputs.html
+msgid "Zanamivir (Relenza®)"
+msgstr "Zanamivir (Relenza®)"
+
+#: ../public/outpatient/time-series.html
+msgid "Zoom out"
+msgstr "Oddálit"
+
+#: ../public/partials/edit/forms/change-password-form.html
+#: ../public/partials/edit/forms/user-form.html
+msgid "characters"
+msgstr "znaky"
+
+#: ../public/outpatient/time-series.html
+msgid "day"
+msgstr "den"
+
+#: ../public/scripts/services/version.js
+msgid "deployed on"
+msgstr "nasazeno"
+
+#: ../public/outpatient/form.html
+msgid "kg"
+msgstr "kg"
+
+#: ../public/outpatient/time-series.html
+msgid "month"
+msgstr "měsíc"
+
+#: ../public/entry/age-inputs.html
+msgid "months"
+msgstr "měsíců"
+
+#: ../public/outpatient/time-series.html
+msgid "quarter"
+msgstr "čtvrtletí"
+
+#: ../public/partials/not-found.html
+msgid "the page you were looking for."
+msgstr "stránka, kterou jste hledali."
+
+#: ../public/outpatient/time-series.html
+msgid "week"
+msgstr "týden"
+
+#: ../public/outpatient/time-series.html
+msgid "year"
+msgstr "rok"
+
+#: ../public/entry/age-inputs.html
+msgid "years"
+msgstr "roků"
+
+#. {{visit.patient.age.years}} is a variable
+#: ../public/entry/age-inputs.html
+msgid "{{visit.patient.age.years}} years is quite old. Are you sure?"
+msgstr "{{visit.patient.age.years}} let je dost vysoký věk. Jsi si jist?"
+
+#: ../public/entry/temperature-inputs.html
+msgid "{{visit.patient.temperature}} °C is quite high. Are you sure?"
+msgstr ""
+"{{visit.patient.temperature}} ° C je poměrně vysoká teplota. Jsi si jist?"
+
+#: ../public/entry/temperature-inputs.html
+msgid "{{visit.patient.temperature}} °C is quite low. Are you sure?"
+msgstr ""
+"{{visit.patient.temperature}} ° C je poměrně nízká teplota. Jsi si jist?"
+
+#: ../public/entry/temperature-inputs.html
+msgid "°C"
+msgstr "°C"
+
+#: ../public/dashboard/widget-settings.html
+msgid "—"
+msgstr "—"
